@@ -1,0 +1,17 @@
+{
+  "name": "teletext",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^7.9.0"
+  },
+  "scripts": {
+    "server": "browser-sync start --server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Tech & Software Ltd.",
+  "license": "UNLICENSED"
+}
