@@ -4,13 +4,14 @@ const WIDTH_PX = 400;
 const HEIGHT_PX = 250;
 const COLS = 40;
 const ROWS = 25;
+const SCREEN_SCALE = 1.5;
 
 const CELL_HEIGHT = HEIGHT_PX / ROWS;
 const CELL_WIDTH = WIDTH_PX / COLS;
 
 class App {
     constructor() {
-        this.d = SVG().addTo('body').viewbox(`0 0 ${WIDTH_PX-1} ${HEIGHT_PX-1}`).size(WIDTH_PX*1.5, HEIGHT_PX*1.5);
+        this.d = SVG().addTo('body').viewbox(`0 0 ${WIDTH_PX-1} ${HEIGHT_PX-1}`).size(WIDTH_PX*SCREEN_SCALE, HEIGHT_PX*SCREEN_SCALE);
 
         // const rect = this.draw.rect(100, 100).attr({ fill: '#03e' })
         this._drawGrid();
@@ -37,20 +38,30 @@ class App {
         const fontSize = CELL_HEIGHT;// * (9/10);
         const cellXOffset = CELL_WIDTH / 2;
         const cellYOffset = CELL_HEIGHT * (4/5);
+        const group = this.d.group().attr({
+            'text-anchor': 'middle',
+            'fill': '#fff'
+        }).font({ size: fontSize });
         for (let rowNum = 0; rowNum < ROWS; rowNum++) {
             const row = [];
             for (let colNum = 0; colNum < COLS; colNum++) {
-                row.push(this.d.plain(getRandomLetter()).attr({
-                    fill: '#fff',
+                row.push(group.plain(getRandomLetter()).attr({
                     x: (colNum * CELL_WIDTH) + cellXOffset,
                     y: (rowNum * CELL_HEIGHT) + cellYOffset,
-                    'text-anchor': 'middle',
-
-                }).font({ size: fontSize }));
+                }));
             }
             rows.push(row);
         }
         this.gridrows = rows;
+        this.textLayer = group;
+    }
+
+    setTestPage() {
+        this.gridrows.forEach(row => {
+            row.forEach(cell => {
+                cell.plain(getRandomLetter())
+            });
+        });
     }
 }
 
@@ -58,4 +69,8 @@ function getRandomLetter() {
     return String.fromCharCode(48 + Math.random() * 75);
 }
 
-new App();
+const app = new App();
+
+window.addEventListener('DOMContentLoaded', (event) => {
+    document.querySelector('#testPageButton').addEventListener('click', () => app.setTestPage());
+});
