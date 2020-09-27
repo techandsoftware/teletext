@@ -66,7 +66,8 @@ class App {
 }
 
 function getRandomLetter() {
-    return String.fromCharCode(48 + Math.random() * 75);
+    return String.fromCharCode(32 + Math.random() * 95);
+    // return String.fromCharCode(48 + Math.random() * 75);
 }
 
 const app = new App();
