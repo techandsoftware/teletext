@@ -7,6 +7,7 @@
     "@svgdotjs/svg.js": "^3.0.16"
   },
   "devDependencies": {
+    "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
     "eslint": "^7.9.0",
     "rollup-plugin-browsersync": "^1.1.0",

@@ -12,7 +12,7 @@ ctl.setPageRows([
     'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
     'abcdefghijklmnopqrstuvwxyz',
     '0123456789012345678901234567890123456789',
-    ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~',
+    ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\u007f',
     'This is' + Attributes.charFromTextColour(Colour.GREEN) + 'green text!',
     'This is' + Attributes.charFromTextColour(Colour.MAGENTA) + 'magenta text!',
     'This is' + Attributes.charFromTextColour(Colour.CYAN) + 'cyan text!',

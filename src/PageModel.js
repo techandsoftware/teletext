@@ -15,7 +15,7 @@ export class PageModel {
             }
             this.screen.push(row);
         }
-        this._characterSet = 0; // TODO
+        this._characterEncoding = 'latin_g0_english';
         
         this.onSet = new Event(this);
         console.debug('PageModel constructed');
@@ -71,6 +71,9 @@ export class PageModel {
             const attrib = Attributes.attribFromChar(char);
             if (attrib.isTextColourAttribute) {
                 textColour = attrib.value;
+                cell.setSpace();
+            } else {
+                cell.setMappedChar(this._characterEncoding);
             }
             cell.setFgColour(textColour);
         });
