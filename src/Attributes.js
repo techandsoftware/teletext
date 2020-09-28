@@ -42,37 +42,40 @@ export class Attributes {
 
 // private data below
 
-const colourAttribToFillColour = {};
-colourAttribToFillColour[Colour.BLACK]   = 'black';
-colourAttribToFillColour[Colour.RED]     = 'red';
-colourAttribToFillColour[Colour.GREEN]   = 'green';
-colourAttribToFillColour[Colour.YELLOW]  = 'yellow';
-colourAttribToFillColour[Colour.BLUE]    = 'blue';
-colourAttribToFillColour[Colour.MAGENTA] = 'magenta';
-colourAttribToFillColour[Colour.CYAN]    = 'cyan';
-colourAttribToFillColour[Colour.WHITE]   = 'white';
+const colourAttribToFillColour = {
+    [Colour.BLACK]   : '#000',
+    [Colour.RED]     : '#f00',
+    [Colour.GREEN]   : '#0f0',
+    [Colour.YELLOW]  : '#ff0',
+    [Colour.BLUE]    : '#00f',
+    [Colour.MAGENTA] : '#f0f',
+    [Colour.CYAN]    : '#0ff',
+    [Colour.WHITE]   : '#fff',
+};
 Object.freeze(colourAttribToFillColour);
 
-const textColourToChar = {};
-textColourToChar[Colour.BLACK]   = String.fromCharCode(128);
-textColourToChar[Colour.RED]     = String.fromCharCode(129);
-textColourToChar[Colour.GREEN]   = String.fromCharCode(130);
-textColourToChar[Colour.YELLOW]  = String.fromCharCode(131);
-textColourToChar[Colour.BLUE]    = String.fromCharCode(132);
-textColourToChar[Colour.MAGENTA] = String.fromCharCode(133);
-textColourToChar[Colour.CYAN]    = String.fromCharCode(134);
-textColourToChar[Colour.WHITE]   = String.fromCharCode(135);
+const textColourToChar = {
+    [Colour.BLACK]   : String.fromCharCode(128),
+    [Colour.RED]     : String.fromCharCode(129),
+    [Colour.GREEN]   : String.fromCharCode(130),
+    [Colour.YELLOW]  : String.fromCharCode(131),
+    [Colour.BLUE]    : String.fromCharCode(132),
+    [Colour.MAGENTA] : String.fromCharCode(133),
+    [Colour.CYAN]    : String.fromCharCode(134),
+    [Colour.WHITE]   : String.fromCharCode(135),
+};
 Object.freeze(textColourToChar);
 
-const graphicColourToChar = {};
-graphicColourToChar[Colour.BLACK]   = String.fromCharCode(144);
-graphicColourToChar[Colour.RED]     = String.fromCharCode(145);
-graphicColourToChar[Colour.GREEN]   = String.fromCharCode(146);
-graphicColourToChar[Colour.YELLOW]  = String.fromCharCode(147);
-graphicColourToChar[Colour.BLUE]    = String.fromCharCode(148);
-graphicColourToChar[Colour.MAGENTA] = String.fromCharCode(149);
-graphicColourToChar[Colour.CYAN]    = String.fromCharCode(150);
-graphicColourToChar[Colour.WHITE]   = String.fromCharCode(151);
+const graphicColourToChar = {
+    [Colour.BLACK]   : String.fromCharCode(144),
+    [Colour.RED]     : String.fromCharCode(145),
+    [Colour.GREEN]   : String.fromCharCode(146),
+    [Colour.YELLOW]  : String.fromCharCode(147),
+    [Colour.BLUE]    : String.fromCharCode(148),
+    [Colour.MAGENTA] : String.fromCharCode(149),
+    [Colour.CYAN]    : String.fromCharCode(150),
+    [Colour.WHITE]   : String.fromCharCode(151),
+};
 Object.freeze(graphicColourToChar);
 
 const attributeChars = {};
@@ -83,4 +86,3 @@ for (const colour of Object.getOwnPropertySymbols(graphicColourToChar)) {
     attributeChars[graphicColourToChar[colour]] = colour;
 }
 Object.freeze(attributeChars);
-
