@@ -50,7 +50,13 @@ class Attributes {
             isTextColourAttribute: false,
         };
     }
+
+    static colourAttribToFillColour(colour) {
+        return(colourAttribToFillColour[colour]);
+    }
 }
+
+// private data below
 
 const colourAttribToFillColour = {};
 colourAttribToFillColour[Colour.BLACK]   = 'black';
@@ -62,9 +68,6 @@ colourAttribToFillColour[Colour.MAGENTA] = 'magenta';
 colourAttribToFillColour[Colour.CYAN]    = 'cyan';
 colourAttribToFillColour[Colour.WHITE]   = 'white';
 Object.freeze(colourAttribToFillColour);
-
-
-// private data below
 
 const textColourToChar = {};
 textColourToChar[Colour.BLACK]   = String.fromCharCode(128);
@@ -7375,7 +7378,8 @@ class View {
             const rowData = this._model.getRow(index);
             rowView.forEach((cellView, cellIndex) => {
                 const cell = rowData[cellIndex];
-                cellView.plain(cell.getByte()).fill(colourAttribToFillColour[cell.getFgColour()]);
+                const fill = Attributes.colourAttribToFillColour(cell.getFgColour());
+                cellView.plain(cell.getByte()).fill(fill);
             });
         });
     }

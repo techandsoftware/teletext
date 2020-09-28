@@ -1,5 +1,5 @@
 import { SVG } from '@svgdotjs/svg.js';
-import { colourAttribToFillColour } from './Attributes.js';
+import { Attributes } from './Attributes.js';
 
 const WIDTH_PX = 400;
 const HEIGHT_PX = 240;
@@ -33,7 +33,8 @@ export class View {
             const rowData = this._model.getRow(index);
             rowView.forEach((cellView, cellIndex) => {
                 const cell = rowData[cellIndex];
-                cellView.plain(cell.getByte()).fill(colourAttribToFillColour[cell.getFgColour()]);
+                const fill = Attributes.colourAttribToFillColour(cell.getFgColour());
+                cellView.plain(cell.getByte()).fill(fill);
             });
         });
     }

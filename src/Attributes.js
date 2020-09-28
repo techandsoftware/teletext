@@ -34,9 +34,15 @@ export class Attributes {
             isTextColourAttribute: false,
         };
     }
+
+    static colourAttribToFillColour(colour) {
+        return(colourAttribToFillColour[colour]);
+    }
 }
 
-export const colourAttribToFillColour = {};
+// private data below
+
+const colourAttribToFillColour = {};
 colourAttribToFillColour[Colour.BLACK]   = 'black';
 colourAttribToFillColour[Colour.RED]     = 'red';
 colourAttribToFillColour[Colour.GREEN]   = 'green';
@@ -46,9 +52,6 @@ colourAttribToFillColour[Colour.MAGENTA] = 'magenta';
 colourAttribToFillColour[Colour.CYAN]    = 'cyan';
 colourAttribToFillColour[Colour.WHITE]   = 'white';
 Object.freeze(colourAttribToFillColour);
-
-
-// private data below
 
 const textColourToChar = {};
 textColourToChar[Colour.BLACK]   = String.fromCharCode(128);
