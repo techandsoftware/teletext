@@ -1,21 +1,39 @@
 import { SVG } from '@svgdotjs/svg.js';
 
 const WIDTH_PX = 400;
-const HEIGHT_PX = 250;
+const HEIGHT_PX = 240;
 const COLS = 40;
-const ROWS = 25;
+const ROWS = 24;
 const SCREEN_SCALE = 1.5;
 
 const CELL_HEIGHT = HEIGHT_PX / ROWS;
 const CELL_WIDTH = WIDTH_PX / COLS;
 
-class App {
-    constructor() {
-        this.d = SVG().addTo('body').viewbox(`0 0 ${WIDTH_PX-1} ${HEIGHT_PX-1}`).size(WIDTH_PX*SCREEN_SCALE, HEIGHT_PX*SCREEN_SCALE);
+export class View {
+    constructor(model) {
+        this.d = SVG().addTo('body')
+            .viewbox(`0 0 ${WIDTH_PX-1} ${HEIGHT_PX-1}`)
+            .size(WIDTH_PX*SCREEN_SCALE, HEIGHT_PX*SCREEN_SCALE);
 
         // const rect = this.draw.rect(100, 100).attr({ fill: '#03e' })
         this._drawGrid();
         this._createCells();
+
+        this._model = model;
+        this._model.onSet.attach(
+            () => this._update()
+        );
+        console.debug('VectorView constructed');
+    }
+
+    _update() {
+        console.debug('## View._update');
+        this.gridrows.forEach((row, index) => {
+            const rowData = this._model.getRow(index);
+            row.forEach((cell, cellIndex) => {
+                cell.plain(rowData[cellIndex].getByte())
+            });
+        });
     }
 
     _drawGrid() {
@@ -66,12 +84,12 @@ class App {
 }
 
 function getRandomLetter() {
-    return String.fromCharCode(32 + Math.random() * 95);
+    return String.fromCharCode(32 + Math.random() * 95); // returns letter in ASCII range
     // return String.fromCharCode(48 + Math.random() * 75);
 }
 
-const app = new App();
+// const app = new App();
 
-window.addEventListener('DOMContentLoaded', (event) => {
-    document.querySelector('#testPageButton').addEventListener('click', () => app.setTestPage());
-});
+// window.addEventListener('DOMContentLoaded', (event) => {
+//     document.querySelector('#testPageButton').addEventListener('click', () => app.setTestPage());
+// });

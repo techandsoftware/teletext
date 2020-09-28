@@ -2,9 +2,9 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import browsersync from 'rollup-plugin-browsersync';
 
 export default {
-    input: 'src/svgtest.js',
+    input: 'src/app.js',
     output: {
-        file: 'dist/svgtestbundle.js',
+        file: 'dist/appbundle.js',
         format: 'es'
   },
   plugins: [

@@ -1,3 +1,113 @@
+class TeletextController {
+    constructor(model, view) {
+        this._view = view;
+        this._model = model;
+        console.debug('TeletextController constructed');
+    }
+
+    setRow(rowNum, string) {
+        this._model.setRowFromChars(rowNum, string);
+    }
+}
+
+const Colour = {
+    BLACK: Symbol('BLACK'),
+    WHITE: Symbol('WHITE'),
+};
+
+Object.freeze(Colour);
+
+class Cell {
+    constructor() {
+        this._char = ' ';
+        this._fgColour = Colour.WHITE;
+        this._bgColour = Colour.BLACK;
+    }
+
+    setByte(byte) {
+        this._char = byte;
+    }
+
+    getByte() {
+        return this._char;
+    }
+}
+
+class Event {
+    constructor(sender) {
+        this._sender = sender;
+        this._listeners = [];
+    }
+
+    attach(listener) {
+        this._listeners.push(listener);
+    }
+
+    notify(args) {
+        this._listeners.forEach((val, index) => this._listeners[index](this._sender, args));
+    }
+}
+
+const ROWS = 24;
+const CELLS_PER_ROW = 40;
+
+class PageModel {
+    constructor() {
+        this.screen = [];
+        for (let r = 0; r < ROWS; r++) {
+            const row = [];
+            for (let c = 0; c < CELLS_PER_ROW; c++) {
+                row.push(new Cell());
+            }
+            this.screen.push(row);
+        }
+        this._characterSet = 0; // TODO
+        
+        this.onSet = new Event(this);
+        console.debug('PageModel constructed');
+    }
+
+    setRowFromChars(rowNum, text) {
+        if (rowNum >= ROWS) {
+            throw new Error("PageModel E21 bad rowNum");
+        }
+        let textArray = [...text];
+        textArray = textArray.slice(0, CELLS_PER_ROW);
+        textArray.forEach((c, index) => {
+            this.screen[rowNum][index].setByte(c);
+        });
+
+        this.onSet.notify();
+    }
+
+    dumpToConsole() {
+        this.screen.forEach((row, index) => {
+            let rowString = '';
+            row.forEach(cell => {
+                rowString += cell.getByte();
+            });
+            console.log(index, '|', rowString, '|');
+        });
+    }
+
+    getRow(rowNum) {
+        if (rowNum >= ROWS) {
+            throw new Error("PageModel.getRow E42 bad rowNum");
+        }
+        return this.screen[rowNum];
+    }
+
+    setTestPage1() {
+        let char = 'A';
+        this.screen.forEach(row => {
+            row.forEach(cell => {
+                cell.setByte(char);
+            });
+            char = String.fromCharCode(String(char).charCodeAt(0) + 1);
+        });
+    }
+}
+
 const methods = {};
 const names = [];
 
@@ -3143,15 +3253,15 @@ function height (height) {
 }
 
 var circled = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  rx: rx,
-  ry: ry,
-  x: x,
-  y: y,
-  cx: cx,
-  cy: cy,
-  width: width,
-  height: height
+    __proto__: null,
+    rx: rx,
+    ry: ry,
+    x: x,
+    y: y,
+    cx: cx,
+    cy: cy,
+    width: width,
+    height: height
 });
 
 class Shape extends Element {}
@@ -3305,9 +3415,9 @@ function to (x, y) {
 }
 
 var gradiented = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  from: from,
-  to: to
+    __proto__: null,
+    from: from,
+    to: to
 });
 
 class Gradient extends Container {
@@ -3670,12 +3780,12 @@ function height$1 (height) {
 }
 
 var pointed = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  MorphArray: MorphArray,
-  x: x$1,
-  y: y$1,
-  width: width$1,
-  height: height$1
+    __proto__: null,
+    MorphArray: MorphArray,
+    x: x$1,
+    y: y$1,
+    width: width$1,
+    height: height$1
 });
 
 class Line extends Shape {
@@ -4738,12 +4848,12 @@ function size (width, height) {
 }
 
 var poly = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  array: array,
-  plot: plot,
-  clear: clear,
-  move: move,
-  size: size
+    __proto__: null,
+    array: array,
+    plot: plot,
+    clear: clear,
+    move: move,
+    size: size
 });
 
 class Polygon extends Shape {
@@ -6348,7 +6458,7 @@ registerMethods({
 
 register(Svg, 'Svg', true);
 
-class Symbol extends Container {
+class Symbol$1 extends Container {
   // Initialize node
   constructor (node) {
     super(nodeOrNew('symbol', node), node);
@@ -6358,12 +6468,12 @@ class Symbol extends Container {
 registerMethods({
   Container: {
     symbol: wrapWithAttrCheck(function () {
-      return this.put(new Symbol())
+      return this.put(new Symbol$1())
     })
   }
 });
 
-register(Symbol, 'Symbol');
+register(Symbol$1, 'Symbol');
 
 // Create plain text node
 function plain (text) {
@@ -6384,9 +6494,9 @@ function length () {
 }
 
 var textable = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  plain: plain,
-  length: length
+    __proto__: null,
+    plain: plain,
+    length: length
 });
 
 class Text extends Shape {
@@ -7066,7 +7176,7 @@ const SVG = makeInstance;
 
 extend([
   Svg,
-  Symbol,
+  Symbol$1,
   Image,
   Pattern,
   Marker
@@ -7120,21 +7230,39 @@ registerMorphableType([
 makeMorphable();
 
 const WIDTH_PX = 400;
-const HEIGHT_PX = 250;
+const HEIGHT_PX = 240;
 const COLS = 40;
-const ROWS = 25;
+const ROWS$1 = 24;
 const SCREEN_SCALE = 1.5;
 
-const CELL_HEIGHT = HEIGHT_PX / ROWS;
+const CELL_HEIGHT = HEIGHT_PX / ROWS$1;
 const CELL_WIDTH = WIDTH_PX / COLS;
 
 class View {
-    constructor() {
-        this.d = SVG().addTo('body').viewbox(`0 0 ${WIDTH_PX-1} ${HEIGHT_PX-1}`).size(WIDTH_PX*SCREEN_SCALE, HEIGHT_PX*SCREEN_SCALE);
+    constructor(model) {
+        this.d = SVG().addTo('body')
+            .viewbox(`0 0 ${WIDTH_PX-1} ${HEIGHT_PX-1}`)
+            .size(WIDTH_PX*SCREEN_SCALE, HEIGHT_PX*SCREEN_SCALE);
 
         // const rect = this.draw.rect(100, 100).attr({ fill: '#03e' })
         this._drawGrid();
         this._createCells();
+
+        this._model = model;
+        this._model.onSet.attach(
+            () => this._update()
+        );
+        console.debug('VectorView constructed');
+    }
+
+    _update() {
+        console.debug('## View._update');
+        this.gridrows.forEach((row, index) => {
+            const rowData = this._model.getRow(index);
+            row.forEach((cell, cellIndex) => {
+                cell.plain(rowData[cellIndex].getByte());
+            });
+        });
     }
 
     _drawGrid() {
@@ -7161,7 +7289,7 @@ class View {
             'text-anchor': 'middle',
             'fill': '#fff'
         }).font({ size: fontSize });
-        for (let rowNum = 0; rowNum < ROWS; rowNum++) {
+        for (let rowNum = 0; rowNum < ROWS$1; rowNum++) {
             const row = [];
             for (let colNum = 0; colNum < COLS; colNum++) {
                 row.push(group.plain(getRandomLetter()).attr({
@@ -7195,4 +7323,11 @@ function getRandomLetter() {
 //     document.querySelector('#testPageButton').addEventListener('click', () => app.setTestPage());
 // });
 
-export { View };
+const model = new PageModel();
+const view = new View(model);
+const ctl = new TeletextController(model, view);
+ctl.setRow(0, 'This is a test');
+ctl.setRow(1, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+ctl.setRow(2, 'abcdefghijklmnopqrstuvwxyz');
+ctl.setRow(3, '0123456789012345678901234567890123456789');
+ctl.setRow(4, ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~');
