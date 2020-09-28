@@ -8,4 +8,8 @@ export class TeletextController {
     setRow(rowNum, string) {
         this._model.setRowFromChars(rowNum, string);
     }
+
+    setPageRows(rows) {
+        this._model.setRows(rows);
+    }
 }

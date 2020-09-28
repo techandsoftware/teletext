@@ -8,6 +8,10 @@ class TeletextController {
     setRow(rowNum, string) {
         this._model.setRowFromChars(rowNum, string);
     }
+
+    setPageRows(rows) {
+        this._model.setRows(rows);
+    }
 }
 
 const Colour = {
@@ -71,13 +75,26 @@ class PageModel {
         if (rowNum >= ROWS) {
             throw new Error("PageModel E21 bad rowNum");
         }
+        this._setRowFromChars(rowNum, text);
+        this.onSet.notify();
+    }
+
+    setRows(rows) {
+        if (rows.length > ROWS) {
+            throw new Error('PageModel E38 bad rowNum');
+        }
+        rows.forEach((row, index) => {
+            this._setRowFromChars(index, row);
+        });
+        this.onSet.notify();
+    }
+
+    _setRowFromChars(rowNum, text) {
         let textArray = [...text];
         textArray = textArray.slice(0, CELLS_PER_ROW);
         textArray.forEach((c, index) => {
             this.screen[rowNum][index].setByte(c);
         });
-
-        this.onSet.notify();
     }
 
     dumpToConsole() {
@@ -7326,8 +7343,11 @@ function getRandomLetter() {
 const model = new PageModel();
 const view = new View(model);
 const ctl = new TeletextController(model, view);
-ctl.setRow(0, 'This is a test');
-ctl.setRow(1, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-ctl.setRow(2, 'abcdefghijklmnopqrstuvwxyz');
-ctl.setRow(3, '0123456789012345678901234567890123456789');
-ctl.setRow(4, ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~');
+
+ctl.setPageRows([
+    'This is a test',
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    'abcdefghijklmnopqrstuvwxyz',
+    '0123456789012345678901234567890123456789',
+    ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
+]);

@@ -24,13 +24,26 @@ export class PageModel {
         if (rowNum >= ROWS) {
             throw new Error("PageModel E21 bad rowNum");
         }
+        this._setRowFromChars(rowNum, text);
+        this.onSet.notify();
+    }
+
+    setRows(rows) {
+        if (rows.length > ROWS) {
+            throw new Error('PageModel E38 bad rowNum');
+        }
+        rows.forEach((row, index) => {
+            this._setRowFromChars(index, row);
+        });
+        this.onSet.notify();
+    }
+
+    _setRowFromChars(rowNum, text) {
         let textArray = [...text];
         textArray = textArray.slice(0, CELLS_PER_ROW);
         textArray.forEach((c, index) => {
             this.screen[rowNum][index].setByte(c);
         });
-
-        this.onSet.notify();
     }
 
     dumpToConsole() {
