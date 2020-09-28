@@ -9,7 +9,8 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^9.0.0",
     "eslint": "^7.9.0",
-    "rollup-plugin-browsersync": "^1.1.0"
+    "rollup-plugin-browsersync": "^1.1.0",
+    "rollup-plugin-sourcemaps": "^0.6.2"
   },
   "scripts": {
     "buildserve": "rollup -c -w",
