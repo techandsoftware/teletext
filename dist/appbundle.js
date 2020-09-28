@@ -16,10 +16,86 @@ class TeletextController {
 
 const Colour = {
     BLACK: Symbol('BLACK'),
+    RED: Symbol('RED'),
+    GREEN: Symbol('GREEN'),
+    YELLOW: Symbol('YELLOW'),
+    BLUE: Symbol('BLUE'),
+    MAGENTA: Symbol('MAGENTA'),
+    CYAN: Symbol('CYAN'),
     WHITE: Symbol('WHITE'),
 };
 
 Object.freeze(Colour);
+
+class Attributes {
+    static charFromTextColour(colour) {
+        if (colour in textColourToChar) return textColourToChar[colour];
+        throw new Error('Attributes.charFromTextColour: bad colour');
+    }
+
+    static charFromGraphicColour(colour) {
+        if (colour in graphicColourToChar) return graphicColourToChar[colour];
+        throw new Error('Attributes.charFromGraphicColour: bad colour');
+    }
+
+    static attribFromChar(char) {
+        if (char in attributeChars) {
+            return {
+                value: attributeChars[char],
+                isTextColourAttribute: true,
+            }
+        }
+        return {
+            value: null,
+            isTextColourAttribute: false,
+        };
+    }
+}
+
+const colourAttribToFillColour = {};
+colourAttribToFillColour[Colour.BLACK]   = 'black';
+colourAttribToFillColour[Colour.RED]     = 'red';
+colourAttribToFillColour[Colour.GREEN]   = 'green';
+colourAttribToFillColour[Colour.YELLOW]  = 'yellow';
+colourAttribToFillColour[Colour.BLUE]    = 'blue';
+colourAttribToFillColour[Colour.MAGENTA] = 'magenta';
+colourAttribToFillColour[Colour.CYAN]    = 'cyan';
+colourAttribToFillColour[Colour.WHITE]   = 'white';
+Object.freeze(colourAttribToFillColour);
+
+
+// private data below
+
+const textColourToChar = {};
+textColourToChar[Colour.BLACK]   = String.fromCharCode(128);
+textColourToChar[Colour.RED]     = String.fromCharCode(129);
+textColourToChar[Colour.GREEN]   = String.fromCharCode(130);
+textColourToChar[Colour.YELLOW]  = String.fromCharCode(131);
+textColourToChar[Colour.BLUE]    = String.fromCharCode(132);
+textColourToChar[Colour.MAGENTA] = String.fromCharCode(133);
+textColourToChar[Colour.CYAN]    = String.fromCharCode(134);
+textColourToChar[Colour.WHITE]   = String.fromCharCode(135);
+Object.freeze(textColourToChar);
+
+const graphicColourToChar = {};
+graphicColourToChar[Colour.BLACK]   = String.fromCharCode(144);
+graphicColourToChar[Colour.RED]     = String.fromCharCode(145);
+graphicColourToChar[Colour.GREEN]   = String.fromCharCode(146);
+graphicColourToChar[Colour.YELLOW]  = String.fromCharCode(147);
+graphicColourToChar[Colour.BLUE]    = String.fromCharCode(148);
+graphicColourToChar[Colour.MAGENTA] = String.fromCharCode(149);
+graphicColourToChar[Colour.CYAN]    = String.fromCharCode(150);
+graphicColourToChar[Colour.WHITE]   = String.fromCharCode(151);
+Object.freeze(graphicColourToChar);
+
+const attributeChars = {};
+for (const colour of Object.getOwnPropertySymbols(textColourToChar)) {
+    attributeChars[textColourToChar[colour]] = colour;
+}
+for (const colour of Object.getOwnPropertySymbols(graphicColourToChar)) {
+    attributeChars[graphicColourToChar[colour]] = colour;
+}
+Object.freeze(attributeChars);
 
 class Cell {
     constructor() {
@@ -34,6 +110,14 @@ class Cell {
 
     getByte() {
         return this._char;
+    }
+
+    setFgColour(colour) {
+        this._fgColour = colour;
+    }
+
+    getFgColour() {
+        return this._fgColour;
     }
 }
 
@@ -93,6 +177,10 @@ class PageModel {
         let textArray = [...text];
         textArray = textArray.slice(0, CELLS_PER_ROW);
         textArray.forEach((c, index) => {
+            const code = c.charCodeAt(0);
+            if (Number.isNaN(code) || code >= 160) {
+                throw new Error(`PageModel: failed to set row characters: character out of range with code: ${code}`);
+            }
             this.screen[rowNum][index].setByte(c);
         });
     }
@@ -111,6 +199,15 @@ class PageModel {
         if (rowNum >= ROWS) {
             throw new Error("PageModel.getRow E42 bad rowNum");
         }
+        let textColour = Colour.WHITE;
+        this.screen[rowNum].forEach(cell => {
+            const char = cell.getByte();
+            const attrib = Attributes.attribFromChar(char);
+            if (attrib.isTextColourAttribute) {
+                textColour = attrib.value;
+            }
+            cell.setFgColour(textColour);
+        });
         return this.screen[rowNum];
     }
 
@@ -7274,10 +7371,11 @@ class View {
 
     _update() {
         console.debug('## View._update');
-        this.gridrows.forEach((row, index) => {
+        this.gridrows.forEach((rowView, index) => {
             const rowData = this._model.getRow(index);
-            row.forEach((cell, cellIndex) => {
-                cell.plain(rowData[cellIndex].getByte());
+            rowView.forEach((cellView, cellIndex) => {
+                const cell = rowData[cellIndex];
+                cellView.plain(cell.getByte()).fill(colourAttribToFillColour[cell.getFgColour()]);
             });
         });
     }
@@ -7349,5 +7447,14 @@ ctl.setPageRows([
     'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
     'abcdefghijklmnopqrstuvwxyz',
     '0123456789012345678901234567890123456789',
-    ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
+    ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~',
+    'This is' + Attributes.charFromTextColour(Colour.GREEN) + 'green text!',
+    'This is' + Attributes.charFromTextColour(Colour.MAGENTA) + 'magenta text!',
+    'This is' + Attributes.charFromTextColour(Colour.CYAN) + 'cyan text!',
+    'This is' + Attributes.charFromTextColour(Colour.RED) + 'red text!',
+    'This is' + Attributes.charFromTextColour(Colour.BLUE) + 'blue text!',
+    'This is' + Attributes.charFromTextColour(Colour.YELLOW) + 'yellow text!',
+    'This is' + Attributes.charFromTextColour(Colour.WHITE) + 'white text!',
+    'This is' + Attributes.charFromTextColour(Colour.BLACK) + 'black text!',
+    
 ]);

@@ -1,3 +1,4 @@
+import { Attributes, Colour } from './Attributes.js';
 import { Cell } from './Cell.js';
 import { Event } from './Event.js';
 
@@ -42,6 +43,10 @@ export class PageModel {
         let textArray = [...text];
         textArray = textArray.slice(0, CELLS_PER_ROW);
         textArray.forEach((c, index) => {
+            const code = c.charCodeAt(0);
+            if (Number.isNaN(code) || code >= 160) {
+                throw new Error(`PageModel: failed to set row characters: character out of range with code: ${code}`);
+            }
             this.screen[rowNum][index].setByte(c);
         });
     }
@@ -60,6 +65,15 @@ export class PageModel {
         if (rowNum >= ROWS) {
             throw new Error("PageModel.getRow E42 bad rowNum");
         }
+        let textColour = Colour.WHITE;
+        this.screen[rowNum].forEach(cell => {
+            const char = cell.getByte();
+            const attrib = Attributes.attribFromChar(char);
+            if (attrib.isTextColourAttribute) {
+                textColour = attrib.value;
+            }
+            cell.setFgColour(textColour);
+        });
         return this.screen[rowNum];
     }
 

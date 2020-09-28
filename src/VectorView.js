@@ -1,4 +1,5 @@
 import { SVG } from '@svgdotjs/svg.js';
+import { colourAttribToFillColour } from './Attributes.js';
 
 const WIDTH_PX = 400;
 const HEIGHT_PX = 240;
@@ -28,10 +29,11 @@ export class View {
 
     _update() {
         console.debug('## View._update');
-        this.gridrows.forEach((row, index) => {
+        this.gridrows.forEach((rowView, index) => {
             const rowData = this._model.getRow(index);
-            row.forEach((cell, cellIndex) => {
-                cell.plain(rowData[cellIndex].getByte())
+            rowView.forEach((cellView, cellIndex) => {
+                const cell = rowData[cellIndex];
+                cellView.plain(cell.getByte()).fill(colourAttribToFillColour[cell.getFgColour()]);
             });
         });
     }

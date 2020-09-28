@@ -14,4 +14,12 @@ export class Cell {
     getByte() {
         return this._char;
     }
+
+    setFgColour(colour) {
+        this._fgColour = colour;
+    }
+
+    getFgColour() {
+        return this._fgColour;
+    }
 }
