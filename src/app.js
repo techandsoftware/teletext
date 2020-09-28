@@ -9,9 +9,9 @@ const ctl = new TeletextController(model, view);
 
 ctl.setPageRows([
     'This is teletext level 1.5  ETSI 300 706',
-    '40 columns \u007f 24 rows \u007f 8 colours',
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-    'abcdefghijklmnopqrstuvwxyz',
+    Attributes.charFromTextColour(Colour.RED) + '   40 columns \u007f 24 rows \u007f 8 colours',
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZ' + Attributes.charFromTextColour(Colour.YELLOW) + '        7 bit',
+    'abcdefghijklmnopqrstuvwxyz' + Attributes.charFromTextColour(Colour.YELLOW) + '     char set',
     '0123456789012345678901234567890123456789',
     ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\u007f',
     '````````````````````````````````````````',
