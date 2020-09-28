@@ -8,11 +8,13 @@ const view = new View(model);
 const ctl = new TeletextController(model, view);
 
 ctl.setPageRows([
-    'This is a test',
+    'This is teletext level 1.5  ETSI 300 706',
+    '40 columns \u007f 24 rows \u007f 8 colours',
     'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
     'abcdefghijklmnopqrstuvwxyz',
     '0123456789012345678901234567890123456789',
     ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\u007f',
+    '````````````````````````````````````````',
     'This is' + Attributes.charFromTextColour(Colour.GREEN) + 'green text!',
     'This is' + Attributes.charFromTextColour(Colour.MAGENTA) + 'magenta text!',
     'This is' + Attributes.charFromTextColour(Colour.CYAN) + 'cyan text!',

@@ -35,7 +35,7 @@ export class Attributes {
         };
     }
 
-    static colourAttribToFillColour(colour) {
+    static fillColourFromColourAttrib(colour) {
         return(colourAttribToFillColour[colour]);
     }
 }
@@ -55,26 +55,26 @@ const colourAttribToFillColour = {
 Object.freeze(colourAttribToFillColour);
 
 const textColourToChar = {
-    [Colour.BLACK]   : String.fromCharCode(128),
-    [Colour.RED]     : String.fromCharCode(129),
-    [Colour.GREEN]   : String.fromCharCode(130),
-    [Colour.YELLOW]  : String.fromCharCode(131),
-    [Colour.BLUE]    : String.fromCharCode(132),
-    [Colour.MAGENTA] : String.fromCharCode(133),
-    [Colour.CYAN]    : String.fromCharCode(134),
-    [Colour.WHITE]   : String.fromCharCode(135),
+    [Colour.BLACK]   : String.fromCharCode(0),
+    [Colour.RED]     : String.fromCharCode(1),
+    [Colour.GREEN]   : String.fromCharCode(2),
+    [Colour.YELLOW]  : String.fromCharCode(3),
+    [Colour.BLUE]    : String.fromCharCode(4),
+    [Colour.MAGENTA] : String.fromCharCode(5),
+    [Colour.CYAN]    : String.fromCharCode(6),
+    [Colour.WHITE]   : String.fromCharCode(7),
 };
 Object.freeze(textColourToChar);
 
 const graphicColourToChar = {
-    [Colour.BLACK]   : String.fromCharCode(144),
-    [Colour.RED]     : String.fromCharCode(145),
-    [Colour.GREEN]   : String.fromCharCode(146),
-    [Colour.YELLOW]  : String.fromCharCode(147),
-    [Colour.BLUE]    : String.fromCharCode(148),
-    [Colour.MAGENTA] : String.fromCharCode(149),
-    [Colour.CYAN]    : String.fromCharCode(150),
-    [Colour.WHITE]   : String.fromCharCode(151),
+    [Colour.BLACK]   : String.fromCharCode(16),
+    [Colour.RED]     : String.fromCharCode(17),
+    [Colour.GREEN]   : String.fromCharCode(18),
+    [Colour.YELLOW]  : String.fromCharCode(19),
+    [Colour.BLUE]    : String.fromCharCode(20),
+    [Colour.MAGENTA] : String.fromCharCode(21),
+    [Colour.CYAN]    : String.fromCharCode(22),
+    [Colour.WHITE]   : String.fromCharCode(23),
 };
 Object.freeze(graphicColourToChar);
 

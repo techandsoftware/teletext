@@ -33,7 +33,7 @@ export class View {
             const rowData = this._model.getRow(index);
             rowView.forEach((cellView, cellIndex) => {
                 const cell = rowData[cellIndex];
-                const fill = Attributes.colourAttribToFillColour(cell.getFgColour());
+                const fill = Attributes.fillColourFromColourAttrib(cell.getFgColour());
                 cellView.plain(cell.getChar()).fill(fill);
             });
         });

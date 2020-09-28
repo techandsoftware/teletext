@@ -65,12 +65,15 @@ export class PageModel {
         if (rowNum >= ROWS) {
             throw new Error("PageModel.getRow E42 bad rowNum");
         }
-        let textColour = Colour.WHITE;
+        let textColour;
+        let nextTextColour = Colour.WHITE;
         this.screen[rowNum].forEach(cell => {
+            textColour = nextTextColour;
+
             const char = cell.getByte();
             const attrib = Attributes.attribFromChar(char);
             if (attrib.isTextColourAttribute) {
-                textColour = attrib.value;
+                nextTextColour = attrib.value;
                 cell.setSpace();
             } else {
                 cell.setMappedChar(this._characterEncoding);
