@@ -24,7 +24,7 @@ ctl.setPageRows([
     'This is' + Attributes.charFromTextColour(Colour.BLUE) + 'blue text!',
     'This is' + Attributes.charFromTextColour(Colour.YELLOW) + 'yellow text!',
     'This is' + Attributes.charFromTextColour(Colour.WHITE) + 'white text!',
-    'This is' + Attributes.charFromTextColour(Colour.BLACK) + 'black text!',
+    'This is' + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) + Attributes.charFromTextColour(Colour.BLACK) + 'black text! ' + Attributes.charFromAttribute(Attributes.BLACK_BACKGROUND),
     Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) + '   ' +
         Attributes.charFromTextColour(Colour.YELLOW) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND)  + '   ' +
         Attributes.charFromTextColour(Colour.CYAN) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND)    + '   ' +

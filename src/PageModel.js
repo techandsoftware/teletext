@@ -83,6 +83,10 @@ export class PageModel {
                     backgroundColour = textColour;
                     cell.setSpace();
                     break;
+                case Attributes.BLACK_BACKGROUND:
+                    backgroundColour = Colour.BLACK;
+                    cell.setSpace();
+                    break;
                 default:
                     cell.setMappedChar(this._characterEncoding);
             }
