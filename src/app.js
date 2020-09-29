@@ -10,8 +10,10 @@ const ctl = new TeletextController(model, view);
 ctl.setPageRows([
     'This is teletext level 1.5  ETSI 300 706',
     Attributes.charFromTextColour(Colour.RED) + '   40 columns \u007f 24 rows \u007f 8 colours',
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZ' + Attributes.charFromTextColour(Colour.YELLOW) + '  126',
-    'abcdefghijklmnopqrstuvwxyz' + Attributes.charFromTextColour(Colour.YELLOW) + '  characters',
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZ' + ' ' +
+        Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) + Attributes.charFromTextColour(Colour.BLACK) + '    96',
+    'abcdefghijklmnopqrstuvwxyz' + ' ' +
+        Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) + Attributes.charFromTextColour(Colour.BLACK) + 'characters',
     '0123456789012345678901234567890123456789',
     ' !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\u007f',
     '````````````````````````````````````````',
@@ -23,8 +25,6 @@ ctl.setPageRows([
     'This is' + Attributes.charFromTextColour(Colour.YELLOW) + 'yellow text!',
     'This is' + Attributes.charFromTextColour(Colour.WHITE) + 'white text!',
     'This is' + Attributes.charFromTextColour(Colour.BLACK) + 'black text!',
-    Attributes.charFromTextColour(Colour.GREEN) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) + Attributes.charFromTextColour(Colour.BLACK) +
-        'Green background',
     Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) + '   ' +
         Attributes.charFromTextColour(Colour.YELLOW) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND)  + '   ' +
         Attributes.charFromTextColour(Colour.CYAN) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND)    + '   ' +

@@ -107,7 +107,12 @@ export class View {
     _setBackgroundForRow(rowNum, colNum, colour) {
         const x = colNum * CELL_WIDTH;
         const y = rowNum * CELL_HEIGHT;
-        this.bgrows[rowNum].rect(CELL_WIDTH, CELL_HEIGHT).fill(colour).stroke({ width: 0 }).move(x, y)
+        this.bgrows[rowNum]
+            .rect(CELL_WIDTH, CELL_HEIGHT)
+            .fill(colour)
+            .stroke({ width: 0 })
+            .attr( { 'shape-rendering': 'crispEdges' })
+            .move(x, y)
     }
 
     setTestPage() {
