@@ -72,8 +72,8 @@ export class PageModel {
 
             const char = cell.getByte();
             const attrib = Attributes.attribFromChar(char);
-            if (attrib.isTextColourAttribute) {
-                nextTextColour = attrib.value;
+            if (attrib.attribute == Attributes.TEXT_COLOUR) {
+                nextTextColour = attrib.colour;
                 cell.setSpace();
             } else {
                 cell.setMappedChar(this._characterEncoding);
