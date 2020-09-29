@@ -65,10 +65,13 @@ export class View {
 
     _createRows() {
         const bgrows = [];
+        const bgGroup = this.d.group();
+        bgGroup.attr( { 'shape-rendering': 'crispEdges' })
         for (let rowNum = 0; rowNum < ROWS; rowNum++) {
-            bgrows.push(this.d.group());
+            bgrows.push(bgGroup.group());
         }
         this.bgrows = bgrows;   // store backgrounds per row
+        this.bgLayer = bgGroup;
     }
 
     _createCells() {
@@ -94,8 +97,8 @@ export class View {
         this.textLayer = textGroup;
     }
 
-    _resetBackgroundForRow(row) {
-        this.bgrows[row] = this.d.group();
+    _resetBackgroundForRow(rowNum) {
+        this.bgrows[rowNum] = this.bgLayer.group();
     }
 
     _extendBackgroundForRow(rowNum) {
@@ -110,8 +113,6 @@ export class View {
         this.bgrows[rowNum]
             .rect(CELL_WIDTH, CELL_HEIGHT)
             .fill(colour)
-            .stroke({ width: 0 })
-            .attr( { 'shape-rendering': 'crispEdges' })
             .move(x, y)
     }
 
