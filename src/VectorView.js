@@ -17,7 +17,8 @@ export class View {
             .size(WIDTH_PX*SCREEN_SCALE, HEIGHT_PX*SCREEN_SCALE);
 
         // const rect = this.draw.rect(100, 100).attr({ fill: '#03e' })
-        this._drawGrid();
+        // this._drawGrid();
+        this._createRows();
         this._createCells();
 
         this._model = model;
@@ -29,52 +30,84 @@ export class View {
 
     _update() {
         console.debug('## View._update');
-        this.gridrows.forEach((rowView, index) => {
-            const rowData = this._model.getRow(index);
+        this.gridrows.forEach((rowView, rowIndex) => {
+            const rowData = this._model.getRow(rowIndex);
+            let previousBg;
             rowView.forEach((cellView, cellIndex) => {
                 const cell = rowData[cellIndex];
                 const fill = Attributes.fillColourFromColourAttrib(cell.getFgColour());
+                const bg = Attributes.fillColourFromColourAttrib(cell.getBgColour());
+                if (previousBg == bg) {
+                    this._extendBackgroundForRow(rowIndex);
+                } else {
+                    this._setBackgroundForRow(rowIndex, cellIndex, bg);
+                }
+                previousBg = bg;
                 cellView.plain(cell.getChar()).fill(fill);
             });
         });
     }
 
     _drawGrid() {
-        // for (let row = 0; row < ROWS; row++) {
-        //     this.d.line(0, row * CELL_HEIGHT, WIDTH_PX-1, row * CELL_HEIGHT).attr({
-        //         stroke: '#555',
-        //         'stroke-width': 0.5,
-        //     });
-        // }
-        // for (let col = 0; col < COLS; col++) {
-        //     this.d.line(col * CELL_WIDTH, 0, col*CELL_WIDTH, HEIGHT_PX - 1).attr({
-        //         stroke: '#555',
-        //         'stroke-width': 0.5,
-        //     });
-        // }
+        for (let row = 0; row < ROWS; row++) {
+            this.d.line(0, row * CELL_HEIGHT, WIDTH_PX-1, row * CELL_HEIGHT).attr({
+                stroke: '#555',
+                'stroke-width': 0.5,
+            });
+        }
+        for (let col = 0; col < COLS; col++) {
+            this.d.line(col * CELL_WIDTH, 0, col*CELL_WIDTH, HEIGHT_PX - 1).attr({
+                stroke: '#555',
+                'stroke-width': 0.5,
+            });
+        }
+    }
+
+    _createRows() {
+        const bgrows = [];
+        for (let rowNum = 0; rowNum < ROWS; rowNum++) {
+            bgrows.push(this.d.group());
+        }
+        this.bgrows = bgrows;   // store backgrounds per row
     }
 
     _createCells() {
-        const rows = [];
+        const gridrows = [];
         const fontSize = CELL_HEIGHT;// * (9/10);
         const cellXOffset = CELL_WIDTH / 2;
         const cellYOffset = CELL_HEIGHT * (4/5);
-        const group = this.d.group().attr({
+        const textGroup = this.d.group().attr({
             'text-anchor': 'middle',
             'fill': '#fff'
         }).font({ size: fontSize });
         for (let rowNum = 0; rowNum < ROWS; rowNum++) {
-            const row = [];
+            const rowCells = [];
             for (let colNum = 0; colNum < COLS; colNum++) {
-                row.push(group.plain(getRandomLetter()).attr({
+                rowCells.push(textGroup.plain(getRandomLetter()).attr({
                     x: (colNum * CELL_WIDTH) + cellXOffset,
                     y: (rowNum * CELL_HEIGHT) + cellYOffset,
                 }));
             }
-            rows.push(row);
+            gridrows.push(rowCells);
         }
-        this.gridrows = rows;
-        this.textLayer = group;
+        this.gridrows = gridrows;   // text per cell per row: [rowNum][colNum]
+        this.textLayer = textGroup;
+    }
+
+    _resetBackgroundForRow(row) {
+        this.bgrows[row] = this.d.group();
+    }
+
+    _extendBackgroundForRow(rowNum) {
+        const last = this.bgrows[rowNum].last();
+        const width = last.width();
+        last.width(width + CELL_WIDTH);
+    }
+
+    _setBackgroundForRow(rowNum, colNum, colour) {
+        const x = colNum * CELL_WIDTH;
+        const y = rowNum * CELL_HEIGHT;
+        this.bgrows[rowNum].rect(CELL_WIDTH, CELL_HEIGHT).fill(colour).stroke({ width: 0 }).move(x, y)
     }
 
     setTestPage() {

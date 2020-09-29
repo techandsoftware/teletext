@@ -67,18 +67,27 @@ export class PageModel {
         }
         let textColour;
         let nextTextColour = Colour.WHITE;
+        let backgroundColour = Colour.BLACK;
         this.screen[rowNum].forEach(cell => {
+            // 'set-after' attributes from previous cell
             textColour = nextTextColour;
 
             const char = cell.getByte();
             const attrib = Attributes.attribFromChar(char);
-            if (attrib.attribute == Attributes.TEXT_COLOUR) {
-                nextTextColour = attrib.colour;
-                cell.setSpace();
-            } else {
-                cell.setMappedChar(this._characterEncoding);
+            switch (attrib.attribute) {
+                case Attributes.TEXT_COLOUR:
+                    nextTextColour = attrib.colour;
+                    cell.setSpace();
+                    break;
+                case Attributes.NEW_BACKGROUND:
+                    backgroundColour = textColour;
+                    cell.setSpace();
+                    break;
+                default:
+                    cell.setMappedChar(this._characterEncoding);
             }
             cell.setFgColour(textColour);
+            cell.setBgColour(backgroundColour);
         });
         return this.screen[rowNum];
     }

@@ -24,6 +24,14 @@ export class Cell {
         return this._fgColour;
     }
 
+    setBgColour(colour) {
+        this._bgColour = colour;
+    }
+
+    getBgColour() {
+        return this._bgColour;
+    }
+
     setMappedChar(encoding) {
         this._char = getCharWithEncoding(this._byte, encoding);
     }
