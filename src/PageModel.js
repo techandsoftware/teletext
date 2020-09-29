@@ -47,7 +47,7 @@ export class PageModel {
             if (Number.isNaN(code) || code >= 160) {
                 throw new Error(`PageModel: failed to set row characters: character out of range with code: ${code}`);
             }
-            this.screen[rowNum][index].setByte(c);
+            this.screen[rowNum][index].byte = c;
         });
     }
 
@@ -55,7 +55,7 @@ export class PageModel {
         this.screen.forEach((row, index) => {
             let rowString = '';
             row.forEach(cell => {
-                rowString += cell.getByte();
+                rowString += cell.byte;
             });
             console.log(index, '|', rowString, '|');
         });
@@ -72,7 +72,7 @@ export class PageModel {
             // 'set-after' attributes from previous cell
             textColour = nextTextColour;
 
-            const char = cell.getByte();
+            const char = cell.byte;
             const attrib = Attributes.attribFromChar(char);
             switch (attrib.attribute) {
                 case Attributes.TEXT_COLOUR:
@@ -86,8 +86,8 @@ export class PageModel {
                 default:
                     cell.setMappedChar(this._characterEncoding);
             }
-            cell.setFgColour(textColour);
-            cell.setBgColour(backgroundColour);
+            cell.fgColour = textColour;
+            cell.bgColour = backgroundColour;
         });
         return this.screen[rowNum];
     }
@@ -96,7 +96,7 @@ export class PageModel {
         let char = 'A';
         this.screen.forEach(row => {
             row.forEach(cell => {
-                cell.setByte(char);
+                cell.byte = char;
             })
             char = String.fromCharCode(String(char).charCodeAt(0) + 1);
         });

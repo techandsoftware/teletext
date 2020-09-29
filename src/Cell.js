@@ -8,27 +8,27 @@ export class Cell {
         this._bgColour = Colour.BLACK;
     }
 
-    setByte(byte) {
+    set byte(byte) {
         this._byte = byte;
     }
 
-    getByte() {
+    get byte() {
         return this._byte;
     }
 
-    setFgColour(colour) {
+    set fgColour(colour) {
         this._fgColour = colour;
     }
 
-    getFgColour() {
+    get fgColour() {
         return this._fgColour;
     }
 
-    setBgColour(colour) {
+    set bgColour(colour) {
         this._bgColour = colour;
     }
 
-    getBgColour() {
+    get bgColour() {
         return this._bgColour;
     }
 
@@ -40,7 +40,7 @@ export class Cell {
         this._char = ' ';
     }
 
-    getChar() {
+    get char() {
         return this._char;
     }
 }

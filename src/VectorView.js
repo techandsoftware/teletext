@@ -35,15 +35,15 @@ export class View {
             let previousBg;
             rowView.forEach((cellView, cellIndex) => {
                 const cell = rowData[cellIndex];
-                const fill = Attributes.fillColourFromColourAttrib(cell.getFgColour());
-                const bg = Attributes.fillColourFromColourAttrib(cell.getBgColour());
+                const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
+                const bg = Attributes.fillColourFromColourAttrib(cell.bgColour);
                 if (previousBg == bg) {
                     this._extendBackgroundForRow(rowIndex);
                 } else {
                     this._setBackgroundForRow(rowIndex, cellIndex, bg);
                 }
                 previousBg = bg;
-                cellView.plain(cell.getChar()).fill(fill);
+                cellView.plain(cell.char).fill(fill);
             });
         });
     }
