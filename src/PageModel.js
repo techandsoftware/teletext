@@ -71,11 +71,12 @@ export class PageModel {
         // start of row defaults for 'set-after' attributes
         let nextCellType = CellType.ALPHA;
         let nextTextColour = Colour.WHITE;
+        // start of row defaults for 'set-at' attributes
         let backgroundColour = Colour.BLACK;
         this.screen[rowNum].forEach(cell => {
             // 'set-after' attributes from previous cell
             textColour = nextTextColour;
-            cellType = nextCellType;
+            cell.type = nextCellType;
 
             const char = cell.byte;
             const attrib = Attributes.attribFromChar(char);
@@ -101,7 +102,8 @@ export class PageModel {
                 default:
                     cell.setMappedChar(this._characterEncoding);
             }
-            cell.type = cellType;
+
+            // 'set-at' attributes from current cell
             cell.fgColour = textColour;
             cell.bgColour = backgroundColour;
         });

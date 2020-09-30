@@ -37,7 +37,8 @@ export class Cell {
         if (this._type == CellType.ALPHA) {
             this._char = getCharWithEncoding(this._byte, encoding);
         } else {
-            this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_unicode');
+            // TODO check char range
+            this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__legacy_computing');
         }
     }
 

@@ -11,7 +11,7 @@ export const Colour = {
 Object.freeze(Colour);
 
 export const CellType = {
-    ALPHA : Symbol('AlPHA'),
+    ALPHA : Symbol('ALPHA'),
     MOSAIC: Symbol('MOSAIC'),
 };
 Object.freeze(CellType);
