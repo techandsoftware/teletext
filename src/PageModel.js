@@ -117,6 +117,7 @@ export class PageModel {
                 case Attributes.STEADY: // set at
                     cell.flashing = false;
                     nextFlashing = false;
+                    cell.setSpace();
                     break;
                 default:
                     cell.setMappedChar(this._characterEncoding);
