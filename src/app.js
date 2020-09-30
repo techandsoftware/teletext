@@ -33,7 +33,7 @@ ctl.setPageRows([
         Attributes.charFromTextColour(Colour.RED) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND)     + '   ' +
         Attributes.charFromTextColour(Colour.BLUE) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND)    + '   ' +
         Attributes.charFromTextColour(Colour.BLACK) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND)   + '   ',
-    Attributes.charFromGraphicColour(Colour.WHITE) +  ' !"#$%&\'()*+,-./',
+    Attributes.charFromGraphicColour(Colour.WHITE) +  ' !"#$%&\'()*+,-./' +  Attributes.charFromTextColour(Colour.WHITE) + "64 graphic characters",
     Attributes.charFromGraphicColour(Colour.WHITE) +  '0123456789:;<=>?',
     Attributes.charFromGraphicColour(Colour.WHITE) +  '`abcdefghijklmno',
     Attributes.charFromGraphicColour(Colour.WHITE) +  'pqrstuvwxyz{|}~\u007f'

@@ -1,5 +1,5 @@
 import { SVG } from '@svgdotjs/svg.js';
-import { Attributes } from './Attributes.js';
+import { Attributes, CellType } from './Attributes.js';
 
 const WIDTH_PX = 400;
 const HEIGHT_PX = 240;
@@ -16,15 +16,19 @@ export class View {
             .viewbox(`0 0 ${WIDTH_PX-1} ${HEIGHT_PX-1}`)
             .size(WIDTH_PX*SCREEN_SCALE, HEIGHT_PX*SCREEN_SCALE);
 
-        // const rect = this.draw.rect(100, 100).attr({ fill: '#03e' })
-        // this._drawGrid();
         this._createRows();
         this._createCells();
+        // this._drawGrid();
 
         this._model = model;
         this._model.onSet.attach(
             () => this._update()
         );
+        // FUDGE following is used to tweak the mosaic cell size/position to avoid tiny gaps
+        // Suspect the gaps are due to font antialiasing, with no way to switch antialiasing off)
+        this._mosaicTextLength = CELL_WIDTH + 0.2;    
+        this._mosaicDX = -0.1;
+        this._mosaicDY = 0.15;
         console.debug('VectorView constructed');
     }
 
@@ -37,6 +41,24 @@ export class View {
                 const cell = rowData[cellIndex];
                 const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
                 const bg = Attributes.fillColourFromColourAttrib(cell.bgColour);
+                if (cell.type == CellType.MOSAIC) {
+                    cellView.addClass('mosaic').attr({
+                        dx: this._mosaicDX,
+                        dy: this._mosaicDY,
+                        textLength: this._mosaicTextLength,
+                        lengthAdjust: 'spacingAndGlyphs',
+                        'text-anchor': 'start',
+                    });
+                } 
+                else {
+                    cellView.removeClass('mosaic').attr({
+                        dx: null,
+                        dy: null,
+                        textLength: null,
+                        lengthAdjust: null,
+                        'text-anchor': null,
+                    });
+                }
                 if (previousBg == bg) {
                     this._extendBackgroundForRow(rowIndex);
                 } else {
