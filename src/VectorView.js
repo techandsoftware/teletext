@@ -52,11 +52,11 @@ export class View {
                 } else if (cell.type == CellType.MOSAIC_SEPARATED) {
                     cellView.addClass('mosaic_separated').attr({
                         dx: 1,
-                        dy: 'none',
+                        dy: null,
                         textLength: this._mosaicTextLength - 1,
                         lengthAdjust: 'spacingAndGlyphs',
                         'text-anchor': 'start',
-                        stroke: 'black',
+                        stroke: 'transparent',
                         'stroke-width': '0.4',
                     });
                 } else {
