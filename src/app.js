@@ -33,4 +33,5 @@ ctl.setPageRows([
         Attributes.charFromTextColour(Colour.RED) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND)     + '   ' +
         Attributes.charFromTextColour(Colour.BLUE) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND)    + '   ' +
         Attributes.charFromTextColour(Colour.BLACK) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND)   + '   ',
+    Attributes.charFromGraphicColour(Colour.WHITE) +  'abcdefghijklmnopqrstuvwxyz', // TODO debug this
 ]);

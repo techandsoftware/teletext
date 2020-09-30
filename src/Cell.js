@@ -1,4 +1,4 @@
-import { Colour } from './Attributes.js';
+import { Colour, CellType } from './Attributes.js';
 import encodings from './data/characterEncodings.json';
 
 export class Cell {
@@ -6,6 +6,7 @@ export class Cell {
         this._byte = ' ';
         this._fgColour = Colour.WHITE;
         this._bgColour = Colour.BLACK;
+        this._type = CellType.ALPHA;
     }
 
     set byte(byte) {
@@ -33,7 +34,11 @@ export class Cell {
     }
 
     setMappedChar(encoding) {
-        this._char = getCharWithEncoding(this._byte, encoding);
+        if (this._type == CellType.ALPHA) {
+            this._char = getCharWithEncoding(this._byte, encoding);
+        } else {
+            this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_unicode');
+        }
     }
 
     setSpace() {
@@ -43,11 +48,20 @@ export class Cell {
     get char() {
         return this._char;
     }
+
+    get type() {
+        return this._type;
+    }
+
+    set type(type) {
+        this._type = type;
+    }
 }
 
 // private
 
 function getCharWithEncoding(byte, encoding) {
+    if (!(encoding in encodings)) throw new Error(`Cell getCharWithEncoding: bad encoding: ${encoding}`);
     if (byte in encodings[encoding]) return encodings[encoding][byte];
     if (byte in encodings['latin_g0']) return encodings['latin_g0'][byte];
     return byte;

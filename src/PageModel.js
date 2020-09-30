@@ -1,4 +1,4 @@
-import { Attributes, Colour } from './Attributes.js';
+import { Attributes, Colour, CellType } from './Attributes.js';
 import { Cell } from './Cell.js';
 import { Event } from './Event.js';
 
@@ -66,16 +66,27 @@ export class PageModel {
             throw new Error("PageModel.getRow E42 bad rowNum");
         }
         let textColour;
+        let cellType;
+
+        // start of row defaults for 'set-after' attributes
+        let nextCellType = CellType.ALPHA;
         let nextTextColour = Colour.WHITE;
         let backgroundColour = Colour.BLACK;
         this.screen[rowNum].forEach(cell => {
             // 'set-after' attributes from previous cell
             textColour = nextTextColour;
+            cellType = nextCellType;
 
             const char = cell.byte;
             const attrib = Attributes.attribFromChar(char);
             switch (attrib.attribute) {
                 case Attributes.TEXT_COLOUR:
+                    nextCellType = CellType.ALPHA;
+                    nextTextColour = attrib.colour;
+                    cell.setSpace();
+                    break;
+                case Attributes.MOSAIC_COLOUR:
+                    nextCellType = CellType.MOSAIC;
                     nextTextColour = attrib.colour;
                     cell.setSpace();
                     break;
@@ -90,6 +101,7 @@ export class PageModel {
                 default:
                     cell.setMappedChar(this._characterEncoding);
             }
+            cell.type = cellType;
             cell.fgColour = textColour;
             cell.bgColour = backgroundColour;
         });

@@ -10,6 +10,12 @@ export const Colour = {
 };
 Object.freeze(Colour);
 
+export const CellType = {
+    ALPHA : Symbol('AlPHA'),
+    MOSAIC: Symbol('MOSAIC'),
+};
+Object.freeze(CellType);
+
 // export const SpacingAttributes = {
 //     TEXT_COLOUR: Symbol('TEXT_COLOUR'),
 //     MOSAIC_COLOUR: Symbol('MOSAIC_COLOUR'),
