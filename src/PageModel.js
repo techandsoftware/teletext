@@ -70,42 +70,53 @@ export class PageModel {
         // start of row defaults for 'set-after' attributes
         let nextCellType = CellType.ALPHA;
         let nextTextColour = Colour.WHITE;
+        let nextFlashing = false;
+
         // start of row defaults for 'set-at' attributes
         let backgroundColour = Colour.BLACK;
         let graphicType = CellType.MOSAIC_CONTIGUOUS;
         this.screen[rowNum].forEach(cell => {
+            const char = cell.byte;
+            const attrib = Attributes.attribFromChar(char);
+
             // 'set-after' attributes from previous cell
             textColour = nextTextColour;
             cell.type = nextCellType;
-
-            const char = cell.byte;
-            const attrib = Attributes.attribFromChar(char);
+            if (attrib.attribute != Attributes.STEADY) cell.flashing = nextFlashing;
             switch (attrib.attribute) {
-                case Attributes.TEXT_COLOUR:
+                case Attributes.TEXT_COLOUR: // set after this cell
                     nextCellType = CellType.ALPHA;
                     nextTextColour = attrib.colour;
                     cell.setSpace();
                     break;
-                case Attributes.MOSAIC_COLOUR:
+                case Attributes.MOSAIC_COLOUR: // set after
                     nextCellType = graphicType;
                     nextTextColour = attrib.colour;
                     cell.setSpace();
                     break;
-                case Attributes.NEW_BACKGROUND:
+                case Attributes.NEW_BACKGROUND: // set after
                     backgroundColour = textColour;
                     cell.setSpace();
                     break;
-                case Attributes.BLACK_BACKGROUND:
+                case Attributes.BLACK_BACKGROUND: // set at this cell
                     backgroundColour = Colour.BLACK;
                     cell.setSpace();
                     break;
-                case Attributes.CONTIGUOUS_GRAPHICS:
-                    graphicType = CellType.MOSAIC_CONTIGUOUS;
+                case Attributes.CONTIGUOUS_GRAPHICS: // set at
+                    graphicType = CellType.MOSAIC_CONTIGUOUS; // will need rework for held graphics
                     cell.setSpace();
                     break;
-                case Attributes.SEPARATED_GRAPHICS:
-                    graphicType = CellType.MOSAIC_SEPARATED;
+                case Attributes.SEPARATED_GRAPHICS: // set at
+                    graphicType = CellType.MOSAIC_SEPARATED; // will need rework for held graphics
                     cell.setSpace();
+                    break;
+                case Attributes.FLASH: // set after
+                    nextFlashing = true;
+                    cell.setSpace();
+                    break;
+                case Attributes.STEADY: // set at
+                    cell.flashing = false;
+                    nextFlashing = false;
                     break;
                 default:
                     cell.setMappedChar(this._characterEncoding);

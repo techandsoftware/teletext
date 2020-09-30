@@ -17,14 +17,6 @@ export const CellType = {
 };
 Object.freeze(CellType);
 
-// export const SpacingAttributes = {
-//     TEXT_COLOUR: Symbol('TEXT_COLOUR'),
-//     MOSAIC_COLOUR: Symbol('MOSAIC_COLOUR'),
-//     NEW_BACKGROUND: Symbol('NEW_BACKGROUND'),
-//     BLACK_BACKGROUND: Symbol('BLACK_BACKGROUND'),
-// };
-// Object.freeze(SpacingAttributes);
-
 export class Attributes {
     static charFromTextColour(colour) {
         if (colour in textColourToChar) return textColourToChar[colour];
@@ -68,6 +60,8 @@ Attributes.NEW_BACKGROUND      = Symbol('NEW_BACKGROUND');
 Attributes.BLACK_BACKGROUND    = Symbol('BLACK_BACKGROUND');
 Attributes.CONTIGUOUS_GRAPHICS = CellType.MOSAIC_CONTIGUOUS;
 Attributes.SEPARATED_GRAPHICS  = CellType.MOSAIC_SEPARATED;
+Attributes.FLASH               = Symbol('FLASH');
+Attributes.STEADY              = Symbol('STEADY');
 
 // private data below
 
@@ -106,6 +100,8 @@ const charToGraphicColour = {
 };
 Object.freeze(charToGraphicColour);
 const attributeChars = {
+    [String.fromCharCode(0x08)] : Attributes.FLASH,
+    [String.fromCharCode(0x09)] : Attributes.STEADY,
     [String.fromCharCode(0x19)] : Attributes.CONTIGUOUS_GRAPHICS,
     [String.fromCharCode(0x1a)] : Attributes.SEPARATED_GRAPHICS,
     [String.fromCharCode(0x1c)] : Attributes.BLACK_BACKGROUND,

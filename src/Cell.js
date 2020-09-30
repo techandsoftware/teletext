@@ -7,6 +7,7 @@ export class Cell {
         this._fgColour = Colour.WHITE;
         this._bgColour = Colour.BLACK;
         this._type = CellType.ALPHA;
+        this._flashing = false;
     }
 
     set byte(byte) {
@@ -56,6 +57,14 @@ export class Cell {
 
     set type(type) {
         this._type = type;
+    }
+
+    set flashing(state) {
+        this._flashing = state;
+    }
+
+    get flashing() {
+        return this._flashing;
     }
 }
 

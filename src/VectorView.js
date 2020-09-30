@@ -76,6 +76,11 @@ export class View {
                     this._setBackgroundForRow(rowIndex, cellIndex, bg);
                 }
                 previousBg = bg;
+                if (cell.flashing) {
+                    cellView.addClass('flash');
+                } else {
+                    cellView.removeClass('flash');
+                }
                 cellView.plain(cell.char).fill(fill);
             });
         });
