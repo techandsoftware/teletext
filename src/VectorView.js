@@ -41,7 +41,7 @@ export class View {
                 const cell = rowData[cellIndex];
                 const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
                 const bg = Attributes.fillColourFromColourAttrib(cell.bgColour);
-                if (cell.type == CellType.MOSAIC) {
+                if (cell.type == CellType.MOSAIC_CONTIGUOUS) {
                     cellView.addClass('mosaic').attr({
                         dx: this._mosaicDX,
                         dy: this._mosaicDY,
@@ -49,14 +49,25 @@ export class View {
                         lengthAdjust: 'spacingAndGlyphs',
                         'text-anchor': 'start',
                     });
-                } 
-                else {
-                    cellView.removeClass('mosaic').attr({
+                } else if (cell.type == CellType.MOSAIC_SEPARATED) {
+                    cellView.addClass('mosaic_separated').attr({
+                        dx: 1,
+                        dy: 'none',
+                        textLength: this._mosaicTextLength - 1,
+                        lengthAdjust: 'spacingAndGlyphs',
+                        'text-anchor': 'start',
+                        stroke: 'black',
+                        'stroke-width': '0.4',
+                    });
+                } else {
+                    cellView.removeClass('mosaic mosaic_separated').attr({
                         dx: null,
                         dy: null,
                         textLength: null,
                         lengthAdjust: null,
                         'text-anchor': null,
+                        stroke: null,
+                        'stroke-width': null,
                     });
                 }
                 if (previousBg == bg) {

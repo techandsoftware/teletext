@@ -66,13 +66,13 @@ export class PageModel {
             throw new Error("PageModel.getRow E42 bad rowNum");
         }
         let textColour;
-        let cellType;
 
         // start of row defaults for 'set-after' attributes
         let nextCellType = CellType.ALPHA;
         let nextTextColour = Colour.WHITE;
         // start of row defaults for 'set-at' attributes
         let backgroundColour = Colour.BLACK;
+        let graphicType = CellType.MOSAIC_CONTIGUOUS;
         this.screen[rowNum].forEach(cell => {
             // 'set-after' attributes from previous cell
             textColour = nextTextColour;
@@ -87,7 +87,7 @@ export class PageModel {
                     cell.setSpace();
                     break;
                 case Attributes.MOSAIC_COLOUR:
-                    nextCellType = CellType.MOSAIC;
+                    nextCellType = graphicType;
                     nextTextColour = attrib.colour;
                     cell.setSpace();
                     break;
@@ -97,6 +97,14 @@ export class PageModel {
                     break;
                 case Attributes.BLACK_BACKGROUND:
                     backgroundColour = Colour.BLACK;
+                    cell.setSpace();
+                    break;
+                case Attributes.CONTIGUOUS_GRAPHICS:
+                    graphicType = CellType.MOSAIC_CONTIGUOUS;
+                    cell.setSpace();
+                    break;
+                case Attributes.SEPARATED_GRAPHICS:
+                    graphicType = CellType.MOSAIC_SEPARATED;
                     cell.setSpace();
                     break;
                 default:

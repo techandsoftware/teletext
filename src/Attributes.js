@@ -12,7 +12,8 @@ Object.freeze(Colour);
 
 export const CellType = {
     ALPHA : Symbol('ALPHA'),
-    MOSAIC: Symbol('MOSAIC'),
+    MOSAIC_CONTIGUOUS: Symbol('MOSAIC_CONTIGUOUS'),
+    MOSAIC_SEPARATED: Symbol('MOSAIC_SEPARATED'),
 };
 Object.freeze(CellType);
 
@@ -61,10 +62,12 @@ export class Attributes {
         return(colourAttribToFillColour[colour]);
     }
 }
-Attributes.TEXT_COLOUR      = Symbol('TEXT_COLOUR');
-Attributes.MOSAIC_COLOUR    = Symbol('MOSAIC_COLOUR');
-Attributes.NEW_BACKGROUND   = Symbol('NEW_BACKGROUND');
-Attributes.BLACK_BACKGROUND = Symbol('BLACK_BACKGROUND');
+Attributes.TEXT_COLOUR         = Symbol('TEXT_COLOUR');
+Attributes.MOSAIC_COLOUR       = Symbol('MOSAIC_COLOUR');
+Attributes.NEW_BACKGROUND      = Symbol('NEW_BACKGROUND');
+Attributes.BLACK_BACKGROUND    = Symbol('BLACK_BACKGROUND');
+Attributes.CONTIGUOUS_GRAPHICS = CellType.MOSAIC_CONTIGUOUS;
+Attributes.SEPARATED_GRAPHICS  = CellType.MOSAIC_SEPARATED;
 
 // private data below
 
@@ -103,6 +106,8 @@ const charToGraphicColour = {
 };
 Object.freeze(charToGraphicColour);
 const attributeChars = {
+    [String.fromCharCode(0x19)] : Attributes.CONTIGUOUS_GRAPHICS,
+    [String.fromCharCode(0x1a)] : Attributes.SEPARATED_GRAPHICS,
     [String.fromCharCode(0x1c)] : Attributes.BLACK_BACKGROUND,
     [String.fromCharCode(0x1d)] : Attributes.NEW_BACKGROUND,
 };
