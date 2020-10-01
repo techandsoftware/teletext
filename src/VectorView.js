@@ -14,17 +14,17 @@ const CELL_DOUBLE_HEIGHT = CELL_HEIGHT * 2;
 export class View {
     constructor(model) {
         this._textXOffset = CELL_WIDTH / 2;         // middle of cell
-        this._textYOffset = CELL_HEIGHT * (4/5);    // font baseline
+        this._textYOffset = CELL_HEIGHT * (4 / 5);    // font baseline
         this._textDoubleHeightDY = this._textYOffset / 2;
 
         // FUDGE following is used to tweak the mosaic cell size/position to avoid tiny gaps
         // Suspect the gaps are due to font antialiasing, with no way to switch antialiasing off
-        this._mosaicTextLength = CELL_WIDTH + 0.2;    
+        this._mosaicTextLength = CELL_WIDTH + 0.2;
         this._mosaicDX = -0.1;
         this._mosaicDY = 0.15;
         this.d = SVG().addTo('body')
-            .viewbox(`0 0 ${WIDTH_PX-1} ${HEIGHT_PX-1}`)
-            .size(WIDTH_PX*SCREEN_SCALE, HEIGHT_PX*SCREEN_SCALE);
+            .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
+            .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE);
 
         this._createRows();
         this._createCells();
@@ -41,9 +41,9 @@ export class View {
         console.debug('## View._update');
         let nextRowHidden = false;
         this.gridrows.forEach((rowView, rowIndex) => {
-            if (nextRowHidden) { 
+            if (nextRowHidden) {
                 nextRowHidden = false;
-                rowView.forEach(cellView => {  
+                rowView.forEach(cellView => {
                     cellView.plain(' ')
                         .removeClass('flash mosaic mosaic_separated')
                         .attr({
@@ -54,8 +54,7 @@ export class View {
                             'text-anchor': null,
                             stroke: null,
                             'stroke-width': null,
-                        }
-                    );
+                        });
                 });
                 this._resetBackgroundForRow(rowIndex);
                 return;
@@ -63,7 +62,7 @@ export class View {
 
             const rowModel = this._model.getRow(rowIndex);
             let previousBg;
-            rowView.forEach((cellView, cellIndex) => {  
+            rowView.forEach((cellView, cellIndex) => {
                 const cell = rowModel.getCell(cellIndex);
                 const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
                 const bg = Attributes.fillColourFromColourAttrib(cell.bgColour);
@@ -127,13 +126,13 @@ export class View {
 
     _drawGrid() {
         for (let row = 0; row < ROWS; row++) {
-            this.d.line(0, row * CELL_HEIGHT, WIDTH_PX-1, row * CELL_HEIGHT).attr({
+            this.d.line(0, row * CELL_HEIGHT, WIDTH_PX - 1, row * CELL_HEIGHT).attr({
                 stroke: '#555',
                 'stroke-width': 0.5,
             });
         }
         for (let col = 0; col < COLS; col++) {
-            this.d.line(col * CELL_WIDTH, 0, col*CELL_WIDTH, HEIGHT_PX - 1).attr({
+            this.d.line(col * CELL_WIDTH, 0, col * CELL_WIDTH, HEIGHT_PX - 1).attr({
                 stroke: '#555',
                 'stroke-width': 0.5,
             });
@@ -143,7 +142,7 @@ export class View {
     _createRows() {
         const bgrows = [];
         const bgGroup = this.d.group();
-        bgGroup.attr( { 'shape-rendering': 'crispEdges' })
+        bgGroup.attr({ 'shape-rendering': 'crispEdges' })
         for (let rowNum = 0; rowNum < ROWS; rowNum++) {
             bgrows.push(bgGroup.group());
         }
