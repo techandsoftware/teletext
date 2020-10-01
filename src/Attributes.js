@@ -17,10 +17,18 @@ export const CellType = {
 };
 Object.freeze(CellType);
 
+export const CellSize = {
+    NORMAL_SIZE:   Symbol('NORMAL_SIZE'),
+    DOUBLE_HEIGHT: Symbol('DOUBLE_HEIGHT'),
+    DOUBLE_WIDTH:  Symbol('DOUBLE_WIDTH'),
+    DOUBLE_SIZE:   Symbol('DOUBLE_SIZE'),
+};
+Object.freeze(CellSize);
+
 export class Attributes {
     static charFromTextColour(colour) {
         if (colour in textColourToChar) return textColourToChar[colour];
-        throw new Error('Attributes.charFromTextColour: bad colour');
+        throw new Error('Attributes.charFromTextColour: bad colour: ' + colour);
     }
 
     static charFromGraphicColour(colour) {
@@ -54,7 +62,7 @@ export class Attributes {
         return(colourAttribToFillColour[colour]);
     }
 }
-Attributes.TEXT_COLOUR         = Symbol('TEXT_COLOUR');
+Attributes.TEXT_COLOUR         = CellType.ALPHA;
 Attributes.MOSAIC_COLOUR       = Symbol('MOSAIC_COLOUR');
 Attributes.NEW_BACKGROUND      = Symbol('NEW_BACKGROUND');
 Attributes.BLACK_BACKGROUND    = Symbol('BLACK_BACKGROUND');
@@ -62,6 +70,10 @@ Attributes.CONTIGUOUS_GRAPHICS = CellType.MOSAIC_CONTIGUOUS;
 Attributes.SEPARATED_GRAPHICS  = CellType.MOSAIC_SEPARATED;
 Attributes.FLASH               = Symbol('FLASH');
 Attributes.STEADY              = Symbol('STEADY');
+Attributes.NORMAL_SIZE         = CellSize.NORMAL_SIZE;
+Attributes.DOUBLE_HEIGHT       = CellSize.DOUBLE_HEIGHT;
+Attributes.DOUBLE_WIDTH        = CellSize.DOUBLE_WIDTH;
+Attributes.DOUBLE_SIZE         = CellSize.DOUBLE_SIZE;
 
 // private data below
 
@@ -102,6 +114,10 @@ Object.freeze(charToGraphicColour);
 const attributeChars = {
     [String.fromCharCode(0x08)] : Attributes.FLASH,
     [String.fromCharCode(0x09)] : Attributes.STEADY,
+    [String.fromCharCode(0x0c)] : Attributes.NORMAL_SIZE,
+    [String.fromCharCode(0x0d)] : Attributes.DOUBLE_HEIGHT,
+    [String.fromCharCode(0x0e)] : Attributes.DOUBLE_WIDTH,
+    [String.fromCharCode(0x0f)] : Attributes.DOUBLE_SIZE,
     [String.fromCharCode(0x19)] : Attributes.CONTIGUOUS_GRAPHICS,
     [String.fromCharCode(0x1a)] : Attributes.SEPARATED_GRAPHICS,
     [String.fromCharCode(0x1c)] : Attributes.BLACK_BACKGROUND,

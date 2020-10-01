@@ -1,6 +1,7 @@
-import { Attributes, Colour, CellType } from './Attributes.js';
+import { Attributes, Colour, CellType, CellSize } from './Attributes.js';
 import { Cell } from './Cell.js';
 import { Event } from './Event.js';
+import { RowModel } from './RowModel.js';
 
 const ROWS = 24;
 const CELLS_PER_ROW = 40;
@@ -65,12 +66,14 @@ export class PageModel {
         if (rowNum >= ROWS) {
             throw new Error("PageModel.getRow E42 bad rowNum");
         }
+        const rowModel = new RowModel();
         let textColour;
 
         // start of row defaults for 'set-after' attributes
         let nextCellType = CellType.ALPHA;
         let nextTextColour = Colour.WHITE;
         let nextFlashing = false;
+        let nextSize = CellSize.NORMAL_SIZE;
 
         // start of row defaults for 'set-at' attributes
         let backgroundColour = Colour.BLACK;
@@ -83,22 +86,24 @@ export class PageModel {
             textColour = nextTextColour;
             cell.type = nextCellType;
             if (attrib.attribute != Attributes.STEADY) cell.flashing = nextFlashing;
+            if (attrib.attribute != Attributes.NORMAL_SIZE) cell.size = nextSize;
+
             switch (attrib.attribute) {
                 case Attributes.TEXT_COLOUR: // set after this cell
                     nextCellType = CellType.ALPHA;
                     nextTextColour = attrib.colour;
                     cell.setSpace();
                     break;
-                case Attributes.MOSAIC_COLOUR: // set after
+                case Attributes.MOSAIC_COLOUR: // set after this cell
                     nextCellType = graphicType;
                     nextTextColour = attrib.colour;
                     cell.setSpace();
                     break;
-                case Attributes.NEW_BACKGROUND: // set after
+                case Attributes.NEW_BACKGROUND: // set at
                     backgroundColour = textColour;
                     cell.setSpace();
                     break;
-                case Attributes.BLACK_BACKGROUND: // set at this cell
+                case Attributes.BLACK_BACKGROUND: // set at
                     backgroundColour = Colour.BLACK;
                     cell.setSpace();
                     break;
@@ -119,15 +124,34 @@ export class PageModel {
                     nextFlashing = false;
                     cell.setSpace();
                     break;
+                case Attributes.NORMAL_SIZE: // set at
+                    cell.size = CellSize.NORMAL_SIZE;
+                    nextSize = CellSize.NORMAL_SIZE;
+                    cell.setSpace();
+                    break;
+                case Attributes.DOUBLE_HEIGHT: // set after
+                    nextSize = CellSize.DOUBLE_HEIGHT;
+                    rowModel.doubleHeight = true;
+                    cell.setSpace();
+                    break;
+                case Attributes.DOUBLE_WIDTH: // set after
+                    nextSize = CellSize.DOUBLE_WIDTH;
+                    cell.setSpace();
+                    break;
+                case Attributes.DOUBLE_SIZE: // set after
+                    nextSize = CellSize.DOUBLE_HEIGHT;
+                    rowModel.doubleHeight = true;
+                    cell.setSpace();
+                    break;
                 default:
                     cell.setMappedChar(this._characterEncoding);
             }
 
-            // 'set-at' attributes from current cell
             cell.fgColour = textColour;
             cell.bgColour = backgroundColour;
+            rowModel.addCell(cell);
         });
-        return this.screen[rowNum];
+        return rowModel;
     }
 
     setTestPage1() {

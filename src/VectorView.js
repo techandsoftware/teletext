@@ -1,5 +1,5 @@
 import { SVG } from '@svgdotjs/svg.js';
-import { Attributes, CellType } from './Attributes.js';
+import { Attributes, CellType, CellSize } from './Attributes.js';
 
 const WIDTH_PX = 400;
 const HEIGHT_PX = 240;
@@ -9,9 +9,19 @@ const SCREEN_SCALE = 1.5;
 
 const CELL_HEIGHT = HEIGHT_PX / ROWS;
 const CELL_WIDTH = WIDTH_PX / COLS;
+const CELL_DOUBLE_HEIGHT = CELL_HEIGHT * 2;
 
 export class View {
     constructor(model) {
+        this._textXOffset = CELL_WIDTH / 2;         // middle of cell
+        this._textYOffset = CELL_HEIGHT * (4/5);    // font baseline
+        this._textDoubleHeightDY = this._textYOffset / 2;
+
+        // FUDGE following is used to tweak the mosaic cell size/position to avoid tiny gaps
+        // Suspect the gaps are due to font antialiasing, with no way to switch antialiasing off
+        this._mosaicTextLength = CELL_WIDTH + 0.2;    
+        this._mosaicDX = -0.1;
+        this._mosaicDY = 0.15;
         this.d = SVG().addTo('body')
             .viewbox(`0 0 ${WIDTH_PX-1} ${HEIGHT_PX-1}`)
             .size(WIDTH_PX*SCREEN_SCALE, HEIGHT_PX*SCREEN_SCALE);
@@ -24,21 +34,37 @@ export class View {
         this._model.onSet.attach(
             () => this._update()
         );
-        // FUDGE following is used to tweak the mosaic cell size/position to avoid tiny gaps
-        // Suspect the gaps are due to font antialiasing, with no way to switch antialiasing off)
-        this._mosaicTextLength = CELL_WIDTH + 0.2;    
-        this._mosaicDX = -0.1;
-        this._mosaicDY = 0.15;
         console.debug('VectorView constructed');
     }
 
     _update() {
         console.debug('## View._update');
+        let nextRowHidden = false;
         this.gridrows.forEach((rowView, rowIndex) => {
-            const rowData = this._model.getRow(rowIndex);
+            if (nextRowHidden) { 
+                nextRowHidden = false;
+                rowView.forEach(cellView => {  
+                    cellView.plain(' ')
+                        .removeClass('flash mosaic mosaic_separated')
+                        .attr({
+                            dx: null,
+                            dy: null,
+                            textLength: null,
+                            lengthAdjust: null,
+                            'text-anchor': null,
+                            stroke: null,
+                            'stroke-width': null,
+                        }
+                    );
+                });
+                this._resetBackgroundForRow(rowIndex);
+                return;
+            }
+
+            const rowModel = this._model.getRow(rowIndex);
             let previousBg;
-            rowView.forEach((cellView, cellIndex) => {
-                const cell = rowData[cellIndex];
+            rowView.forEach((cellView, cellIndex) => {  
+                const cell = rowModel.getCell(cellIndex);
                 const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
                 const bg = Attributes.fillColourFromColourAttrib(cell.bgColour);
                 if (cell.type == CellType.MOSAIC_CONTIGUOUS) {
@@ -76,13 +102,26 @@ export class View {
                     this._setBackgroundForRow(rowIndex, cellIndex, bg);
                 }
                 previousBg = bg;
-                if (cell.flashing) {
-                    cellView.addClass('flash');
-                } else {
-                    cellView.removeClass('flash');
+
+                if (cell.flashing) cellView.addClass('flash');
+                else cellView.removeClass('flash');
+
+                if (cell.size == CellSize.NORMAL_SIZE) {
+                    cellView.dy(null).transform(null); // TODO handle graphic offset too
+                } else if (cell.size == CellSize.DOUBLE_HEIGHT) {
+                    cellView.dy(this._textDoubleHeightDY).scale(1, 2); // TODO handle graphic offset too
                 }
+
                 cellView.plain(cell.char).fill(fill);
             });
+
+            if (rowModel.doubleHeight) {
+                this.bgrows[rowIndex].height(CELL_DOUBLE_HEIGHT);
+                nextRowHidden = true;
+            } else {
+                this.bgrows[rowIndex].transform(null);
+                nextRowHidden = false;
+            }
         });
     }
 
@@ -115,8 +154,6 @@ export class View {
     _createCells() {
         const gridrows = [];
         const fontSize = CELL_HEIGHT;// * (9/10);
-        const cellXOffset = CELL_WIDTH / 2;
-        const cellYOffset = CELL_HEIGHT * (4/5);
         const textGroup = this.d.group().attr({
             'text-anchor': 'middle',
             'fill': '#fff'
@@ -125,8 +162,8 @@ export class View {
             const rowCells = [];
             for (let colNum = 0; colNum < COLS; colNum++) {
                 rowCells.push(textGroup.plain(getRandomLetter()).attr({
-                    x: (colNum * CELL_WIDTH) + cellXOffset,
-                    y: (rowNum * CELL_HEIGHT) + cellYOffset,
+                    x: (colNum * CELL_WIDTH) + this._textXOffset,
+                    y: (rowNum * CELL_HEIGHT) + this._textYOffset,
                 }));
             }
             gridrows.push(rowCells);

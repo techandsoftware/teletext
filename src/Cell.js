@@ -1,4 +1,4 @@
-import { Colour, CellType } from './Attributes.js';
+import { Colour, CellType, CellSize } from './Attributes.js';
 import encodings from './data/characterEncodings.json';
 
 export class Cell {
@@ -9,6 +9,7 @@ export class Cell {
         this._bgColour = Colour.BLACK;
         this._type = CellType.ALPHA;
         this._flashing = false;
+        this._size = CellSize.NORMAL_SIZE;
     }
 
     set byte(byte) {
@@ -66,6 +67,14 @@ export class Cell {
 
     get flashing() {
         return this._flashing;
+    }
+
+    get size() {
+        return this._size;
+    }
+
+    set size(size) {
+        this._size = size;
     }
 }
 
