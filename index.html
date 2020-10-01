@@ -17,8 +17,22 @@
             font-smooth: never;
         }
         @keyframes blink {
+            66% {
+                visibility: hidden;
+            }
             to {
                 visibility: hidden;
+            }
+        }
+        @keyframes fancyblink {
+            66% {
+                filter: none;
+                opacity: 1;
+            }
+            to {
+                xvisibility: hidden;
+                filter: blur(1px);
+                opacity: 0;
             }
         }
         .mosaic {
@@ -30,7 +44,8 @@
             font-size: 9.2px;
         }
         .flash {
-            animation: blink 2s steps(3, start) infinite;
+            /* animation: blink 2s steps(3, start) infinite; */
+            animation: blink 2s ease-in infinite;
         }
         svg {
             background-color: black;

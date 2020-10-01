@@ -4,6 +4,7 @@ import encodings from './data/characterEncodings.json';
 export class Cell {
     constructor() {
         this._byte = ' ';
+        this._char = ' ';
         this._fgColour = Colour.WHITE;
         this._bgColour = Colour.BLACK;
         this._type = CellType.ALPHA;
