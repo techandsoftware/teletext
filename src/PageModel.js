@@ -99,7 +99,7 @@ export class PageModel {
                     nextTextColour = attrib.colour;
                     cell.setSpace();
                     break;
-                case Attributes.NEW_BACKGROUND: // set at
+                case Attributes.NEW_BACKGROUND: // set at this cell
                     backgroundColour = textColour;
                     cell.setSpace();
                     break;
@@ -109,10 +109,14 @@ export class PageModel {
                     break;
                 case Attributes.CONTIGUOUS_GRAPHICS: // set at
                     graphicType = CellType.MOSAIC_CONTIGUOUS; // will need rework for held graphics
+                    if (cell.type == CellType.MOSAIC_SEPARATED) cell.type = CellType.MOSAIC_CONTIGUOUS;
+                    if (nextCellType == CellType.MOSAIC_SEPARATED) nextCellType = CellType.MOSAIC_CONTIGUOUS;
                     cell.setSpace();
                     break;
                 case Attributes.SEPARATED_GRAPHICS: // set at
                     graphicType = CellType.MOSAIC_SEPARATED; // will need rework for held graphics
+                    if (cell.type == CellType.MOSAIC_CONTIGUOUS) cell.type = CellType.MOSAIC_SEPARATED;
+                    if (nextCellType == CellType.MOSAIC_CONTIGUOUS) nextCellType = CellType.MOSAIC_SEPARATED;
                     cell.setSpace();
                     break;
                 case Attributes.FLASH: // set after
