@@ -11,23 +11,43 @@ const CELL_HEIGHT = HEIGHT_PX / ROWS;
 const CELL_WIDTH = WIDTH_PX / COLS;
 const CELL_DOUBLE_HEIGHT = CELL_HEIGHT * 2;
 
+const TEXT_X_OFFSET = CELL_WIDTH / 2;           // middle of cell
+const TEXT_Y_OFFSET = CELL_HEIGHT * (4 / 5);    // font baseline
+const TEXT_DOUBLE_HEIGHT_DY = CELL_HEIGHT * (1 / 5);
+
+// FUDGE contiguous mosaics are slightly bigger than they should be to avoid tiny gaps on adjacent characters.
+// Suspect the gaps are due to font antialiasing, with no way to switch antialiasing off.
+const MOSAIC_METRIC = {
+    contiguous: {
+        textLength: CELL_WIDTH + 0.2,
+        DX: -0.1,
+        DY: null,
+        doubleHeightDY: 2.2
+    }
+};
+MOSAIC_METRIC.separated = {
+    textLength: MOSAIC_METRIC.contiguous.textLength - 1,
+    DX: 1,
+    DY: null,
+    doubleHeightDY: 2.1
+};
+
+const dyLookup = {
+    [CellSize.NORMAL_SIZE]: {
+        [CellType.ALPHA]            : null,
+        [CellType.MOSAIC_CONTIGUOUS]: MOSAIC_METRIC.contiguous.DY,
+        [CellType.MOSAIC_SEPARATED] : MOSAIC_METRIC.separated.DY,
+    },
+    [CellSize.DOUBLE_HEIGHT]: {
+        [CellType.ALPHA]            : TEXT_DOUBLE_HEIGHT_DY,
+        [CellType.MOSAIC_CONTIGUOUS]: MOSAIC_METRIC.contiguous.doubleHeightDY,
+        [CellType.MOSAIC_SEPARATED] : MOSAIC_METRIC.separated.doubleHeightDY,
+    }
+};
+
+
 export class View {
     constructor(model) {
-        this._textXOffset = CELL_WIDTH / 2;         // middle of cell
-        this._textYOffset = CELL_HEIGHT * (4 / 5);    // font baseline
-        this._textDoubleHeightDY = CELL_HEIGHT * (1 / 5);
-
-        // FUDGE following is used to tweak the mosaic cell size/position to avoid tiny gaps
-        // Suspect the gaps are due to font antialiasing, with no way to switch antialiasing off
-        // The font size is a bit bigger than it should be to close the gaps, then adjusting to equalize the overlap around the mosaic
-        this._mosaicTextLength = CELL_WIDTH + 0.2;
-        this._mosaicDX = -0.1;
-        this._mosaicDY = null;
-        this._mosaicDoubleHeightDY = 2.2;
-        this._separatedMosaicTextLength = this._mosaicTextLength - 1;
-        this._separatedMosaicDX = 1;
-        this._separatedMosaicDY = null;
-        this._separatedMosaicDoubleHeightDY = 2.1;
         this.d = SVG().addTo('body')
             .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
             .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE);
@@ -74,15 +94,15 @@ export class View {
                 const bg = Attributes.fillColourFromColourAttrib(cell.bgColour);
                 if (cell.type == CellType.MOSAIC_CONTIGUOUS) {
                     cellView.addClass('mosaic').attr({
-                        dx: this._mosaicDX,
-                        textLength: this._mosaicTextLength,
+                        dx: MOSAIC_METRIC.contiguous.DX,
+                        textLength: MOSAIC_METRIC.contiguous.textLength,
                         lengthAdjust: 'spacingAndGlyphs',
                         'text-anchor': 'start',
                     });
                 } else if (cell.type == CellType.MOSAIC_SEPARATED) {
                     cellView.addClass('mosaic_separated').attr({
-                        dx: this._separatedMosaicDX,
-                        textLength: this._separatedMosaicTextLength,
+                        dx: MOSAIC_METRIC.separated.DX,
+                        textLength: MOSAIC_METRIC.separated.textLength,
                         lengthAdjust: 'spacingAndGlyphs',
                         'text-anchor': 'start',
                         stroke: 'transparent',
@@ -130,16 +150,9 @@ export class View {
 
     _getCellDY(type, size) {
         if (size == CellSize.NORMAL_SIZE || size == CellSize.DOUBLE_WIDTH) {
-            // TODO replace with lookup structure
-            if      (type == CellType.ALPHA)             return null;
-            else if (type == CellType.MOSAIC_CONTIGUOUS) return this._mosaicDY;
-            else if (type == CellType.MOSAIC_SEPARATED)  return this._separatedMosaicDY;
-        } else if (size == CellSize.DOUBLE_HEIGHT || size == CellSize.DOUBLE_SIZE) {
-            if      (type == CellType.ALPHA)             return this._textDoubleHeightDY;
-            else if (type == CellType.MOSAIC_CONTIGUOUS) return this._mosaicDoubleHeightDY;
-            else if (type == CellType.MOSAIC_SEPARATED)  return this._separatedMosaicDoubleHeightDY;
+            return dyLookup[CellSize.NORMAL_SIZE][type];
         }
-        return null;
+        return dyLookup[CellSize.DOUBLE_HEIGHT][type];
     }
 
     _drawGrid() {
@@ -179,8 +192,8 @@ export class View {
             const rowCells = [];
             for (let colNum = 0; colNum < COLS; colNum++) {
                 rowCells.push(textGroup.plain(getRandomLetter()).attr({
-                    x: (colNum * CELL_WIDTH) + this._textXOffset,
-                    y: (rowNum * CELL_HEIGHT) + this._textYOffset,
+                    x: (colNum * CELL_WIDTH) + TEXT_X_OFFSET,
+                    y: (rowNum * CELL_HEIGHT) + TEXT_Y_OFFSET,
                 }));
             }
             gridrows.push(rowCells);

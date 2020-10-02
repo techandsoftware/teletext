@@ -108,13 +108,13 @@ export class PageModel {
                     cell.setSpace();
                     break;
                 case Attributes.CONTIGUOUS_GRAPHICS: // set at
-                    graphicType = CellType.MOSAIC_CONTIGUOUS; // will need rework for held graphics
+                    graphicType = CellType.MOSAIC_CONTIGUOUS;
                     if (cell.type == CellType.MOSAIC_SEPARATED) cell.type = CellType.MOSAIC_CONTIGUOUS;
                     if (nextCellType == CellType.MOSAIC_SEPARATED) nextCellType = CellType.MOSAIC_CONTIGUOUS;
                     cell.setSpace();
                     break;
                 case Attributes.SEPARATED_GRAPHICS: // set at
-                    graphicType = CellType.MOSAIC_SEPARATED; // will need rework for held graphics
+                    graphicType = CellType.MOSAIC_SEPARATED;
                     if (cell.type == CellType.MOSAIC_CONTIGUOUS) cell.type = CellType.MOSAIC_SEPARATED;
                     if (nextCellType == CellType.MOSAIC_CONTIGUOUS) nextCellType = CellType.MOSAIC_SEPARATED;
                     cell.setSpace();
@@ -143,7 +143,7 @@ export class PageModel {
                     cell.setSpace();
                     break;
                 case Attributes.DOUBLE_SIZE: // set after
-                    nextSize = CellSize.DOUBLE_HEIGHT;
+                    nextSize = CellSize.DOUBLE_SIZE;
                     rowModel.doubleHeight = true;
                     cell.setSpace();
                     break;
