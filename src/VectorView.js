@@ -20,14 +20,14 @@ const TEXT_DOUBLE_HEIGHT_DY = TEXT_Y_OFFSET / 4;
 const MOSAIC_METRIC = {
     contiguous: {
         textLength: CELL_WIDTH + 0.2,
-        DX: -0.1,
+        DX: 0 - TEXT_X_OFFSET -0.1,
         DY: null,   
         doubleHeightDY: 2.3
     }
 };
 MOSAIC_METRIC.separated = {
     textLength: MOSAIC_METRIC.contiguous.textLength - 1,
-    DX: 0.5,
+    DX: 0 - TEXT_X_OFFSET - 0.3,
     DY: null,
     doubleHeightDY: 2.1
 };
