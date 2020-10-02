@@ -27,7 +27,7 @@ const MOSAIC_METRIC = {
 };
 MOSAIC_METRIC.separated = {
     textLength: MOSAIC_METRIC.contiguous.textLength - 1,
-    DX: 1,
+    DX: 0.5,
     DY: null,
     doubleHeightDY: 2.1
 };
