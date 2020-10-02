@@ -13,7 +13,7 @@ const CELL_DOUBLE_HEIGHT = CELL_HEIGHT * 2;
 
 const TEXT_X_OFFSET = CELL_WIDTH / 2;           // middle of cell
 const TEXT_Y_OFFSET = CELL_HEIGHT * (4 / 5);    // font baseline
-const TEXT_DOUBLE_HEIGHT_DY = CELL_HEIGHT * (1 / 5);
+const TEXT_DOUBLE_HEIGHT_DY = TEXT_Y_OFFSET / 4;
 
 // FUDGE contiguous mosaics are slightly bigger than they should be to avoid tiny gaps on adjacent characters.
 // Suspect the gaps are due to font antialiasing, with no way to switch antialiasing off.
@@ -21,8 +21,8 @@ const MOSAIC_METRIC = {
     contiguous: {
         textLength: CELL_WIDTH + 0.2,
         DX: -0.1,
-        DY: null,
-        doubleHeightDY: 2.2
+        DY: null,   
+        doubleHeightDY: 2.3
     }
 };
 MOSAIC_METRIC.separated = {
@@ -31,6 +31,7 @@ MOSAIC_METRIC.separated = {
     DY: null,
     doubleHeightDY: 2.1
 };
+Object.freeze(MOSAIC_METRIC);
 
 const dyLookup = {
     [CellSize.NORMAL_SIZE]: {
@@ -44,6 +45,7 @@ const dyLookup = {
         [CellType.MOSAIC_SEPARATED] : MOSAIC_METRIC.separated.doubleHeightDY,
     }
 };
+Object.freeze(dyLookup);
 
 
 export class View {
@@ -52,7 +54,7 @@ export class View {
             .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
             .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE);
 
-        this._createRows();
+        this._createRowBackgrounds();
         this._createCells();
         // this._drawGrid();
 
@@ -69,19 +71,7 @@ export class View {
         this.gridrows.forEach((rowView, rowIndex) => {
             if (nextRowHidden) {
                 nextRowHidden = false;
-                rowView.forEach(cellView => {
-                    cellView.plain(' ')
-                        .removeClass('flash mosaic mosaic_separated')
-                        .attr({
-                            dx: null,
-                            dy: null,
-                            textLength: null,
-                            lengthAdjust: null,
-                            'text-anchor': null,
-                            stroke: null,
-                            'stroke-width': null,
-                        });
-                });
+                this._resetRowCells(rowView);
                 this._resetBackgroundForRow(rowIndex);
                 return;
             }
@@ -92,50 +82,23 @@ export class View {
                 const cell = rowModel.getCell(cellIndex);
                 const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
                 const bg = Attributes.fillColourFromColourAttrib(cell.bgColour);
-                if (cell.type == CellType.MOSAIC_CONTIGUOUS) {
-                    cellView.addClass('mosaic').attr({
-                        dx: MOSAIC_METRIC.contiguous.DX,
-                        textLength: MOSAIC_METRIC.contiguous.textLength,
-                        lengthAdjust: 'spacingAndGlyphs',
-                        'text-anchor': 'start',
-                    });
-                } else if (cell.type == CellType.MOSAIC_SEPARATED) {
-                    cellView.addClass('mosaic_separated').attr({
-                        dx: MOSAIC_METRIC.separated.DX,
-                        textLength: MOSAIC_METRIC.separated.textLength,
-                        lengthAdjust: 'spacingAndGlyphs',
-                        'text-anchor': 'start',
-                        stroke: 'transparent',
-                        'stroke-width': '0.4',
-                    });
-                } else {
-                    cellView.removeClass('mosaic mosaic_separated').attr({
-                        dx: null,
-                        textLength: null,
-                        lengthAdjust: null,
-                        'text-anchor': null,
-                        stroke: null,
-                        'stroke-width': null,
-                    });
+                const dy = View._getCellDY(cell.type, cell.size);
+                const attr = View._getCellAttr(cell.type);
+
+                View._setCellClasses(cellView, cell.type, cell.flashing);
+                if (cell.size == CellSize.NORMAL_SIZE) {
+                    cellView.transform(null);
+                } else if (cell.size == CellSize.DOUBLE_HEIGHT) {
+                    cellView.scale(1, 2);
                 }
+                cellView.plain(cell.char).attr(attr).fill(fill).dy(dy);
+
                 if (previousBg == bg) {
                     this._extendBackgroundForRow(rowIndex);
                 } else {
                     this._setBackgroundForRow(rowIndex, cellIndex, bg);
                 }
                 previousBg = bg;
-
-                if (cell.flashing) cellView.addClass('flash');
-                else cellView.removeClass('flash');
-
-                if (cell.size == CellSize.NORMAL_SIZE) {
-                    cellView.transform(null);
-                } else if (cell.size == CellSize.DOUBLE_HEIGHT) {
-                    cellView.scale(1, 2);
-                }
-
-                const dy = this._getCellDY(cell.type, cell.size);
-                cellView.plain(cell.char).fill(fill).dy(dy);
             });
 
             if (rowModel.doubleHeight) {
@@ -148,7 +111,50 @@ export class View {
         });
     }
 
-    _getCellDY(type, size) {
+    static _setCellClasses(cellView, cellType, flashing) {
+        if (cellType == CellType.MOSAIC_CONTIGUOUS) {
+            cellView.addClass('mosaic');
+            cellView.removeClass('mosaic_separated');
+        } else if (cellType == CellType.MOSAIC_SEPARATED) {
+            cellView.addClass('mosaic_separated');
+            cellView.removeClass('mosaic');
+        } else {
+            cellView.removeClass('mosaic mosaic_separated');
+        }
+
+        if (flashing) cellView.addClass('flash');
+        else cellView.removeClass('flash');
+    }
+
+    static _getCellAttr(cellType) {
+        if (cellType == CellType.MOSAIC_CONTIGUOUS) {
+            return {
+                dx: MOSAIC_METRIC.contiguous.DX,
+                textLength: MOSAIC_METRIC.contiguous.textLength,
+                lengthAdjust: 'spacingAndGlyphs',
+                'text-anchor': 'start',
+            };
+        } else if (cellType == CellType.MOSAIC_SEPARATED) {
+            return {
+                dx: MOSAIC_METRIC.separated.DX,
+                textLength: MOSAIC_METRIC.separated.textLength,
+                lengthAdjust: 'spacingAndGlyphs',
+                'text-anchor': 'start',
+                stroke: 'transparent',
+                'stroke-width': '0.4',
+            };
+        } 
+        return {
+            dx: null,
+            textLength: null,
+            lengthAdjust: null,
+            'text-anchor': null,
+            stroke: null,
+            'stroke-width': null,
+        };
+    }
+
+    static _getCellDY(type, size) {
         if (size == CellSize.NORMAL_SIZE || size == CellSize.DOUBLE_WIDTH) {
             return dyLookup[CellSize.NORMAL_SIZE][type];
         }
@@ -170,7 +176,24 @@ export class View {
         }
     }
 
-    _createRows() {
+    _resetRowCells(rowView) {
+        rowView.forEach(cellView => {
+            cellView.plain(' ')
+                .removeClass('flash mosaic mosaic_separated')
+                .attr({
+                    dx: null,
+                    dy: null,
+                    textLength: null,
+                    lengthAdjust: null,
+                    'text-anchor': null,
+                    stroke: null,
+                    'stroke-width': null,
+                })
+            ;
+        });
+    }
+
+    _createRowBackgrounds() {
         const bgrows = [];
         const bgGroup = this.d.group();
         bgGroup.attr({ 'shape-rendering': 'crispEdges' })
