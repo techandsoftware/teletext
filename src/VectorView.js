@@ -1,6 +1,5 @@
 import { SVG } from '@svgdotjs/svg.js';
 import { Attributes, CellType, CellSize } from './Attributes.js';
-import { Cell } from './Cell.js';
 
 const WIDTH_PX = 400;
 const HEIGHT_PX = 240;
@@ -28,7 +27,7 @@ export class View {
         this._separatedMosaicTextLength = this._mosaicTextLength - 1;
         this._separatedMosaicDX = 1;
         this._separatedMosaicDY = null;
-        this._separatedMosaicDoubleHeightDY = null;
+        this._separatedMosaicDoubleHeightDY = 2.1;
         this.d = SVG().addTo('body')
             .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
             .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE);
@@ -131,13 +130,14 @@ export class View {
 
     _getCellDY(type, size) {
         if (size == CellSize.NORMAL_SIZE || size == CellSize.DOUBLE_WIDTH) {
+            // TODO replace with lookup structure
             if      (type == CellType.ALPHA)             return null;
             else if (type == CellType.MOSAIC_CONTIGUOUS) return this._mosaicDY;
             else if (type == CellType.MOSAIC_SEPARATED)  return this._separatedMosaicDY;
         } else if (size == CellSize.DOUBLE_HEIGHT || size == CellSize.DOUBLE_SIZE) {
             if      (type == CellType.ALPHA)             return this._textDoubleHeightDY;
             else if (type == CellType.MOSAIC_CONTIGUOUS) return this._mosaicDoubleHeightDY;
-            else if (type == CellType.MOSAIC_SEPARATED)  return this._separatedMosaicDY;
+            else if (type == CellType.MOSAIC_SEPARATED)  return this._separatedMosaicDoubleHeightDY;
         }
         return null;
     }
