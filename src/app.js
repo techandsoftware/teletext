@@ -39,6 +39,12 @@ ctl.setPageRows([
     Attributes.charFromAttribute(Attributes.SEPARATED_GRAPHICS) + Attributes.charFromGraphicColour(Colour.WHITE) +  '  pqrstuvwxyz{|}~\u007f',
     Attributes.charFromTextColour(Colour.BLUE) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) + Attributes.charFromTextColour(Colour.WHITE) +  'Normal size' + Attributes.charFromAttribute(Attributes.DOUBLE_HEIGHT) + 'Dbl hgtgjy' + Attributes.charFromGraphicColour(Colour.WHITE) + '\u0024\u007b' +  Attributes.charFromAttribute(Attributes.SEPARATED_GRAPHICS) + '\u0024\u007b' + Attributes.charFromAttribute(Attributes.NORMAL_SIZE) + Attributes.charFromTextColour(Colour.WHITE) + 'Normal',
     'This text should not be visible',
-    '1' + Attributes.charFromAttribute(Attributes.CONCEAL) + '2 Concealed' + Attributes.charFromTextColour(Colour.WHITE) + '3' + Attributes.charFromAttribute(Attributes.FLASH) + Attributes.charFromAttribute(Attributes.CONCEAL) + ' 4 Flash+conceal' + Attributes.charFromTextColour(Colour.WHITE) + '5'
+    '1' + Attributes.charFromAttribute(Attributes.CONCEAL) + '2 Concealed' + Attributes.charFromTextColour(Colour.WHITE) + '3' + Attributes.charFromAttribute(Attributes.FLASH) + Attributes.charFromAttribute(Attributes.CONCEAL) + ' 4 Flash+conceal' + Attributes.charFromTextColour(Colour.WHITE) + '5',
+
+    // '     G5H7Y9RWX     G5SH7Y9RWX GCH3S5', 
+    'CHELD' + Attributes.charFromGraphicColour(Colour.GREEN) + '5' + Attributes.charFromAttribute(Attributes.HOLD_MOSAICS) + '7' + Attributes.charFromGraphicColour(Colour.YELLOW) + '9' + Attributes.charFromAttribute(Attributes.RELEASE_MOSAICS) + Attributes.charFromTextColour(Colour.WHITE) + 'X' +
+    'SHELD' + Attributes.charFromGraphicColour(Colour.GREEN) + '5' + Attributes.charFromAttribute(Attributes.SEPARATED_GRAPHICS) + Attributes.charFromAttribute(Attributes.HOLD_MOSAICS) + '7' + Attributes.charFromGraphicColour(Colour.YELLOW) + '9' + Attributes.charFromAttribute(Attributes.RELEASE_MOSAICS) + Attributes.charFromTextColour(Colour.WHITE) + 'X ' +
+    Attributes.charFromGraphicColour(Colour.GREEN) + Attributes.charFromAttribute(Attributes.CONTIGUOUS_GRAPHICS) +  Attributes.charFromAttribute(Attributes.HOLD_MOSAICS) + '3' + Attributes.charFromAttribute(Attributes.SEPARATED_GRAPHICS) + '5' + Attributes.charFromAttribute(Attributes.CONTIGUOUS_GRAPHICS) + '7',
+
     
-]);
+]); 

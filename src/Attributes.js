@@ -75,6 +75,8 @@ Attributes.DOUBLE_HEIGHT       = CellSize.DOUBLE_HEIGHT;
 Attributes.DOUBLE_WIDTH        = CellSize.DOUBLE_WIDTH;
 Attributes.DOUBLE_SIZE         = CellSize.DOUBLE_SIZE;
 Attributes.CONCEAL             = Symbol('CONCEAL');
+Attributes.HOLD_MOSAICS        = Symbol('HOLD_MOSAICS');
+Attributes.RELEASE_MOSAICS     = Symbol('RELEASE_MOSAICS');
 
 // private data below
 
@@ -124,6 +126,8 @@ const attributeChars = {
     [String.fromCharCode(0x1a)] : Attributes.SEPARATED_GRAPHICS,
     [String.fromCharCode(0x1c)] : Attributes.BLACK_BACKGROUND,
     [String.fromCharCode(0x1d)] : Attributes.NEW_BACKGROUND,
+    [String.fromCharCode(0x1e)] : Attributes.HOLD_MOSAICS,
+    [String.fromCharCode(0x1f)] : Attributes.RELEASE_MOSAICS,
 };
 
 const textColourToChar = {};

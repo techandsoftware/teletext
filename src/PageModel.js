@@ -75,10 +75,17 @@ export class PageModel {
         let nextFlashing = false;
         let nextSize = CellSize.NORMAL_SIZE;
         let nextConcealed = false; // setting is set-at, unsetting is set-after
+        let cancelNextHoldMosaics = false; // setting is set-at, cancelling is set-after
 
         // start of row defaults for 'set-at' attributes
         let backgroundColour = Colour.BLACK;
         let graphicType = CellType.MOSAIC_CONTIGUOUS;
+        let heldMosaic = {
+            active: false,
+            char: ' ',
+            type: CellType.MOSAIC_CONTIGUOUS
+        };
+
         this.screen[rowNum].forEach(cell => {
             const char = cell.byte;
             const attrib = Attributes.attribFromChar(char);
@@ -89,75 +96,92 @@ export class PageModel {
             if (attrib.attribute != Attributes.STEADY) cell.flashing = nextFlashing;
             if (attrib.attribute != Attributes.NORMAL_SIZE) cell.size = nextSize;
             if (attrib.attribute != Attributes.CONCEAL) cell.concealed = nextConcealed;
+            if (cancelNextHoldMosaics) {
+                if (attrib.attribute != Attributes.HOLD_MOSAICS) heldMosaic.active = false;
+                cancelNextHoldMosaics = false;
+            }
 
             switch (attrib.attribute) {
                 case Attributes.TEXT_COLOUR: // set after this cell
                     nextCellType = CellType.ALPHA;
                     nextTextColour = attrib.colour;
                     nextConcealed = false;
-                    cell.setSpace();
+                    cell.setSpace(heldMosaic);
                     break;
                 case Attributes.MOSAIC_COLOUR: // set after this cell
                     nextCellType = graphicType;
                     nextTextColour = attrib.colour;
                     nextConcealed = false;
-                    cell.setSpace();
+                    cell.setSpace(heldMosaic);
                     break;
                 case Attributes.NEW_BACKGROUND: // set at this cell
                     backgroundColour = textColour;
-                    cell.setSpace();
+                    cell.setSpace(heldMosaic);
                     break;
                 case Attributes.BLACK_BACKGROUND: // set at
                     backgroundColour = Colour.BLACK;
-                    cell.setSpace();
+                    cell.setSpace(heldMosaic);
                     break;
                 case Attributes.CONTIGUOUS_GRAPHICS: // set at
                     graphicType = CellType.MOSAIC_CONTIGUOUS;
                     if (cell.type == CellType.MOSAIC_SEPARATED) cell.type = CellType.MOSAIC_CONTIGUOUS;
                     if (nextCellType == CellType.MOSAIC_SEPARATED) nextCellType = CellType.MOSAIC_CONTIGUOUS;
-                    cell.setSpace();
+                    cell.setSpace(heldMosaic);
                     break;
                 case Attributes.SEPARATED_GRAPHICS: // set at
                     graphicType = CellType.MOSAIC_SEPARATED;
                     if (cell.type == CellType.MOSAIC_CONTIGUOUS) cell.type = CellType.MOSAIC_SEPARATED;
                     if (nextCellType == CellType.MOSAIC_CONTIGUOUS) nextCellType = CellType.MOSAIC_SEPARATED;
-                    cell.setSpace();
+                    cell.setSpace(heldMosaic);
                     break;
                 case Attributes.FLASH: // set after
                     nextFlashing = true;
-                    cell.setSpace();
+                    cell.setSpace(heldMosaic);
                     break;
                 case Attributes.STEADY: // set at
                     cell.flashing = false;
                     nextFlashing = false;
-                    cell.setSpace();
+                    cell.setSpace(heldMosaic);
                     break;
                 case Attributes.NORMAL_SIZE: // set at
                     cell.size = CellSize.NORMAL_SIZE;
                     nextSize = CellSize.NORMAL_SIZE;
-                    cell.setSpace();
+                    cell.setSpace(heldMosaic);
                     break;
                 case Attributes.DOUBLE_HEIGHT: // set after
                     nextSize = CellSize.DOUBLE_HEIGHT;
                     rowModel.doubleHeight = true;
-                    cell.setSpace();
+                    cell.setSpace(heldMosaic);
                     break;
                 case Attributes.DOUBLE_WIDTH: // set after
                     nextSize = CellSize.DOUBLE_WIDTH;
-                    cell.setSpace();
+                    cell.setSpace(heldMosaic);
                     break;
                 case Attributes.DOUBLE_SIZE: // set after
                     nextSize = CellSize.DOUBLE_SIZE;
                     rowModel.doubleHeight = true;
-                    cell.setSpace();
+                    cell.setSpace(heldMosaic);
                     break;
                 case Attributes.CONCEAL: // set at
                     cell.concealed = true;
                     nextConcealed = true;
-                    cell.setSpace();
+                    cell.setSpace(heldMosaic);
+                    break;
+                case Attributes.HOLD_MOSAICS: // set at
+                    heldMosaic.active = true;
+                    cell.setSpace(heldMosaic);
+                    break;
+                case Attributes.RELEASE_MOSAICS: // set after
+                    cancelNextHoldMosaics = true;
+                    cell.setSpace(heldMosaic);
                     break;
                 default:
                     cell.setMappedChar(this._characterEncoding);
+                    // mosaic chars are held for use when 'hold mosaics' is active
+                    if (cell.isMosaic()) {
+                        heldMosaic.char = char;
+                        heldMosaic.type = cell.type;
+                    }
             }
 
             cell.fgColour = textColour;

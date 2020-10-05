@@ -46,8 +46,13 @@ export class Cell {
         }
     }
 
-    setSpace() {
-        this._char = ' ';
+    setSpace(heldMosaic) {
+        if (heldMosaic.active) {
+            this._char = getCharWithEncoding(heldMosaic.char, 'g1_block_mosaic_to_unicode__legacy_computing');
+            if (this.type == CellType.ALPHA) this._type = heldMosaic.type; // not sure if this is right
+        } else {
+            this._char = ' ';
+        }
     }
 
     get char() {
@@ -85,10 +90,19 @@ export class Cell {
     get concealed() {
         return this._concealed;
     }
+    
+    isMosaic() {
+        const code = this._byte.charCodeAt(0);
+        const isMosaic = (this._type == CellType.MOSAIC_CONTIGUOUS || this._type == CellType.MOSAIC_SEPARATED)
+                && (code <= 0x7f) 
+                && (code & 0b100000 == 0b100000);
+        return isMosaic;
+    }
 }
 
 // private
 
+// TODO fix rendering of burn-through mosaic chars
 function getCharWithEncoding(byte, encoding) {
     if (!(encoding in encodings)) throw new Error(`Cell getCharWithEncoding: bad encoding: ${encoding}`);
     if (byte in encodings[encoding]) return encodings[encoding][byte];

@@ -53,7 +53,7 @@ export class View {
         this.d = SVG().addTo('body')
             .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
             .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE)
-            .toggleClass('conceal_hidden');
+            .toggleClass('conceal_concealed');
 
         this._createRowBackgrounds();
         this._createCells();
@@ -113,7 +113,7 @@ export class View {
     }
 
     reveal() {
-        this.d.toggleClass('conceal_hidden');
+        this.d.toggleClass('conceal_concealed');
     }
 
     static _setCellClasses(cellView, cellType, flashing, concealed) {
