@@ -74,6 +74,7 @@ Attributes.NORMAL_SIZE         = CellSize.NORMAL_SIZE;
 Attributes.DOUBLE_HEIGHT       = CellSize.DOUBLE_HEIGHT;
 Attributes.DOUBLE_WIDTH        = CellSize.DOUBLE_WIDTH;
 Attributes.DOUBLE_SIZE         = CellSize.DOUBLE_SIZE;
+Attributes.CONCEAL             = Symbol('CONCEAL');
 
 // private data below
 
@@ -118,6 +119,7 @@ const attributeChars = {
     [String.fromCharCode(0x0d)] : Attributes.DOUBLE_HEIGHT,
     [String.fromCharCode(0x0e)] : Attributes.DOUBLE_WIDTH,
     [String.fromCharCode(0x0f)] : Attributes.DOUBLE_SIZE,
+    [String.fromCharCode(0x18)] : Attributes.CONCEAL,
     [String.fromCharCode(0x19)] : Attributes.CONTIGUOUS_GRAPHICS,
     [String.fromCharCode(0x1a)] : Attributes.SEPARATED_GRAPHICS,
     [String.fromCharCode(0x1c)] : Attributes.BLACK_BACKGROUND,

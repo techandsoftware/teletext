@@ -74,6 +74,7 @@ export class PageModel {
         let nextTextColour = Colour.WHITE;
         let nextFlashing = false;
         let nextSize = CellSize.NORMAL_SIZE;
+        let nextConcealed = false; // setting is set-at, unsetting is set-after
 
         // start of row defaults for 'set-at' attributes
         let backgroundColour = Colour.BLACK;
@@ -87,16 +88,19 @@ export class PageModel {
             cell.type = nextCellType;
             if (attrib.attribute != Attributes.STEADY) cell.flashing = nextFlashing;
             if (attrib.attribute != Attributes.NORMAL_SIZE) cell.size = nextSize;
+            if (attrib.attribute != Attributes.CONCEAL) cell.concealed = nextConcealed;
 
             switch (attrib.attribute) {
                 case Attributes.TEXT_COLOUR: // set after this cell
                     nextCellType = CellType.ALPHA;
                     nextTextColour = attrib.colour;
+                    nextConcealed = false;
                     cell.setSpace();
                     break;
                 case Attributes.MOSAIC_COLOUR: // set after this cell
                     nextCellType = graphicType;
                     nextTextColour = attrib.colour;
+                    nextConcealed = false;
                     cell.setSpace();
                     break;
                 case Attributes.NEW_BACKGROUND: // set at this cell
@@ -145,6 +149,11 @@ export class PageModel {
                 case Attributes.DOUBLE_SIZE: // set after
                     nextSize = CellSize.DOUBLE_SIZE;
                     rowModel.doubleHeight = true;
+                    cell.setSpace();
+                    break;
+                case Attributes.CONCEAL: // set at
+                    cell.concealed = true;
+                    nextConcealed = true;
                     cell.setSpace();
                     break;
                 default:

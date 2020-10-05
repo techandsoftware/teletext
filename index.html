@@ -48,16 +48,36 @@
             /* animation: blink 2s steps(3, start) infinite; */
             animation: blink 2s ease-in infinite;
         }
+        .conceal_hidden  .conceal {
+            visibility: hidden;
+        }
         svg {
             background-color: black;
         }
         body {
             background-color: #040;
         }
+        input {
+            font-size: 50px;
+        }
     </style>
+    <script>
+    (function() {
+        "use strict";
+        window.addEventListener('keypress', e => {
+            if (e.key == '?') window.dispatchEvent(new Event('ttx.reveal'));
+        });
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('revealButton').addEventListener('click', () => {
+                window.dispatchEvent(new Event('ttx.reveal'));
+            });
+        });
+    })();
+    </script>
 </head>
 
 <body>
+    <input type="button" value="reveal" id="revealButton">
 </body>
 
 </html>

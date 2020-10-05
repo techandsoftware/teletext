@@ -52,7 +52,8 @@ export class View {
     constructor(model) {
         this.d = SVG().addTo('body')
             .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
-            .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE);
+            .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE)
+            .toggleClass('conceal_hidden');
 
         this._createRowBackgrounds();
         this._createCells();
@@ -85,7 +86,7 @@ export class View {
                 const dy = View._getCellDY(cell.type, cell.size);
                 const attr = View._getCellAttr(cell.type);
 
-                View._setCellClasses(cellView, cell.type, cell.flashing);
+                View._setCellClasses(cellView, cell.type, cell.flashing, cell.concealed);
                 if (cell.size == CellSize.NORMAL_SIZE) {
                     cellView.transform(null);
                 } else if (cell.size == CellSize.DOUBLE_HEIGHT) {
@@ -111,7 +112,11 @@ export class View {
         });
     }
 
-    static _setCellClasses(cellView, cellType, flashing) {
+    reveal() {
+        this.d.toggleClass('conceal_hidden');
+    }
+
+    static _setCellClasses(cellView, cellType, flashing, concealed) {
         if (cellType == CellType.MOSAIC_CONTIGUOUS) {
             cellView.addClass('mosaic');
             cellView.removeClass('mosaic_separated');
@@ -124,6 +129,9 @@ export class View {
 
         if (flashing) cellView.addClass('flash');
         else cellView.removeClass('flash');
+
+        if (concealed) cellView.addClass('conceal');
+        else cellView.removeClass('conceal');
     }
 
     static _getCellAttr(cellType) {

@@ -10,6 +10,7 @@ export class Cell {
         this._type = CellType.ALPHA;
         this._flashing = false;
         this._size = CellSize.NORMAL_SIZE;
+        this._concealed = false;
     }
 
     set byte(byte) {
@@ -75,6 +76,14 @@ export class Cell {
 
     set size(size) {
         this._size = size;
+    }
+
+    set concealed(concealed) {
+        this._concealed = concealed;
+    }
+
+    get concealed() {
+        return this._concealed;
     }
 }
 
