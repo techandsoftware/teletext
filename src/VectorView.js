@@ -227,8 +227,7 @@ export class View {
         const boxGroup = this.d.group(); // FUDGE wanted to use d.defs().group() but that fails in firefox when sizing for double height
 
         // FUDGE can't use groups directly in <clipPath> - https://github.com/w3c/fxtf-drafts/issues/17
-        // so groups are stored in boxRowDefs when creating then transferred to boxLayer pre render
-        // this.boxRowDefs = this.d.defs().group().attr({ 'shape-rendering': 'crispEdges' });
+        // so groups are stored in boxRows when creating then transferred to boxLayer pre render
         for (let rowNum = 0; rowNum < ROWS; rowNum++) {
             this.boxRows.push(boxGroup.group());
         }
