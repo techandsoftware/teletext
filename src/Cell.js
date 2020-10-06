@@ -11,6 +11,7 @@ export class Cell {
         this._flashing = false;
         this._size = CellSize.NORMAL_SIZE;
         this._concealed = false;
+        this._boxed = false;
     }
 
     set byte(byte) {
@@ -89,6 +90,14 @@ export class Cell {
 
     get concealed() {
         return this._concealed;
+    }
+
+    set boxed(boxed) {
+        this._boxed = boxed;
+    }
+
+    get boxed() {
+        return this._boxed;
     }
     
     isMosaic() {

@@ -77,6 +77,8 @@ Attributes.DOUBLE_SIZE         = CellSize.DOUBLE_SIZE;
 Attributes.CONCEAL             = Symbol('CONCEAL');
 Attributes.HOLD_MOSAICS        = Symbol('HOLD_MOSAICS');
 Attributes.RELEASE_MOSAICS     = Symbol('RELEASE_MOSAICS');
+Attributes.START_BOX           = Symbol('START_BOX');
+Attributes.END_BOX             = Symbol('END_BOX');
 
 // private data below
 
@@ -117,6 +119,8 @@ Object.freeze(charToGraphicColour);
 const attributeChars = {
     [String.fromCharCode(0x08)] : Attributes.FLASH,
     [String.fromCharCode(0x09)] : Attributes.STEADY,
+    [String.fromCharCode(0x0a)] : Attributes.END_BOX,
+    [String.fromCharCode(0x0b)] : Attributes.START_BOX,
     [String.fromCharCode(0x0c)] : Attributes.NORMAL_SIZE,
     [String.fromCharCode(0x0d)] : Attributes.DOUBLE_HEIGHT,
     [String.fromCharCode(0x0e)] : Attributes.DOUBLE_WIDTH,

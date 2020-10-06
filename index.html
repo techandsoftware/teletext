@@ -52,7 +52,7 @@
             visibility: hidden;
         }
         svg {
-            background-color: black;
+            background-color: purple;
         }
         body {
             background-color: #040;
@@ -66,6 +66,9 @@
         "use strict";
         window.addEventListener('keypress', e => {
             if (e.key == '?') window.dispatchEvent(new Event('ttx.reveal'));
+        });
+        window.addEventListener('keypress', e => {
+            if (e.key == 's') window.dispatchEvent(new Event('ttx.subtitlemode'));
         });
         window.addEventListener('DOMContentLoaded', () => {
             document.getElementById('revealButton').addEventListener('click', () => {

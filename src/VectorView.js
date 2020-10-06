@@ -5,7 +5,7 @@ const WIDTH_PX = 400;
 const HEIGHT_PX = 240;
 const COLS = 40;
 const ROWS = 24;
-const SCREEN_SCALE = 10;
+const SCREEN_SCALE = 2;
 
 const CELL_HEIGHT = HEIGHT_PX / ROWS;
 const CELL_WIDTH = WIDTH_PX / COLS;
@@ -50,19 +50,22 @@ Object.freeze(dyLookup);
 
 export class View {
     constructor(model) {
-        this.d = SVG().addTo('body')
+        this.s = SVG().addTo('body')
             .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
-            .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE)
-            .toggleClass('conceal_concealed');
+            .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE);
+
+        this.d = this.s.group().toggleClass('conceal_concealed');
 
         this._createRowBackgrounds();
         this._createCells();
+        this._createBoxModeClip();
         // this._drawGrid();
 
         this._model = model;
         this._model.onSet.attach(
             () => this._update()
         );
+        this._boxMode = false;
         console.debug('VectorView constructed');
     }
 
@@ -74,11 +77,12 @@ export class View {
                 nextRowHidden = false;
                 this._resetRowCells(rowView);
                 this._resetBackgroundForRow(rowIndex);
+                this._resetBoxClipForRow(rowIndex);
                 return;
             }
 
             const rowModel = this._model.getRow(rowIndex);
-            let previousBg;
+            let previousBg, previousBoxed;
             rowView.forEach((cellView, cellIndex) => {
                 const cell = rowModel.getCell(cellIndex);
                 const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
@@ -94,26 +98,46 @@ export class View {
                 }
                 cellView.plain(cell.char).attr(attr).fill(fill).dy(dy);
 
+                if (cell.boxed) {
+                    if (previousBoxed) this._extendBoxForRow(rowIndex);
+                    else this._setBoxForRow(rowIndex, cellIndex);
+                }
+
                 if (previousBg == bg) {
                     this._extendBackgroundForRow(rowIndex);
                 } else {
                     this._setBackgroundForRow(rowIndex, cellIndex, bg);
                 }
+
+                previousBoxed = cell.boxed;
                 previousBg = bg;
             });
 
             if (rowModel.doubleHeight) {
                 this.bgrows[rowIndex].height(CELL_DOUBLE_HEIGHT);
+                this.boxRows[rowIndex].height(CELL_DOUBLE_HEIGHT);
                 nextRowHidden = true;
             } else {
                 this.bgrows[rowIndex].transform(null);
                 nextRowHidden = false;
             }
+
+            this._makeClipFromBoxesForRow(rowIndex);
         });
     }
 
     reveal() {
         this.d.toggleClass('conceal_concealed');
+    }
+
+    boxMode() {
+        if (!this._boxMode) {
+            this.d.clipWith(this.boxLayer)
+            this._boxMode = true;
+        } else {
+            this.d.unclip();
+            this._boxMode = false;
+        }
     }
 
     static _setCellClasses(cellView, cellType, flashing, concealed) {
@@ -201,6 +225,20 @@ export class View {
         });
     }
 
+    _createBoxModeClip() {
+        this.boxRows = [];
+        const boxGroup = this.d.group(); // FUDGE wanted to use d.defs().group() but that fails in firefox when sizing for double height
+
+        // FUDGE can't use groups directly in <clipPath> - https://github.com/w3c/fxtf-drafts/issues/17
+        // so groups are stored in boxRowDefs when creating then transferred to boxLayer pre render
+        // this.boxRowDefs = this.d.defs().group().attr({ 'shape-rendering': 'crispEdges' });
+        for (let rowNum = 0; rowNum < ROWS; rowNum++) {
+            this.boxRows.push(boxGroup.group());
+        }
+
+        this.boxLayer = this.d.clip();
+    }
+
     _createRowBackgrounds() {
         const bgrows = [];
         const bgGroup = this.d.group();
@@ -233,6 +271,12 @@ export class View {
         this.textLayer = textGroup;
     }
 
+    _resetBoxClipForRow(rowNum) {
+        this.boxLayer.children()
+            .filter(b => b.data('r') == rowNum)
+            .forEach(b => b.remove());
+    }
+
     _resetBackgroundForRow(rowNum) {
         this.bgrows[rowNum] = this.bgLayer.group();
     }
@@ -250,6 +294,27 @@ export class View {
             .rect(CELL_WIDTH, CELL_HEIGHT)
             .fill(colour)
             .move(x, y)
+    }
+
+    _extendBoxForRow(rowNum) {
+        const last = this.boxRows[rowNum].last();
+        const width = last.width();
+        last.width(width + CELL_WIDTH);
+    }
+
+    _setBoxForRow(rowNum, colNum) {
+        const x = colNum * CELL_WIDTH;
+        const y = rowNum * CELL_HEIGHT;
+        this.boxRows[rowNum].rect(CELL_WIDTH, CELL_HEIGHT).move(x, y);
+    }
+
+    // FUDGE move boxes from the holding area into the clip layer.
+    // This is because the clip area can't contain groups so we have to build up the boxes separately
+    _makeClipFromBoxesForRow(rowNum) {
+        this.boxRows[rowNum].children().forEach(box => {
+            box.data('r', rowNum);
+            this.boxLayer.add(box);
+        });
     }
 
     setTestPage() {

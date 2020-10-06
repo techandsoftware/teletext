@@ -17,6 +17,7 @@ export class PageModel {
             this.screen.push(row);
         }
         this._characterEncoding = 'latin_g0_english';
+        this._startBoxChar = Attributes.charFromAttribute(Attributes.START_BOX)
         
         this.onSet = new Event(this);
         console.debug('PageModel constructed');
@@ -76,6 +77,7 @@ export class PageModel {
         let nextSize = CellSize.NORMAL_SIZE;
         let nextConcealed = false; // setting is set-at, unsetting is set-after
         let cancelNextHoldMosaics = false; // setting is set-at, cancelling is set-after
+        let nextBoxed = false;
 
         // start of row defaults for 'set-at' attributes
         let backgroundColour = Colour.BLACK;
@@ -86,7 +88,7 @@ export class PageModel {
             type: CellType.MOSAIC_CONTIGUOUS
         };
 
-        this.screen[rowNum].forEach(cell => {
+        this.screen[rowNum].forEach((cell, cellIndex) => {
             const char = cell.byte;
             const attrib = Attributes.attribFromChar(char);
 
@@ -100,6 +102,7 @@ export class PageModel {
                 if (attrib.attribute != Attributes.HOLD_MOSAICS) heldMosaic.active = false;
                 cancelNextHoldMosaics = false;
             }
+            cell.boxed = nextBoxed;
 
             switch (attrib.attribute) {
                 case Attributes.TEXT_COLOUR: // set after this cell
@@ -173,6 +176,19 @@ export class PageModel {
                     break;
                 case Attributes.RELEASE_MOSAICS: // set after
                     cancelNextHoldMosaics = true;
+                    cell.setSpace(heldMosaic);
+                    break;
+                case Attributes.START_BOX: // set between two start box chars
+                    if (cellIndex >= 1) {
+                        if (this.screen[rowNum][cellIndex-1].byte == this._startBoxChar) {
+                            cell.boxed = true;
+                            nextBoxed = true;
+                        }
+                    }
+                    cell.setSpace(heldMosaic);
+                    break;
+                case Attributes.END_BOX: // set after
+                    nextBoxed = false;
                     cell.setSpace(heldMosaic);
                     break;
                 default:

@@ -18,5 +18,8 @@ export class TeletextController {
         window.addEventListener('ttx.reveal', () => {
             this._view.reveal();
         });
+        window.addEventListener('ttx.subtitlemode', () => {
+            this._view.boxMode();
+        });
     }
 }
