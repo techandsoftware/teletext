@@ -103,11 +103,8 @@ export class View {
                     else this._setBoxForRow(rowIndex, cellIndex);
                 }
 
-                if (previousBg == bg) {
-                    this._extendBackgroundForRow(rowIndex);
-                } else {
-                    this._setBackgroundForRow(rowIndex, cellIndex, bg);
-                }
+                if (previousBg == bg) this._extendBackgroundForRow(rowIndex);
+                else this._setBackgroundForRow(rowIndex, cellIndex, bg);
 
                 previousBoxed = cell.boxed;
                 previousBg = bg;
