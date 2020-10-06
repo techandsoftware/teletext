@@ -6,6 +6,12 @@ const HEIGHT_PX = 240;
 const COLS = 40;
 const ROWS = 24;
 const SCREEN_SCALE = 2;
+const ASPECT_RATIO_VERTICAL_SCALE = {
+    "1.33": 1.203007519,
+    "1.2": 1.333333333,
+    "1.22": 1.31147541,
+};
+const DEFAULT_ASPECT_RATIO = 1.22;
 
 const CELL_HEIGHT = HEIGHT_PX / ROWS;
 const CELL_WIDTH = WIDTH_PX / COLS;
@@ -52,7 +58,8 @@ export class View {
     constructor(model) {
         this.s = SVG().addTo('body')
             .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
-            .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE);
+            .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO]);
+        this.s.attr('preserveAspectRatio', 'none');
 
         this.d = this.s.group().toggleClass('conceal_concealed');
 
