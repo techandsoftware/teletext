@@ -85,12 +85,13 @@ export class View {
             let previousBg, previousBoxed;
             rowView.forEach((cellView, cellIndex) => {
                 const cell = rowModel.getCell(cellIndex);
+                const isMosaicByte = cell.isMosaicByte();
                 const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
                 const bg = Attributes.fillColourFromColourAttrib(cell.bgColour);
                 const dy = View._getCellDY(cell.type, cell.size);
-                const attr = View._getCellAttr(cell.type);
+                const attr = View._getCellAttr(cell.type, isMosaicByte);
 
-                View._setCellClasses(cellView, cell.type, cell.flashing, cell.concealed);
+                View._setCellClasses(cellView, cell.type, cell.flashing, cell.concealed, isMosaicByte);
                 if (cell.size == CellSize.NORMAL_SIZE) {
                     cellView.transform(null);
                 } else if (cell.size == CellSize.DOUBLE_HEIGHT) {
@@ -137,11 +138,11 @@ export class View {
         }
     }
 
-    static _setCellClasses(cellView, cellType, flashing, concealed) {
-        if (cellType == CellType.MOSAIC_CONTIGUOUS) {
+    static _setCellClasses(cellView, cellType, flashing, concealed, isMosaic) {
+        if (cellType == CellType.MOSAIC_CONTIGUOUS && isMosaic) {
             cellView.addClass('mosaic');
             cellView.removeClass('mosaic_separated');
-        } else if (cellType == CellType.MOSAIC_SEPARATED) {
+        } else if (cellType == CellType.MOSAIC_SEPARATED && isMosaic) {
             cellView.addClass('mosaic_separated');
             cellView.removeClass('mosaic');
         } else {
@@ -155,15 +156,15 @@ export class View {
         else cellView.removeClass('conceal');
     }
 
-    static _getCellAttr(cellType) {
-        if (cellType == CellType.MOSAIC_CONTIGUOUS) {
+    static _getCellAttr(cellType, isMosaicChar) {
+        if (cellType == CellType.MOSAIC_CONTIGUOUS && isMosaicChar) {
             return {
                 dx: MOSAIC_METRIC.contiguous.DX,
                 textLength: MOSAIC_METRIC.contiguous.textLength,
                 lengthAdjust: 'spacingAndGlyphs',
                 'text-anchor': 'start',
             };
-        } else if (cellType == CellType.MOSAIC_SEPARATED) {
+        } else if (cellType == CellType.MOSAIC_SEPARATED && isMosaicChar) {
             return {
                 dx: MOSAIC_METRIC.separated.DX,
                 textLength: MOSAIC_METRIC.separated.textLength,

@@ -12,6 +12,7 @@ export class Cell {
         this._size = CellSize.NORMAL_SIZE;
         this._concealed = false;
         this._boxed = false;
+        this._byteHeld = null;
     }
 
     set byte(byte) {
@@ -49,9 +50,11 @@ export class Cell {
 
     setSpace(heldMosaic) {
         if (heldMosaic.active) {
+            this._byteHeld = heldMosaic.char;
             this._char = getCharWithEncoding(heldMosaic.char, 'g1_block_mosaic_to_unicode__legacy_computing');
             if (this.type == CellType.ALPHA) this._type = heldMosaic.type; // not sure if this is right
         } else {
+            this._byteHeld = null;
             this._char = ' ';
         }
     }
@@ -99,19 +102,25 @@ export class Cell {
     get boxed() {
         return this._boxed;
     }
+
+    // used in rendering to distinguish burn-through characters in G1 set
+    isMosaicByte() {
+        const code = this._byteHeld != null ? this._byteHeld.charCodeAt(0) : this._byte.charCodeAt(0);
+        return (code <= 0x7f) && ((code & 0b100000) == 0b100000);
+    }
     
+    // used in page model to keep track of mosaic to hold 
     isMosaic() {
         const code = this._byte.charCodeAt(0);
         const isMosaic = (this._type == CellType.MOSAIC_CONTIGUOUS || this._type == CellType.MOSAIC_SEPARATED)
                 && (code <= 0x7f) 
-                && (code & 0b100000 == 0b100000);
+                && ((code & 0b100000) == 0b100000);
         return isMosaic;
     }
 }
 
 // private
 
-// TODO fix rendering of burn-through mosaic chars
 function getCharWithEncoding(byte, encoding) {
     if (!(encoding in encodings)) throw new Error(`Cell getCharWithEncoding: bad encoding: ${encoding}`);
     if (byte in encodings[encoding]) return encodings[encoding][byte];
