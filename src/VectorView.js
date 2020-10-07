@@ -7,11 +7,12 @@ const COLS = 40;
 const ROWS = 25;
 const SCREEN_SCALE = 2;
 const ASPECT_RATIO_VERTICAL_SCALE = {
+    "1":    1,
     "1.33": WIDTH_PX/(1.33 * HEIGHT_PX),
     "1.2":  WIDTH_PX/(1.2  * HEIGHT_PX),
     "1.22": WIDTH_PX/(1.22 * HEIGHT_PX),
 };
-const DEFAULT_ASPECT_RATIO = 1.2;
+const DEFAULT_ASPECT_RATIO = 1;
 
 const CELL_HEIGHT = HEIGHT_PX / ROWS;
 const CELL_WIDTH = WIDTH_PX / COLS;
@@ -32,10 +33,10 @@ const MOSAIC_METRIC = {
     }
 };
 MOSAIC_METRIC.separated = {
-    textLength: MOSAIC_METRIC.contiguous.textLength - 1,
-    DX: 0 - TEXT_X_OFFSET - 0.3,
+    textLength: CELL_WIDTH,
+    DX: 0 - TEXT_X_OFFSET,
     DY: null,
-    doubleHeightDY: 2.1
+    doubleHeightDY: 2.3
 };
 Object.freeze(MOSAIC_METRIC);
 
@@ -177,8 +178,6 @@ export class View {
                 textLength: MOSAIC_METRIC.separated.textLength,
                 lengthAdjust: 'spacingAndGlyphs',
                 'text-anchor': 'start',
-                stroke: 'transparent',
-                'stroke-width': '0.4',
             };
         } 
         return {

@@ -42,9 +42,10 @@ export class Cell {
     setMappedChar(encoding) {
         if (this._type == CellType.ALPHA) {
             this._char = getCharWithEncoding(this._byte, encoding);
-        } else {
-            // TODO check char range
+        } else if (this._type == CellType.MOSAIC_CONTIGUOUS) {
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__legacy_computing');
+        } else {
+            this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__unscii_separated');
         }
     }
 
