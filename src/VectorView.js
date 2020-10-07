@@ -107,7 +107,7 @@ export class View {
                 cellView.plain(cell.char).attr(attr).fill(fill).dy(dy);
 
                 if (cell.boxed) {
-                    if (previousBoxed) this._extendBoxForRow(rowIndex);
+                    if (previousBoxed) this._extendBox();
                     else this._setBoxForRow(rowIndex, cellIndex);
                 }
 
@@ -120,7 +120,7 @@ export class View {
 
             if (rowModel.doubleHeight) {
                 this.bgrows[rowIndex].height(CELL_DOUBLE_HEIGHT);
-                this.boxRows[rowIndex].height(CELL_DOUBLE_HEIGHT);
+                this._setBoxDoubleHeight();
                 nextRowHidden = true;
             } else {
                 this.bgrows[rowIndex].transform(null);
@@ -231,15 +231,11 @@ export class View {
     }
 
     _createBoxModeClip() {
-        this.boxRows = [];
-        const boxGroup = this.d.group(); // FUDGE wanted to use d.defs().group() but that fails in firefox when sizing for double height
-
-        // FUDGE can't use groups directly in <clipPath> - https://github.com/w3c/fxtf-drafts/issues/17
-        // so groups are stored in boxRows when creating then transferred to boxLayer pre render
-        for (let rowNum = 0; rowNum < ROWS; rowNum++) {
-            this.boxRows.push(boxGroup.group());
-        }
-
+        // FUDGE can't use groups directly in <clipPath> https://github.com/w3c/fxtf-drafts/issues/17
+        // Boxed cells are buffered and tagged with data-boxbuffer as the row is constructed
+        // Then moved to the <clipPath> stored in this.boxLayer and tagged with data-r=rowNum
+        this.defs = this.d.defs();
+        this.lastBoxBuffer = null;
         this.boxLayer = this.d.clip();
     }
 
@@ -300,23 +296,29 @@ export class View {
             .move(x, y)
     }
 
-    _extendBoxForRow(rowNum) {
-        const last = this.boxRows[rowNum].last();
-        const width = last.width();
-        last.width(width + CELL_WIDTH);
+    _extendBox() {
+        const width = this.lastBoxBuffer.width();
+        this.lastBoxBuffer.width(width + CELL_WIDTH);
+    }
+
+    _setBoxDoubleHeight() {
+        this.defs.find('[data-boxbuffer]').forEach(box => box.height(CELL_DOUBLE_HEIGHT));
+        // TODO might be quicker to filter instead of using a selector
     }
 
     _setBoxForRow(rowNum, colNum) {
         const x = colNum * CELL_WIDTH;
         const y = rowNum * CELL_HEIGHT;
-        this.boxRows[rowNum].rect(CELL_WIDTH, CELL_HEIGHT).move(x, y);
+        this.lastBoxBuffer = this.defs.rect(CELL_WIDTH, CELL_HEIGHT).data('boxbuffer', true).move(x, y);
     }
 
-    // FUDGE move boxes from the holding area into the clip layer.
-    // This is because the clip area can't contain groups so we have to build up the boxes separately
+    // FUDGE move boxes tagged with data-boxbuffer into the clip layer.
     _makeClipFromBoxesForRow(rowNum) {
-        this.boxRows[rowNum].children().forEach(box => {
-            box.data('r', rowNum);
+        this.defs.find('[data-boxbuffer]').forEach(box => {
+            box.data({
+                r: rowNum,
+                boxbuffer: null
+            });
             this.boxLayer.add(box);
         });
     }
