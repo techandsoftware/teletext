@@ -3,7 +3,7 @@ import { Cell } from './Cell.js';
 import { Event } from './Event.js';
 import { RowModel } from './RowModel.js';
 
-const ROWS = 24;
+const ROWS = 25;
 const CELLS_PER_ROW = 40;
 
 export class PageModel {

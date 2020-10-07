@@ -2,16 +2,16 @@ import { SVG } from '@svgdotjs/svg.js';
 import { Attributes, CellType, CellSize } from './Attributes.js';
 
 const WIDTH_PX = 400;
-const HEIGHT_PX = 240;
+const HEIGHT_PX = 250;
 const COLS = 40;
-const ROWS = 24;
+const ROWS = 25;
 const SCREEN_SCALE = 2;
 const ASPECT_RATIO_VERTICAL_SCALE = {
-    "1.33": 1.203007519,
-    "1.2": 1.333333333,
-    "1.22": 1.31147541,
+    "1.33": WIDTH_PX/(1.33 * HEIGHT_PX),
+    "1.2":  WIDTH_PX/(1.2  * HEIGHT_PX),
+    "1.22": WIDTH_PX/(1.22 * HEIGHT_PX),
 };
-const DEFAULT_ASPECT_RATIO = 1.22;
+const DEFAULT_ASPECT_RATIO = 1.2;
 
 const CELL_HEIGHT = HEIGHT_PX / ROWS;
 const CELL_WIDTH = WIDTH_PX / COLS;
@@ -56,7 +56,7 @@ Object.freeze(dyLookup);
 
 export class View {
     constructor(model) {
-        this.s = SVG().addTo('body')
+        this.s = SVG().addTo('#teletextscreen')
             .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
             .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO]);
         this.s.attr('preserveAspectRatio', 'none');
