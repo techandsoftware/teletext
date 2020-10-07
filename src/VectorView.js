@@ -34,7 +34,7 @@ const MOSAIC_METRIC = {
 };
 MOSAIC_METRIC.separated = {
     textLength: CELL_WIDTH,
-    DX: 0 - TEXT_X_OFFSET,
+    DX: 0 - TEXT_X_OFFSET + 0.5,
     DY: null,
     doubleHeightDY: 2.3
 };

@@ -40,20 +40,23 @@ export class Cell {
     }
 
     setMappedChar(encoding) {
-        if (this._type == CellType.ALPHA) {
+        if (this._type == CellType.ALPHA)
             this._char = getCharWithEncoding(this._byte, encoding);
-        } else if (this._type == CellType.MOSAIC_CONTIGUOUS) {
+        else if (this._type == CellType.MOSAIC_CONTIGUOUS)
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__legacy_computing');
-        } else {
+        else
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__unscii_separated');
-        }
     }
 
     setSpace(heldMosaic) {
         if (heldMosaic.active) {
             this._byteHeld = heldMosaic.char;
-            this._char = getCharWithEncoding(heldMosaic.char, 'g1_block_mosaic_to_unicode__legacy_computing');
-            if (this.type == CellType.ALPHA) this._type = heldMosaic.type; // not sure if this is right
+            // Use the held mosaic type if this cell type is alpha.
+            // Otherwise we use the existing graphics type but with the held character. Not sure if this is right
+            let charEncoding = 'g1_block_mosaic_to_unicode__legacy_computing';
+            if (this._type == CellType.ALPHA) this._type = heldMosaic.type;
+            if (this._type == CellType.MOSAIC_SEPARATED) charEncoding = 'g1_block_mosaic_to_unicode__unscii_separated';
+            this._char = getCharWithEncoding(heldMosaic.char, charEncoding);
         } else {
             this._byteHeld = null;
             this._char = ' ';
