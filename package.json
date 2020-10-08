@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@svgdotjs/svg.js": "^3.0.16"
+    "@svgdotjs/svg.js": "^3.0.16",
+    "uint1array": "^1.1.1"
   },
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",

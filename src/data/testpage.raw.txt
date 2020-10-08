@@ -1,0 +1,66 @@
+0000000  sp  sp  sp  sp  sp  sp  sp  sp   C   E   E   F   A   X  sp   2
+0000020   9   7  sp  sp   W   e   d  sp  sp   2  sp   M   a   r  sp etx
+0000040   2   1   :   0   1   /   1   0  nl soh nul soh nul soh nul soh
+0000060 nul soh nul soh nul soh nul soh nul soh nul soh nul soh nul soh
+0000100 nul soh nul soh nul soh nul soh nul soh nul soh nul soh nul   0
+0000120   1  nl etb  rs  si   s dc3 sub syn  rs  us can eot  cr  gs etx
+0000140   E   N   G   I   N   E   E   R   I   N   G  sp dc2  fs  ff  rs
+0000160   s nak  so dc1  si dc4  si bel   0   2  nl nul soh nul soh nul
+0000200 soh nul soh nul soh nul soh nul soh nul soh nul soh nul soh nul
+*
+0000240 soh   0   3  nl   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del
+0000260   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del
+0000300   ~ del   ~ del   ~ del   ~ del   ~ del   0   4  nl dc4 sub  rs
+0000320   s dc1  em nak nul  em soh  cr  sp enq  gs stx   T   e   s   t
+0000340  sp   P   a   g   e  sp  sp  fs  ff  rs dc2   s syn dle dc3 nul
+0000360 etb dle soh   0   5  nl   ~ del   ~ del   ~ del   ~ del   ~ del
+0000400   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del
+0000420   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del   0   6  nl soh
+0000440 nul soh  sp nul  sp soh  rs  sp  rs  sp etb   , dc3 dc3 syn syn
+0000460 dc2 dc2 dc2 nak nak dc1 dc1 dc4 dc4 dc4  sp  sp dc4 nul soh nul
+0000500 soh nul soh nul soh   0   7  nl   ~ del   ~ del   ~ del   ~ del
+0000520   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del
+0000540   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del   0   8
+0000560  nl soh nul soh nul soh nul soh nul soh nul soh nul soh nul soh
+0000600 nul soh nul soh nul soh nul soh nul soh nul soh nul soh nul soh
+0000620 nul soh nul soh nul soh nul   0   9  nl   ~ del   ~ del   ~ del
+0000640   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del
+*
+0000700   1   0  nl soh nul soh nul soh nul soh nul soh nul soh nul soh
+0000720 nul soh nul soh nul soh nul soh nul soh nul soh nul soh nul soh
+0000740 nul soh nul soh nul soh nul soh nul   1   1  nl   ~ del   ~ del
+0000760   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del
+*
+0001020   ~ del   1   2  nl soh nul soh nul soh nul soh nul soh nul soh
+0001040 nul soh nul soh nul soh nul soh nul soh nul soh nul soh nul soh
+0001060 nul soh nul soh nul soh nul soh nul soh nul   1   3  nl   ~ del
+0001100   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del
+*
+0001140   ~ del   ~ del   1   4  nl soh nul soh nul soh nul soh nul soh
+0001160 nul soh nul soh nul soh nul soh nul soh nul soh nul soh nul soh
+0001200 nul soh nul soh nul soh nul soh nul soh nul soh nul   1   5  nl
+0001220   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del   ~ del
+*
+0001260   ~ del   ~ del   ~ del   1   6  nl   k   h   i   t   e etx   Y
+0001300   e   l   l   o   w ack   C   y   a   n stx   G   r   e   e   n
+0001320 ack   M   a   g   e   n   t   a soh   R   e   d eot   B   l   u
+0001340   f  nl etb  em   !   "   # dc3   $   %   &   ' syn   (   )   *
+0001360   + dc2   ,   -   .   /  em   0   1   2   3 nak   4   5   6   7
+0001400 dc1   8   9   :   ; dc4   <   =   >   ?  nl  sp  sp   !   "   #
+0001420  sp   $   %   &   '  sp   (   )   *   +  sp   ,   -   .   /  sp
+0001440   0   1   2   3  sp   4   5   6   7  sp   8   9   :   ;  sp   <
+0001460   =   >   ?  nl  sp   @   A   B   C  sp   D   E   F   G  sp   H
+0001500   I   J   K  sp   L   M   N   O  sp   P   Q   R   S  sp   T   U
+0001520   V   W  sp   X   Y   Z   [  sp   \   ]   ^   _  nl  sp   `   a
+0001540   b   c  sp   d   e   f   g  sp   h   i   j   k  sp   l   m   n
+0001560   o  sp   p   q   r   s  sp   t   u   v   w  sp   x   y   z   {
+0001600  sp   |   }   ~ del  nl dc4   `   a   b   c dc1   d   e   f   g
+0001620 nak   h   i   j   k dc2   l   m   n   o sub   p   q   r   s syn
+0001640   t   u   v   w dc3   x   y   z   { etb   |   }   ~ del  nl etx
+0001660 can   C   o   n   c   e   a   l  bs   F   l   a   s   h etx   *
+0001700  vt  vt   B   o   x  ht   S   t   e   a   d   y can   G   o   n
+0001720   e  nl  nl   ? syn   ^ del  nl  sp  sp  sp  sp  sp  sp  sp  sp
+0001740  sp  sp  sp  sp  sp  sp  sp  sp  sp  sp  sp  sp  sp  sp  sp  sp
+*
+0002000  nl
+0002001
