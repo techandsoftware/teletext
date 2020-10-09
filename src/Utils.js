@@ -16,8 +16,6 @@ export class Utils {
         const packed = atob(input);
 
         // FUDGE as Unit8Array.set stores LSB first but we want MSB first in the bit array, getMsbCode reverses the bits
-        // const msbCodes = [...packed].map(c => getMsbCode(c));
-        // const codes =    [...packed].map(c => c.charCodeAt(0));
         const msbCodes = [...packed].map(c => getMsbCode(c));
         
         const buffer = new ArrayBuffer(msbCodes.length);
