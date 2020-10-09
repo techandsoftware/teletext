@@ -26,12 +26,6 @@ export class TeletextController {
 
     loadPageFromEncodedString(input) {
         const decoded = Utils.decodeBase64URLEncoded(input);
-        // const rows = [];
-        // for (let row = 0; row < 25; row++) {
-        //     for (let col = 0; col < 40; col++) {
-
-        //     }
-        // }
         this.setPageRows(decoded);
     }
 
