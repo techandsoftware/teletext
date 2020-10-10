@@ -210,7 +210,7 @@ export class PageModel {
             cell.bgColour = backgroundColour;
             rowModel.addCell(cell);
         });
-        console.dir(rowModel);
+        // console.dir(rowModel);
         return rowModel;
     }
 
