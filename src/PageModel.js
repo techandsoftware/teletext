@@ -99,13 +99,17 @@ export class PageModel {
             if (attrib.attribute != Attributes.NORMAL_SIZE) cell.size = nextSize;
             if (attrib.attribute != Attributes.CONCEAL) cell.concealed = nextConcealed;
             if (cancelNextHoldMosaics) {
-                if (attrib.attribute != Attributes.HOLD_MOSAICS) heldMosaic.active = false;
+                if (attrib.attribute != Attributes.HOLD_MOSAICS) {
+                    heldMosaic.active = false;
+                    heldMosaic.char = ' ';
+                }
                 cancelNextHoldMosaics = false;
             }
             cell.boxed = nextBoxed;
 
             switch (attrib.attribute) {
                 case Attributes.TEXT_COLOUR: // set after this cell
+                    // TODO ignore alpha black if level 1
                     nextCellType = CellType.ALPHA;
                     nextTextColour = attrib.colour;
                     nextConcealed = false;
@@ -157,12 +161,14 @@ export class PageModel {
                     cell.setSpace(heldMosaic);
                     break;
                 case Attributes.DOUBLE_WIDTH: // set after
-                    nextSize = CellSize.DOUBLE_WIDTH;
+                    // nextSize = CellSize.DOUBLE_WIDTH;
+                    // TODO - double width
                     cell.setSpace(heldMosaic);
                     break;
                 case Attributes.DOUBLE_SIZE: // set after
-                    nextSize = CellSize.DOUBLE_SIZE;
-                    rowModel.doubleHeight = true;
+                    // nextSize = CellSize.DOUBLE_SIZE;
+                    // rowModel.doubleHeight = true;
+                    // TODO - double size
                     cell.setSpace(heldMosaic);
                     break;
                 case Attributes.CONCEAL: // set at
@@ -204,6 +210,7 @@ export class PageModel {
             cell.bgColour = backgroundColour;
             rowModel.addCell(cell);
         });
+        console.dir(rowModel);
         return rowModel;
     }
 

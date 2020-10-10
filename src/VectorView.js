@@ -67,7 +67,7 @@ export class View {
         this._createRowBackgrounds();
         this._createCells();
         this._createBoxModeClip();
-        // this._drawGrid();
+        this._drawGrid();
 
         this._model = model;
         this._model.onSet.attach(

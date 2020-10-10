@@ -49,12 +49,11 @@ export class Cell {
     }
 
     setSpace(heldMosaic) {
-        if (heldMosaic.active) {
+        if ((this._type == CellType.MOSAIC_CONTIGUOUS || this._type == CellType.MOSAIC_SEPARATED)
+            && heldMosaic.active) {
             this._byteHeld = heldMosaic.char;
-            // Use the held mosaic type if this cell type is alpha.
-            // Otherwise we use the existing graphics type but with the held character. Not sure if this is right
+            this._type = heldMosaic.type;
             let charEncoding = 'g1_block_mosaic_to_unicode__legacy_computing';
-            if (this._type == CellType.ALPHA) this._type = heldMosaic.type;
             if (this._type == CellType.MOSAIC_SEPARATED) charEncoding = 'g1_block_mosaic_to_unicode__unscii_separated';
             this._char = getCharWithEncoding(heldMosaic.char, charEncoding);
         } else {
