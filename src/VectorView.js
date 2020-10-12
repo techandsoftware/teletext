@@ -57,12 +57,12 @@ Object.freeze(dyLookup);
 
 export class View {
     constructor(model) {
-        this.s = SVG().addTo('#teletextscreen')
+        this._svg = SVG().addTo('#teletextscreen')
             .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
-            .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO]);
-        this.s.attr('preserveAspectRatio', 'none');
+            .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO])
+            .attr('preserveAspectRatio', 'none');
 
-        this.d = this.s.group().toggleClass('conceal_concealed');
+        this.d = this._svg.group().toggleClass('conceal_concealed');
 
         this._createRowBackgrounds();
         this._createCells();
