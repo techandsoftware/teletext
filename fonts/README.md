@@ -1,3 +1,1 @@
-Unscii from
-
-http://pelulamu.net/unscii/
+Unscii from http://pelulamu.net/unscii/
