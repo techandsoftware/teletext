@@ -41,10 +41,10 @@ export class Attributes {
         throw new Error('Attributes.charFromAttribute: bad attribute');
     }
 
-    static attribFromChar(char) {
+    static attribFromChar(level, char) {
         let attribute = null;
         let colour = null;
-        if (char in attributeChars) {
+        if (char in attributeChars && charCodesByLevel[level].includes(char.charCodeAt(0))) {
             if (char in charToTextColour) {
                 attribute = Attributes.TEXT_COLOUR;
                 colour = attributeChars[char];
@@ -54,12 +54,14 @@ export class Attributes {
             } else {
                 attribute = attributeChars[char];
             }
+        } else if (char.charCodeAt(0) <= 0x1f) {
+            attribute = Attributes.UNKNOWN;
         }
         return { attribute, colour };
     }
 
     static fillColourFromColourAttrib(colour) {
-        return(colourAttribToFillColour[colour]);
+        return colourAttribToFillColour[colour];
     }
 }
 Attributes.TEXT_COLOUR         = CellType.ALPHA;
@@ -79,6 +81,7 @@ Attributes.HOLD_MOSAICS        = Symbol('HOLD_MOSAICS');
 Attributes.RELEASE_MOSAICS     = Symbol('RELEASE_MOSAICS');
 Attributes.START_BOX           = Symbol('START_BOX');
 Attributes.END_BOX             = Symbol('END_BOX');
+Attributes.UNKNOWN             = Symbol('UNKNOWN'); // pseudo-attribute
 
 // private data below
 
@@ -137,21 +140,15 @@ const attributeChars = {
 const textColourToChar = {};
 for (const char in charToTextColour) {
     textColourToChar[charToTextColour[char]] = char;
+    attributeChars[char] = charToTextColour[char];
 }
 Object.freeze(textColourToChar);
-
 const graphicColourToChar = {};
 for (const char in charToGraphicColour) {
     graphicColourToChar[charToGraphicColour[char]] = char;
-}
-Object.freeze(graphicColourToChar);
-
-for (const char in charToTextColour) {
-    attributeChars[char] = charToTextColour[char];
-}
-for (const char in charToGraphicColour) {
     attributeChars[char] = charToGraphicColour[char];
 }
+Object.freeze(graphicColourToChar);
 Object.freeze(attributeChars);
 
 const spacingAttributesToChar = {};
@@ -159,3 +156,26 @@ for (const char in attributeChars) {
     spacingAttributesToChar[attributeChars[char]] = char;
 }
 Object.freeze(spacingAttributesToChar);
+
+// 'level 0' is fake but derived from Ceefax 1975 pages at https://archive.teletextarchaeologist.org/Pages/Details/21000
+// which has different control codes
+export const Level = {
+    0:   Symbol('0'),   // 7 colour text and contiguous graphics, flashing
+    1:   Symbol('1'),   // + background colours, separated graphics, conceal, box, double height
+    1.5: Symbol('1.5'), // + black text/graphics
+    2.5: Symbol('2.5'), // + double width, double size
+};
+Object.freeze(Level);
+
+const charCodesByLevel = {};
+charCodesByLevel[Level[0]] = [     // fictional level 0
+    0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,
+    0x08, 0x09,
+    0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+];
+charCodesByLevel[Level[1]] = [...charCodesByLevel[Level[0]]].concat([
+    0x0a, 0x0b, 0x0c, 0x0d, 0x18, 0x19, 0x1a, 0x1c, 0x1d, 0x1e, 0x1f,
+]);
+charCodesByLevel[Level[1.5]] = [...charCodesByLevel[Level[1]]].concat([0x0, 0x10]);
+charCodesByLevel[Level[2.5]] = [...charCodesByLevel[Level[1.5]]].concat([0xe, 0xf]);
+Object.freeze(charCodesByLevel); 

@@ -1,4 +1,4 @@
-import { Attributes, Colour, CellType, CellSize } from './Attributes.js';
+import { Level, Attributes, Colour, CellType, CellSize } from './Attributes.js';
 import { Cell } from './Cell.js';
 import { Event } from './Event.js';
 import { RowModel } from './RowModel.js';
@@ -18,6 +18,7 @@ export class PageModel {
         }
         this._characterEncoding = 'latin_g0_english';
         this._startBoxChar = Attributes.charFromAttribute(Attributes.START_BOX)
+        this._level = Level['1.5'];
         
         this.onSet = new Event(this);
         console.debug('PageModel constructed');
@@ -90,7 +91,7 @@ export class PageModel {
 
         this.screen[rowNum].forEach((cell, cellIndex) => {
             const char = cell.byte;
-            const attrib = Attributes.attribFromChar(char);
+            const attrib = Attributes.attribFromChar(this._level, char);
 
             // 'set-after' attributes from previous cell
             textColour = nextTextColour;
@@ -109,7 +110,6 @@ export class PageModel {
 
             switch (attrib.attribute) {
                 case Attributes.TEXT_COLOUR: // set after this cell
-                    // TODO ignore alpha black if level 1
                     nextCellType = CellType.ALPHA;
                     nextTextColour = attrib.colour;
                     nextConcealed = false;
@@ -195,6 +195,9 @@ export class PageModel {
                     break;
                 case Attributes.END_BOX: // set after
                     nextBoxed = false;
+                    cell.setSpace(heldMosaic);
+                    break;
+                case Attributes.UNKNOWN:
                     cell.setSpace(heldMosaic);
                     break;
                 default:
