@@ -40,7 +40,7 @@ export class Cell {
     }
 
     setMappedChar(encoding) {
-        if (this._type == CellType.ALPHA)
+        if (this._type == CellType.ALPHA || ((this._byte.charCodeAt(0) & 0b100000) == 0))
             this._char = getCharWithEncoding(this._byte, encoding);
         else if (this._type == CellType.MOSAIC_CONTIGUOUS)
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__legacy_computing');

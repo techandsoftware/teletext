@@ -9,8 +9,6 @@ export class TeletextController {
         this._model = model;
         this._initEventHandlers();
         console.debug('TeletextController constructed');
-        // const encoded = base64url.encode("ladies and gentlemen we are floating in space");
-        // console.log(encoded);
     }
 
     setRow(rowNum, string) {
@@ -27,7 +25,7 @@ export class TeletextController {
 
     loadPageFromEncodedString(input) {
         const decoded = Utils.decodeBase64URLEncoded(input);
-        // this.setRow(0, decoded[5]);
+        // this.setRow(0, decoded[23]);
         this.setPageRows(decoded);
     }
 
