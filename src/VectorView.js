@@ -83,7 +83,7 @@ export class View {
         this.gridrows.forEach((rowView, rowIndex) => {
             if (nextRowHidden) {
                 nextRowHidden = false;
-                this._resetRowCells(rowView);
+                this._resetRowCells(rowView, rowIndex);
                 this._resetBackgroundForRow(rowIndex);
                 this._resetBoxClipForRow(rowIndex);
                 return;
@@ -97,15 +97,14 @@ export class View {
                 const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
                 const bg = Attributes.fillColourFromColourAttrib(cell.bgColour);
                 const dy = View._getCellDY(cell.type, cell.size);
-                const attr = View._getCellAttr(cell.type, isMosaicByte);
+                const attr = View._getCellAttr(rowIndex, cellIndex, cell.type, isMosaicByte);
 
-                View._setCellClasses(cellView, cell.type, cell.flashing, cell.concealed, isMosaicByte);
-                if (cell.size == CellSize.NORMAL_SIZE) {
-                    cellView.transform(null);
-                } else if (cell.size == CellSize.DOUBLE_HEIGHT) {
+                cellView.plain(cell.char).attr(attr).fill(fill);
+                if (cell.size == CellSize.DOUBLE_HEIGHT) {
                     cellView.scale(1, 2);
                 }
-                cellView.plain(cell.char).attr(attr).fill(fill).dy(dy);
+                View._setCellClasses(cellView, cell.type, cell.flashing, cell.concealed, isMosaicByte);
+                cellView.dy(dy);
 
                 if (cell.boxed) {
                     if (previousBoxed) this._extendBox();
@@ -147,46 +146,48 @@ export class View {
     }
 
     static _setCellClasses(cellView, cellType, flashing, concealed, isMosaic) {
-        if (cellType == CellType.MOSAIC_CONTIGUOUS && isMosaic) {
-            cellView.addClass('mosaic');
-            cellView.removeClass('mosaic_separated');
-        } else if (cellType == CellType.MOSAIC_SEPARATED && isMosaic) {
-            cellView.addClass('mosaic_separated');
-            cellView.removeClass('mosaic');
-        } else {
-            cellView.removeClass('mosaic mosaic_separated');
-        }
+        if (cellType == CellType.MOSAIC_CONTIGUOUS && isMosaic) cellView.addClass('mosaic');
+        else if (cellType == CellType.MOSAIC_SEPARATED && isMosaic) cellView.addClass('mosaic_separated');
 
         if (flashing) cellView.addClass('flash');
-        else cellView.removeClass('flash');
-
         if (concealed) cellView.addClass('conceal');
-        else cellView.removeClass('conceal');
     }
 
-    static _getCellAttr(cellType, isMosaicChar) {
+    static _getCellAttr(rowNum, colNum, cellType, isMosaicChar) {
+        const x = colNum * CELL_WIDTH + TEXT_X_OFFSET;
+        const y = rowNum * CELL_HEIGHT + TEXT_Y_OFFSET;
         if (cellType == CellType.MOSAIC_CONTIGUOUS && isMosaicChar) {
             return {
+                x: x,
+                y: y,
                 dx: MOSAIC_METRIC.contiguous.DX,
                 textLength: MOSAIC_METRIC.contiguous.textLength,
                 lengthAdjust: 'spacingAndGlyphs',
                 'text-anchor': 'start',
+                transform: null,
+                class: null,
             };
         } else if (cellType == CellType.MOSAIC_SEPARATED && isMosaicChar) {
             return {
+                x: x,
+                y: y,
                 dx: MOSAIC_METRIC.separated.DX,
                 textLength: MOSAIC_METRIC.separated.textLength,
                 lengthAdjust: 'spacingAndGlyphs',
                 'text-anchor': 'start',
+                transform: null,
+                class: null,
             };
         } 
         return {
+            x: x,
+            y: y,
             dx: null,
             textLength: null,
             lengthAdjust: null,
             'text-anchor': null,
-            stroke: null,
-            'stroke-width': null,
+            transform: null,
+            class: null,
         };
     }
 
@@ -212,18 +213,19 @@ export class View {
         }
     }
 
-    _resetRowCells(rowView) {
-        rowView.forEach(cellView => {
+    _resetRowCells(rowView, rowNum) {
+        rowView.forEach((cellView, colNum) => {
             cellView.plain(' ')
-                .removeClass('flash mosaic mosaic_separated')
                 .attr({
+                    x: colNum * CELL_WIDTH + TEXT_X_OFFSET,
+                    y: rowNum * CELL_HEIGHT + TEXT_Y_OFFSET,
                     dx: null,
                     dy: null,
                     textLength: null,
                     lengthAdjust: null,
                     'text-anchor': null,
-                    stroke: null,
-                    'stroke-width': null,
+                    transform: null,
+                    class: null,
                 })
             ;
         });

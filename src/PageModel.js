@@ -18,7 +18,7 @@ export class PageModel {
         }
         this._characterEncoding = 'latin_g0_english';
         this._startBoxChar = Attributes.charFromAttribute(Attributes.START_BOX)
-        this._level = Level['1.5'];
+        this._level = Level[1];
         
         this.onSet = new Event(this);
         console.debug('PageModel constructed');
@@ -62,6 +62,12 @@ export class PageModel {
             });
             console.log(index, '|', rowString, '|');
         });
+    }
+
+    setLevel(level) {
+        this._level = level;
+        console.debug('PageModel.setLevel: switching to Level', level);
+        this.onSet.notify();
     }
 
     getRow(rowNum) {

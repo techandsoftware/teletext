@@ -70,6 +70,9 @@
         window.addEventListener('keypress', e => {
             if (e.key == 's') window.dispatchEvent(new Event('ttx.subtitlemode'));
         });
+        window.addEventListener('keypress', e => {
+            if (e.key == 'l') window.dispatchEvent(new Event('ttx.level'));
+        });
         window.addEventListener('DOMContentLoaded', () => {
             document.getElementById('revealButton').addEventListener('click', () => {
                 window.dispatchEvent(new Event('ttx.reveal'));
