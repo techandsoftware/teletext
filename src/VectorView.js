@@ -244,9 +244,9 @@ export class View {
         const bgrows = [];
         const bgGroup = this.d.group();
         bgGroup.attr({ 'shape-rendering': 'crispEdges' })
-        for (let rowNum = 0; rowNum < ROWS; rowNum++) {
-            bgrows.push(bgGroup.group());
-        }
+        // for (let rowNum = 0; rowNum < ROWS; rowNum++) {
+        //     bgrows.push(bgGroup.group().data({row: rowNum}));
+        // }
         this.bgrows = bgrows;   // store backgrounds per row
         this.bgLayer = bgGroup;
     }
@@ -279,7 +279,8 @@ export class View {
     }
 
     _resetBackgroundForRow(rowNum) {
-        this.bgrows[rowNum] = this.bgLayer.group();
+        if (this.bgrows[rowNum]) this.bgrows[rowNum].remove();
+        this.bgrows[rowNum] = this.bgLayer.group().data({row: rowNum});
     }
 
     _extendBackgroundForRow(rowNum) {
