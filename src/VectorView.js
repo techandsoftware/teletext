@@ -97,13 +97,13 @@ export class View {
                 const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
                 const bg = Attributes.fillColourFromColourAttrib(cell.bgColour);
                 const dy = View._getCellDY(cell.type, cell.size);
-                const attr = View._getCellAttr(rowIndex, cellIndex, cell.type, isMosaicByte);
+                const attr = View._getCellAttr(cell.type, isMosaicByte);
 
                 cellView.plain(cell.char).attr(attr).fill(fill);
                 if (cell.size == CellSize.DOUBLE_HEIGHT) {
                     cellView.scale(1, 2);
                 }
-                cellView.dy(dy);
+                cellView.attr({ dy: dy });
                 View._setCellClasses(cellView, cell.type, cell.flashing, cell.concealed, isMosaicByte);
 
                 if (cell.boxed) {
@@ -153,13 +153,9 @@ export class View {
         if (concealed) cellView.addClass('conceal');
     }
 
-    static _getCellAttr(rowNum, colNum, cellType, isMosaicChar) {
-        const x = colNum * CELL_WIDTH + TEXT_X_OFFSET;
-        const y = rowNum * CELL_HEIGHT + TEXT_Y_OFFSET;
+    static _getCellAttr(cellType, isMosaicChar) {
         if (cellType == CellType.MOSAIC_CONTIGUOUS && isMosaicChar) {
             return {
-                x: x,
-                y: y,
                 dx: MOSAIC_METRIC.contiguous.DX,
                 textLength: MOSAIC_METRIC.contiguous.textLength,
                 lengthAdjust: 'spacingAndGlyphs',
@@ -169,8 +165,6 @@ export class View {
             };
         } else if (cellType == CellType.MOSAIC_SEPARATED && isMosaicChar) {
             return {
-                x: x,
-                y: y,
                 dx: MOSAIC_METRIC.separated.DX,
                 textLength: MOSAIC_METRIC.separated.textLength,
                 lengthAdjust: 'spacingAndGlyphs',
@@ -180,8 +174,6 @@ export class View {
             };
         } 
         return {
-            x: x,
-            y: y,
             dx: null,
             textLength: null,
             lengthAdjust: null,
@@ -213,12 +205,10 @@ export class View {
         }
     }
 
-    _resetRowCells(rowView, rowNum) {
-        rowView.forEach((cellView, colNum) => {
+    _resetRowCells(rowView) {
+        rowView.forEach((cellView) => {
             cellView.plain(' ')
                 .attr({
-                    x: colNum * CELL_WIDTH + TEXT_X_OFFSET,
-                    y: rowNum * CELL_HEIGHT + TEXT_Y_OFFSET,
                     dx: null,
                     dy: null,
                     textLength: null,
