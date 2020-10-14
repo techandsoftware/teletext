@@ -29,7 +29,7 @@ export class TeletextController {
 
     loadPageFromEncodedString(input) {
         const decoded = Utils.decodeBase64URLEncoded(input);
-        // this.setRow(0, decoded[10]);
+        // this.setRow(0, decoded[2]);
         this.setPageRows(decoded);
     }
 

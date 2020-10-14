@@ -81,11 +81,11 @@ export class View {
         console.debug('## View._update');
         let nextRowHidden = false;
         this.gridrows.forEach((rowView, rowIndex) => {
+            this._resetBackgroundForRow(rowIndex);
+            this._resetBoxClipForRow(rowIndex);
             if (nextRowHidden) {
                 nextRowHidden = false;
                 this._resetRowCells(rowView, rowIndex);
-                this._resetBackgroundForRow(rowIndex);
-                this._resetBoxClipForRow(rowIndex);
                 return;
             }
 
@@ -103,8 +103,8 @@ export class View {
                 if (cell.size == CellSize.DOUBLE_HEIGHT) {
                     cellView.scale(1, 2);
                 }
-                View._setCellClasses(cellView, cell.type, cell.flashing, cell.concealed, isMosaicByte);
                 cellView.dy(dy);
+                View._setCellClasses(cellView, cell.type, cell.flashing, cell.concealed, isMosaicByte);
 
                 if (cell.boxed) {
                     if (previousBoxed) this._extendBox();
