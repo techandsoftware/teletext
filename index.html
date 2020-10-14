@@ -62,19 +62,24 @@
         }
     </style>
     <script>
-    (function() {
+    (() => {
         "use strict";
         window.addEventListener('keypress', e => {
-            if (e.key == '?') window.dispatchEvent(new Event('ttx.reveal'));
-        });
-        window.addEventListener('keypress', e => {
-            if (e.key == 's') window.dispatchEvent(new Event('ttx.subtitlemode'));
-        });
-        window.addEventListener('keypress', e => {
-            if (e.key == 'l') window.dispatchEvent(new Event('ttx.level'));
-        });
-        window.addEventListener('keypress', e => {
-            if (e.key == 't') window.dispatchEvent(new Event('ttx.testpage'));
+            switch (e.key) {
+                case '?':
+                    window.dispatchEvent(new Event('ttx.reveal'));
+                    break;
+                case 's':
+                    window.dispatchEvent(new Event('ttx.subtitlemode'));
+                    break;
+                case 'l':
+                    window.dispatchEvent(new Event('ttx.level'));
+                    break;
+                case 't':
+                    window.dispatchEvent(new Event('ttx.testpage'));
+                    break;
+                default:
+            }
         });
         window.addEventListener('DOMContentLoaded', () => {
             document.getElementById('revealButton').addEventListener('click', () => {
