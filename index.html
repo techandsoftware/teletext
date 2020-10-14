@@ -73,6 +73,9 @@
         window.addEventListener('keypress', e => {
             if (e.key == 'l') window.dispatchEvent(new Event('ttx.level'));
         });
+        window.addEventListener('keypress', e => {
+            if (e.key == 't') window.dispatchEvent(new Event('ttx.testpage'));
+        });
         window.addEventListener('DOMContentLoaded', () => {
             document.getElementById('revealButton').addEventListener('click', () => {
                 window.dispatchEvent(new Event('ttx.reveal'));
