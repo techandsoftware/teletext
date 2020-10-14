@@ -8,6 +8,7 @@ const view = new View(model);
 const ctl = new TeletextController(model, view);
 
 ctl.showTestPage();
+// ctl.showRandomisedPage();
 
 
 // ctl.setPageRows([

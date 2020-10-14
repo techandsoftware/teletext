@@ -28,6 +28,18 @@ export class TeletextController {
         this._testPageIndex++;
         if (this._testPageIndex == TEST_PAGE_NAMES.length) this._testPageIndex = 0;
     }
+    
+    showRandomisedPage() {
+        const rows = [];
+        for (let row = 0; row < 25; row++) {
+            const cols = [];
+            for (let col = 0; col < 40; col++) {
+                cols.push(String.fromCharCode(Math.random() * 127));
+            }
+            rows.push(cols.join(''));
+        }
+        this.setPageRows(rows);
+    }
 
     loadPageFromEncodedString(input) {
         const decoded = Utils.decodeBase64URLEncoded(input);
