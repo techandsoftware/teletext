@@ -51,6 +51,7 @@ export class TeletextController {
         window.addEventListener('ttx.reveal', () => this._view.reveal());
         window.addEventListener('ttx.subtitlemode', () => this._view.boxMode());
         window.addEventListener('ttx.testpage', () => this.showTestPage());
+        window.addEventListener('ttx.testrandom', () => this.showRandomisedPage());
         window.addEventListener('ttx.level', () => {
             this._levelIndex++;
             if (this._levelIndex == LEVELS.length) this._levelIndex = 0;

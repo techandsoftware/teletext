@@ -102,6 +102,7 @@ export class PageModel {
             // 'set-after' attributes from previous cell
             textColour = nextTextColour;
             cell.type = nextCellType;
+            cell.boxed = nextBoxed;
             if (attrib.attribute != Attributes.STEADY) cell.flashing = nextFlashing;
             if (attrib.attribute != Attributes.NORMAL_SIZE) cell.size = nextSize;
             if (attrib.attribute != Attributes.CONCEAL) cell.concealed = nextConcealed;
@@ -112,7 +113,6 @@ export class PageModel {
                 }
                 cancelNextHoldMosaics = false;
             }
-            cell.boxed = nextBoxed;
 
             switch (attrib.attribute) {
                 case Attributes.TEXT_COLOUR: // set after this cell
