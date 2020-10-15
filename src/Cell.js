@@ -46,6 +46,8 @@ export class Cell {
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__legacy_computing');
         else
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__unscii_separated');
+
+        this._byteHeld = null;
     }
 
     setSpace(heldMosaic) {
@@ -60,10 +62,6 @@ export class Cell {
             this._byteHeld = null;
             this._char = ' ';
         }
-    }
-
-    clearHeld() {
-        this._byteHeld = null;
     }
 
     get char() {
