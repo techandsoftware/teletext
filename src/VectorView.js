@@ -81,7 +81,6 @@ export class View {
         console.debug('## View._update');
         let nextRowHidden = false;
         this.gridrows.forEach((rowView, rowIndex) => {
-            // this.d.removeClass('flash_flashing');
             this._resetBackgroundForRow(rowIndex);
             this._resetBoxClipForRow(rowIndex);
             if (nextRowHidden) {
@@ -102,7 +101,7 @@ export class View {
 
                 cellView.plain(cell.char).attr(attr).fill(fill);
                 if (cell.size == CellSize.DOUBLE_HEIGHT) {
-                    cellView.scale(1, 2);
+                    cellView.scale(1, 2); // TODO - check if this has an impact and if it's better to set transformation attribute directly
                 }
                 cellView.attr({ dy: dy });
                 View._setCellClasses(cellView, cell.type, cell.flashing, cell.concealed, isMosaicByte);
@@ -129,7 +128,9 @@ export class View {
             }
 
             this._makeClipFromBoxesForRow(rowIndex);
-            // this.d.addClass('flash_flashing'); // FUDGE keep flashing synchronised
+            // FUDGE keep flashing synchronised
+            this.d.removeClass('flash_flashing');
+            setTimeout(() => this.d.addClass('flash_flashing'), 0);
         });
     }
 
