@@ -80,6 +80,7 @@ export class View {
     _update() {
         console.debug('## View._update');
         let nextRowHidden = false;
+        let pageContainsFlash = false;
         this.gridrows.forEach((rowView, rowIndex) => {
             this._resetBackgroundForRow(rowIndex);
             this._resetBoxClipForRow(rowIndex);
@@ -116,6 +117,7 @@ export class View {
 
                 previousBoxed = cell.boxed;
                 previousBg = bg;
+                if (cell.flashing) pageContainsFlash = true;
             });
 
             if (rowModel.doubleHeight) {
@@ -129,8 +131,10 @@ export class View {
 
             this._makeClipFromBoxesForRow(rowIndex);
             // FUDGE keep flashing synchronised
-            this.d.removeClass('flash_flashing');
-            setTimeout(() => this.d.addClass('flash_flashing'), 0);
+            if (pageContainsFlash) {
+                this.d.removeClass('flash_flashing');
+                setTimeout(() => this.d.addClass('flash_flashing'), 0);
+            }
         });
     }
 
