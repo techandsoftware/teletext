@@ -20,7 +20,7 @@ const CELL_DOUBLE_HEIGHT = CELL_HEIGHT * 2;
 
 const TEXT_X_OFFSET = CELL_WIDTH / 2;           // middle of cell
 const TEXT_Y_OFFSET = CELL_HEIGHT * (4 / 5);    // font baseline
-const TEXT_DOUBLE_HEIGHT_DY = TEXT_Y_OFFSET / 4;
+// const TEXT_DOUBLE_HEIGHT_DY = TEXT_Y_OFFSET / 4;
 
 // FUDGE contiguous mosaics are slightly bigger than they should be to avoid tiny gaps on adjacent characters.
 // Suspect the gaps are due to font antialiasing, with no way to switch antialiasing off.
@@ -29,14 +29,14 @@ const MOSAIC_METRIC = {
         textLength: CELL_WIDTH + 0.2,
         DX: 0 - TEXT_X_OFFSET -0.1,
         DY: null,   
-        doubleHeightDY: 2.3
+        doubleHeightDY: null
     }
 };
 MOSAIC_METRIC.separated = {
     textLength: CELL_WIDTH,
     DX: 0 - TEXT_X_OFFSET + 0.5,
     DY: null,
-    doubleHeightDY: 2.3
+    doubleHeightDY: null
 };
 Object.freeze(MOSAIC_METRIC);
 
@@ -47,7 +47,7 @@ const dyLookup = {
         [CellType.MOSAIC_SEPARATED] : MOSAIC_METRIC.separated.DY,
     },
     [CellSize.DOUBLE_HEIGHT]: {
-        [CellType.ALPHA]            : TEXT_DOUBLE_HEIGHT_DY,
+        [CellType.ALPHA]            : null,
         [CellType.MOSAIC_CONTIGUOUS]: MOSAIC_METRIC.contiguous.doubleHeightDY,
         [CellType.MOSAIC_SEPARATED] : MOSAIC_METRIC.separated.doubleHeightDY,
     }
@@ -102,8 +102,8 @@ export class View {
 
                 cellView.plain(cell.char).attr(attr).fill(fill);
                 if (cell.size == CellSize.DOUBLE_HEIGHT) {
-                    const yTranslate = 0 - (((CELL_HEIGHT * rowIndex) + TEXT_Y_OFFSET) / 2) + dy;
-                    cellView.attr('transform', `scale(1 2) translate(0 ${yTranslate})`);
+                    const yTranslate = (2 * ((CELL_HEIGHT * rowIndex) + TEXT_Y_OFFSET)) - ((CELL_HEIGHT * rowIndex) + (2 * TEXT_Y_OFFSET))
+                    cellView.attr('transform', `translate(0 -${yTranslate}) scale(1 2)`);
                 }
                 cellView.attr('dy', dy);
                 View._setCellClasses(cellView, cell.type, cell.flashing, cell.concealed, isMosaicByte);
