@@ -105,7 +105,7 @@ export class View {
                     const yTranslate = 0 - (((CELL_HEIGHT * rowIndex) + TEXT_Y_OFFSET) / 2) + dy;
                     cellView.attr('transform', `scale(1 2) translate(0 ${yTranslate})`);
                 }
-                cellView.attr({ dy: dy });
+                cellView.attr('dy', dy);
                 View._setCellClasses(cellView, cell.type, cell.flashing, cell.concealed, isMosaicByte);
 
                 if (cell.boxed) {
@@ -122,7 +122,7 @@ export class View {
             });
 
             if (rowModel.doubleHeight) {
-                this.bgrows[rowIndex].height(CELL_DOUBLE_HEIGHT);
+                this._setRowDoubleHeight(rowIndex);
                 this._setBoxDoubleHeight();
                 nextRowHidden = true;
             } else {
@@ -301,6 +301,10 @@ export class View {
     _extendBox() {
         const width = this.lastBoxBuffer.width();
         this.lastBoxBuffer.width(width + CELL_WIDTH);
+    }
+
+    _setRowDoubleHeight(rowNum) {
+        this.bgrows[rowNum].children().forEach(bg => bg.attr('height', CELL_DOUBLE_HEIGHT));
     }
 
     _setBoxDoubleHeight() {
