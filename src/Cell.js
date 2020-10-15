@@ -62,6 +62,10 @@ export class Cell {
         }
     }
 
+    clearHeld() {
+        this._byteHeld = null;
+    }
+
     get char() {
         return this._char;
     }

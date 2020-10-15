@@ -215,6 +215,7 @@ export class PageModel {
                     }
             }
 
+            if (!heldMosaic.active) cell.clearHeld();
             cell.fgColour = textColour;
             cell.bgColour = backgroundColour;
             rowModel.addCell(cell);

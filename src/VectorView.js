@@ -40,7 +40,7 @@ MOSAIC_METRIC.separated = {
 };
 Object.freeze(MOSAIC_METRIC);
 
-const dyLookup = {
+const dyLookup = { // TODO remove
     [CellSize.NORMAL_SIZE]: {
         [CellType.ALPHA]            : null,
         [CellType.MOSAIC_CONTIGUOUS]: MOSAIC_METRIC.contiguous.DY,
