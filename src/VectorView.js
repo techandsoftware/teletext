@@ -62,7 +62,7 @@ export class View {
             .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO])
             .attr('preserveAspectRatio', 'none');
 
-        this.d = this._svg.group().toggleClass('conceal_concealed');
+        this.d = this._svg.group().attr('class', 'conceal_concealed flash_flashing');
 
         this._createRowBackgrounds();
         this._createCells();
@@ -81,6 +81,7 @@ export class View {
         console.debug('## View._update');
         let nextRowHidden = false;
         this.gridrows.forEach((rowView, rowIndex) => {
+            // this.d.removeClass('flash_flashing');
             this._resetBackgroundForRow(rowIndex);
             this._resetBoxClipForRow(rowIndex);
             if (nextRowHidden) {
@@ -128,6 +129,7 @@ export class View {
             }
 
             this._makeClipFromBoxesForRow(rowIndex);
+            // this.d.addClass('flash_flashing'); // FUDGE keep flashing synchronised
         });
     }
 
@@ -139,9 +141,11 @@ export class View {
         if (!this._boxMode) {
             this.d.clipWith(this.boxLayer)
             this._boxMode = true;
+            console.log('box activated');
         } else {
             this.d.unclip();
             this._boxMode = false;
+            console.log('box deactivated');
         }
     }
 
@@ -157,6 +161,7 @@ export class View {
         if (cellType == CellType.MOSAIC_CONTIGUOUS && isMosaicChar) {
             return {
                 dx: MOSAIC_METRIC.contiguous.DX,
+                dy: null,
                 textLength: MOSAIC_METRIC.contiguous.textLength,
                 lengthAdjust: 'spacingAndGlyphs',
                 'text-anchor': 'start',
@@ -166,6 +171,7 @@ export class View {
         } else if (cellType == CellType.MOSAIC_SEPARATED && isMosaicChar) {
             return {
                 dx: MOSAIC_METRIC.separated.DX,
+                dy: null,
                 textLength: MOSAIC_METRIC.separated.textLength,
                 lengthAdjust: 'spacingAndGlyphs',
                 'text-anchor': 'start',
@@ -175,6 +181,7 @@ export class View {
         } 
         return {
             dx: null,
+            dy: null,
             textLength: null,
             lengthAdjust: null,
             'text-anchor': null,
