@@ -130,12 +130,12 @@ export class View {
             }
 
             this._makeClipFromBoxesForRow(rowIndex);
-            // FUDGE keep flashing synchronised
-            if (pageContainsFlash) {
-                this.d.removeClass('flash_flashing');
-                setTimeout(() => this.d.addClass('flash_flashing'), 0);
-            }
         });
+        // FUDGE keep flashing synchronised
+        if (pageContainsFlash) {
+            this.d.removeClass('flash_flashing');
+            setTimeout(() => this.d.addClass('flash_flashing'), 0);
+        }
     }
 
     reveal() {
