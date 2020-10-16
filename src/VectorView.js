@@ -115,6 +115,7 @@ export class View {
             this.d.removeClass('flash_flashing');
             setTimeout(() => this.d.addClass('flash_flashing'), 0);
         }
+        this.d.addClass('conceal_concealed');
     }
 
     reveal() {
