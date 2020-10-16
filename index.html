@@ -19,11 +19,12 @@
         "use strict";
         const KEY_EVENTS = {
             '?': 'ttx.reveal',
-            's': 'ttx.subtitlemode',
-            'l': 'ttx.level',
-            't': 'ttx.testpage',
-            'x': 'ttx.testrandom',
             'm': 'ttx.mix',
+            's': 'ttx.subtitlemode',
+            'l': 'ttx.dev.level',
+            't': 'ttx.dev.testpage',
+            'x': 'ttx.dev.randompage',
+            'c': 'ttx.dev.grid', // c for cells
         };
         window.addEventListener('keypress', e => {
             if (e.key in KEY_EVENTS) window.dispatchEvent(new Event(KEY_EVENTS[e.key]));

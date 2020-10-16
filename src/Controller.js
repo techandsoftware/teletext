@@ -50,10 +50,11 @@ export class TeletextController {
     _initEventHandlers() {
         window.addEventListener('ttx.reveal', () => this._view.reveal());
         window.addEventListener('ttx.subtitlemode', () => this._view.boxMode());
-        window.addEventListener('ttx.testpage', () => this.showTestPage());
-        window.addEventListener('ttx.testrandom', () => this.showRandomisedPage());
+        window.addEventListener('ttx.dev.testpage', () => this.showTestPage());
+        window.addEventListener('ttx.dev.randompage', () => this.showRandomisedPage());
         window.addEventListener('ttx.mix', () => this._view.mixMode());
-        window.addEventListener('ttx.level', () => {
+        window.addEventListener('ttx.dev.grid', () => this._view.grid());
+        window.addEventListener('ttx.dev.level', () => {
             this._levelIndex++;
             if (this._levelIndex == LEVELS.length) this._levelIndex = 0;
             this._model.setLevel(LEVELS[this._levelIndex]);

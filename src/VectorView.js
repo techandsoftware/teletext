@@ -48,7 +48,7 @@ export class View {
         this._createRowBackgrounds();
         this._createCells();
         this._createBoxModeClip();
-        // this._drawGrid();
+        this._gridLayer = null;
 
         this._model = model;
         this._model.onSet.attach(
@@ -185,6 +185,15 @@ svg {
         this.d.toggleClass('conceal_concealed');
     }
 
+    grid() {
+        if (this._gridLayer) {
+            this._gridLayer.remove();
+            this._gridLayer = null;
+        } else {
+            this._drawGrid();
+        }
+    }
+
     mixMode() {
         if (this._mixMode) {
             this._mixMode = false;
@@ -247,14 +256,15 @@ svg {
     }
 
     _drawGrid() {
+        this._gridLayer = this.d.group();
         for (let row = 0; row < ROWS; row++) {
-            this.d.line(0, row * CELL_HEIGHT, WIDTH_PX - 1, row * CELL_HEIGHT).attr({
+            this._gridLayer.line(0, row * CELL_HEIGHT, WIDTH_PX - 1, row * CELL_HEIGHT).attr({
                 stroke: '#555',
                 'stroke-width': 0.5,
             });
         }
         for (let col = 0; col < COLS; col++) {
-            this.d.line(col * CELL_WIDTH, 0, col * CELL_WIDTH, HEIGHT_PX - 1).attr({
+            this._gridLayer.line(col * CELL_WIDTH, 0, col * CELL_WIDTH, HEIGHT_PX - 1).attr({
                 stroke: '#555',
                 'stroke-width': 0.5,
             });
