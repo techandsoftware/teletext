@@ -27,11 +27,11 @@ const MOSAIC_METRIC = {
     contiguous: {
         textLength: CELL_WIDTH + 0.2,
         DX: 0 - TEXT_X_OFFSET -0.1,
+    },
+    separated: {
+        textLength: CELL_WIDTH,
+        DX: 0 - TEXT_X_OFFSET + 0.5,
     }
-};
-MOSAIC_METRIC.separated = {
-    textLength: CELL_WIDTH,
-    DX: 0 - TEXT_X_OFFSET + 0.5,
 };
 Object.freeze(MOSAIC_METRIC);
 
