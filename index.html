@@ -25,12 +25,19 @@
             }
         }
         @keyframes fancyblink {
+            0% {
+                filter: none;
+                opacity: 0.8;
+            }
+            33% {
+                filter: none;
+                opacity: 1;
+            }
             66% {
                 filter: none;
                 opacity: 1;
             }
             to {
-                xvisibility: hidden;
                 filter: blur(1px);
                 opacity: 0;
             }
@@ -45,7 +52,7 @@
         }
         .flash_flashing .flash {
             /* animation: blink 2s steps(3, start) infinite; */
-            animation: fancyblink 2s ease-in infinite;
+            animation: fancyblink 2s linear infinite;
         }
         .conceal_concealed  .conceal {
             visibility: hidden;
