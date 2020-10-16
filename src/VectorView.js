@@ -20,7 +20,6 @@ const CELL_DOUBLE_HEIGHT = CELL_HEIGHT * 2;
 
 const TEXT_X_OFFSET = CELL_WIDTH / 2;           // middle of cell
 const TEXT_Y_OFFSET = CELL_HEIGHT * (4 / 5);    // font baseline
-// const TEXT_DOUBLE_HEIGHT_DY = TEXT_Y_OFFSET / 4;
 
 // FUDGE contiguous mosaics are slightly bigger than they should be to avoid tiny gaps on adjacent characters.
 // Suspect the gaps are due to font antialiasing, with no way to switch antialiasing off.
@@ -28,32 +27,13 @@ const MOSAIC_METRIC = {
     contiguous: {
         textLength: CELL_WIDTH + 0.2,
         DX: 0 - TEXT_X_OFFSET -0.1,
-        DY: null,   
-        doubleHeightDY: null
     }
 };
 MOSAIC_METRIC.separated = {
     textLength: CELL_WIDTH,
     DX: 0 - TEXT_X_OFFSET + 0.5,
-    DY: null,
-    doubleHeightDY: null
 };
 Object.freeze(MOSAIC_METRIC);
-
-const dyLookup = { // TODO remove
-    [CellSize.NORMAL_SIZE]: {
-        [CellType.ALPHA]            : null,
-        [CellType.MOSAIC_CONTIGUOUS]: MOSAIC_METRIC.contiguous.DY,
-        [CellType.MOSAIC_SEPARATED] : MOSAIC_METRIC.separated.DY,
-    },
-    [CellSize.DOUBLE_HEIGHT]: {
-        [CellType.ALPHA]            : null,
-        [CellType.MOSAIC_CONTIGUOUS]: MOSAIC_METRIC.contiguous.doubleHeightDY,
-        [CellType.MOSAIC_SEPARATED] : MOSAIC_METRIC.separated.doubleHeightDY,
-    }
-};
-Object.freeze(dyLookup);
-
 
 export class View {
     constructor(model) {
@@ -97,7 +77,6 @@ export class View {
                 const isMosaicByte = cell.isMosaicByte();
                 const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
                 const bg = Attributes.fillColourFromColourAttrib(cell.bgColour);
-                const dy = View._getCellDY(cell.type, cell.size);
                 const attr = View._getCellAttr(cell.type, isMosaicByte);
 
                 cellView.plain(cell.char).attr(attr).fill(fill);
@@ -105,7 +84,6 @@ export class View {
                     const yTranslate = (2 * ((CELL_HEIGHT * rowIndex) + TEXT_Y_OFFSET)) - ((CELL_HEIGHT * rowIndex) + (2 * TEXT_Y_OFFSET))
                     cellView.attr('transform', `translate(0 -${yTranslate}) scale(1 2)`);
                 }
-                cellView.attr('dy', dy);
                 View._setCellClasses(cellView, cell.type, cell.flashing, cell.concealed, isMosaicByte);
 
                 if (cell.boxed) {
@@ -167,7 +145,6 @@ export class View {
         if (cellType == CellType.MOSAIC_CONTIGUOUS && isMosaicChar) {
             return {
                 dx: MOSAIC_METRIC.contiguous.DX,
-                dy: null,
                 textLength: MOSAIC_METRIC.contiguous.textLength,
                 lengthAdjust: 'spacingAndGlyphs',
                 'text-anchor': 'start',
@@ -177,7 +154,6 @@ export class View {
         } else if (cellType == CellType.MOSAIC_SEPARATED && isMosaicChar) {
             return {
                 dx: MOSAIC_METRIC.separated.DX,
-                dy: null,
                 textLength: MOSAIC_METRIC.separated.textLength,
                 lengthAdjust: 'spacingAndGlyphs',
                 'text-anchor': 'start',
@@ -187,20 +163,12 @@ export class View {
         } 
         return {
             dx: null,
-            dy: null,
             textLength: null,
             lengthAdjust: null,
             'text-anchor': null,
             transform: null,
             class: null,
         };
-    }
-
-    static _getCellDY(type, size) {
-        if (size == CellSize.NORMAL_SIZE || size == CellSize.DOUBLE_WIDTH) {
-            return dyLookup[CellSize.NORMAL_SIZE][type];
-        }
-        return dyLookup[CellSize.DOUBLE_HEIGHT][type];
     }
 
     _drawGrid() {
@@ -223,7 +191,6 @@ export class View {
             cellView.plain(' ')
                 .attr({
                     dx: null,
-                    dy: null,
                     textLength: null,
                     lengthAdjust: null,
                     'text-anchor': null,
