@@ -54,6 +54,7 @@ export class View {
             () => this._update()
         );
         this._boxMode = false;
+        this._mixMode = false;
         console.debug('VectorView constructed');
     }
 
@@ -104,22 +105,32 @@ export class View {
                 this._setBoxDoubleHeight();
                 nextRowHidden = true;
             } else {
-                this.bgrows[rowIndex].transform(null);
                 nextRowHidden = false;
             }
 
             this._makeClipFromBoxesForRow(rowIndex);
         });
+        this.d.addClass('conceal_concealed');
         // FUDGE keep flashing synchronised
         if (pageContainsFlash) {
             this.d.removeClass('flash_flashing');
             setTimeout(() => this.d.addClass('flash_flashing'), 0);
         }
-        this.d.addClass('conceal_concealed');
     }
 
     reveal() {
         this.d.toggleClass('conceal_concealed');
+    }
+
+    mixMode() {
+        if (this._mixMode) {
+            this._mixMode = false;
+            this.bgLayer.attr('opacity', 1);
+        } else {
+            this._mixMode = true;
+            if (this._boxMode) this.bgLayer.attr('opacity', 0.3);
+            else this.bgLayer.attr('opacity', 0);
+        }
     }
 
     boxMode() {
