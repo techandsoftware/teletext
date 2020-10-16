@@ -125,7 +125,7 @@ export class View {
     mixMode() {
         if (this._mixMode) {
             this._mixMode = false;
-            this.bgLayer.attr('opacity', 1);
+            this.bgLayer.attr('opacity', null);
         } else {
             this._mixMode = true;
             if (this._boxMode) this.bgLayer.attr('opacity', 0.3);
