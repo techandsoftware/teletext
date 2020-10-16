@@ -225,7 +225,10 @@ export class View {
     _createRowBackgrounds() {
         const bgrows = [];
         const bgGroup = this.d.group();
-        bgGroup.attr('shape-rendering', 'crispEdges');
+        bgGroup.attr({
+            'shape-rendering': 'crispEdges',
+            id: 'background'
+        });
         this.bgrows = bgrows;   // store backgrounds per row
         this.bgLayer = bgGroup;
     }
