@@ -16,6 +16,7 @@
         import { teletextjs, Level } from './dist/teletextjs.js';
         import { DemoApp } from './src/DemoApp.js';
     (() => {
+        teletextjs.addTo('#teletextscreen');
         teletextjs.showTestPage();
         const demo = new DemoApp(teletextjs);
 

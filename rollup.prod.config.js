@@ -17,6 +17,7 @@ export default {
       format: 'umd',
       name: 'teletextjs',
       preferConst: true,
+      sourcemap: true,
     }
   ],
   plugins: [

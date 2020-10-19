@@ -70,4 +70,8 @@ export class TeletextController {
     setLevel(level) {
         this._model.setLevel(level);
     }
+
+    addTo(selector) {
+        this._view.addTo(selector);
+    }
 }
