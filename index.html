@@ -8,15 +8,16 @@
     <style>
         body {
             background-color: #040;
-        }
-        input {
             font-size: 30px;
+            color: white;
         }
     </style>
     <script type="module">
         import { teletextjs, Level } from './dist/teletextjs.js';
+        import { DemoApp } from './src/DemoApp.js';
     (() => {
         teletextjs.showTestPage();
+        const demo = new DemoApp(teletextjs);
 
         const levels = Object.keys(Level);
         let levelIndex = 1;
@@ -46,12 +47,19 @@
                 case 'c': // for cells
                     teletextjs.toggleGrid();
                     break;
+                case 'd':
+                    debugger;
+                    demo.setPageRows();
+                    break;
                 default:
             }
         });
         window.addEventListener('DOMContentLoaded', () => {
             document.getElementById('revealButton').addEventListener('click', () => {
                 window.dispatchEvent(new Event('ttx.reveal'));
+            });
+            document.getElementById('levelSelect').addEventListener('input', e => {
+                teletextjs.setLevel(Level[e.target.value]);
             });
         });
     })();
@@ -62,6 +70,15 @@
     <div id="teletextscreen"></div>
 
     <input type="button" value="REVEAL (?)" id="revealButton">
+
+    <hr>
+
+    <label for="levelSelect">Level: </label>
+    <select id="levelSelect" autocomplete="false">
+        <option>0</option>
+        <option selected>1</option>
+        <option>1.5</option>
+    </select>
 </body>
 
 </html>
