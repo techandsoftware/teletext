@@ -1,8 +1,47 @@
-import { Attributes, Colour } from '../dist/teletextjs.js';
+import { teletextjs, Attributes, Colour, Level } from '../dist/teletextjs.js';
 
 export class DemoApp {
     constructor(teletextjs) {
         this.t = teletextjs;
+        this.KEY_EVENTS = {
+            '?': 'ttx.reveal',
+            'm': 'ttx.mix',
+            's': 'ttx.subtitlemode',
+        };
+        this._initEventListeners();
+    }
+
+    _initEventListeners() {
+        window.addEventListener('keypress', e => {
+            switch (e.key) {
+                case '?':
+                case 'm':
+                case 's':
+                    window.dispatchEvent(new Event(this.KEY_EVENTS[e.key]));
+                    break;
+                case 't':
+                    teletextjs.showTestPage();
+                    break;
+                case 'x':
+                    teletextjs.showRandomisedPage();
+                    break;
+                case 'c': // for cells
+                    teletextjs.toggleGrid();
+                    break;
+                case 'd':
+                    this.setPageRows();
+                    break;
+                default:
+            }
+        });
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('revealButton').addEventListener('click', () => {
+                window.dispatchEvent(new Event('ttx.reveal'));
+            });
+            document.getElementById('levelSelect').addEventListener('input', e => {
+                teletextjs.setLevel(Level[e.target.value]);
+            });
+        });
     }
 
     setPageRows() {

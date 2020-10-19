@@ -37,7 +37,7 @@ Object.freeze(MOSAIC_METRIC);
 
 export class View {
     constructor(model) {
-        this._svg = new SVG()//.addTo('#teletextscreen')
+        this._svg = new SVG()
             .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
             .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO])
             .attr('preserveAspectRatio', 'none')
