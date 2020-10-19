@@ -1,4 +1,4 @@
-import { SVG } from '@svgdotjs/svg.js';
+import { SVG } from './SVG.js'
 import { Attributes, CellType, CellSize } from './Attributes.js';
 
 const WIDTH_PX = 400;
@@ -37,12 +37,12 @@ Object.freeze(MOSAIC_METRIC);
 
 export class View {
     constructor(model) {
-        this._svg = SVG().addTo('#teletextscreen')
+        this._svg = new SVG().addTo('#teletextscreen')
             .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
             .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO])
             .attr('preserveAspectRatio', 'none')
-        
-        this._svg.style(getStyle());
+            .style(getStyle());
+
         this.d = this._svg.group().attr('class', 'conceal_concealed flash_flashing');
 
         this._createRowBackgrounds();
@@ -192,7 +192,7 @@ export class View {
         // Then moved to the <clipPath> stored in this.boxLayer and tagged with data-r=rowNum
         this.defs = this.d.defs();
         this.lastBoxBuffer = null;
-        this.boxLayer = this.d.clip();
+        this.boxLayer = this.defs.clip();
     }
 
     _createRowBackgrounds() {
@@ -208,11 +208,10 @@ export class View {
 
     _createCells() {
         const gridrows = [];
-        const fontSize = CELL_HEIGHT;// * (9/10);
         const textGroup = this.d.group().attr({
             'text-anchor': 'middle',
             'fill': '#fff'
-        }).font({ size: fontSize });
+        }).attr('id', 'textlayer');
         for (let rowNum = 0; rowNum < ROWS; rowNum++) {
             const rowCells = [];
             for (let colNum = 0; colNum < COLS; colNum++) {
@@ -362,6 +361,9 @@ to {
 filter: blur(1px);
 opacity: 0;
 }
+}
+#textlayer {
+    font-size: 10px;
 }
 .mosaic {
 font-family: 'Unscii';

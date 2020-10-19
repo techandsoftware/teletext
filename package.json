@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@svgdotjs/svg.js": "^3.0.16",
     "uint1array": "^1.1.1"
   },
   "devDependencies": {
@@ -12,10 +11,12 @@
     "@rollup/plugin-node-resolve": "^9.0.0",
     "eslint": "^7.9.0",
     "rollup-plugin-browsersync": "^1.1.0",
-    "rollup-plugin-sourcemaps": "^0.6.2"
+    "rollup-plugin-sourcemaps": "^0.6.2",
+    "rollup-plugin-terser": "^7.0.2"
   },
   "scripts": {
     "buildserve": "rollup -c -w",
+    "builddist": "rollup -c",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
