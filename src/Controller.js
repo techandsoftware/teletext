@@ -1,8 +1,6 @@
-import { Level } from './Attributes.js';
 import { Utils } from './Utils.js';
 import testpages from'./data/testpages.json';
 
-const LEVELS = [Level[0], Level[1], Level[1.5], Level[2.5]];
 const TEST_PAGE_NAMES = ['ENGINEERING', 'ADVERT', 'UK'];
 
 export class TeletextController {
@@ -49,15 +47,27 @@ export class TeletextController {
 
     _initEventHandlers() {
         window.addEventListener('ttx.reveal', () => this._view.reveal());
-        window.addEventListener('ttx.subtitlemode', () => this._view.boxMode());
-        window.addEventListener('ttx.dev.testpage', () => this.showTestPage());
-        window.addEventListener('ttx.dev.randompage', () => this.showRandomisedPage());
         window.addEventListener('ttx.mix', () => this._view.mixMode());
-        window.addEventListener('ttx.dev.grid', () => this._view.grid());
-        window.addEventListener('ttx.dev.level', () => {
-            this._levelIndex++;
-            if (this._levelIndex == LEVELS.length) this._levelIndex = 0;
-            this._model.setLevel(LEVELS[this._levelIndex]);
-        });
+        window.addEventListener('ttx.subtitlemode', () => this._view.boxMode());
+    }
+
+    toggleReveal() {
+        this._view.reveal();
+    }
+
+    toggleMixMode() {
+        this._view.mixMode();
+    }
+
+    toggleBoxMode() {
+        this._view.boxMode();
+    }
+
+    toggleGrid() {
+        this._view.grid();
+    }
+
+    setLevel(level) {
+        this._model.setLevel(level);
     }
 }

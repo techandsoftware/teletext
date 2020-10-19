@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <title>title</title>
-    <script src="dist/appbundle.js" type="module">
     </script>
     <style>
         body {
@@ -14,20 +13,41 @@
             font-size: 30px;
         }
     </style>
-    <script>
+    <script type="module">
+        import { teletextjs, Level } from './dist/teletextjs.js';
     (() => {
-        "use strict";
+        teletextjs.showTestPage();
+
+        const levels = Object.keys(Level);
+        let levelIndex = 1;
         const KEY_EVENTS = {
             '?': 'ttx.reveal',
             'm': 'ttx.mix',
             's': 'ttx.subtitlemode',
-            'l': 'ttx.dev.level',
-            't': 'ttx.dev.testpage',
-            'x': 'ttx.dev.randompage',
-            'c': 'ttx.dev.grid', // c for cells
         };
         window.addEventListener('keypress', e => {
-            if (e.key in KEY_EVENTS) window.dispatchEvent(new Event(KEY_EVENTS[e.key]));
+            switch (e.key) {
+                case '?':
+                case 'm':
+                case 's':
+                    window.dispatchEvent(new Event(KEY_EVENTS[e.key]));
+                    break;
+                case 'l':
+                    levelIndex++;
+                    if (levelIndex == levels.length) levelIndex = 0;
+                    teletextjs.setLevel(Level[levels[levelIndex]]);
+                    break;
+                case 't':
+                    teletextjs.showTestPage();
+                    break;
+                case 'x':
+                    teletextjs.showRandomisedPage();
+                    break;
+                case 'c': // for cells
+                    teletextjs.toggleGrid();
+                    break;
+                default:
+            }
         });
         window.addEventListener('DOMContentLoaded', () => {
             document.getElementById('revealButton').addEventListener('click', () => {
