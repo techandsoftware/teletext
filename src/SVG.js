@@ -173,10 +173,12 @@ class Group extends Element {
 
     clipWith(clipPath) {
         this._e.setAttribute('clip-path', `url("#${clipPath._node().id}")`);
+        return this;
     }
 
     unclip() {
         this._e.removeAttribute('clip-path');
+        return this;
     }
 
     remove() {

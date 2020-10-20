@@ -56,6 +56,7 @@ export class View {
         );
         this._boxMode = false;
         this._mixMode = false;
+        this._pageContainsBox = false;
         console.debug('VectorView constructed');
     }
 
@@ -67,6 +68,7 @@ export class View {
         console.debug('## View._update');
         let nextRowHidden = false;
         let pageContainsFlash = false;
+        this._pageContainsBox = false;
         this._gridrows.forEach((rowView, rowIndex) => {
             this._resetBackgroundForRow(rowIndex);
             this._resetBoxClipForRow(rowIndex);
@@ -95,6 +97,7 @@ export class View {
                 if (cell.boxed) {
                     if (previousBoxed) this._extendBox();
                     else this._setBoxForRow(rowIndex, cellIndex);
+                    this._pageContainsBox = true;
                 }
 
                 if (previousBg == bg) this._extendBackgroundForRow(rowIndex);
@@ -121,6 +124,7 @@ export class View {
             this.d.removeClass('flash_flashing');
             setTimeout(() => this.d.addClass('flash_flashing'), 0);
         }
+        this._refreshMixMode();
     }
 
     reveal() {
@@ -139,12 +143,24 @@ export class View {
     mixMode() {
         if (this._mixMode) {
             this._mixMode = false;
-            this._bgLayer.attr('opacity', null);
+            this._bgLayer.attr('opacity', null).unclip();
         } else {
             this._mixMode = true;
-            if (this._boxMode) this._bgLayer.attr('opacity', 0.3);
-            else this._bgLayer.attr('opacity', 0);
+            this._setMixMode();
         }
+    }
+
+    _setMixMode() {
+        if (this._boxMode && this._pageContainsBox)
+            this._bgLayer.attr('opacity', 0.3);
+        else if (this._pageContainsBox)
+            this._bgLayer.clipWith(this._boxLayer).attr('opacity', 0.3);
+        else
+            this._bgLayer.attr('opacity', 0);
+    }
+
+    _refreshMixMode() {
+        if (this._mixMode) this._setMixMode();
     }
 
     boxMode() {
@@ -157,6 +173,7 @@ export class View {
             this._boxMode = false;
             console.log('box deactivated');
         }
+        this._refreshMixMode();
     }
 
     _drawGrid() {
