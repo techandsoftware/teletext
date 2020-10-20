@@ -1,4 +1,4 @@
-import { teletextjs, Attributes, Colour, Level } from '../dist/teletextjs.js';
+import { teletextjs, Attributes, Colour, Level } from '../dist/teletextjs.min.js';
 
 export class DemoApp {
     constructor(teletextjs) {

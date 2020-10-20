@@ -15,7 +15,6 @@
     </script>
     <script>
     (() => {
-        let levelIndex = 1;
         const KEY_EVENTS = {
             '?': 'ttx.reveal',
             'm': 'ttx.mix',
@@ -31,7 +30,6 @@
             });
         });
         window.addEventListener("load", () => {
-            console.log('here');
             teletextjs.teletextjs.addTo('#teletextscreen');
             teletextjs.teletextjs.showTestPage();
         });

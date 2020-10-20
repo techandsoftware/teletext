@@ -18,10 +18,25 @@ export default {
       name: 'teletextjs',
       preferConst: true,
       sourcemap: true,
+      compact: true,
     }
   ],
   plugins: [
-    terser(),
+    terser({
+      ecma: 2015,
+      toplevel: true,
+      compress: {
+        drop_console: true,
+        passes: 2,
+        pure_getters: true,
+        unsafe_arrows: true,
+      },
+      mangle: {
+        properties: {
+          regex: /^_/,
+        },
+      },
+    }),
     nodeResolve(),
     sourcemaps(),
     json(),
