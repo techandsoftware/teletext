@@ -24,13 +24,13 @@ const TEXT_Y_OFFSET = CELL_HEIGHT * (4 / 5);    // font baseline
 // FUDGE contiguous mosaics are slightly bigger than they should be to avoid tiny gaps on adjacent characters.
 // Suspect the gaps are due to font antialiasing, with no way to switch antialiasing off.
 const MOSAIC_METRIC = {
-    contiguous: {
-        textLength: CELL_WIDTH + 0.2,
-        DX: 0 - TEXT_X_OFFSET -0.1,
+    _contiguous: {
+        _textLength: CELL_WIDTH + 0.2,
+        _DX: 0 - TEXT_X_OFFSET -0.1,
     },
-    separated: {
-        textLength: CELL_WIDTH,
-        DX: 0 - TEXT_X_OFFSET + 0.5,
+    _separated: {
+        _textLength: CELL_WIDTH,
+        _DX: 0 - TEXT_X_OFFSET + 0.5,
     }
 };
 Object.freeze(MOSAIC_METRIC);
@@ -67,7 +67,7 @@ export class View {
         console.debug('## View._update');
         let nextRowHidden = false;
         let pageContainsFlash = false;
-        this.gridrows.forEach((rowView, rowIndex) => {
+        this._gridrows.forEach((rowView, rowIndex) => {
             this._resetBackgroundForRow(rowIndex);
             this._resetBoxClipForRow(rowIndex);
             if (nextRowHidden) {
@@ -139,17 +139,17 @@ export class View {
     mixMode() {
         if (this._mixMode) {
             this._mixMode = false;
-            this.bgLayer.attr('opacity', null);
+            this._bgLayer.attr('opacity', null);
         } else {
             this._mixMode = true;
-            if (this._boxMode) this.bgLayer.attr('opacity', 0.3);
-            else this.bgLayer.attr('opacity', 0);
+            if (this._boxMode) this._bgLayer.attr('opacity', 0.3);
+            else this._bgLayer.attr('opacity', 0);
         }
     }
 
     boxMode() {
         if (!this._boxMode) {
-            this.d.clipWith(this.boxLayer)
+            this.d.clipWith(this._boxLayer)
             this._boxMode = true;
             console.log('box activated');
         } else {
@@ -193,10 +193,10 @@ export class View {
     _createBoxModeClip() {
         // FUDGE can't use groups directly in <clipPath> https://github.com/w3c/fxtf-drafts/issues/17
         // Boxed cells are buffered and tagged with data-boxbuffer as the row is constructed
-        // Then moved to the <clipPath> stored in this.boxLayer and tagged with data-r=rowNum
-        this.defs = this.d.defs();
-        this.lastBoxBuffer = null;
-        this.boxLayer = this.defs.clip();
+        // Then moved to the <clipPath> stored in this._boxLayer and tagged with data-r=rowNum
+        this._defs = this.d.defs();
+        this._lastBoxBuffer = null;
+        this._boxLayer = this._defs.clip();
     }
 
     _createRowBackgrounds() {
@@ -206,8 +206,8 @@ export class View {
             'shape-rendering': 'crispEdges',
             id: 'background'
         });
-        this.bgrows = bgrows;   // store backgrounds per row
-        this.bgLayer = bgGroup;
+        this._bgrows = bgrows;   // store backgrounds per row
+        this._bgLayer = bgGroup;
     }
 
     _createCells() {
@@ -226,23 +226,23 @@ export class View {
             }
             gridrows.push(rowCells);
         }
-        this.gridrows = gridrows;   // text per cell per row: [rowNum][colNum]
-        this.textLayer = textGroup;
+        this._gridrows = gridrows;   // text per cell per row: [rowNum][colNum]
+        this._textLayer = textGroup;
     }
 
     _resetBoxClipForRow(rowNum) {
-        this.boxLayer.children()
+        this._boxLayer.children()
             .filter(b => b.data('r') == rowNum)
             .forEach(b => b.remove());
     }
 
     _resetBackgroundForRow(rowNum) {
-        if (this.bgrows[rowNum]) this.bgrows[rowNum].remove();
-        this.bgrows[rowNum] = this.bgLayer.group();
+        if (this._bgrows[rowNum]) this._bgrows[rowNum].remove();
+        this._bgrows[rowNum] = this._bgLayer.group();
     }
 
     _extendBackgroundForRow(rowNum) {
-        const last = this.bgrows[rowNum].last();
+        const last = this._bgrows[rowNum].last();
         const width = last.width();
         last.width(width + CELL_WIDTH);
     }
@@ -250,40 +250,40 @@ export class View {
     _setBackgroundForRow(rowNum, colNum, colour) {
         const x = colNum * CELL_WIDTH;
         const y = rowNum * CELL_HEIGHT;
-        this.bgrows[rowNum]
+        this._bgrows[rowNum]
             .rect(CELL_WIDTH, CELL_HEIGHT)
             .fill(colour)
             .move(x, y)
     }
 
     _extendBox() {
-        const width = this.lastBoxBuffer.width();
-        this.lastBoxBuffer.width(width + CELL_WIDTH);
+        const width = this._lastBoxBuffer.width();
+        this._lastBoxBuffer.width(width + CELL_WIDTH);
     }
 
     _setRowDoubleHeight(rowNum) {
-        this.bgrows[rowNum].children().forEach(bg => bg.attr('height', CELL_DOUBLE_HEIGHT));
+        this._bgrows[rowNum].children().forEach(bg => bg.attr('height', CELL_DOUBLE_HEIGHT));
     }
 
     _setBoxDoubleHeight() {
-        this.defs.find('[data-boxbuffer]').forEach(box => box.height(CELL_DOUBLE_HEIGHT));
+        this._defs.find('[data-boxbuffer]').forEach(box => box.height(CELL_DOUBLE_HEIGHT));
         // TODO might be quicker to filter instead of using a selector
     }
 
     _setBoxForRow(rowNum, colNum) {
         const x = colNum * CELL_WIDTH;
         const y = rowNum * CELL_HEIGHT;
-        this.lastBoxBuffer = this.defs.rect(CELL_WIDTH, CELL_HEIGHT).data('boxbuffer', true).move(x, y);
+        this._lastBoxBuffer = this._defs.rect(CELL_WIDTH, CELL_HEIGHT).data('boxbuffer', true).move(x, y);
     }
 
     // FUDGE move boxes tagged with data-boxbuffer into the clip layer.
     _makeClipFromBoxesForRow(rowNum) {
-        this.defs.find('[data-boxbuffer]').forEach(box => {
+        this._defs.find('[data-boxbuffer]').forEach(box => {
             box.data({
                 r: rowNum,
                 boxbuffer: null
             });
-            this.boxLayer.add(box);
+            this._boxLayer.add(box);
         });
     }
 }
@@ -291,8 +291,8 @@ export class View {
 function getCellAttr(cellType, isMosaicChar) {
     if (cellType == CellType.MOSAIC_CONTIGUOUS && isMosaicChar) {
         return {
-            dx: MOSAIC_METRIC.contiguous.DX,
-            textLength: MOSAIC_METRIC.contiguous.textLength,
+            dx: MOSAIC_METRIC._contiguous._DX,
+            textLength: MOSAIC_METRIC._contiguous._textLength,
             lengthAdjust: 'spacingAndGlyphs',
             'text-anchor': 'start',
             transform: null,
@@ -300,8 +300,8 @@ function getCellAttr(cellType, isMosaicChar) {
         };
     } else if (cellType == CellType.MOSAIC_SEPARATED && isMosaicChar) {
         return {
-            dx: MOSAIC_METRIC.separated.DX,
-            textLength: MOSAIC_METRIC.separated.textLength,
+            dx: MOSAIC_METRIC._separated._DX,
+            textLength: MOSAIC_METRIC._separated._textLength,
             lengthAdjust: 'spacingAndGlyphs',
             'text-anchor': 'start',
             transform: null,
@@ -331,6 +331,8 @@ function setCellClasses(cellView, cellType, flashing, concealed, isMosaic) {
 }
 
 function getStyle() {
+
+    // .mosaic class font size - FUDGE bigger than 10px to close tiny gaps vertically */
     return `@font-face {
 font-family: 'Unscii';
 src: url('fonts/unscii-16.woff') format('woff'), 
@@ -367,11 +369,11 @@ opacity: 0;
 }
 }
 #textlayer {
-    font-size: 10px;
+font-size: 10px;
 }
 .mosaic {
 font-family: 'Unscii';
-font-size: 10.1px; /* FUDGE bigger than 10px to close tiny gaps vertically */
+font-size: 10.1px;
 }
 .mosaic_separated {
 font-family: 'Unscii';

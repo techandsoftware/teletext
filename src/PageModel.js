@@ -8,13 +8,13 @@ const CELLS_PER_ROW = 40;
 
 export class PageModel {
     constructor() {
-        this.screen = [];
+        this._screen = [];
         for (let r = 0; r < ROWS; r++) {
             const row = [];
             for (let c = 0; c < CELLS_PER_ROW; c++) {
                 row.push(new Cell());
             }
-            this.screen.push(row);
+            this._screen.push(row);
         }
         this._characterEncoding = 'latin_g0_english';
         this._startBoxChar = Attributes.charFromAttribute(Attributes.START_BOX)
@@ -50,19 +50,19 @@ export class PageModel {
             if (Number.isNaN(code) || code >= 160) {
                 throw new Error(`PageModel: failed to set row characters: character out of range with code: ${code}`);
             }
-            this.screen[rowNum][index].byte = c;
+            this._screen[rowNum][index].byte = c;
         });
     }
 
-    dumpToConsole() {
-        this.screen.forEach((row, index) => {
-            let rowString = '';
-            row.forEach(cell => {
-                rowString += cell.byte;
-            });
-            console.log(index, '|', rowString, '|');
-        });
-    }
+    // dumpToConsole() {
+    //     this._screen.forEach((row, index) => {
+    //         let rowString = '';
+    //         row.forEach(cell => {
+    //             rowString += cell.byte;
+    //         });
+    //         console.log(index, '|', rowString, '|');
+    //     });
+    // }
 
     setLevel(level) {
         this._level = level;
@@ -95,7 +95,7 @@ export class PageModel {
             type: CellType.MOSAIC_CONTIGUOUS
         };
 
-        this.screen[rowNum].forEach((cell, cellIndex) => {
+        this._screen[rowNum].forEach((cell, cellIndex) => {
             const char = cell.byte;
             const attrib = Attributes.attribFromChar(this._level, char);
 
@@ -192,7 +192,7 @@ export class PageModel {
                     break;
                 case Attributes.START_BOX: // set between two start box chars
                     if (cellIndex >= 1) {
-                        if (this.screen[rowNum][cellIndex-1].byte == this._startBoxChar) {
+                        if (this._screen[rowNum][cellIndex-1].byte == this._startBoxChar) {
                             cell.boxed = true;
                             nextBoxed = true;
                         }
@@ -223,13 +223,4 @@ export class PageModel {
         return rowModel;
     }
 
-    setTestPage1() {
-        let char = 'A';
-        this.screen.forEach(row => {
-            row.forEach(cell => {
-                cell.byte = char;
-            })
-            char = String.fromCharCode(String(char).charCodeAt(0) + 1);
-        });
-    }
 }
