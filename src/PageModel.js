@@ -43,16 +43,16 @@ export class PageModel {
     _setRowFromChars(rowNum, text) {
         let textArray = [...text];
         textArray = textArray.slice(0, CELLS_PER_ROW);
-        textArray.forEach((c, index) => {
+        textArray.forEach((c, colNum) => {
             const code = c.charCodeAt(0);
             if (Number.isNaN(code) || code > 127) {
-                throw new Error(`PageModel E51 failed to write row: bad character code (${code}) at row ${rowNum} col ${index}`);
+                throw new Error(`PageModel E51 failed to write row: bad character code (${code}) at row ${rowNum} col ${colNum}`);
             }
-            this._screen[rowNum][index].byte = c;
+            this._screen[rowNum][colNum].byte = c;
         });
         if (textArray.length < CELLS_PER_ROW) {
-            for (let i = textArray.length; i < CELLS_PER_ROW; i++) {
-                this._screen[rowNum][i].byte = ' ';
+            for (let colNum = textArray.length; colNum < CELLS_PER_ROW; colNum++) {
+                this._screen[rowNum][colNum].byte = ' ';
             }
         }
     }
