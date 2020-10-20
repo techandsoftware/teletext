@@ -1,5 +1,7 @@
 import { teletextjs, Attributes, Colour, Level } from '../dist/teletextjs.js';
 
+const ASPECT_RATIOS = [1.2, 1.22, 1.33, 'natural'];
+
 export class DemoApp {
     constructor(teletextjs) {
         this.t = teletextjs;
@@ -9,6 +11,7 @@ export class DemoApp {
             's': 'ttx.subtitlemode',
         };
         this._initEventListeners();
+        this._aspectRatioIndex = 0;
     }
 
     _initEventListeners() {
@@ -27,6 +30,11 @@ export class DemoApp {
                     break;
                 case 'c': // for cells
                     teletextjs.toggleGrid();
+                    break;
+                case 'a':
+                    this._aspectRatioIndex++;
+                    if (this._aspectRatioIndex == ASPECT_RATIOS.length) this._aspectRatioIndex = 0;
+                    teletextjs.setAspectRatio(ASPECT_RATIOS[this._aspectRatioIndex]);
                     break;
                 case 'd':
                     this.setPageRows();

@@ -7,10 +7,10 @@ const COLS = 40;
 const ROWS = 25;
 const SCREEN_SCALE = 2;
 const ASPECT_RATIO_VERTICAL_SCALE = {
-    "1":    1,
-    "1.33": WIDTH_PX/(1.33 * HEIGHT_PX),
-    "1.2":  WIDTH_PX/(1.2  * HEIGHT_PX),
-    "1.22": WIDTH_PX/(1.22 * HEIGHT_PX),
+    1:    1,
+    1.33: WIDTH_PX/(1.33 * HEIGHT_PX),
+    1.2:  WIDTH_PX/(1.2  * HEIGHT_PX),
+    1.22: WIDTH_PX/(1.22 * HEIGHT_PX),
 };
 const DEFAULT_ASPECT_RATIO = 1.2;
 
@@ -148,6 +148,17 @@ export class View {
             this._mixMode = true;
             this._setMixMode();
         }
+    }
+
+    setAspectRatio(aspectRatio) {
+        const width = WIDTH_PX * SCREEN_SCALE;
+        if (aspectRatio == 'natural') {
+            this._svg.size(width, HEIGHT_PX * SCREEN_SCALE);
+            return;
+        }
+        const aspectRatioVerticalScale = WIDTH_PX / (aspectRatio * HEIGHT_PX);
+        const height = HEIGHT_PX * SCREEN_SCALE * aspectRatioVerticalScale;
+        this._svg.size(width, height);
     }
 
     _setMixMode() {

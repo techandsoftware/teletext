@@ -74,4 +74,14 @@ export class TeletextController {
     addTo(selector) {
         this._view.addTo(selector);
     }
+
+    setAspectRatio(aspectRatio) {
+        if (aspectRatio == 'natural') {
+            this._view.setAspectRatio(aspectRatio);
+            return;
+        }
+        const ar = parseFloat(aspectRatio);
+        if (Number.isNaN(ar)) throw new Error("E80 setAspectRatio: bad number");
+        this._view.setAspectRatio(ar);
+    }
 }
