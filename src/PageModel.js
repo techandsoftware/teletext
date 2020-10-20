@@ -26,16 +26,14 @@ export class PageModel {
 
     setRowFromChars(rowNum, text) {
         if (rowNum >= ROWS) {
-            throw new Error("PageModel E21 bad rowNum");
+            throw new Error("PageModel E29 bad row number");
         }
         this._setRowFromChars(rowNum, text);
         this.onSet.notify();
     }
 
     setRows(rows) {
-        if (rows.length > ROWS) {
-            throw new Error('PageModel E38 bad rowNum');
-        }
+        rows = rows.slice(0, ROWS);
         rows.forEach((row, index) => {
             this._setRowFromChars(index, row);
         });
@@ -47,11 +45,16 @@ export class PageModel {
         textArray = textArray.slice(0, CELLS_PER_ROW);
         textArray.forEach((c, index) => {
             const code = c.charCodeAt(0);
-            if (Number.isNaN(code) || code >= 160) {
-                throw new Error(`PageModel: failed to set row characters: character out of range with code: ${code}`);
+            if (Number.isNaN(code) || code > 127) {
+                throw new Error(`PageModel E51 failed to write row: bad character code (${code}) at row ${rowNum} col ${index}`);
             }
             this._screen[rowNum][index].byte = c;
         });
+        if (textArray.length < CELLS_PER_ROW) {
+            for (let i = textArray.length; i < CELLS_PER_ROW; i++) {
+                this._screen[rowNum][i].byte = ' ';
+            }
+        }
     }
 
     // dumpToConsole() {
