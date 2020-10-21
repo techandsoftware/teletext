@@ -124,7 +124,7 @@ export class View {
         // FUDGE keep flashing synchronised
         if (pageContainsFlash) {
             this.d.removeClass('flash_flashing');
-            setTimeout(() => this.d.addClass('flash_flashing'), 0);
+            setTimeout(() => this.d.addClass('flash_flashing'), 10);
         }
         this._refreshMixMode();
     }
@@ -136,7 +136,7 @@ export class View {
     setFont(font) {
         let newFont = 'sans-serif';
         if (font == 'native')
-            newFont = '--font-family: -apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif';
+            newFont = '-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif';
         else if (font == 'default')
             true; //noop
         else if (['Bedstead', 'serif', 'sans-serif'].indexOf(font) != -1)
