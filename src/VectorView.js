@@ -134,13 +134,13 @@ export class View {
     }
 
     setFont(font) {
-        let newFont = font;
+        let newFont = '"' + font + '"';
         if (font == 'native')
             newFont = '-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif';
         else if (font == 'default')
             newFont = 'sans-serif';
 
-        this._svg.attr('style', `--font-family: "${newFont}"`);
+        this._svg.attr('style', `--font-family: ${newFont}`);
     }
 
     grid() {
