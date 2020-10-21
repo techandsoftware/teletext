@@ -134,15 +134,13 @@ export class View {
     }
 
     setFont(font) {
-        let newFont = 'sans-serif';
+        let newFont = font;
         if (font == 'native')
             newFont = '-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif';
         else if (font == 'default')
-            true; //noop
-        else if (['Bedstead', 'serif', 'sans-serif'].indexOf(font) != -1)
-            newFont = font;
+            newFont = 'sans-serif';
 
-        this._svg.attr('style', `--font-family: ${newFont}`);
+        this._svg.attr('style', `--font-family: "${newFont}"`);
     }
 
     grid() {
@@ -376,7 +374,7 @@ function getStyle() {
 
     // .mosaic class font size - FUDGE bigger than 10px to close tiny gaps vertically */
     return `@font-face {
-font-family: 'Unscii';
+font-family: 'UnsciiBlocks';
 src: url('fonts/unscii-16.woff') format('woff'), 
 url('fonts/unscii-16.ttf') format('truetype'),
 url('fonts/unscii-16.otf') format('opentype');
@@ -385,8 +383,18 @@ unicode-range: U+20, U+2022, U+2500, U+2502, U+250C, U+2510, U+2514, U+2518, U+2
 font-smooth: never;
 }
 @font-face {
+font-family: 'Unscii';
+src: url('fonts/unscii-16.woff') format('woff'), 
+url('fonts/unscii-16.ttf') format('truetype'),
+url('fonts/unscii-16.otf') format('opentype');
+unicode-range: U+0000-00FF;
+-webkit-font-smoothing: none;
+font-smooth: never;
+}
+@font-face {
 font-family: 'Bedstead';
 src: url('fonts/bedstead.otf') format('opentype');
+unicode-range: U+0000-00FF;
 }
 @keyframes blink {
 66% {
@@ -419,11 +427,11 @@ font-size: 10px;
 font-family: var(--font-family, sans-serif);
 }
 .mosaic {
-font-family: 'Unscii';
+font-family: 'UnsciiBlocks';
 font-size: 10.1px;
 }
 .mosaic_separated {
-font-family: 'Unscii';
+font-family: 'UnsciiBlocks';
 font-size: 10px;
 }
 .flash_flashing .flash {
