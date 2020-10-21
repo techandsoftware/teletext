@@ -134,15 +134,15 @@ export class View {
     }
 
     setFont(font) {
-        // debugger;
+        let newFont = 'sans-serif';
         if (font == 'native')
-            this._svg.attr('style', '--font-family: -apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif');
+            newFont = '--font-family: -apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif';
         else if (font == 'default')
-            this._svg.attr('style', '--font-family: sans-serif');
+            true; //noop
         else if (['Bedstead', 'serif', 'sans-serif'].indexOf(font) != -1)
-            this._svg.attr('style', `--font-family: ${font}`);
-        else
-            this._svg.attr('style', '--font-family: sans-serif');
+            newFont = font;
+
+        this._svg.attr('style', `--font-family: ${newFont}`);
     }
 
     grid() {
