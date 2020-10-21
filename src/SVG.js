@@ -87,6 +87,7 @@ class Element {
         }
         return this;
     }
+
 }
 
 export class SVG extends Element {

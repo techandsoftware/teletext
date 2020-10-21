@@ -1,6 +1,7 @@
 import { teletextjs, Attributes, Colour, Level } from '../dist/teletextjs.js';
 
 const ASPECT_RATIOS = [1.2, 1.22, 1.33, 'natural'];
+const FONTS = ['sans-serif', 'Bedstead', 'native', 'serif'];
 
 export class DemoApp {
     constructor(teletextjs) {
@@ -12,6 +13,7 @@ export class DemoApp {
         };
         this._initEventListeners();
         this._aspectRatioIndex = 0;
+        this._fontIndex = 0;
     }
 
     _initEventListeners() {
@@ -38,6 +40,12 @@ export class DemoApp {
                     break;
                 case 'd':
                     this.setPageRows();
+                    break;
+                case 'f':
+                    this._fontIndex++;
+                    if (this._fontIndex == FONTS.length) this._fontIndex = 0;
+                    console.debug('setting font to', FONTS[this._fontIndex]);
+                    teletextjs.setFont(FONTS[this._fontIndex]);
                     break;
                 default:
             }

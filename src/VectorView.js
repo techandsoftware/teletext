@@ -7,7 +7,6 @@ const COLS = 40;
 const ROWS = 25;
 const SCREEN_SCALE = 2;
 const ASPECT_RATIO_VERTICAL_SCALE = {
-    1:    1,
     1.33: WIDTH_PX/(1.33 * HEIGHT_PX),
     1.2:  WIDTH_PX/(1.2  * HEIGHT_PX),
     1.22: WIDTH_PX/(1.22 * HEIGHT_PX),
@@ -40,10 +39,13 @@ export class View {
         this._svg = new SVG()
             .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
             .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO])
-            .attr('preserveAspectRatio', 'none')
+            .attr({
+                'preserveAspectRatio': 'none',
+                'style': '--font-family: sans-serif',
+            })
             .style(getStyle());
 
-        this.d = this._svg.group().attr('class', 'conceal_concealed flash_flashing');
+        this.d = this._svg.group().attr('class', 'conceal_concealed flash_flashing font-bedstead');
 
         this._createRowBackgrounds();
         this._createCells();
@@ -129,6 +131,18 @@ export class View {
 
     reveal() {
         this.d.toggleClass('conceal_concealed');
+    }
+
+    setFont(font) {
+        // debugger;
+        if (font == 'native')
+            this._svg.attr('style', '--font-family: -apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif');
+        else if (font == 'default')
+            this._svg.attr('style', '--font-family: sans-serif');
+        else if (['Bedstead', 'serif', 'sans-serif'].indexOf(font) != -1)
+            this._svg.attr('style', `--font-family: ${font}`);
+        else
+            this._svg.attr('style', '--font-family: sans-serif');
     }
 
     grid() {
@@ -370,6 +384,10 @@ unicode-range: U+20, U+2022, U+2500, U+2502, U+250C, U+2510, U+2514, U+2518, U+2
 -webkit-font-smoothing: none;
 font-smooth: never;
 }
+@font-face {
+font-family: 'Bedstead';
+src: url('fonts/bedstead.otf') format('opentype');
+}
 @keyframes blink {
 66% {
 visibility: hidden;
@@ -398,6 +416,7 @@ opacity: 0;
 }
 #textlayer {
 font-size: 10px;
+font-family: var(--font-family, sans-serif);
 }
 .mosaic {
 font-family: 'Unscii';
@@ -420,5 +439,6 @@ transition-duration: 0.25s;
 }
 svg {
 background-color: transparent;
-}`;
+}
+`;
 }
