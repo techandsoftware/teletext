@@ -75,16 +75,16 @@ export class PageModel {
 
     clearScreen(withUpdate) {
         let updateAfterClear = typeof withUpdate != 'undefined' ? withUpdate : true;
-        const rows = [];
-        for (let rowNum = 0; rowNum < ROWS; rowNum++) {
-            rows.push("");
-        }
-        if (updateAfterClear)
+        if (updateAfterClear) {
+            const rows = [];
+            for (let rowNum = 0; rowNum < ROWS; rowNum++) {
+                rows.push("");
+            }
             this.setRows(rows);
-        else {
-            rows.forEach((row, index) => {
-                this._setRowFromChars(index, "");
-            });
+        } else {
+            for (let rowNum = 0; rowNum < ROWS; rowNum++) {
+                this._setRowFromChars(rowNum, "");
+            }
         }
     }
 
