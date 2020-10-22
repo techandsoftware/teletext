@@ -79,6 +79,10 @@ export class TeletextController {
         this._view.setFont(font);
     }
 
+    clearScreen(withUpdate) {
+        this._model.clearScreen(withUpdate);
+    }
+
     setAspectRatio(aspectRatio) {
         if (aspectRatio == 'natural') {
             this._view.setAspectRatio(aspectRatio);

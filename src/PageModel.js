@@ -73,6 +73,23 @@ export class PageModel {
         this.onSet.notify();
     }
 
+    clearScreen(withUpdate) {
+        let updateAfterClear = true;
+        if (typeof withUpdate != 'undefined') updateAfterClear = withUpdate;
+        const blankRow = " ".repeat(CELLS_PER_ROW);
+        const rows = [];
+        for (let rowNum = 0; rowNum < ROWS; rowNum++) {
+            rows.push(blankRow);
+        }
+        if (updateAfterClear)
+            this.setRows(rows);
+        else {
+            rows.forEach((row, index) => {
+                this._setRowFromChars(index, row);
+            });
+        }
+    }
+
     getRow(rowNum) {
         if (rowNum >= ROWS) {
             throw new Error("PageModel.getRow E42 bad rowNum");

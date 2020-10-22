@@ -47,6 +47,9 @@ export class DemoApp {
                     console.debug('setting font to', FONTS[this._fontIndex]);
                     teletextjs.setFont(FONTS[this._fontIndex]);
                     break;
+                case 'w': // for wipe
+                    teletextjs.clearScreen();
+                    break;
                 default:
             }
         });
