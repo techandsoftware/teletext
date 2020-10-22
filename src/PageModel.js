@@ -74,7 +74,7 @@ export class PageModel {
     }
 
     clearScreen(withUpdate) {
-        let updateAfterClear = typeof withUpdate != 'undefined' ? withUpdate : true;
+        const updateAfterClear = typeof withUpdate != 'undefined' ? withUpdate : true;
         if (updateAfterClear) {
             const rows = [];
             for (let rowNum = 0; rowNum < ROWS; rowNum++) {
