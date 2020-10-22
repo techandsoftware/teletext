@@ -41,7 +41,7 @@ export class View {
             .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO])
             .attr({
                 'preserveAspectRatio': 'none',
-                'style': '--font-family: sans-serif',
+                'style': 'font-family: "sans-serif"'
             })
             .style(getStyle());
 
@@ -140,7 +140,7 @@ export class View {
         else if (font == 'default')
             newFont = 'sans-serif';
 
-        this._svg.attr('style', `--font-family: ${newFont}`);
+        this._svg.attr('style', `font-family: ${newFont}`);
     }
 
     grid() {
@@ -415,7 +415,6 @@ opacity: 0;
 }
 #textlayer {
 font-size: 10px;
-font-family: var(--font-family, sans-serif);
 }
 .mosaic {
 font-family: 'Unscii';
