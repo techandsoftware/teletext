@@ -74,18 +74,16 @@ export class PageModel {
     }
 
     clearScreen(withUpdate) {
-        let updateAfterClear = true;
-        if (typeof withUpdate != 'undefined') updateAfterClear = withUpdate;
-        const blankRow = " ".repeat(CELLS_PER_ROW);
+        let updateAfterClear = typeof withUpdate != 'undefined' ? withUpdate : true;
         const rows = [];
         for (let rowNum = 0; rowNum < ROWS; rowNum++) {
-            rows.push(blankRow);
+            rows.push("");
         }
         if (updateAfterClear)
             this.setRows(rows);
         else {
             rows.forEach((row, index) => {
-                this._setRowFromChars(index, row);
+                this._setRowFromChars(index, "");
             });
         }
     }
