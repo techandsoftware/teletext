@@ -92,4 +92,10 @@ export class TeletextController {
         if (Number.isNaN(ar)) throw new Error("E80 setAspectRatio: bad number");
         this._view.setAspectRatio(ar);
     }
+
+    setHeight(height) {
+        height = parseFloat(height);
+        if (Number.isNaN(height)) throw new Error("E98 setHeight: bad number");
+        this._view.setHeight(height);
+    }
 }

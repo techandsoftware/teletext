@@ -47,6 +47,8 @@ export class View {
 
         this.d = this._svg.group().attr('class', 'conceal_concealed flash_flashing font-bedstead');
 
+        this._aspectRatio = DEFAULT_ASPECT_RATIO;
+
         this._createRowBackgrounds();
         this._createCells();
         this._createBoxModeClip();
@@ -163,13 +165,12 @@ export class View {
     }
 
     setAspectRatio(aspectRatio) {
-        const width = WIDTH_PX * SCREEN_SCALE;
-        if (aspectRatio == 'natural') {
-            this._svg.size(width, HEIGHT_PX * SCREEN_SCALE);
-            return;
-        }
-        const aspectRatioVerticalScale = WIDTH_PX / (aspectRatio * HEIGHT_PX);
-        const height = HEIGHT_PX * SCREEN_SCALE * aspectRatioVerticalScale;
+        this._aspectRatio = aspectRatio;
+        this.setHeight(this._svg.height());
+    }
+
+    setHeight(height) {
+        const width = this._aspectRatio == 'natural' ? height * (WIDTH_PX / HEIGHT_PX) : height * this._aspectRatio;
         this._svg.size(width, height);
     }
 

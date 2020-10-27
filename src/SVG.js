@@ -126,6 +126,10 @@ export class SVG extends Element {
         this._e.append(group._node());
         return group;
     }
+
+    height() {
+        return this._e.clientHeight;
+    }
 }
 
 

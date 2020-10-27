@@ -50,6 +50,9 @@ export class DemoApp {
                 case 'w': // for wipe
                     teletextjs.clearScreen();
                     break;
+                case 'h':
+                    teletextjs.setHeight(document.head.parentElement.clientHeight * 0.8);
+                    break;
                 default:
             }
         });
