@@ -23,12 +23,14 @@ export default {
   ],
   plugins: [
     terser({
-      ecma: 2015,
+      ecma: 2016,
       toplevel: true,
       compress: {
         drop_console: true,
         passes: 2,
         pure_getters: true,
+        unsafe: true,
+        unsafe_symbols: true,
         unsafe_arrows: true,
       },
       mangle: {
