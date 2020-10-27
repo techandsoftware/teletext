@@ -4,12 +4,17 @@ import sourcemaps from 'rollup-plugin-sourcemaps';
 import json from '@rollup/plugin-json';
 
 export default {
-    input: 'src/app.js',
-    output: {
-        file: 'dist/teletextjs.js',
-        format: 'es',
-        sourcemap: true,
+  input: {
+    teletextjs: 'src/app.js',
+    DemoApp: 'src/DemoApp.js'
   },
+  output: {
+    entryFileNames: '[name].js',
+    dir: 'dist',
+    format: 'es',
+    sourcemap: true,
+  },
+  external: '../dist/teletextjs.js',
   plugins: [
     nodeResolve(),
     browsersync({

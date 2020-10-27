@@ -10,10 +10,16 @@
             font-size: 30px;
             color: white;
         }
+        google-cast-launcher {
+            display: block;
+            width: 40px;
+            height: 40px;
+        }
     </style>
+    <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
     <script type="module">
         import { teletextjs } from './dist/teletextjs.js';
-        import { DemoApp } from './src/DemoApp.js';
+        import { DemoApp } from './dist/DemoApp.js';
         teletextjs.addTo('#teletextscreen');
         teletextjs.showTestPage();
         const demo = new DemoApp(teletextjs);
@@ -25,7 +31,7 @@
     <div id="teletextscreen"></div>
 
     <input type="button" value="REVEAL (?)" id="revealButton">
-
+    <google-cast-launcher id="castbutton"></google-cast-launcher>
     <hr>
 
     <label for="levelSelect">Level: </label>

@@ -1,4 +1,5 @@
 import { teletextjs, Attributes, Colour, Level } from '../dist/teletextjs.js';
+import { ttxcaster } from './TeletextCaster.js';
 
 const ASPECT_RATIOS = [1.2, 1.22, 1.33, 'natural'];
 const FONTS = ['sans-serif', 'Bedstead', 'native', 'serif', 'Unscii', 'Ubuntu'];
