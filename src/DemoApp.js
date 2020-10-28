@@ -26,9 +26,12 @@ export class DemoApp {
         window.addEventListener('keypress', e => {
             switch (e.key) {
                 case '?':
-                    ttxcaster.reveal();
-                // eslint-disable-next-line no-fallthrough
+                    ttxcaster.toggleReveal();
+                    window.dispatchEvent(new Event(this.KEY_EVENTS[e.key]));
+                    break;
                 case 'm':
+                    ttxcaster.toggleMixMode();
+                // eslint-disable-next-line no-fallthrough
                 case 's':
                     window.dispatchEvent(new Event(this.KEY_EVENTS[e.key]));
                     break;
@@ -40,6 +43,7 @@ export class DemoApp {
                     break;
                 case 'c': // for cells
                     teletextjs.toggleGrid();
+                    ttxcaster.toggleGrid();
                     break;
                 case 'a':
                     this._aspectRatioIndex++;
@@ -56,6 +60,7 @@ export class DemoApp {
                     teletextjs.setFont(FONTS[this._fontIndex]);
                     break;
                 case 'w': // for wipe
+                    ttxcaster.clearScreen();
                     teletextjs.clearScreen();
                     break;
                 case 'h':
@@ -66,7 +71,7 @@ export class DemoApp {
         });
         window.addEventListener('DOMContentLoaded', () => {
             document.getElementById('revealButton').addEventListener('click', () => {
-                ttxcaster.reveal();
+                ttxcaster.toggleReveal();
                 window.dispatchEvent(new Event('ttx.reveal'));
             });
             document.getElementById('levelSelect').addEventListener('input', e => {

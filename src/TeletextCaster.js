@@ -43,15 +43,19 @@ class TeletextCaster {
         }
     }
 
-    clear() {
-
+    clearScreen() {
+        this._sendCommand('clear');
     }
 
-    reveal() {
+    toggleGrid() {
+        this._sendCommand('grid');
+    }
+
+    toggleReveal() {
         this._sendCommand('reveal');
     }
 
-    mix() {
+    toggleMixMode() {
         this._sendCommand('mix');
     }
 
