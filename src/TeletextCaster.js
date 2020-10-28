@@ -86,12 +86,25 @@ class TeletextCaster {
 
 export const ttxcaster = new TeletextCaster();
 
+let checkForCastCount = 0;
 window['__onGCastApiAvailable'] = isAvailable => {
     if (isAvailable) {
         if (typeof cast == 'undefined') {
-            throw new Error("TeletextCaster: 'cast' is not defined even though __onGCastApiAvailable says it is");
-            // TODO - make this more reliable
+            delayedCheckForCast();
+        } else {
+            ttxcaster._init();
         }
-        ttxcaster._init();
     }
 };
+
+// FUDGE cast isn't set reliably so we have to work around that
+function delayedCheckForCast() {
+    window.setTimeout(() => {
+        if (typeof cast == 'undefined') {
+            checkForCastCount++;
+            if (checkForCastCount < 10) delayedCheckForCast();
+        } else {
+            ttxcaster._init();
+        }
+    }, 500);
+}
