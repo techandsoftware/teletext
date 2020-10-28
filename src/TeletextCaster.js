@@ -1,9 +1,12 @@
 /* globals cast, chrome */
+import { Event } from './Event.js';
+
 const CHROMECAST_APPLICATION_CUSTOM_MESSAGE_NAMESPACE = 'urn:x-cast:uk.ltd.techandsoftware.teletext';
 const CHROMECAST_RECEIVER_APPLICATION_ID = '000F65B3';
 
 class TeletextCaster {
     constructor() {
+        this.connected = new Event(this);
     }
 
     _init() {
@@ -11,7 +14,7 @@ class TeletextCaster {
             console.error("TeletextCaster: failed to init: 'cast' not defined");
             return;
         }
-        var options = {
+        const options = {
             receiverApplicationId: CHROMECAST_RECEIVER_APPLICATION_ID,
             autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED,
         };
@@ -21,25 +24,22 @@ class TeletextCaster {
         this._remotePlayerController = new cast.framework.RemotePlayerController(this._remotePlayer);
         this._remotePlayerController.addEventListener(
             cast.framework.RemotePlayerEventType.IS_CONNECTED_CHANGED,
-            e => this._switchPlayer(e.value)
+            e => this._handleChangeOfConnected(e.value)
         );
     }
 
-    discover() {
-
-    }
-
     async display(packedPage) {
-        const castSession = this._getSession();
+        if (!this._isConnected()) return;
+
+        const session = this._getSession();
         const mediaInfo = new chrome.cast.media.MediaInfo('data:,', 'video/mp4');
         mediaInfo.entity = packedPage;
         const request = new chrome.cast.media.LoadRequest(mediaInfo);
         try {
-            await castSession.loadMedia(request)
+            await session.loadMedia(request)
             console.debug('TeletextCaster.display: ok');
         } catch (e) {
-            console.trace(e);
-            console.error('TeletextCaster.display failed:', e.message);
+            console.error('TeletextCaster.display failed:', e.toString());
         }
     }
 
@@ -47,26 +47,36 @@ class TeletextCaster {
 
     }
 
-    disconnect() {
-
-    }
-
     reveal() {
-
+        this._sendCommand('reveal');
     }
 
     mix() {
+        this._sendCommand('mix');
+    }
 
+    async _sendCommand(command) {
+        if (!this._isConnected()) return;
+
+        const session = this._getSession();
+        try {
+            await session.sendMessage(CHROMECAST_APPLICATION_CUSTOM_MESSAGE_NAMESPACE, `"${command}"`);
+            console.debug(`TeletextCaster._sendCommand: ${command} sent o_O`)
+        } catch (e) {
+            console.error('TeletextCaster._sendCommand E67: failed to send:', e.toString());
+        }
+    }
+
+    _isConnected() {
+        return cast && cast.framework && this._remotePlayer.isConnected;
     }
 
     _getSession() {
         return cast.framework.CastContext.getInstance().getCurrentSession();
     }
 
-    _switchPlayer(isConnected) {
-        if (isConnected) {
-            this.display("QIECBAgQIIcWLGg2EDFy2QIJu_cgZNUETLjQA2TN0xYr2DAodJIECBAgQIEGDB4_PUCBAgQIECBAgQIECBAgQIEANkvaMih0kgQIECDA1Qfv__OgQYGCBAgQIECBAgQIECBAgQIECBAgKHSSBAgQIH6FR-__-v7___oECBAgQIEAORPmxUE6LXpoECAodJIECBAoQKum7______9-gQIECBAgQA82_Zs39-aB8-QIAh0kgQIECBAgSev_____v06BAgQIECBAgQIECBAgQIECBAgKHSSBAgQIECBR00____-_w9GCBAgQIECBAgQIECBAgQIECAodJIECBAgQIECD8rx________ECBAgQIECBAgQIECBAgQICh0kgQIECBAgQLETRlv_______6oECBAgQIECBAgQIECBAgKHSyBAgQIHGQlwYIEH_-_x_____9-dECBAgQIECBAgQIECAIdLIECDAmJbfz_-0RJ0qBV________7sECBAgQIECBAgQIAh0sgQIMzAl-__fX5Sg0JECvX______586IECBAgQIECBAgCHSyBAgwJiW9OjX_0qBAgQIEX________-l8fPjBAgQIECAIdLIEHBYhQIECBQxQICWDhg5fv____________tUCBAgQIAh0sgzIECBAgQIEGlAgQEtP_______________-lQIECBAgCHSyBUwQIECBAgQakCBASQqv_____________-6FAgQIECAIdLIECJygQIECBAgaoEBJBg______________5-OiBAgQIAh0sgQKGKBAgQIEHBKgJIMH7____8v__________QoECBAgCHSyBRmQIECBA4RoECAkgVoVaNel________r16FAgQIECAIdLINCFAgwOEyBAgQICSBAgQePn7___r06RAgQIECBAgQIAh0sgQLeKxCgQIECBAgJIECDR__v0aNGhQIECBAgQIECBAgCHSSBAgQIECBAgQIECBAgQYP3_-1QIECBAgQIECBAgQIECAIdJIECBAgQIECBAgQIECBB6boUSBAgQIECBAgQIECBAgQIAh0kgQIECBAgQIECBAgQIFStAgQIECBAgQIECBAgQIECBAgAzsvjognZe_MFIy4cmzTuy8wdTfwQU-G_l0DVKy-lhyad6A");
-        }
+    _handleChangeOfConnected(isConnected) {
+        if (isConnected) this.connected.notify();
     }
 }
 
@@ -76,6 +86,7 @@ window['__onGCastApiAvailable'] = isAvailable => {
     if (isAvailable) {
         if (typeof cast == 'undefined') {
             throw new Error("TeletextCaster: 'cast' is not defined even though __onGCastApiAvailable says it is");
+            // TODO - make this more reliable
         }
         ttxcaster._init();
     }
