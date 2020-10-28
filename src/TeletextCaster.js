@@ -59,6 +59,10 @@ class TeletextCaster {
         this._sendCommand('mix');
     }
 
+    toggleBoxMode() {
+        this._sendCommand('box');
+    }
+
     async _sendCommand(command) {
         if (!this._isConnected()) return;
 

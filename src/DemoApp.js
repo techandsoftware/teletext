@@ -31,8 +31,10 @@ export class DemoApp {
                     break;
                 case 'm':
                     ttxcaster.toggleMixMode();
-                // eslint-disable-next-line no-fallthrough
+                    window.dispatchEvent(new Event(this.KEY_EVENTS[e.key]));
+                    break;
                 case 's':
+                    ttxcaster.toggleBoxMode();
                     window.dispatchEvent(new Event(this.KEY_EVENTS[e.key]));
                     break;
                 case 't':
