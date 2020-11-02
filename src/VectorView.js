@@ -221,6 +221,7 @@ export class View {
             cellView.plain(' ')
                 .attr({
                     dx: null,
+                    dy: null,
                     textLength: null,
                     lengthAdjust: null,
                     'text-anchor': null,
@@ -333,6 +334,7 @@ function getCellAttr(cellType, isMosaicChar) {
     if (cellType == CellType.MOSAIC_CONTIGUOUS && isMosaicChar) {
         return {
             dx: MOSAIC_METRIC._contiguous._DX,
+            dy: -0.125,
             textLength: MOSAIC_METRIC._contiguous._textLength,
             lengthAdjust: 'spacingAndGlyphs',
             'text-anchor': 'start',
@@ -342,6 +344,7 @@ function getCellAttr(cellType, isMosaicChar) {
     } else if (cellType == CellType.MOSAIC_SEPARATED && isMosaicChar) {
         return {
             dx: MOSAIC_METRIC._separated._DX,
+            dy: null,
             textLength: MOSAIC_METRIC._separated._textLength,
             lengthAdjust: 'spacingAndGlyphs',
             'text-anchor': 'start',
@@ -351,6 +354,7 @@ function getCellAttr(cellType, isMosaicChar) {
     } 
     return {
         dx: null,
+        dy: null,
         textLength: null,
         lengthAdjust: null,
         'text-anchor': null,
@@ -419,7 +423,7 @@ font-size: 10px;
 }
 .mosaic {
 font-family: 'Unscii';
-font-size: 10.1px;
+font-size: 10.25px;
 }
 .mosaic_separated {
 font-family: 'Unscii';
