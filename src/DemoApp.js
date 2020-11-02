@@ -15,6 +15,7 @@ export class DemoApp {
         this._initEventListeners();
         this._aspectRatioIndex = 0;
         this._fontIndex = 0;
+        // this.t.setHeight(720 * 0.9);
         ttxcaster.connected.attach( () => this._castConnected() );
     }
 

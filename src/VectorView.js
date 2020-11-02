@@ -24,8 +24,8 @@ const TEXT_Y_OFFSET = CELL_HEIGHT * (4 / 5);    // font baseline
 // Suspect the gaps are due to font antialiasing, with no way to switch antialiasing off.
 const MOSAIC_METRIC = {
     _contiguous: {
-        _textLength: CELL_WIDTH + 0.2,
-        _DX: 0 - TEXT_X_OFFSET -0.1,
+        _textLength: CELL_WIDTH + 0.4,
+        _DX: 0 - TEXT_X_OFFSET - 0.2,
     },
     _separated: {
         _textLength: CELL_WIDTH,
@@ -334,7 +334,7 @@ function getCellAttr(cellType, isMosaicChar) {
     if (cellType == CellType.MOSAIC_CONTIGUOUS && isMosaicChar) {
         return {
             dx: MOSAIC_METRIC._contiguous._DX,
-            dy: -0.125,
+            dy: -0.15,
             textLength: MOSAIC_METRIC._contiguous._textLength,
             lengthAdjust: 'spacingAndGlyphs',
             'text-anchor': 'start',
@@ -423,7 +423,7 @@ font-size: 10px;
 }
 .mosaic {
 font-family: 'Unscii';
-font-size: 10.25px;
+font-size: 10.3px;
 }
 .mosaic_separated {
 font-family: 'Unscii';
