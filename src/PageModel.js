@@ -5,7 +5,7 @@ import { RowModel } from './RowModel.js';
 
 const ROWS = 25;
 const CELLS_PER_ROW = 40;
-const DEFAULT_CHARACTER_SET = 'latin_g0__english';
+const DEFAULT_PRIMARY_G0_CHARACTER_SET = 'latin_g0';
 
 export class PageModel {
     constructor() {
@@ -17,7 +17,7 @@ export class PageModel {
             }
             this._screen.push(row);
         }
-        this._characterEncoding = DEFAULT_CHARACTER_SET;
+        this._primaryG0CharacterEncoding = DEFAULT_PRIMARY_G0_CHARACTER_SET;
         this._startBoxChar = Attributes.charFromAttribute(Attributes.START_BOX)
         this._level = Level[1];
         
@@ -87,6 +87,12 @@ export class PageModel {
                 this._setRowFromChars(rowNum, "");
             }
         }
+    }
+
+    setPrimaryG0CharacterEncoding(encoding) {
+        this._primaryG0CharacterEncoding = encoding;
+        console.debug('PageModel.setPrimaryG0CharacterEncoding: set default g0 encoding to', encoding);
+        this.onSet.notify();
     }
 
     getRow(rowNum) {
@@ -226,7 +232,7 @@ export class PageModel {
                     cell.setSpace(heldMosaic);
                     break;
                 default:
-                    cell.setMappedChar(this._characterEncoding);
+                    cell.setMappedChar(this._primaryG0CharacterEncoding);
                     // mosaic chars are held for use when 'hold mosaics' is active
                     if (cell.isMosaic()) {
                         heldMosaic.char = char;

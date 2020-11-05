@@ -98,4 +98,8 @@ export class TeletextController {
         if (Number.isNaN(height)) throw new Error("E98 setHeight: bad number");
         this._view.setHeight(height);
     }
+
+    setDefaultG0Charset(encoding) {
+        this._model.setPrimaryG0CharacterEncoding(encoding);
+    }
 }

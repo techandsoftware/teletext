@@ -3,10 +3,34 @@ import { ttxcaster } from './TeletextCaster.js';
 
 const ASPECT_RATIOS = [1.2, 1.22, 1.33, 'natural'];
 const FONTS = ['sans-serif', 'Bedstead', 'native', 'serif', 'Unscii', 'Ubuntu'];
+const CHARACTER_SETS = [
+    'latin_g0',
+    'latin_g0__czech_slovak',
+    'latin_g0__english',
+    'latin_g0__estonian',
+    'latin_g0__french',
+    'latin_g0__german',
+    'latin_g0__italian',
+    'latin_g0__latvian_lithuanian',
+    'latin_g0__polish',
+    'latin_g0__portuguese_spanish',
+    'latin_g0__romanian',
+    'latin_g0__serbian_croatian_slovenian',
+    'latin_g0__swedish_finnish_hungarian',
+    'latin_g0__turkish',
+    'greek_g0',
+    'cyrillic_g0__russian_bulgarian',
+    'cyrillic_g0__serbian_croatian',
+    'cyrillic_g0__ukranian',
+    'arabic_g0',
+    'hebrew_g0',
+];
+const DEFAULT_CHARACTER_SET = 'latin_g0__english';
 
 export class DemoApp {
     constructor(teletextjs) {
         this.t = teletextjs;
+        teletextjs.setDefaultG0Charset(DEFAULT_CHARACTER_SET);
         this.KEY_EVENTS = {
             '?': 'ttx.reveal',
             'm': 'ttx.mix',
@@ -15,6 +39,7 @@ export class DemoApp {
         this._initEventListeners();
         this._aspectRatioIndex = 0;
         this._fontIndex = 0;
+        this._charSetIndex = 0;
         // this.t.setHeight(720 * 0.9);
         ttxcaster.connected.attach( () => this._castConnected() );
     }
@@ -68,6 +93,11 @@ export class DemoApp {
                     break;
                 case 'h':
                     teletextjs.setHeight(document.head.parentElement.clientHeight * 0.8);
+                    break;
+                case 'e': // for encoding
+                    this._charSetIndex++;
+                    if (this._charSetIndex == CHARACTER_SETS.length) this._charSetIndex = 0;
+                    teletextjs.setDefaultG0Charset(CHARACTER_SETS[this._charSetIndex]);
                     break;
                 default:
             }
