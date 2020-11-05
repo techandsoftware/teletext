@@ -5,6 +5,7 @@ import { RowModel } from './RowModel.js';
 
 const ROWS = 25;
 const CELLS_PER_ROW = 40;
+const DEFAULT_CHARACTER_SET = 'latin_g0__english';
 
 export class PageModel {
     constructor() {
@@ -16,7 +17,7 @@ export class PageModel {
             }
             this._screen.push(row);
         }
-        this._characterEncoding = 'latin_g0_english';
+        this._characterEncoding = DEFAULT_CHARACTER_SET;
         this._startBoxChar = Attributes.charFromAttribute(Attributes.START_BOX)
         this._level = Level[1];
         

@@ -129,6 +129,13 @@ export class Cell {
 function getCharWithEncoding(byte, encoding) {
     if (!(encoding in encodings)) throw new Error(`Cell getCharWithEncoding: bad encoding: ${encoding}`);
     if (byte in encodings[encoding]) return encodings[encoding][byte];
-    if (byte in encodings['latin_g0']) return encodings['latin_g0'][byte];
+    const matches = encoding.match(/^(.+)__/);
+    if (matches != null) {
+        const baseEncoding = matches[1];
+        if (byte in encodings[baseEncoding]) {
+            encodings[encoding][byte] = encodings[baseEncoding][byte];
+            return encodings[baseEncoding][byte];
+        }
+    }
     return byte;
 }
