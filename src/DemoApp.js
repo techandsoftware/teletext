@@ -1,5 +1,4 @@
 import { teletextjs, Attributes, Colour, Level } from '../dist/teletextjs.js';
-import { ttxcaster } from './TeletextCaster.js';
 
 const ASPECT_RATIOS = [1.2, 1.22, 1.33, 'natural'];
 const FONTS = ['sans-serif', 'Bedstead', 'native', 'serif', 'Unscii', 'Ubuntu'];
@@ -41,26 +40,18 @@ export class DemoApp {
         this._fontIndex = 0;
         this._charSetIndex = 0;
         // this.t.setHeight(720 * 0.9);
-        ttxcaster.connected.attach( () => this._castConnected() );
-    }
-
-    _castConnected() {
-        // ttxcaster.display("QIECBAgQIIcWLGg2EDFy2QIJu_cgZNUETLjQA2TN0xYr2DAodJIECBAgQIEGDB4_PUCBAgQIECBAgQIECBAgQIEANkvaMih0kgQIECDA1Qfv__OgQYGCBAgQIECBAgQIECBAgQIECBAgKHSSBAgQIH6FR-__-v7___oECBAgQIEAORPmxUE6LXpoECAodJIECBAoQKum7______9-gQIECBAgQA82_Zs39-aB8-QIAh0kgQIECBAgSev_____v06BAgQIECBAgQIECBAgQIECBAgKHSSBAgQIECBR00____-_w9GCBAgQIECBAgQIECBAgQIECAodJIECBAgQIECD8rx________ECBAgQIECBAgQIECBAgQICh0kgQIECBAgQLETRlv_______6oECBAgQIECBAgQIECBAgKHSyBAgQIHGQlwYIEH_-_x_____9-dECBAgQIECBAgQIECAIdLIECDAmJbfz_-0RJ0qBV________7sECBAgQIECBAgQIAh0sgQIMzAl-__fX5Sg0JECvX______586IECBAgQIECBAgCHSyBAgwJiW9OjX_0qBAgQIEX________-l8fPjBAgQIECAIdLIEHBYhQIECBQxQICWDhg5fv____________tUCBAgQIAh0sgzIECBAgQIEGlAgQEtP_______________-lQIECBAgCHSyBUwQIECBAgQakCBASQqv_____________-6FAgQIECAIdLIECJygQIECBAgaoEBJBg______________5-OiBAgQIAh0sgQKGKBAgQIEHBKgJIMH7____8v__________QoECBAgCHSyBRmQIECBA4RoECAkgVoVaNel________r16FAgQIECAIdLINCFAgwOEyBAgQICSBAgQePn7___r06RAgQIECBAgQIAh0sgQLeKxCgQIECBAgJIECDR__v0aNGhQIECBAgQIECBAgCHSSBAgQIECBAgQIECBAgQYP3_-1QIECBAgQIECBAgQIECAIdJIECBAgQIECBAgQIECBB6boUSBAgQIECBAgQIECBAgQIAh0kgQIECBAgQIECBAgQIFStAgQIECBAgQIECBAgQIECBAgAzsvjognZe_MFIy4cmzTuy8wdTfwQU-G_l0DVKy-lhyad6A");
     }
 
     _initEventListeners() {
         window.addEventListener('keypress', e => {
             switch (e.key) {
                 case '?':
-                    ttxcaster.toggleReveal();
                     window.dispatchEvent(new Event(this.KEY_EVENTS[e.key]));
                     break;
                 case 'm':
-                    ttxcaster.toggleMixMode();
                     window.dispatchEvent(new Event(this.KEY_EVENTS[e.key]));
                     break;
                 case 's':
-                    ttxcaster.toggleBoxMode();
                     window.dispatchEvent(new Event(this.KEY_EVENTS[e.key]));
                     break;
                 case 't':
@@ -71,7 +62,6 @@ export class DemoApp {
                     break;
                 case 'c': // for cells
                     teletextjs.toggleGrid();
-                    ttxcaster.toggleGrid();
                     break;
                 case 'a':
                     this._aspectRatioIndex++;
@@ -88,7 +78,6 @@ export class DemoApp {
                     teletextjs.setFont(FONTS[this._fontIndex]);
                     break;
                 case 'w': // for wipe
-                    ttxcaster.clearScreen();
                     teletextjs.clearScreen();
                     break;
                 case 'h':
@@ -104,7 +93,6 @@ export class DemoApp {
         });
         window.addEventListener('DOMContentLoaded', () => {
             document.getElementById('revealButton').addEventListener('click', () => {
-                ttxcaster.toggleReveal();
                 window.dispatchEvent(new Event('ttx.reveal'));
             });
             document.getElementById('levelSelect').addEventListener('input', e => {

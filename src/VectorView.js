@@ -45,7 +45,7 @@ export class View {
             })
             .style(getStyle());
 
-        this.d = this._svg.group().attr('class', 'conceal_concealed flash_flashing font-bedstead');
+        this.d = this._svg.group().attr('class', 'conceal_concealed flash_flashing');
 
         this._aspectRatio = DEFAULT_ASPECT_RATIO;
 
