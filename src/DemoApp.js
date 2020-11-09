@@ -24,12 +24,9 @@ const CHARACTER_SETS = [
     'arabic_g0',
     'hebrew_g0',
 ];
-const DEFAULT_CHARACTER_SET = 'latin_g0__english';
-
 export class DemoApp {
     constructor(teletextjs) {
         this.t = teletextjs;
-        teletextjs.setDefaultG0Charset(DEFAULT_CHARACTER_SET);
         this.KEY_EVENTS = {
             '?': 'ttx.reveal',
             'm': 'ttx.mix',
@@ -86,7 +83,7 @@ export class DemoApp {
                 case 'e': // for encoding
                     this._charSetIndex++;
                     if (this._charSetIndex == CHARACTER_SETS.length) this._charSetIndex = 0;
-                    teletextjs.setDefaultG0Charset(CHARACTER_SETS[this._charSetIndex]);
+                    teletextjs.setDefaultG0Charset(CHARACTER_SETS[this._charSetIndex], true);
                     break;
                 default:
             }

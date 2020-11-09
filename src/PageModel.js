@@ -89,10 +89,10 @@ export class PageModel {
         }
     }
 
-    setPrimaryG0CharacterEncoding(encoding) {
+    setPrimaryG0CharacterEncoding(encoding, withUpdate) {
         this._primaryG0CharacterEncoding = encoding;
         console.debug('PageModel.setPrimaryG0CharacterEncoding: set default g0 encoding to', encoding);
-        this.onSet.notify();
+        if (withUpdate) this.onSet.notify();
     }
 
     getRow(rowNum) {

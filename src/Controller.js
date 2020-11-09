@@ -99,8 +99,8 @@ export class TeletextController {
         this._view.setHeight(height);
     }
 
-    setDefaultG0Charset(encoding) {
-        this._model.setPrimaryG0CharacterEncoding(encoding);
+    setDefaultG0Charset(...args) {
+        this._model.setPrimaryG0CharacterEncoding(...args);
     }
 
     // dumpToConsole() {
