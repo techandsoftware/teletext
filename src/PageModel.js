@@ -62,7 +62,7 @@ export class PageModel {
     //     this._screen.forEach((row, index) => {
     //         let rowString = '';
     //         row.forEach(cell => {
-    //             rowString += cell.byte;
+    //             rowString += cell.byte.charCodeAt(0).toString(16).padStart(2, '0') + ' ';
     //         });
     //         console.log(index, '|', rowString, '|');
     //     });

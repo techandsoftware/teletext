@@ -102,4 +102,8 @@ export class TeletextController {
     setDefaultG0Charset(encoding) {
         this._model.setPrimaryG0CharacterEncoding(encoding);
     }
+
+    // dumpToConsole() {
+    //     this._model.dumpToConsole();
+    // }
 }

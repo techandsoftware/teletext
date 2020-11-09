@@ -1,6 +1,8 @@
 import { Colour, CellType, CellSize } from './Attributes.js';
 import encodings from './data/characterEncodings.json';
 
+const sextants = {};
+
 export class Cell {
     constructor() {
         this._byte = ' ';
@@ -121,6 +123,17 @@ export class Cell {
                 && (code <= 0x7f) 
                 && ((code & 0b100000) == 0b100000);
         return isMosaic;
+    }
+
+    getSextants() {
+        let code = this._byteHeld != null ? this._byteHeld.charCodeAt(0) : this._byte.charCodeAt(0);
+        if (code > 0x7f) return null;
+        if (code in sextants) return sextants[code];
+
+        code -= 0x20;
+        if (code >= 0x40) code -= 0x20;
+        sextants[code] = [...code.toString(2).padStart(6, '0')].reverse().map(sextant => sextant == '1');
+        return sextants[code];
     }
 }
 

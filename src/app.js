@@ -1,6 +1,6 @@
 import { TeletextController } from './Controller.js';
 import { PageModel } from "./PageModel.js";
-import { View } from './VectorView.js';
+import { View } from './VectorView2.js';
 
 const model = new PageModel();
 const view = new View(model);
