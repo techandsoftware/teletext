@@ -1,5 +1,6 @@
 import { SVG } from './SVG.js'
 import { Attributes, CellType, CellSize } from './Attributes.js';
+import { Cell } from './Cell.js';
 
 const WIDTH_PX = 400;
 const HEIGHT_PX = 250;
@@ -61,6 +62,7 @@ export class View {
         this._boxMode = false;
         this._mixMode = false;
         this._pageContainsBox = false;
+        this._mosaicSymbols = new Set();
         console.debug('VectorView constructed');
     }
 
@@ -140,11 +142,34 @@ export class View {
     _drawMosaic(row, col, cell) {
         const sextants = cell.getSextants();
         // console.debug('row', row, 'col', col, cell.byte.charCodeAt(0).toString(16), sextants);
-        if (!sextants.includes(true)) return;
+        if (!sextants.includes('1')) return;
+        let id = 'c';
+        if (cell.type == CellType.MOSAIC_SEPARATED) id = 's';
+        id += sextants.join('');
 
-        // TODO
-        // create SVG object
+        if (!this._mosaicSymbols.has(id)) {
+            this._mosaicSymbols.add(id);
+            const symbol = this._svg.symbol(id);
+            symbol.attr({
+                preserveAspectRatio: 'none',
+                width: CELL_WIDTH,
+                height: CELL_HEIGHT,
+                viewBox: '0 0 12 18',
+            });
+
+            if (cell.type == CellType.MOSAIC_CONTIGUOUS) {
+                for (let i = 0; i < 6; i++) {
+                    sextants[i] == '1' && symbol.rect(6, 6).move((i % 2) * 6, Math.floor(i/2) * 6);
+                }
+            } else {
+                for (let i = 0; i < 6; i++) {
+                    sextants[i] == '1' && symbol.rect(4, 4).move(((i % 2) * 6) + 2, (Math.floor(i/2) * 6) + 2);
+                }
+            }
+        }
+
         // plot it at the right place
+        // TODO add use
     }
 
     reveal() {

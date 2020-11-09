@@ -132,7 +132,7 @@ export class Cell {
 
         code -= 0x20;
         if (code >= 0x40) code -= 0x20;
-        sextants[code] = [...code.toString(2).padStart(6, '0')].reverse().map(sextant => sextant == '1');
+        sextants[code] = [...code.toString(2).padStart(6, '0')].reverse();
         return sextants[code];
     }
 }

@@ -130,6 +130,12 @@ export class SVG extends Element {
     height() {
         return this._e.clientHeight;
     }
+
+    symbol(id) {
+        const symbol = new SVGSymbol(id);
+        this._e.append(symbol._node());
+        return symbol;
+    }
 }
 
 
@@ -198,6 +204,21 @@ class Group extends Element {
         this._e.append(line._node());
         this._c.push(line);
         return line;
+    }
+}
+
+class SVGSymbol extends Element {
+    constructor(id) {
+        super();
+        this._e = document.createElementNS(NS, 'symbol');
+        this._e.setAttribute('id', id);
+        return this;
+    }
+
+    rect(width, height) {
+        const rect = new Rect(width, height);
+        this._e.append(rect._node());
+        return rect;
     }
 }
 
