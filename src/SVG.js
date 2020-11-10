@@ -205,8 +205,36 @@ class Group extends Element {
         this._c.push(line);
         return line;
     }
+
+    use(id) {
+        const use = new Use(id);
+        this._e.append(use._node());
+        this._c.push(use);
+        return use;
+    }
 }
 
+class Use extends Element {
+    constructor(id) {
+        super();
+        this._e = document.createElementNS(NS, 'use');
+        this._e.setAttribute('href', `#${id}`);
+        return this;
+    }
+
+    fill(fill) {
+        this._e.setAttribute('fill', fill);
+        return this;
+    }
+
+    move(x, y) {
+        this._e.setAttribute('x', x);
+        this._e.setAttribute('y', y);
+        return this;
+    }
+}
+
+// Called SVGSymbol to avoid clash with built-in Symbol
 class SVGSymbol extends Element {
     constructor(id) {
         super();

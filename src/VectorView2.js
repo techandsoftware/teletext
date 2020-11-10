@@ -51,6 +51,7 @@ export class View {
         this._aspectRatio = DEFAULT_ASPECT_RATIO;
 
         this._createRowBackgrounds();
+        this._createGraphicRows();
         this._createCells();
         this._createBoxModeClip();
         this._gridLayer = null;
@@ -77,6 +78,7 @@ export class View {
         this._pageContainsBox = false;
         this._gridrows.forEach((rowView, rowIndex) => {
             this._resetBackgroundForRow(rowIndex);
+            this._resetGraphicRow(rowIndex);
             this._resetBoxClipForRow(rowIndex);
             if (nextRowHidden) {
                 nextRowHidden = false;
@@ -96,9 +98,8 @@ export class View {
                 if (cell.type == CellType.ALPHA || !isMosaicByte) {
                     cellView.plain(cell.char).attr(attr).fill(fill);
                 } else if (isMosaicByte) {
-                    // TODO check logic for when this should be called
-                    this._drawMosaic(rowIndex, cellIndex, cell);
-                    cellView.plain(cell.char).attr(attr).fill(fill);
+                    cellView.plain(' ').attr(attr);
+                    this._drawMosaic(rowIndex, cellIndex, cell, fill);
                 }
                 if (cell.size == CellSize.DOUBLE_HEIGHT) {
                     const yTranslate = (2 * ((CELL_HEIGHT * rowIndex) + TEXT_Y_OFFSET)) - ((CELL_HEIGHT * rowIndex) + (2 * TEXT_Y_OFFSET));
@@ -139,12 +140,11 @@ export class View {
         this._refreshMixMode();
     }
 
-    _drawMosaic(row, col, cell) {
+    _drawMosaic(row, col, cell, fill) {
         const sextants = cell.getSextants();
         // console.debug('row', row, 'col', col, cell.byte.charCodeAt(0).toString(16), sextants);
         if (!sextants.includes('1')) return;
-        let id = 'c';
-        if (cell.type == CellType.MOSAIC_SEPARATED) id = 's';
+        let id = cell.type == CellType.MOSAIC_CONTIGUOUS ? 'c' : 's';
         id += sextants.join('');
 
         if (!this._mosaicSymbols.has(id)) {
@@ -168,8 +168,10 @@ export class View {
             }
         }
 
-        // plot it at the right place
-        // TODO add use
+        const use = this._graphicrows[row].use(id).move(col * CELL_WIDTH, row * CELL_HEIGHT).fill(fill);
+        if (cell.size == CellSize.DOUBLE_HEIGHT) use.attr('height', CELL_DOUBLE_HEIGHT);
+        if (cell.flashing) use.addClass('flash');
+        if (cell.concealed) use.addClass('conceal');
     }
 
     reveal() {
@@ -313,6 +315,11 @@ export class View {
         this._textLayer = textGroup;
     }
 
+    _createGraphicRows() {
+        this._graphicrows = [];
+        this._graphicLayer = this.d.group();
+    }
+
     _resetBoxClipForRow(rowNum) {
         this._boxLayer.children()
             .filter(b => b.data('r') == rowNum)
@@ -322,6 +329,11 @@ export class View {
     _resetBackgroundForRow(rowNum) {
         if (this._bgrows[rowNum]) this._bgrows[rowNum].remove();
         this._bgrows[rowNum] = this._bgLayer.group();
+    }
+
+    _resetGraphicRow(rowNum) {
+        if (this._graphicrows[rowNum]) this._graphicrows[rowNum].remove();
+        this._graphicrows[rowNum] = this._graphicLayer.group();
     }
 
     _extendBackgroundForRow(rowNum) {
@@ -371,28 +383,8 @@ export class View {
     }
 }
 
+// eslint-disable-next-line no-unused-vars
 function getCellAttr(cellType, isMosaicChar) {
-    if (cellType == CellType.MOSAIC_CONTIGUOUS && isMosaicChar) {
-        return {
-            dx: MOSAIC_METRIC._contiguous._DX,
-            dy: -0.15,
-            textLength: MOSAIC_METRIC._contiguous._textLength,
-            lengthAdjust: 'spacingAndGlyphs',
-            'text-anchor': 'start',
-            transform: null,
-            class: null,
-        };
-    } else if (cellType == CellType.MOSAIC_SEPARATED && isMosaicChar) {
-        return {
-            dx: MOSAIC_METRIC._separated._DX,
-            dy: null,
-            textLength: MOSAIC_METRIC._separated._textLength,
-            lengthAdjust: 'spacingAndGlyphs',
-            'text-anchor': 'start',
-            transform: null,
-            class: null,
-        };
-    } 
     return {
         dx: null,
         dy: null,
@@ -408,12 +400,12 @@ function getRandomLetter() {
     return String.fromCharCode(32 + Math.random() * 95); // returns letter in ASCII range
 }
 
+// eslint-disable-next-line no-unused-vars
 function setCellClasses(cellView, cellType, flashing, concealed, isMosaic) {
-    if (cellType == CellType.MOSAIC_CONTIGUOUS && isMosaic) cellView.addClass('mosaic');
-    else if (cellType == CellType.MOSAIC_SEPARATED && isMosaic) cellView.addClass('mosaic_separated');
-
-    if (flashing) cellView.addClass('flash');
-    if (concealed) cellView.addClass('conceal');
+    if (cellType == CellType.ALPHA) {
+        if (flashing) cellView.addClass('flash');
+        if (concealed) cellView.addClass('conceal');
+    }
 }
 
 function getStyle() {
@@ -483,6 +475,9 @@ transition-duration: 0.25s;
 }
 svg {
 background-color: transparent;
+}
+svg use {
+shape-rendering: crispEdges;
 }
 `;
 }

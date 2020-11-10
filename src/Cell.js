@@ -126,13 +126,13 @@ export class Cell {
     }
 
     getSextants() {
-        let code = this._byteHeld != null ? this._byteHeld.charCodeAt(0) : this._byte.charCodeAt(0);
+        const code = this._byteHeld != null ? this._byteHeld.charCodeAt(0) : this._byte.charCodeAt(0);
         if (code > 0x7f) return null;
         if (code in sextants) return sextants[code];
 
-        code -= 0x20;
-        if (code >= 0x40) code -= 0x20;
-        sextants[code] = [...code.toString(2).padStart(6, '0')].reverse();
+        let sextant = code - 0x20;
+        if (sextant >= 0x40) sextant -= 0x20;
+        sextants[code] = [...sextant.toString(2).padStart(6, '0')].reverse();
         return sextants[code];
     }
 }
