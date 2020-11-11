@@ -1,6 +1,5 @@
 import { SVG } from './SVG.js'
 import { Attributes, CellType, CellSize } from './Attributes.js';
-import { Cell } from './Cell.js';
 
 const WIDTH_PX = 400;
 const HEIGHT_PX = 250;
@@ -35,7 +34,7 @@ const MOSAIC_METRIC = {
 };
 Object.freeze(MOSAIC_METRIC);
 
-export class View {
+export class ViewBase {
     constructor(model) {
         this._svg = new SVG()
             .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
@@ -50,9 +49,7 @@ export class View {
 
         this._aspectRatio = DEFAULT_ASPECT_RATIO;
 
-        this._createRowBackgrounds();
-        this._createGraphicRows();
-        this._createCells();
+        this._createDisplay();
         this._createBoxModeClip();
         this._gridLayer = null;
 
@@ -63,7 +60,6 @@ export class View {
         this._boxMode = false;
         this._mixMode = false;
         this._pageContainsBox = false;
-        this._mosaicSymbols = new Set();
         console.debug('VectorView constructed');
     }
 
@@ -71,20 +67,16 @@ export class View {
         this._svg.addTo(selector);
     }
 
-    // TODO - combine vectorview/vectorview2 using base class
-
     _update() {
         console.debug('## View._update');
         let nextRowHidden = false;
         let pageContainsFlash = false;
         this._pageContainsBox = false;
         this._gridrows.forEach((rowView, rowIndex) => {
-            this._resetBackgroundForRow(rowIndex);
-            this._resetGraphicRow(rowIndex);
-            this._resetBoxClipForRow(rowIndex);
+            this._resetRow(rowIndex);
             if (nextRowHidden) {
                 nextRowHidden = false;
-                this._resetRowCells(rowView, rowIndex);
+                this._clearRowCells(rowView, rowIndex);
                 return;
             }
 
@@ -95,19 +87,9 @@ export class View {
                 const isMosaicByte = cell.isMosaicByte();
                 const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
                 const bg = Attributes.fillColourFromColourAttrib(cell.bgColour);
-                const attr = getCellAttr(cell.type, isMosaicByte);
+                const attr = this._getCellAttr(cell.type, isMosaicByte);
 
-                if (cell.type == CellType.ALPHA || !isMosaicByte) {
-                    cellView.plain(cell.char).attr(attr).fill(fill);
-                } else if (isMosaicByte) {
-                    cellView.plain(' ').attr(attr);
-                    this._drawMosaic(rowIndex, cellIndex, cell, fill);
-                }
-                if (cell.size == CellSize.DOUBLE_HEIGHT) {
-                    const yTranslate = (2 * ((CELL_HEIGHT * rowIndex) + TEXT_Y_OFFSET)) - ((CELL_HEIGHT * rowIndex) + (2 * TEXT_Y_OFFSET));
-                    cellView.attr('transform', `translate(0 -${yTranslate}) scale(1 2)`);
-                }
-                setCellClasses(cellView, cell.type, cell.flashing, cell.concealed, isMosaicByte);
+                this._renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaicByte);
 
                 if (cell.boxed) {
                     if (previousBoxed) this._extendBox();
@@ -142,39 +124,38 @@ export class View {
         this._refreshMixMode();
     }
 
-    _drawMosaic(row, col, cell, fill) {
-        const sextants = cell.getSextants();
-        // console.debug('row', row, 'col', col, cell.byte.charCodeAt(0).toString(16), sextants);
-        if (!sextants.includes('1')) return;
-        let id = cell.type == CellType.MOSAIC_CONTIGUOUS ? 'c' : 's';
-        id += sextants.join('');
+    _resetRow(rowIndex) {
+        this._resetBackgroundForRow(rowIndex);
+        this._resetBoxClipForRow(rowIndex);
+    }
 
-        if (!this._mosaicSymbols.has(id)) {
-            this._mosaicSymbols.add(id);
-            const symbol = this._svg.symbol(id);
-            symbol.attr({
-                preserveAspectRatio: 'none',
-                width: CELL_WIDTH,
-                height: CELL_HEIGHT,
-                viewBox: '0 0 12 18',
-            });
+    _clearRowCells(rowView) {
+        rowView.forEach((cellView) => {
+            cellView.plain(' ')
+                .attr({
+                    dx: null,
+                    dy: null,
+                    textLength: null,
+                    lengthAdjust: null,
+                    'text-anchor': null,
+                    transform: null,
+                    class: null,
+                })
+            ;
+        });
+    }
 
-            if (cell.type == CellType.MOSAIC_CONTIGUOUS) {
-                for (let i = 0; i < 6; i++) {
-                    sextants[i] == '1' && symbol.rect(6, 6).move((i % 2) * 6, Math.floor(i/2) * 6);
-                }
-            } else {
-                // TODO tidy separated cell offsets to match saa5050
-                for (let i = 0; i < 6; i++) {
-                    sextants[i] == '1' && symbol.rect(4, 4).move(((i % 2) * 6) + 2, (Math.floor(i/2) * 6) + 2);
-                }
-            }
+    _renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaic) {
+        cellView.plain(cell.char).attr(attr).fill(fill);
+        if (cell.size == CellSize.DOUBLE_HEIGHT) {
+            cellView.attr('transform', ViewBase._getDoubleHeightTransform(rowIndex));
         }
 
-        const use = this._graphicrows[row].use(id).move(col * CELL_WIDTH, row * CELL_HEIGHT).fill(fill);
-        if (cell.size == CellSize.DOUBLE_HEIGHT) use.attr('height', CELL_DOUBLE_HEIGHT);
-        if (cell.flashing) use.addClass('flash');
-        if (cell.concealed) use.addClass('conceal');
+        if (cell.type == CellType.MOSAIC_CONTIGUOUS && isMosaic) cellView.addClass('mosaic');
+        else if (cell.type == CellType.MOSAIC_SEPARATED && isMosaic) cellView.addClass('mosaic_separated');
+    
+        if (cell.flashing) cellView.addClass('flash');
+        if (cell.concealed) cellView.addClass('conceal');
     }
 
     reveal() {
@@ -262,22 +243,6 @@ export class View {
         }
     }
 
-    _resetRowCells(rowView) {
-        rowView.forEach((cellView) => {
-            cellView.plain(' ')
-                .attr({
-                    dx: null,
-                    dy: null,
-                    textLength: null,
-                    lengthAdjust: null,
-                    'text-anchor': null,
-                    transform: null,
-                    class: null,
-                })
-            ;
-        });
-    }
-
     _createBoxModeClip() {
         // FUDGE can't use groups directly in <clipPath> https://github.com/w3c/fxtf-drafts/issues/17
         // Boxed cells are buffered and tagged with data-boxbuffer as the row is constructed
@@ -285,6 +250,11 @@ export class View {
         this._defs = this.d.defs();
         this._lastBoxBuffer = null;
         this._boxLayer = this._defs.clip();
+    }
+
+    _createDisplay() {
+        this._createRowBackgrounds();
+        this._createCells();
     }
 
     _createRowBackgrounds() {
@@ -318,11 +288,6 @@ export class View {
         this._textLayer = textGroup;
     }
 
-    _createGraphicRows() {
-        this._graphicrows = [];
-        this._graphicLayer = this.d.group();
-    }
-
     _resetBoxClipForRow(rowNum) {
         this._boxLayer.children()
             .filter(b => b.data('r') == rowNum)
@@ -332,11 +297,6 @@ export class View {
     _resetBackgroundForRow(rowNum) {
         if (this._bgrows[rowNum]) this._bgrows[rowNum].remove();
         this._bgrows[rowNum] = this._bgLayer.group();
-    }
-
-    _resetGraphicRow(rowNum) {
-        if (this._graphicrows[rowNum]) this._graphicrows[rowNum].remove();
-        this._graphicrows[rowNum] = this._graphicLayer.group();
     }
 
     _extendBackgroundForRow(rowNum) {
@@ -384,31 +344,53 @@ export class View {
             this._boxLayer.add(box);
         });
     }
+
+    _getCellAttr(cellType, isMosaicChar) {
+        if (cellType == CellType.MOSAIC_CONTIGUOUS && isMosaicChar) {
+            return {
+                dx: MOSAIC_METRIC._contiguous._DX,
+                dy: -0.15,
+                textLength: MOSAIC_METRIC._contiguous._textLength,
+                lengthAdjust: 'spacingAndGlyphs',
+                'text-anchor': 'start',
+                transform: null,
+                class: null,
+            };
+        } else if (cellType == CellType.MOSAIC_SEPARATED && isMosaicChar) {
+            return {
+                dx: MOSAIC_METRIC._separated._DX,
+                dy: null,
+                textLength: MOSAIC_METRIC._separated._textLength,
+                lengthAdjust: 'spacingAndGlyphs',
+                'text-anchor': 'start',
+                transform: null,
+                class: null,
+            };
+        } 
+        return {
+            dx: null,
+            dy: null,
+            textLength: null,
+            lengthAdjust: null,
+            'text-anchor': null,
+            transform: null,
+            class: null,
+        };
+    }
+
+    static _getDoubleHeightTransform(row) {
+        const yTranslate = (2 * ((CELL_HEIGHT * row) + TEXT_Y_OFFSET)) - ((CELL_HEIGHT * row) + (2 * TEXT_Y_OFFSET));
+        return `translate(0 -${yTranslate}) scale(1 2)`;
+    }
 }
 
-// eslint-disable-next-line no-unused-vars
-function getCellAttr(cellType, isMosaicChar) {
-    return {
-        dx: null,
-        dy: null,
-        textLength: null,
-        lengthAdjust: null,
-        'text-anchor': null,
-        transform: null,
-        class: null,
-    };
-}
+// expose constants here for subclasses
+ViewBase.CELL_WIDTH = CELL_WIDTH;
+ViewBase.CELL_HEIGHT = CELL_HEIGHT;
+ViewBase.CELL_DOUBLE_HEIGHT = CELL_DOUBLE_HEIGHT;
 
 function getRandomLetter() {
     return String.fromCharCode(32 + Math.random() * 95); // returns letter in ASCII range
-}
-
-// eslint-disable-next-line no-unused-vars
-function setCellClasses(cellView, cellType, flashing, concealed, isMosaic) {
-    if (cellType == CellType.ALPHA) {
-        if (flashing) cellView.addClass('flash');
-        if (concealed) cellView.addClass('conceal');
-    }
 }
 
 function getStyle() {
