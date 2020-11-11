@@ -390,9 +390,9 @@ export class VectorViewBase {
 }
 
 // expose constants here for subclasses
-VectorViewBase.CELL_WIDTH = CELL_WIDTH;
-VectorViewBase.CELL_HEIGHT = CELL_HEIGHT;
-VectorViewBase.CELL_DOUBLE_HEIGHT = CELL_DOUBLE_HEIGHT;
+VectorViewBase._CELL_WIDTH = CELL_WIDTH;
+VectorViewBase._CELL_HEIGHT = CELL_HEIGHT;
+VectorViewBase._CELL_DOUBLE_HEIGHT = CELL_DOUBLE_HEIGHT;
 
 function getRandomLetter() {
     return String.fromCharCode(32 + Math.random() * 95); // returns letter in ASCII range

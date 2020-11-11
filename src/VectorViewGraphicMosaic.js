@@ -44,8 +44,8 @@ export class View extends Base {
             const symbol = this._svg.symbol(id);
             symbol.attr({
                 preserveAspectRatio: 'none',
-                width: Base.CELL_WIDTH,
-                height: Base.CELL_HEIGHT,
+                width: Base._CELL_WIDTH,
+                height: Base._CELL_HEIGHT,
                 viewBox: '0 0 12 18',
             });
 
@@ -60,8 +60,8 @@ export class View extends Base {
             }
         }
 
-        const use = this._graphicrows[row].use(id).move(col * Base.CELL_WIDTH, row * Base.CELL_HEIGHT).fill(fill);
-        if (cell.size == CellSize.DOUBLE_HEIGHT) use.attr('height', Base.CELL_DOUBLE_HEIGHT);
+        const use = this._graphicrows[row].use(id).move(col * Base._CELL_WIDTH, row * Base._CELL_HEIGHT).fill(fill);
+        if (cell.size == CellSize.DOUBLE_HEIGHT) use.attr('height', Base._CELL_DOUBLE_HEIGHT);
         if (cell.flashing) use.addClass('flash');
         if (cell.concealed) use.addClass('conceal');
     }
