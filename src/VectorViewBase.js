@@ -34,7 +34,7 @@ const MOSAIC_METRIC = {
 };
 Object.freeze(MOSAIC_METRIC);
 
-export class ViewBase {
+export class VectorViewBase {
     constructor(model) {
         this._svg = new SVG()
             .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
@@ -54,17 +54,22 @@ export class ViewBase {
         this._gridLayer = null;
 
         this._model = model;
-        this._model.onSet.attach(
+        this._listenerId = this._model.onSet.attach(
             () => this._update()
         );
         this._boxMode = false;
         this._mixMode = false;
         this._pageContainsBox = false;
-        console.debug('VectorView constructed');
+        console.debug('VectorViewBase constructed');
     }
 
     addTo(selector) {
         this._svg.addTo(selector);
+    }
+
+    detach() {
+        this._model.onSet.detach(this._listenerId);
+        this._listenerId = null;
     }
 
     _update() {
@@ -148,7 +153,7 @@ export class ViewBase {
     _renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaic) {
         cellView.plain(cell.char).attr(attr).fill(fill);
         if (cell.size == CellSize.DOUBLE_HEIGHT) {
-            cellView.attr('transform', ViewBase._getDoubleHeightTransform(rowIndex));
+            cellView.attr('transform', VectorViewBase._getDoubleHeightTransform(rowIndex));
         }
 
         if (cell.type == CellType.MOSAIC_CONTIGUOUS && isMosaic) cellView.addClass('mosaic');
@@ -385,9 +390,9 @@ export class ViewBase {
 }
 
 // expose constants here for subclasses
-ViewBase.CELL_WIDTH = CELL_WIDTH;
-ViewBase.CELL_HEIGHT = CELL_HEIGHT;
-ViewBase.CELL_DOUBLE_HEIGHT = CELL_DOUBLE_HEIGHT;
+VectorViewBase.CELL_WIDTH = CELL_WIDTH;
+VectorViewBase.CELL_HEIGHT = CELL_HEIGHT;
+VectorViewBase.CELL_DOUBLE_HEIGHT = CELL_DOUBLE_HEIGHT;
 
 function getRandomLetter() {
     return String.fromCharCode(32 + Math.random() * 95); // returns letter in ASCII range

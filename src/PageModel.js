@@ -25,6 +25,10 @@ export class PageModel {
         console.debug('PageModel constructed');
     }
 
+    notify() {
+        this.onSet.notify();
+    }
+
     setRowFromChars(rowNum, text) {
         if (rowNum >= ROWS) {
             throw new Error("PageModel E29 bad row number");

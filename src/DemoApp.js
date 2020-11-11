@@ -24,6 +24,8 @@ const CHARACTER_SETS = [
     'arabic_g0',
     'hebrew_g0',
 ];
+const VIEWS = ['classic__font-for-mosaic', 'classic__graphic-for-mosaic'];
+
 export class DemoApp {
     constructor(teletextjs) {
         this.t = teletextjs;
@@ -36,6 +38,7 @@ export class DemoApp {
         this._aspectRatioIndex = 0;
         this._fontIndex = 0;
         this._charSetIndex = 0;
+        this._viewIndex = 0;
         // this.t.setHeight(720 * 0.9);
     }
 
@@ -84,6 +87,12 @@ export class DemoApp {
                     this._charSetIndex++;
                     if (this._charSetIndex == CHARACTER_SETS.length) this._charSetIndex = 0;
                     teletextjs.setDefaultG0Charset(CHARACTER_SETS[this._charSetIndex], true);
+                    break;
+                case 'v':
+                    teletextjs.remove();
+                    this._viewIndex++;
+                    if (this._viewIndex == VIEWS.length) this._viewIndex = 0;
+                    teletextjs.setView(VIEWS[this._viewIndex]);
                     break;
                 default:
             }

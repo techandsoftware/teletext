@@ -6,9 +6,14 @@ export class Event {
 
     attach(listener) {
         this._listeners.push(listener);
+        return this._listeners.length - 1;
     }
 
     notify(args) {
-        this._listeners.forEach((val, index) => this._listeners[index](this._sender, args));
+        this._listeners.forEach(fn => fn != null && fn(this._sender, args));
+    }
+
+    detach(index) {
+        this._listeners[index] = null;
     }
 }

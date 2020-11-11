@@ -1,15 +1,22 @@
 import { Utils } from './Utils.js';
 import testpages from'./data/testpages.json';
 
+import { VectorViewBase } from './VectorViewBase.js';
+class ViewClassic extends VectorViewBase {}
+import { View as ViewGraphicMosaic } from './VectorViewGraphicMosaic.js';
+
+
+
 const TEST_PAGE_NAMES = ['ENGINEERING', 'ADVERT', 'UK'];
 
 export class TeletextController {
-    constructor(model, view) {
-        this._view = view;
+    constructor(model) {
+        this._view = new ViewGraphicMosaic(model);
         this._model = model;
         this._levelIndex = 1;
         this._testPageIndex = 0;
         this._initEventHandlers();
+        this._viewSelector = null;
         console.debug('TeletextController constructed');
     }
 
@@ -72,6 +79,7 @@ export class TeletextController {
     }
 
     addTo(selector) {
+        this._selector = selector;
         this._view.addTo(selector);
     }
 
@@ -101,6 +109,28 @@ export class TeletextController {
 
     setDefaultG0Charset(...args) {
         this._model.setPrimaryG0CharacterEncoding(...args);
+    }
+
+    remove() {
+        this._view.detach();
+        const el = document.querySelector(this._selector);
+        if (el) el.removeChild(el.firstChild);
+        this._view = null;
+    }
+
+    setView(view) {
+        switch (view) {
+            case 'classic__font-for-mosaic':
+                this._view = new ViewClassic(this._model);
+                break;
+            case 'classic__graphic-for-mosaic':
+                this._view = new ViewGraphicMosaic(this._model);
+                break;
+            default:
+                throw new Error("setView E126: bad view name:" + view);
+        }
+        if (this._selector) this._view.addTo(this._selector);
+        this._model.notify();
     }
 
     // dumpToConsole() {

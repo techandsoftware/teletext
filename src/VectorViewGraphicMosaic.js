@@ -1,11 +1,11 @@
 import { CellType, CellSize } from './Attributes.js';
-import { ViewBase } from './ViewBase.js';
+import { VectorViewBase as Base } from './VectorViewBase.js';
 
-export class View extends ViewBase {
+export class View extends Base {
     constructor(model) {
         super(model);
         this._mosaicSymbols = new Set();
-        console.debug('VectorView 3 constructed');
+        console.debug('VectorViewGraphicMosaic constructed');
     }
 
     _createDisplay() {
@@ -29,13 +29,12 @@ export class View extends ViewBase {
             if (cell.concealed) cellView.addClass('conceal');
         } else if (isMosaic) {
             cellView.plain(' ').attr(attr);
-            this._drawMosaic(rowIndex, cellIndex, cell, fill);
+            this._renderMosaic(rowIndex, cellIndex, cell, fill);
         }
     }
 
-    _drawMosaic(row, col, cell, fill) {
+    _renderMosaic(row, col, cell, fill) {
         const sextants = cell.getSextants();
-        // console.debug('row', row, 'col', col, cell.byte.charCodeAt(0).toString(16), sextants);
         if (!sextants.includes('1')) return;
         let id = cell.type == CellType.MOSAIC_CONTIGUOUS ? 'c' : 's';
         id += sextants.join('');
@@ -45,8 +44,8 @@ export class View extends ViewBase {
             const symbol = this._svg.symbol(id);
             symbol.attr({
                 preserveAspectRatio: 'none',
-                width: ViewBase.CELL_WIDTH,
-                height: ViewBase.CELL_HEIGHT,
+                width: Base.CELL_WIDTH,
+                height: Base.CELL_HEIGHT,
                 viewBox: '0 0 12 18',
             });
 
@@ -61,8 +60,8 @@ export class View extends ViewBase {
             }
         }
 
-        const use = this._graphicrows[row].use(id).move(col * ViewBase.CELL_WIDTH, row * ViewBase.CELL_HEIGHT).fill(fill);
-        if (cell.size == CellSize.DOUBLE_HEIGHT) use.attr('height', ViewBase.CELL_DOUBLE_HEIGHT);
+        const use = this._graphicrows[row].use(id).move(col * Base.CELL_WIDTH, row * Base.CELL_HEIGHT).fill(fill);
+        if (cell.size == CellSize.DOUBLE_HEIGHT) use.attr('height', Base.CELL_DOUBLE_HEIGHT);
         if (cell.flashing) use.addClass('flash');
         if (cell.concealed) use.addClass('conceal');
     }
