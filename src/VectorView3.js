@@ -34,7 +34,6 @@ export class View extends ViewBase {
     }
 
     _drawMosaic(row, col, cell, fill) {
-        // debugger;
         const sextants = cell.getSextants();
         // console.debug('row', row, 'col', col, cell.byte.charCodeAt(0).toString(16), sextants);
         if (!sextants.includes('1')) return;
@@ -56,9 +55,8 @@ export class View extends ViewBase {
                     sextants[i] == '1' && symbol.rect(6, 6).move((i % 2) * 6, Math.floor(i/2) * 6);
                 }
             } else {
-                // TODO tidy separated cell offsets to match saa5050
                 for (let i = 0; i < 6; i++) {
-                    sextants[i] == '1' && symbol.rect(4, 4).move(((i % 2) * 6) + 2, (Math.floor(i/2) * 6) + 2);
+                    sextants[i] == '1' && symbol.rect(4, 4).move(((i % 2) * 6) + 1, (Math.floor(i/2) * 6) + 2);
                 }
             }
         }
