@@ -5,6 +5,7 @@
   "main": "dist/teletextjs.umd.min.js",
   "module": "dist/teletextjs.min.js",
   "dependencies": {
+    "js-hqx": "^1.0.0",
     "uint1array": "^1.1.1"
   },
   "devDependencies": {

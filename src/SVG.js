@@ -127,6 +127,10 @@ export class SVG extends Element {
         return group;
     }
 
+    width() {
+        return this._e.clientWidth;
+    }
+
     height() {
         return this._e.clientHeight;
     }

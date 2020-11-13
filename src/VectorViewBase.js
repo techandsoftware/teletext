@@ -120,6 +120,7 @@ export class VectorViewBase {
 
             this._makeClipFromBoxesForRow(rowIndex);
         });
+        this._endOfUpdateHook();
         this.d.addClass('conceal_concealed');
         // FUDGE keep flashing synchronised
         if (pageContainsFlash) {
@@ -127,6 +128,10 @@ export class VectorViewBase {
             setTimeout(() => this.d.addClass('flash_flashing'), 10);
         }
         this._refreshMixMode();
+    }
+
+    _endOfUpdateHook() {
+        // noop here, hook for subclasses to use
     }
 
     _resetRow(rowIndex) {
@@ -393,6 +398,10 @@ export class VectorViewBase {
 VectorViewBase._CELL_WIDTH = CELL_WIDTH;
 VectorViewBase._CELL_HEIGHT = CELL_HEIGHT;
 VectorViewBase._CELL_DOUBLE_HEIGHT = CELL_DOUBLE_HEIGHT;
+VectorViewBase._ROWS = ROWS;
+VectorViewBase._COLS = COLS;
+VectorViewBase._WIDTH_PX = WIDTH_PX;
+VectorViewBase._HEIGHT_PX = HEIGHT_PX;
 
 function getRandomLetter() {
     return String.fromCharCode(32 + Math.random() * 95); // returns letter in ASCII range
@@ -465,6 +474,7 @@ transition-duration: 0.25s;
 }
 svg {
 background-color: transparent;
+position: absolute;
 }
 svg use {
 shape-rendering: crispEdges;

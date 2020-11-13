@@ -4,6 +4,7 @@ import testpages from'./data/testpages.json';
 import { VectorViewBase } from './VectorViewBase.js';
 class ViewClassic extends VectorViewBase {}
 import { View as ViewGraphicMosaic } from './VectorViewGraphicMosaic.js';
+import { View as ViewSmoothedMosaic } from './VectorViewSmoothedMosaic.js';
 
 
 
@@ -11,7 +12,7 @@ const TEST_PAGE_NAMES = ['ENGINEERING', 'ADVERT', 'UK'];
 
 export class TeletextController {
     constructor(model) {
-        this._view = new ViewGraphicMosaic(model);
+        this._view = new ViewSmoothedMosaic(model);
         this._model = model;
         this._levelIndex = 1;
         this._testPageIndex = 0;
