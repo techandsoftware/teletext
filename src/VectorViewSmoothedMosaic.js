@@ -1,5 +1,4 @@
 // TODO
-// conceal/flash
 // background colour to fix anti-aliasing
 // fix hqx module
 // change code to be a plugin?
@@ -99,8 +98,8 @@ export class View extends Base {
     }
 
     _renderMosaic(row, col, cell, fill) {
-        if (cell.type == CellType.MOSAIC_SEPARATED) {
-            this._renderMosaicSeparated(row, col, cell, fill);
+        if (cell.type == CellType.MOSAIC_SEPARATED || cell.flashing || cell.concealed) {
+            this._renderMosaicVector(row, col, cell, fill);
             return;
         }
 
@@ -120,7 +119,7 @@ export class View extends Base {
         }
     }
 
-    _renderMosaicSeparated(row, col, cell, fill) {
+    _renderMosaicVector(row, col, cell, fill) {
         const sextants = cell.getSextants();
         if (!sextants.includes('1')) return;
         let id = cell.type == CellType.MOSAIC_CONTIGUOUS ? 'c' : 's';
