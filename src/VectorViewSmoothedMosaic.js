@@ -1,8 +1,10 @@
 // TODO
-// double height
 // conceal/flash
 // background colour to fix anti-aliasing
+// fix hqx module
 // change code to be a plugin?
+// investigate http://blog.pkh.me/p/19-butchering-hqx-scaling-filters.html
+
 
 
 import { CellType, CellSize } from './Attributes.js';
@@ -14,6 +16,7 @@ export class View extends Base {
         super(model);
         this._mosaicSymbols = new Set();
         this._scaledGraphicsLayer = null;
+        this._doubleHeightCellsInRowAbove = new Set(); // keep track of double height cells to avoid clearing bottom half on graphics canvas
 
         const canvas = document.createElement('canvas');
         this._canvasCtx = canvas.getContext('2d');
@@ -21,6 +24,8 @@ export class View extends Base {
         this._canvasCtx.height = Base._ROWS * 3;
         canvas.width = this._canvasCtx.width;
         canvas.height = this._canvasCtx.height;
+        canvas.style.width = canvas.width * 2 + 'px';
+        canvas.style.height = canvas.height * 2 + 'px';
         this._canvasEl = canvas;
 
         // this._randomiseCanvas();
@@ -79,6 +84,7 @@ export class View extends Base {
     }
 
     _renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaic) {
+        this._canvasCtx.clearRect(cellIndex * 2, rowIndex * 3, 2, 3);
         if (cell.type == CellType.ALPHA || !isMosaic) {
             cellView.plain(cell.char).attr(attr).fill(fill);
             if (cell.size == CellSize.DOUBLE_HEIGHT) {
@@ -101,8 +107,16 @@ export class View extends Base {
         const sextants = cell.getSextants();
         if (!sextants.includes('1')) return;
         this._canvasCtx.fillStyle = fill;
-        for (let s = 0; s < 6; s++) {
-            sextants[s] == '1' && this._canvasCtx.fillRect((s % 2) + (col*2), Math.floor(s/2) + (row*3), 1, 1);
+        if (cell.size == CellSize.DOUBLE_HEIGHT) {
+            this._canvasCtx.clearRect(col*2, row*4, 2, 3);
+            for (let s = 0; s < 6; s++) {
+                sextants[s] == '1' && this._canvasCtx.fillRect((s % 2) + (col*2), (Math.floor(s/2)*2) + (row*3), 1, 2);
+            }
+            this._doubleHeightCellsInRowAbove.add(col);
+        } else {
+            for (let s = 0; s < 6; s++) {
+                sextants[s] == '1' && this._canvasCtx.fillRect((s % 2) + (col*2), Math.floor(s/2) + (row*3), 1, 1);
+            }
         }
     }
 
@@ -142,7 +156,16 @@ export class View extends Base {
     _resetGraphicRow(rowNum) {
         if (this._graphicrows[rowNum]) this._graphicrows[rowNum].remove();
         this._graphicrows[rowNum] = this._graphicLayer.group();
-        this._canvasCtx.clearRect(0, rowNum * 3, this._canvasCtx.width, 3);
+    }
+
+    _clearRowCells(rowView, rowNum) {
+        super._clearRowCells(rowView, rowNum);
+        for (let colNum = 0; colNum < rowView.length; colNum++) {
+            if (!this._doubleHeightCellsInRowAbove.has(colNum)) {
+                this._canvasCtx.clearRect(colNum * 2, rowNum * 3, 2, 3);
+            }
+        }
+        this._doubleHeightCellsInRowAbove.clear();
     }
 
     // eslint-disable-next-line no-unused-vars
