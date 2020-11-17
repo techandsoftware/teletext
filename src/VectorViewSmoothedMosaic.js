@@ -1,12 +1,10 @@
 // TODO
-// background colour to fix anti-aliasing
 // fix hqx module
 // change code to be a plugin?
 // investigate http://blog.pkh.me/p/19-butchering-hqx-scaling-filters.html
 
 
-
-import { CellType, CellSize } from './Attributes.js';
+import { Attributes, CellType, CellSize } from './Attributes.js';
 import { VectorViewBase as Base } from './VectorViewBase.js';
 import hqx from 'js-hqx'; 
 
@@ -28,6 +26,8 @@ export class View extends Base {
         this._canvasEl = canvas;
 
         // this._randomiseCanvas();
+        // this._canvasCtx.fillStyle = '#0000ff00';
+        // this._canvasCtx.fillRect(0, 0, this._canvasCtx.width, this._canvasCtx.height);
         document.querySelector('#canvas').appendChild(canvas);
 
         console.debug('VectorViewSmoothedMosaic constructed');
@@ -83,7 +83,11 @@ export class View extends Base {
     }
 
     _renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaic) {
-        this._canvasCtx.clearRect(cellIndex * 2, rowIndex * 3, 2, 3);
+        const bgHeight = cell.size == CellSize.DOUBLE_HEIGHT ? 6 : 3;
+        this._canvasCtx.clearRect(cellIndex * 2, rowIndex * 3, 2, bgHeight);
+        this._canvasCtx.fillStyle = Attributes.fillColourFromColourAttrib(cell.bgColour) + 'e';  // draw almost-transparent fill
+        this._canvasCtx.fillRect(cellIndex * 2, rowIndex * 3, 2, bgHeight);
+
         if (cell.type == CellType.ALPHA || !isMosaic) {
             cellView.plain(cell.char).attr(attr).fill(fill);
             if (cell.size == CellSize.DOUBLE_HEIGHT) {
