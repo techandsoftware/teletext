@@ -1,4 +1,5 @@
-import { nodeResolve } from '@rollup/plugin-node-resolve';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs'; // needed for js-hqx
 import browsersync from 'rollup-plugin-browsersync';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 import json from '@rollup/plugin-json';
@@ -16,7 +17,10 @@ export default {
   },
   external: '../dist/teletextjs.js',
   plugins: [
-    nodeResolve(),
+    resolve(),
+    commonjs({
+      include: 'node_modules/**/hqx.js'
+    }),
     browsersync({
       server: '.'
     }),

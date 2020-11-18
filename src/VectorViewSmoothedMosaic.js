@@ -6,7 +6,7 @@
 
 import { Attributes, CellType, CellSize } from './Attributes.js';
 import { VectorViewBase as Base } from './VectorViewBase.js';
-import hqx from 'js-hqx'; 
+import hqx from 'js-hqx';
 
 export class View extends Base {
     constructor(model) {
@@ -85,7 +85,7 @@ export class View extends Base {
     _renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaic) {
         const bgHeight = cell.size == CellSize.DOUBLE_HEIGHT ? 6 : 3;
         this._canvasCtx.clearRect(cellIndex * 2, rowIndex * 3, 2, bgHeight);
-        this._canvasCtx.fillStyle = Attributes.fillColourFromColourAttrib(cell.bgColour) + 'e';  // draw almost-transparent fill
+        this._canvasCtx.fillStyle = Attributes.fillColourFromColourAttrib(cell.bgColour) + '7';  // draw almost-transparent fill
         this._canvasCtx.fillRect(cellIndex * 2, rowIndex * 3, 2, bgHeight);
 
         if (cell.type == CellType.ALPHA || !isMosaic) {
