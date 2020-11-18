@@ -1,17 +1,16 @@
 // TODO
-// fix hqx module
 // change code to be a plugin?
 // investigate http://blog.pkh.me/p/19-butchering-hqx-scaling-filters.html
 
 
 import { Attributes, CellType, CellSize } from './Attributes.js';
-import { VectorViewBase as Base } from './VectorViewBase.js';
+import { View as Base } from './VectorViewGraphicMosaic.js';
 import hqx from 'js-hqx';
 
 export class View extends Base {
     constructor(model) {
         super(model);
-        this._mosaicSymbols = new Set();
+
         this._scaledGraphicsLayer = null;
         this._doubleHeightCellsInRowAbove = new Set(); // keep track of double height cells to avoid clearing bottom half on graphics canvas
 
@@ -25,44 +24,36 @@ export class View extends Base {
         canvas.style.height = canvas.height * 2 + 'px';
         this._canvasEl = canvas;
 
-        // this._randomiseCanvas();
-        // this._canvasCtx.fillStyle = '#0000ff00';
-        // this._canvasCtx.fillRect(0, 0, this._canvasCtx.width, this._canvasCtx.height);
-        document.querySelector('#canvas').appendChild(canvas);
+        document.querySelector('#canvas').appendChild(canvas); // TODO - move to svg?
 
         console.debug('VectorViewSmoothedMosaic constructed');
     }
 
-    _randomiseCanvas() {
-        for (let r = 0; r < Base._ROWS; r++) {
-            this._canvasCtx.fillStyle = this._getRandomRGB();
-            this._canvasCtx.fillRect(0, r*3, this._canvasCtx.width, 4);
-            for (let c = 0; c < Base._COLS; c++) {
-                this._canvasCtx.fillStyle = this._getRandomRGB();
-                for (let s = 0; s < 6; s++) {
-                    if (Math.round(Math.random())) {
-                        this._canvasCtx.fillRect((s % 2) + (c*2), Math.floor(s/2) + (r*3), 1, 1);
-                    }
-                }
-            }
-        }
-    }
+    // _randomiseCanvas() {
+    //     for (let r = 0; r < Base._ROWS; r++) {
+    //         this._canvasCtx.fillStyle = this._getRandomRGB();
+    //         this._canvasCtx.fillRect(0, r*3, this._canvasCtx.width, 4);
+    //         for (let c = 0; c < Base._COLS; c++) {
+    //             this._canvasCtx.fillStyle = this._getRandomRGB();
+    //             for (let s = 0; s < 6; s++) {
+    //                 if (Math.round(Math.random())) {
+    //                     this._canvasCtx.fillRect((s % 2) + (c*2), Math.floor(s/2) + (r*3), 1, 1);
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
-    _getRandomRGB() {
-        let rgb = [
-            Math.round(Math.random()),
-            Math.round(Math.random()),
-            Math.round(Math.random())
-        ];
-        rgb = rgb.map(c => c.toString().replace('1', 'f'));
-        return '#' + rgb.join('');
-    }
+    // _getRandomRGB() {
+    //     let rgb = [
+    //         Math.round(Math.random()),
+    //         Math.round(Math.random()),
+    //         Math.round(Math.random())
+    //     ];
+    //     rgb = rgb.map(c => c.toString().replace('1', 'f'));
+    //     return '#' + rgb.join('');
+    // }
 
-    _createDisplay() {
-        super._createDisplay();
-        this._graphicrows = [];
-        this._graphicLayer = this.d.group();
-    }
 
     _endOfUpdateHook() {
         const targetCanvas = cloneCanvas(this._canvasEl);
@@ -77,33 +68,21 @@ export class View extends Base {
         this._scaledGraphicsLayer = targetCanvas;
     }
 
-    _resetRow(rowIndex) {
-        super._resetRow(rowIndex);
-        this._resetGraphicRow(rowIndex);
-    }
 
     _renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaic) {
+        // plugin draw cell background
         const bgHeight = cell.size == CellSize.DOUBLE_HEIGHT ? 6 : 3;
         this._canvasCtx.clearRect(cellIndex * 2, rowIndex * 3, 2, bgHeight);
         this._canvasCtx.fillStyle = Attributes.fillColourFromColourAttrib(cell.bgColour) + '7';  // draw almost-transparent fill
         this._canvasCtx.fillRect(cellIndex * 2, rowIndex * 3, 2, bgHeight);
+        // end of plugin
 
-        if (cell.type == CellType.ALPHA || !isMosaic) {
-            cellView.plain(cell.char).attr(attr).fill(fill);
-            if (cell.size == CellSize.DOUBLE_HEIGHT) {
-                cellView.attr('transform', View._getDoubleHeightTransform(rowIndex));
-            }
-            if (cell.flashing) cellView.addClass('flash');
-            if (cell.concealed) cellView.addClass('conceal');
-        } else if (isMosaic) {
-            cellView.plain(' ').attr(attr);
-            this._renderMosaic(rowIndex, cellIndex, cell, fill);
-        }
+        super._renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaic);
     }
 
     _renderMosaic(row, col, cell, fill) {
         if (cell.type == CellType.MOSAIC_SEPARATED || cell.flashing || cell.concealed) {
-            this._renderMosaicVector(row, col, cell, fill);
+            super._renderMosaic(row, col, cell, fill);
             return;
         }
 
@@ -123,44 +102,6 @@ export class View extends Base {
         }
     }
 
-    _renderMosaicVector(row, col, cell, fill) {
-        const sextants = cell.getSextants();
-        if (!sextants.includes('1')) return;
-        let id = cell.type == CellType.MOSAIC_CONTIGUOUS ? 'c' : 's';
-        id += sextants.join('');
-
-        if (!this._mosaicSymbols.has(id)) {
-            this._mosaicSymbols.add(id);
-            const symbol = this._svg.symbol(id);
-            symbol.attr({
-                preserveAspectRatio: 'none',
-                width: Base._CELL_WIDTH,
-                height: Base._CELL_HEIGHT,
-                viewBox: '0 0 12 18',
-            });
-
-            if (cell.type == CellType.MOSAIC_CONTIGUOUS) {
-                for (let i = 0; i < 6; i++) {
-                    sextants[i] == '1' && symbol.rect(6, 6).move((i % 2) * 6, Math.floor(i/2) * 6);
-                }
-            } else {
-                for (let i = 0; i < 6; i++) {
-                    sextants[i] == '1' && symbol.rect(4, 4).move(((i % 2) * 6) + 1, (Math.floor(i/2) * 6) + 2);
-                }
-            }
-        }
-
-        const use = this._graphicrows[row].use(id).move(col * Base._CELL_WIDTH, row * Base._CELL_HEIGHT).fill(fill);
-        if (cell.size == CellSize.DOUBLE_HEIGHT) use.attr('height', Base._CELL_DOUBLE_HEIGHT);
-        if (cell.flashing) use.addClass('flash');
-        if (cell.concealed) use.addClass('conceal');
-    }
-
-    _resetGraphicRow(rowNum) {
-        if (this._graphicrows[rowNum]) this._graphicrows[rowNum].remove();
-        this._graphicrows[rowNum] = this._graphicLayer.group();
-    }
-
     _clearRowCells(rowView, rowNum) {
         super._clearRowCells(rowView, rowNum);
         for (let colNum = 0; colNum < rowView.length; colNum++) {
@@ -171,18 +112,6 @@ export class View extends Base {
         this._doubleHeightCellsInRowAbove.clear();
     }
 
-    // eslint-disable-next-line no-unused-vars
-    _getCellAttr(cellType, isMosaicChar) {
-        return {
-            dx: null,
-            dy: null,
-            textLength: null,
-            lengthAdjust: null,
-            'text-anchor': null,
-            transform: null,
-            class: null,
-        };
-    }
 }
 
 
