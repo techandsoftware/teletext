@@ -20,6 +20,10 @@ export class View extends Base {
     }
 
     _renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaic) {
+        if ('_background' in this._plugins) {
+            this._plugins._background(rowIndex, cellIndex, cell.size, cell.bgColour);
+        }
+
         if (cell.type == CellType.ALPHA || !isMosaic) {
             cellView.plain(cell.char).attr(attr).fill(fill);
             if (cell.size == CellSize.DOUBLE_HEIGHT) {
@@ -34,6 +38,11 @@ export class View extends Base {
     }
 
     _renderMosaic(row, col, cell, fill) {
+        if ('_mosaic' in this._plugins) {
+            const rendered = this._plugins._mosaic(row, col, cell, fill);
+            if (rendered) return;
+        }
+
         const sextants = cell.getSextants();
         if (!sextants.includes('1')) return;
         let id = cell.type == CellType.MOSAIC_CONTIGUOUS ? 'c' : 's';

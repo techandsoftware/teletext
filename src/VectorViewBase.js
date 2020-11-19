@@ -60,6 +60,8 @@ export class VectorViewBase {
         this._boxMode = false;
         this._mixMode = false;
         this._pageContainsBox = false;
+
+        this._plugins = {};
         console.debug('VectorViewBase constructed');
     }
 
@@ -120,7 +122,7 @@ export class VectorViewBase {
 
             this._makeClipFromBoxesForRow(rowIndex);
         });
-        this._endOfUpdateHook();
+        if ('_endOfUpdate' in this._plugins) this._plugins._endOfUpdate(this._svg.width(), this._svg.height());
         this.d.addClass('conceal_concealed');
         // FUDGE keep flashing synchronised
         if (pageContainsFlash) {
@@ -130,16 +132,15 @@ export class VectorViewBase {
         this._refreshMixMode();
     }
 
-    _endOfUpdateHook() {
-        // noop here, hook for subclasses to use
-    }
-
     _resetRow(rowIndex) {
         this._resetBackgroundForRow(rowIndex);
         this._resetBoxClipForRow(rowIndex);
     }
 
-    _clearRowCells(rowView) {
+    _clearRowCells(rowView, rowNum) {
+        if ('_clearCellsForRow' in this._plugins)
+            this._plugins._clearCellsForRow(rowView.length, rowNum);
+
         rowView.forEach((cellView) => {
             cellView.plain(' ')
                 .attr({
@@ -391,6 +392,17 @@ export class VectorViewBase {
     static _getDoubleHeightTransform(row) {
         const yTranslate = (2 * ((CELL_HEIGHT * row) + TEXT_Y_OFFSET)) - ((CELL_HEIGHT * row) + (2 * TEXT_Y_OFFSET));
         return `translate(0 -${yTranslate}) scale(1 2)`;
+    }
+
+    registerPlugin(name, methods) {
+        if ('renderBackground' in methods)
+            this._plugins._background = methods.renderBackground;
+        if ('renderMosaic' in methods)
+            this._plugins._mosaic = methods.renderMosaic; 
+        if ('endOfPageUpdate' in methods)
+            this._plugins._endOfUpdate = methods.endOfPageUpdate;
+        if ('clearCellsForRow' in methods)
+            this._plugins._clearCellsForRow = methods.clearCellsForRow;
     }
 }
 

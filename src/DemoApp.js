@@ -1,4 +1,6 @@
 import { teletextjs, Attributes, Colour, Level } from '../dist/teletextjs.js';
+import { SmoothMosaicPlugin } from './SmoothMosaicPlugin.js';
+
 
 const ASPECT_RATIOS = [1.2, 1.22, 1.33, 'natural'];
 const FONTS = ['sans-serif', 'Bedstead', 'native', 'serif', 'Unscii', 'Ubuntu'];
@@ -93,6 +95,9 @@ export class DemoApp {
                     this._viewIndex++;
                     if (this._viewIndex == VIEWS.length) this._viewIndex = 0;
                     teletextjs.setView(VIEWS[this._viewIndex]);
+                    break;
+                case 'p':
+                    teletextjs.registerViewPlugin(SmoothMosaicPlugin);
                     break;
                 default:
             }
