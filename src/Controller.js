@@ -4,9 +4,6 @@ import testpages from'./data/testpages.json';
 import { VectorViewBase } from './VectorViewBase.js';
 class ViewClassic extends VectorViewBase {}
 import { View as ViewGraphicMosaic } from './VectorViewGraphicMosaic.js';
-import { View as ViewSmoothedMosaic } from './VectorViewSmoothedMosaic.js';
-
-
 
 const TEST_PAGE_NAMES = ['ENGINEERING', 'ADVERT', 'UK'];
 
