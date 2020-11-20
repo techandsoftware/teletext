@@ -403,6 +403,12 @@ export class VectorViewBase {
             this._plugins._endOfUpdate = methods.endOfPageUpdate;
         if ('clearCellsForRow' in methods)
             this._plugins._clearCellsForRow = methods.clearCellsForRow;
+
+        return {
+            lookupColour: colourLookupFn,
+            isDoubleHeight: isDoubleHeightFn,
+            isSeparatedMosaic: isSeparatedMosaicFn,
+        };
     }
 }
 
@@ -414,6 +420,11 @@ VectorViewBase._ROWS = ROWS;
 VectorViewBase._COLS = COLS;
 VectorViewBase._WIDTH_PX = WIDTH_PX;
 VectorViewBase._HEIGHT_PX = HEIGHT_PX;
+
+// helper functions used by plugin
+const colourLookupFn = colourSymbol => Attributes.fillColourFromColourAttrib(colourSymbol);
+const isDoubleHeightFn = size => size == CellSize.DOUBLE_HEIGHT;
+const isSeparatedMosaicFn = type => type == CellType.MOSAIC_SEPARATED;
 
 function getRandomLetter() {
     return String.fromCharCode(32 + Math.random() * 95); // returns letter in ASCII range
