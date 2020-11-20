@@ -216,6 +216,23 @@ class Group extends Element {
         this._c.push(use);
         return use;
     }
+
+    image(width, height) {
+        const image = new Image(width, height);
+        this._e.append(image._node());
+        this._c.push(image);
+        return image;
+    }
+}
+
+class Image extends Element {
+    constructor(width, height) {
+        super();
+        this._e = document.createElementNS(NS, 'image');
+        this._e.setAttribute('width', parseInt(width));
+        this._e.setAttribute('height', parseInt(height));
+        return this;
+    }
 }
 
 class Use extends Element {

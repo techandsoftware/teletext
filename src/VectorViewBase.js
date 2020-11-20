@@ -408,7 +408,14 @@ export class VectorViewBase {
             lookupColour: colourLookupFn,
             isDoubleHeight: isDoubleHeightFn,
             isSeparatedMosaic: isSeparatedMosaicFn,
+            createImageOverlay: this._createImageOverlay.bind(this)
         };
+    }
+
+    _createImageOverlay() {
+        const image = this.d.image(WIDTH_PX, HEIGHT_PX);
+        image.attr('preserveAspectRatio', 'none');
+        return image;
     }
 }
 
