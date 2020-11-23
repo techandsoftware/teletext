@@ -504,7 +504,6 @@ transition-duration: 0.25s;
 }
 svg {
 background-color: transparent;
-position: absolute;
 }
 svg use {
 shape-rendering: crispEdges;
