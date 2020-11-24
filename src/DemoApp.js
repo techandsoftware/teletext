@@ -1,5 +1,5 @@
 import { teletextjs, Attributes, Colour, Level } from '../dist/teletextjs.js';
-import { SmoothMosaicPlugin } from 'teletext-plugin-smooth-mosaic';
+import { SmoothMosaicPlugin } from '@techandsoftware/teletext-plugin-smooth-mosaic';
 
 const ASPECT_RATIOS = [1.2, 1.22, 1.33, 'natural'];
 const FONTS = ['sans-serif', 'Bedstead', 'native', 'serif', 'Unscii', 'Ubuntu'];
