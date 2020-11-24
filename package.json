@@ -6,7 +6,6 @@
   "module": "dist/teletextjs.min.js",
   "dependencies": {
     "@techandsoftware/teletext-plugin-smooth-mosaic": "0.0.0",
-    "js-hqx": "^1.0.0",
     "uint1array": "^1.1.1"
   },
   "devDependencies": {
