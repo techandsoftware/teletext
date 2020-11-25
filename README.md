@@ -74,7 +74,7 @@ Displays a page from the `base64input`.  The input is a base64-encoded string of
 
 ## clearScreen(withUpdate)
 
-Clears the screen.  `withUpdate` is an optional boolean, default is `true`. When `true`, the page is cleared immediately.  When `false` the page model is cleared but the display is not updated.
+Clears the screen.  `withUpdate` is an optional boolean, default is `true`. When `true`, the page is cleared immediately.  When `false` the page model is cleared but the display is not updated.  In that case, the screen is cleared the next time you call a function which updates the display, such as `setPageRows`.
 
 ## remove()
 
