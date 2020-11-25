@@ -94,7 +94,9 @@ Randomises the display data. This doesn't have a practical use but emulates a do
 
 ## setAspectRatio(value)
 
-Set the aspect ratio of the display. `value` is a number or the string `natural`.  The default aspect ratio is 1.2 to match real teletext.  The special value of `natural` removes pixel distortion, but the page looks squashed.
+`value` is a number or the string `natural`.
+
+Set the aspect ratio of the display.  The page height is kept and the width adjusted. The display's default aspect ratio is 1.2 to match typical teletext displays. The special value of `natural` removes pixel distortion - so the pixels are square - but the page looks squashed.
 
 ## setHeight(heightInPixels)
 
@@ -105,9 +107,9 @@ Sets the screen height to the number of pixels you passed in. The aspect ratio i
 Sets the text font. `font` is a string, which can be a string corresponding to a CSS [font family](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) or a couple of special values.
 
 Special values are:
-* `Bedstead` - this is a built in font emulating the mode 7 character generator on a BBC Micro. [Source](https://bjh21.me.uk/bedstead/)
-* `Unscii` - a blocky retro-computing font. [Source](http://pelulamu.net/unscii/)
-* `native` - uses the native font specific to your operating system.  The actual font used depends on your system. Sourced from [bootstrap 4's native font stack](https://getbootstrap.com/docs/4.1/content/reboot/#native-font-stack).
+* `Bedstead` - a font emulating the mode 7 character generator on a BBC Micro, by bjh21. [Source](https://bjh21.me.uk/bedstead/)
+* `Unscii` - a blocky retro-computing font by Viznut. [Source](http://pelulamu.net/unscii/)
+* `native` - uses the native font specific to your operating system. The actual font used depends on your system. Sourced from [bootstrap 4's native font stack](https://getbootstrap.com/docs/4.1/content/reboot/#native-font-stack).
 
 Normal values include `serif`, `sans-serif`, `monospace` and specific font family names of the sort you'd use in a CSS stylesheet, which might be browser- or OS-specific. Your containing HTML page can supply its own font family (using Google Fonts, for example) and then refer to it here. Even though the teletext layout is grid-based, you can use a proportional font and the grid is maintained.
 
