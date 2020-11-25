@@ -115,9 +115,13 @@ When using the `arabic_g0` character set, the cursive Arabic characters are disp
 
 ## setView(view)
 
-You can override the default view class used to render. The default view uses SVG graphics to display teletext mosaic graphics. You can switch to using a font to display the graphics.
+`view` is a string with one of these values:
+* `classic__font-for-mosaic` - render mosaic graphics using a font
+* `classic__graphic-for-mosaic` - render mosaic graphics using SVG shapes.  This is the default view.
 
-`view` is a string with a value of `classic__font-for-mosaic` or `classic__graphic-for-mosaic`
+When using `classic__font-for-mosaic`, the contiguous mosaic characters use codepoints defined in Unicode [Symbols for Legacy Computing](https://en.wikipedia.org/wiki/Symbols_for_Legacy_Computing). The separated mosaic characters use private use codepoints because the separated mosaics are missing from the legacy computing block.  The mosaic characters use the Unscii font.
+
+Using the font will result in a smaller SVG.  If you export the SVG from the DOM then you will need to ensure the Unscii font is available so that the SVG can be viewed properly in isolation. Because of issues with getting the edges of the mosaics to join up without gaps, the font size is slightly bigger than it should be. Using SVG graphics for the mosaics is more portable, and the fidelity is more precise.
 
 ## setLevel(level)
 
