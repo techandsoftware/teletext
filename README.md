@@ -1,14 +1,199 @@
+Renders teletext pages using vector graphics (SVG).  Note this is just the display part of teletext, and operates as a screen or a dumb terminal.  The application using this package will need to supply the page content, implement page numbers, navigation, etc.  The package provides an API to set page content and change the display characteristics such as the screen height and aspect ratio.
 
-## Bugs
+This supports up to level 1.5.  Most level 1.5 features are supported, including support for multiple character sets, mix mode, boxed mode, reveal and all spacing attributes. Display features include changing the text font (including proportional fonts), casting with Chromecast, aspect ratio and screen height. Mosaic graphics can be rendered with a font or using SVG graphics.
 
-Switching to boxed mode then back on a page without boxed characters fails to show the page in Chrome. This looks like an SVG bug:
+Extensions are supported via plugins.
+
+## Plugins
+
+* [@techandsoftware/teletext-plugin-smooth-mosaic](https://www.npmjs.com/package/@techandsoftware/teletext-plugin-smooth-mosaic) - render smooth mosaic graphics using a pixel art scaling algorithm instead of the usual block mosaics
+
+# Using
+
+```npm install @techandsoftware/teletext```
+
+Javascript (using ES6 modules):
+```javascript
+import { teletext } from '@techandsoftware/teletext';
+teletext.addTo('#teletextscreen');
+teletext.setRow(0, 'Hello world!');
+```
+
+HTML:
+```html
+<div id="teletextscreen"></div>
+```
+
+This creates an SVG object in the #teletextscreen div.
+
+# API
+
+## addTo(selector)
+
+`selector` is a DOM selector string, e.g. `#teletextscreen`
+
+## setDefaultG0Charset(charset, withUpdate)
+
+Sets the default g0 character set. The character set applies until the function is called again. The default set is `latin_g0`, which is similar to ASCII (it has `¤` instead of `$` and `■` instead of the delete control code). The suffix on the `latin_g0` character set names below correspond to the national option selections defined in ETSI EN 300 706, which modify certain characters from the `latin_g0` set. 
+
+`charset` is a string corresponding to one of these:
+* latin_g0
+* latin_g0__czech_slovak
+* latin_g0__english
+* latin_g0__estonian
+* latin_g0__french
+* latin_g0__german
+* latin_g0__italian
+* latin_g0__latvian_lithuanian
+* latin_g0__polish
+* latin_g0__portuguese_spanish
+* latin_g0__romanian
+* latin_g0__serbian_croatian_slovenian
+* latin_g0__swedish_finnish_hungarian
+* latin_g0__turkish
+* greek_g0
+* cyrillic_g0__russian_bulgarian
+* cyrillic_g0__serbian_croatian
+* cyrillic_g0__ukranian
+* arabic_g0
+* hebrew_g0
+
+`withUpdate` is an optional boolean. When `true` the display is updated immediately. Defaults to `false`.
+
+## setPageRows([strings])
+
+Display the content in the strings. Array of up to 25 elements. Each element is a string up to 40 characters. This is used to set the contents of the whole screen.
+
+## setRow(rowNum, string)
+
+Display the string on the row number. The string is up to 40 characters.
+
+## loadPageFromEncodingString(base64input)
+
+Displays a page from the `base64input`.  The input is a base64-encoded string of 7-bit characters for the 25 rows x 40 characters concatenated together. The encoded string uses the character repertoire defined in the [base64url encoding](https://tools.ietf.org/html/rfc4648#section-5). This format is taken from the querystring format used by Simon Rawles' online edit.tf teletext editor. See further details here: https://github.com/rawles/edit.tf
+
+## clearScreen(withUpdate)
+
+Clears the screen.  `withUpdate` is an optional boolean, default is `true`. When `true`, the page is cleared immediately.  When `false` the page model is cleared but the display is not updated.
+
+## remove()
+
+Removes the teletext display from the DOM.
+
+## showTestPage()
+
+3 test pages are built-in. This displays a test page, rotating between the 3. The test pages were kindly supplied by https://archive.teletextarchaeologist.org/
+
+## toggleGrid()
+
+Show or a hide a grid. The grid shows the rows and cells.
+
+## showRandomisedPage()
+
+Randomises the display data. This doesn't have a practical use but emulates a dodgy TV signal and creates a nice mash of display attributes.
+
+## setAspectRatio(value)
+
+Set the aspect ratio of the display. `value` is a number or the string `natural`.  The default aspect ratio is 1.2 to match real teletext.  The special value of `natural` removes pixel distortion, but the page looks squashed.
+
+## setHeight(heightInPixels)
+
+Sets the screen height to the number of pixels you passed in. The aspect ratio is maintained. You could set the screen to fill the available window height using `document.documentElement.clientHeight` as the value.
+
+## setFont(font)
+
+Sets the text font. `font` is a string, which can be a string corresponding to a CSS [font family](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) or a couple of special values.
+
+Special values are:
+* `Bedstead` - this is a built in font emulating the mode 7 character generator on a BBC Micro. [Source](https://bjh21.me.uk/bedstead/)
+* `Unscii` - a blocky retro-computing font. [Source](http://pelulamu.net/unscii/)
+* `native` - uses the native font specific to your operating system.  The actual font used depends on your system. Sourced from [bootstrap 4's native font stack](https://getbootstrap.com/docs/4.1/content/reboot/#native-font-stack).
+
+Normal values include `serif`, `sans-serif`, `monospace` and specific font family names of the sort you'd use in a CSS stylesheet, which might be browser- or OS-specific. Your containing HTML page can supply its own font family (using Google Fonts, for example) and then refer to it here. Even though the teletext layout is grid-based, you can use a proportional font and the grid is maintained.
+
+When using the `arabic_g0` character set, the cursive Arabic characters are displayed but not in the right way, yet, as the characters aren't in the joined form.
+
+## setView(view)
+
+You can override the default view class used to render. The default view uses SVG graphics to display teletext mosaic graphics. You can switch to using a font to display the graphics.
+
+`view` is a string with a value of `classic__font-for-mosaic` or `classic__graphic-for-mosaic`
+
+## setLevel(level)
+
+Sets the teletext level used to display the page. The value is a property on the `Level` object.  `Level` is importable:
+
+```javascript
+import { Level } from '@techandsoftware/teletext'
+```
+
+Values are `Level[0]`, `Level[1]`, `Level[1.5]`.  Level 0 isn't a real teletext level, but uses a subset of the spacing attributes roughly corresponding to Ceefax test pages from 1975.  The default is Level 1.
+
+## registerViewPlugin(plugin)
+
+Pass in a plugin class. The plugin can hook in and override parts of the page rendering using a plugin interface.
+
+## toggleReveal()
+
+Toggles reveal on or off to show or hide concealed characters. See also the `ttx.reveal` event.
+
+## toggleMixMode()
+
+Toggle mixed display mode on or off.  See also the `ttx.mix` event.
+
+## toggleBoxMode()
+
+Toggles boxed display mode on or off. See also the `ttx.subtitlemode` event.
+
+## Event API
+
+Your application can dispatch these events as an alternative to using the API.
+
+* `ttx.reveal` - toggles reveal. If the page contains concealed characters, then this shows or hides them.  This is used for things like punchlines or quizzes.  This corresponds to a 'reveal' button on a TV remote cntrol. This has no effect if the page doesn't have any concealed characters. The initial state is to conceal, and the reveal state is reset to concealed on API calls which update the page, set the character set (when `withUpdate` is true) or set the level.
+* `ttx.mix` - toggles mix display mode.  When mixed, the page background colours are hidden. In a real TV this would display the TV picture with text on top. For your app, it would display whatever you have positioned behind the screen or used as the html body background.
+* `ttx.subtitlemode` - toggles boxed display mode.  A page can contain 'boxed' characters. When in boxed mode, the boxed characters display on top of the TV picture, which is used for subtitles or a newsflash page.  Non-boxed characters are hidden. On a broadcast teletext service, the broadcaster decides whether the page is displayed in boxed mode or not. If the page doesn't contain any boxed characters, the page is blank, so that the screen shows the TV picture. For your app, the display shows whatever you have positioned behind the screen or used as the html body background.
+
+You can send an event like this in your application:
+
+```javascript
+window.dispatchEvent(new Event('ttx.reveal'));
+```
+
+# TODO
+
+These features of [ETSI EN 300 706](https://www.etsi.org/deliver/etsi_en/300700_300799/300706/01.02.01_60/en_300706v010201p.pdf) aren't supported yet:
+
+* Level 1
+  * Set second g0 character set
+  * Switch between the default and second g0 sets with a control code
+* Level 1.5
+  * Place 'a few' characters from the g2 supplementary character set, although the g2 set isn't defined precisely at level 1.5
+  * Place diacritics from the g2 set onto 'a few' g0 characters
+  * Place 4 characters from the g3 set
+  * Place `@` which is missing from most g0 sets
+* Level 2.5 and 3.5
+  * all features apart from black foreground text/graphics, which I've included in 1.5
+
+For Level 2.5 and 3.5, the ETSI spec includes double width and double size text, full g3 character set support (smoothed block mosaic and line drawing characters), g2 character set selection, 32 colours via 4 colour tables, colour table selection and remapping, side panels, non-spacing attributes, default screen/row colours, redefinable characters.  The non-spacing attributes include underline, inverse, bold, italic, proportional text and extra flashing modes in addition to level 1 attributes.  I'm not sure how much is worth implementing.
+
+The spec also defines navigation and object pages, which I consider out of scope.
+
+# License
+
+TODO
+
+# Bugs
+
+Switching to boxed mode then back on a page without boxed characters fails to show the page in Chrome. This is a bug in Chrome:
 https://bugs.chromium.org/p/chromium/issues/detail?id=1138917
 
-## Credits
+Arabic script isn't rendered correctly.
+
+# Credits
 
 * Unscii font used for block graphics - http://pelulamu.net/unscii/
 * Bedstead font - http://bjh21.me.uk/bedstead/
 * Native font stack adapted from Bootstrap's - https://getbootstrap.com/docs/4.5/content/reboot/#native-font-stack
 * The internal API used for drawing SVG is a subset of svg.js v3 - https://svgjs.com/docs/3.0/
 * Teletext test pages from https://archive.teletextarchaeologist.org/
-* The data format for stored teletext pages is from the edit.tf teletext editor
+* The data format for stored test pages and for the `loadPageFromEncodingString` API is from Simon Rawles' teletext editor, edit.tf - https://edit.tf/
