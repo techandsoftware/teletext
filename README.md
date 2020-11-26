@@ -259,11 +259,13 @@ These features of [ETSI EN 300 706](https://www.etsi.org/deliver/etsi_en/300700_
 * Level 1
   * Set second g0 character set
   * Switch between the default and second g0 sets with a control code
+
 * Level 1.5
   * Place 'a few' characters from the g2 supplementary character set, although the g2 set isn't defined precisely at level 1.5
   * Place diacritics from the g2 set onto 'a few' g0 characters
   * Place 4 characters from the g3 set
   * Place `@` which is missing from most g0 sets
+
 * Level 2.5 and 3.5
   * all features apart from black foreground text/graphics, which I've included in 1.5
 
