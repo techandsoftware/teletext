@@ -12,25 +12,26 @@ Extensions are supported via plugins.
 
 ```npm install @techandsoftware/teletext```
 
-As an ES6 module:
+## As an ES6 module
 
-```javascript
+```html
+<script type="module">
 // Import as an ES6 module
 import { teletext } from './node_modules/@techandsoftware/teletext/dist/teletext.min.js';
 
-// Or import the npm module (you will also need a toolchain which resolves the module)
+// Or import the npm module (you will also need tooling to resolve the module for the browser)
 import { teletext } from '@techandsoftware/teletext';
 
 teletext.addTo('#teletextscreen');
 teletext.setRow(0, 'Hello world!');
-```
+</script>
 
-HTML container:
-```html
 <div id="teletextscreen"></div>
 ```
 
 This creates an SVG object in the #teletextscreen div which contains the teletext display.
+
+## As a <script>
 
 For browsers that don't support ES6 module imports, you can use the UMD module. The exports are exported to the `ttx` global, so you need to prefix API calls with that.
 
@@ -39,9 +40,10 @@ For browsers that don't support ES6 module imports, you can use the UMD module. 
 <script>
 ttx.teletext.addTo('#teletextscreen');
 </script>
+<div id="teletextscreen"></div>
 ```
 
-See the [demos directory](./demos/) for some examples of these.
+See the [demo directory](./demo/index.html) for some examples of these.
 
 # API
 
@@ -58,24 +60,25 @@ This adds a teletext screen to the DOM element referred to by the selector, whic
 Sets the default g0 character set. The character set applies until the function is called again. The default set is `latin_g0`, which is similar to ASCII (it has `¤` instead of `$` and `■` instead of the delete control code). The suffix on the `latin_g0` character set names below correspond to the national option selections defined in ETSI EN 300 706, which modify certain characters from the `latin_g0` set. 
 
 `charset` is a string corresponding to one of these:
+
 * latin_g0
-* latin_g0__czech_slovak
-* latin_g0__english
-* latin_g0__estonian
-* latin_g0__french
-* latin_g0__german
-* latin_g0__italian
-* latin_g0__latvian_lithuanian
-* latin_g0__polish
-* latin_g0__portuguese_spanish
-* latin_g0__romanian
-* latin_g0__serbian_croatian_slovenian
-* latin_g0__swedish_finnish_hungarian
-* latin_g0__turkish
+* latin_g0\__czech_slovak
+* latin_g0\__english
+* latin_g0\__estonian
+* latin_g0\__french
+* latin_g0\__german
+* latin_g0\__italian
+* latin_g0\__latvian_lithuanian
+* latin_g0\__polish
+* latin_g0\__portuguese_spanish
+* latin_g0\__romanian
+* latin_g0\__serbian_croatian_slovenian
+* latin_g0\__swedish_finnish_hungarian
+* latin_g0\__turkish
 * greek_g0
-* cyrillic_g0__russian_bulgarian
-* cyrillic_g0__serbian_croatian
-* cyrillic_g0__ukranian
+* cyrillic_g0\__russian_bulgarian
+* cyrillic_g0\__serbian_croatian
+* cyrillic_g0\__ukranian
 * arabic_g0
 * hebrew_g0
 
