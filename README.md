@@ -64,6 +64,8 @@ Sets the default g0 character set. The character set applies until the function 
 
 Display the content in the strings. Array of up to 25 elements. Each element is a string up to 40 characters. This is used to set the contents of the whole screen.
 
+Display attributes such as text or graphic colour, flashing and other features are set with control codes defined by ETSI EN 300 706. These can be embedded directly in the strings or are exposed via an Attribtes class to generate them. See the section below. 
+
 ## setRow(rowNum, string)
 
 Display the string on the row number. The string is up to 40 characters.
@@ -123,7 +125,7 @@ When using the `arabic_g0` character set, the cursive Arabic characters are disp
 
 When using `classic__font-for-mosaic`, the contiguous mosaic characters use codepoints defined in Unicode [Symbols for Legacy Computing](https://en.wikipedia.org/wiki/Symbols_for_Legacy_Computing). The separated mosaic characters use private use codepoints because the separated mosaics are missing from the legacy computing block.  The mosaic characters use the Unscii font.
 
-Using the font will result in a smaller SVG.  If you export the SVG from the DOM then you will need to ensure the Unscii font is available so that the SVG can be viewed properly in isolation. Because of issues with getting the edges of the mosaics to join up without gaps, the font size is slightly bigger than it should be. Using SVG graphics for the mosaics is more portable, and the fidelity is more precise.
+Using the font will result in a smaller SVG.  If you export the SVG from the DOM then you will need to ensure the Unscii font is available so that the SVG can be viewed properly in isolation. Because of issues with getting the edges of the mosaics to join up without gaps, the font size is slightly bigger than it should be. Using SVG graphics for the mosaics is more portable, and the mosaics are more precisely positioned.
 
 ## setLevel(level)
 
@@ -164,6 +166,69 @@ You can send an event like this in your application:
 ```javascript
 window.dispatchEvent(new Event('ttx.reveal'));
 ```
+
+# Attributes
+
+Control code characters set display attributes which control the text colour, double height, flashing etc. The default attributes at the beginning of a row are white text on a black background, single height, not flashing, not boxed, not concealed, no held mosaic. When an attribute is set it stays activated for the characters after it. An attribute takes up a space.
+
+To help with the codes, the `Attributes` and `Colour` objects can be used when composing strings for `setPageRows()` and `setRow()`.
+
+```javascript
+import { Attributes, Colour } from '@techandsoftware/teletext';
+```
+
+## Attributes.charFromTextColour(colour)
+## Attributes.charfromGraphicColour(colour)
+
+Sets text mode or graphic mode for the specified colour. `colour` is one of these:
+
+* Colour.RED 
+* Colour.GREEN
+* Colour.YELLOW
+* Colour.BLUE
+* Colour.MAGENTA
+* Colour.CYAN
+* Colour.WHITE
+* Colour.BLACK - black was added in level 2.5, but is included here at level 1.5 and ignored at level 1
+
+Subsequent characters in the string are processed depending on the text or graphics mode. For text, the characters are mapped according to the g0 character set.  For graphics, characters draw block mosaics or show text depending on the code as defined in the g1 character set.
+
+## Attributes.charFromAttribute(attribute)
+
+Gets the code for an attribute. `attribute` is one of these:
+
+* Attributes.NEW_BACKGROUND - set the background colour to the current foreground colour
+* Attributes.BLACK_BACKGROUND - set the background colour to black
+* Attributes.CONTIGUOUS_GRAPHIC - set the mosaic graphics to contiguous blocks
+* Attributes.SEPARATED_GRAPHIC - set the mosaic graphics to separated blocks
+* Attributes.FLASH - activate flashing for text/mosaic
+* Attributes.STEADY - deactivate flashing for text/mosaic
+* Attributes.NORMAL_SIZE - set text/mosaic to normal height
+* Attributes.DOUBLE_HEIGHT - set text/mosaic to double height. The row below will be hidden. Background colours on this row will be extended to the row below. Single height characters on the top row stay single height but their background colour is still extended to the lower row
+* Attributes.CONCEAL - hides text/mosaic characters unless reveal is pressed. For use with `toggleReveal()` / `ttx.reveal`. TODO - check when this deactivates
+* Attributes.HOLD_MOSAICS - stores the last mosaic character on a row (going left to right) so that on the next spacing attribute the held mosaic is used instead of a space
+* Attributes.RELEASE_MOSAICS - releases the held mosaic, and spacing attributes will show a space
+* Attributes.START_BOX - starts boxed characters (used for subtitles, newsflash). Two adjacent start box characters need to be used, with the box starting between the two. For use with `toggleBoxMode()`
+* Attributes.END_BOX - ends boxed characters
+
+These attributes are defined from level 2.5, but have no effect right now:
+
+* Attributes.DOUBLE_WIDTH
+* Attributes.DOUBLE_SIZE
+
+As an example, to set red text on a yellow background, you will need:
+
+```javascript
+Attributes.charFromTextColour(Colour.YELLOW) +
+Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) +
+Attributes.charFromTextColour(Colour.RED)
+```
+
+This takes up 3 spaces.
+
+If you prefer to use the control codes directly, check the source of Attributes.js or the teletext spec to get the control code values. Double height is code 13, so you could use strings like `"\x0d"`, `"\u{d}"`, `String.fromCharCode(13)`.
+
+TODO - check what happens if Attributes.TEXT_COLOUR or Attributes.MOSAIC_COLOUR
 
 # TODO
 
