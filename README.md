@@ -169,7 +169,7 @@ window.dispatchEvent(new Event('ttx.reveal'));
 
 # Attributes
 
-Control code characters set display attributes which control the text colour, double height, flashing etc. The default attributes at the beginning of a row are white text on a black background, single height, not flashing, not boxed, not concealed, no held mosaic. When an attribute is set it stays activated for the characters after it. An attribute takes up a space.
+Control code characters set display attributes which control the text colour, double height, flashing etc. The default attributes at the beginning of a row are white text on a black background, single height, not flashing, not boxed, not concealed, no held mosaic. Graphics, when activated, default to contiguous. When an attribute is set it stays activated until the end of the row. An attribute takes up a space unless hold mosaics is active, in which case the held mosaic is used.
 
 To help with the codes, the `Attributes` and `Colour` objects can be used when composing strings for `setPageRows()` and `setRow()`.
 
@@ -191,7 +191,7 @@ Sets text mode or graphic mode for the specified colour. `colour` is one of thes
 * Colour.WHITE
 * Colour.BLACK - black was added in level 2.5, but is included here at level 1.5 and ignored at level 1
 
-Subsequent characters in the string are processed depending on the text or graphics mode. For text, the characters are mapped according to the g0 character set.  For graphics, characters draw block mosaics or show text depending on the code as defined in the g1 character set.
+ Characters in the string after this attribute are processed depending on the text or graphics mode that has been set. For text mode, the characters are mapped according to the g0 character set.  For graphics mode, characters draw block mosaics from the g1 character set, for character codes 20 to 3f and 60 to 7f; characters 40 to 5f show text from the g0 set with the same code.
 
 ## Attributes.charFromAttribute(attribute)
 
@@ -205,8 +205,8 @@ Gets the code for an attribute. `attribute` is one of these:
 * Attributes.STEADY - deactivate flashing for text/mosaic
 * Attributes.NORMAL_SIZE - set text/mosaic to normal height
 * Attributes.DOUBLE_HEIGHT - set text/mosaic to double height. The row below will be hidden. Background colours on this row will be extended to the row below. Single height characters on the top row stay single height but their background colour is still extended to the lower row
-* Attributes.CONCEAL - hides text/mosaic characters unless reveal is pressed. For use with `toggleReveal()` / `ttx.reveal`. TODO - check when this deactivates
-* Attributes.HOLD_MOSAICS - stores the last mosaic character on a row (going left to right) so that on the next spacing attribute the held mosaic is used instead of a space
+* Attributes.CONCEAL - text/mosaic characters show as spaces until reveal is pressed. For use with `toggleReveal()` / `ttx.reveal`. The concealed atttribute is active until the next colour attribute (or the end of the row)
+* Attributes.HOLD_MOSAICS - stores the last mosaic character seen on a row (going left to right) so that on the next spacing attribute the held mosaic is used instead of a space. A practical use is in a row of graphics, so that the colour could be changed without a space, with the space being filled in with the mosaic before the colour change 
 * Attributes.RELEASE_MOSAICS - releases the held mosaic, and spacing attributes will show a space
 * Attributes.START_BOX - starts boxed characters (used for subtitles, newsflash). Two adjacent start box characters need to be used, with the box starting between the two. For use with `toggleBoxMode()`
 * Attributes.END_BOX - ends boxed characters
@@ -226,9 +226,7 @@ Attributes.charFromTextColour(Colour.RED)
 
 This takes up 3 spaces.
 
-If you prefer to use the control codes directly, check the source of Attributes.js or the teletext spec to get the control code values. Double height is code 13, so you could use strings like `"\x0d"`, `"\u{d}"`, `String.fromCharCode(13)`.
-
-TODO - check what happens if Attributes.TEXT_COLOUR or Attributes.MOSAIC_COLOUR
+If you prefer to use the control codes directly, check the source of Attributes.js or the teletext spec to get the control code values. Double height is code 13 (or d in hexadecimal), so you could use strings like `"\x0d"`, `"\u{d}"`, `String.fromCharCode(13)`.
 
 # TODO
 
@@ -255,7 +253,7 @@ TODO
 
 # Bugs
 
-Switching to boxed mode then back on a page without boxed characters fails to show the page in Chrome. This is a bug in Chrome:
+Switching out of boxed mode on a page without boxed characters fails to show the page in Chrome. This is an SVG bug in Chrome:
 https://bugs.chromium.org/p/chromium/issues/detail?id=1138917
 
 Arabic script isn't rendered correctly.
