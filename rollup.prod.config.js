@@ -8,15 +8,15 @@ export default {
   input: 'src/app.js',
   output: [
     {
-      file: 'dist/teletextjs.min.js',
+      file: 'dist/teletext.min.js',
       format: 'es',
       sourcemap: true,
       compact: true,
       preferConst: true,
     },{
-      file: 'dist/teletextjs.umd.min.js',
+      file: 'dist/teletext.umd.min.js',
       format: 'umd',
-      name: 'teletextjs',
+      name: 'ttx',
       preferConst: true,
       sourcemap: true,
       compact: true,

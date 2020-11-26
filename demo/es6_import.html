@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Importing teletext as ES6 module</title>
+    <style>
+        body {
+            background-color: darkblue;
+            font-size: 30px;
+            color: white;
+        }
+        input {
+            font-size: 30px;
+        }
+        td {
+            padding: 5px;
+        }
+    </style>
+
+    <script type="module">
+        // minimum code to load and show a built-in test page
+        import { teletext as t } from '../dist/teletext.js';
+        t.addTo('#teletextscreen');
+        t.setDefaultG0Charset('latin_g0__english');
+        t.showTestPage();
+    </script>
+
+    <script type="module">
+        // code below is to handle key events and the button. This demonstrates using events
+        const KEY_EVENTS = {
+            '?': 'ttx.reveal',
+            'm': 'ttx.mix',
+            's': 'ttx.subtitlemode',
+        };
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('revealButton').addEventListener('click', () => {
+                window.dispatchEvent(new Event(KEY_EVENTS['?']));
+            });
+        });
+        window.addEventListener('keypress', e => {
+            if (e.key in KEY_EVENTS)
+                window.dispatchEvent(new Event(KEY_EVENTS[e.key]));
+        });
+    </script>
+
+    <script nomodule>
+        document.write("<p>Sorry, your browser needs to support ES6 module imports for this to work.</p>");
+        console.debug("=========> If you need to support old browsers, you'll need to use the provided UMD module and transpile the code for your targetted browsers");
+    </script>
+</head>
+
+<body>
+
+    <div id="teletextscreen"></div>
+
+    <input type="button" value="REVEAL" id="revealButton">
+
+    <p>Key controls</p>
+    <table>
+        <tr>
+            <td>?</td><td>Toggle reveal</td>
+        </tr>
+        <tr>
+            <td>m</td><td>Toggle mix</td>
+        </tr>
+        <tr>
+            <td>s</td><td>Toggle subtitle (boxed) mode</td>
+        </tr>
+    </table>
+
+</body>
+
+</html>

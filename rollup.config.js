@@ -6,8 +6,8 @@ import json from '@rollup/plugin-json';
 
 export default {
   input: {
-    teletextjs: 'src/app.js',
-    DemoApp: 'src/DemoApp.js'
+    teletext: 'src/app.js',
+    // DemoApp: 'src/DemoApp.js'
   },
   output: {
     entryFileNames: '[name].js',
@@ -15,14 +15,14 @@ export default {
     format: 'es',
     sourcemap: true,
   },
-  external: '../dist/teletextjs.js',
   plugins: [
     resolve(),
     commonjs({
       include: 'node_modules/**/hqx.js'
     }),
     browsersync({
-      server: '.'
+      server: '.',
+      startPath: "/demo/es6_import.html"
     }),
     sourcemaps(),
     json(),

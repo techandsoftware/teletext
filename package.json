@@ -1,11 +1,10 @@
 {
-  "name": "teletextjs",
+  "name": "@techandsoftware/teletext",
   "version": "0.0.0",
-  "description": "",
-  "main": "dist/teletextjs.umd.min.js",
-  "module": "dist/teletextjs.min.js",
+  "description": "Module and API to render teletext pages using vector graphics",
+  "browser": "dist/teletext.umd.min.js",
+  "module": "dist/teletext.min.js",
   "dependencies": {
-    "@techandsoftware/teletext-plugin-smooth-mosaic": "0.0.0",
     "uint1array": "^1.1.1"
   },
   "devDependencies": {
@@ -23,7 +22,7 @@
     "builddist": "rollup -c rollup.prod.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": ["teletext", "телетекст", "teletexto", "télétexte", "teletekst", "Videotext", "τελετέξτ"],
   "author": "Tech & Software Ltd.",
   "license": "UNLICENSED"
 }

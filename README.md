@@ -1,6 +1,6 @@
 Renders teletext pages using vector graphics (SVG).  Note this is just the display part of teletext, and operates as a screen or a dumb terminal.  The application using this package will need to supply the page content, implement page numbers, navigation, etc.  The package provides an API to set page content and change the display characteristics such as the screen height and aspect ratio.
 
-This supports up to level 1.5.  Most level 1.5 features are supported, including support for multiple character sets, mix mode, boxed mode, reveal and all spacing attributes. Display features include changing the text font (including proportional fonts), casting with Chromecast, aspect ratio and screen height. Mosaic graphics can be rendered with a font or using SVG graphics.
+This supports up to level 1.5.  Most level 1.5 features are supported, including support for multiple character sets, mix mode, boxed mode, reveal and all spacing attributes. Display features include changing the text font (including proportional fonts), aspect ratio and screen height. Mosaic graphics can be rendered with a font or using SVG graphics.
 
 Extensions are supported via plugins.
 
@@ -12,25 +12,46 @@ Extensions are supported via plugins.
 
 ```npm install @techandsoftware/teletext```
 
-Javascript (using ES6 modules):
+As an ES6 module:
+
 ```javascript
+// Import as an ES6 module
+import { teletext } from './node_modules/@techandsoftware/teletext/dist/teletext.min.js';
+
+// Or import the npm module (you will also need a toolchain which resolves the module)
 import { teletext } from '@techandsoftware/teletext';
+
 teletext.addTo('#teletextscreen');
 teletext.setRow(0, 'Hello world!');
 ```
 
-HTML:
+HTML container:
 ```html
 <div id="teletextscreen"></div>
 ```
 
-This creates an SVG object in the #teletextscreen div.
+This creates an SVG object in the #teletextscreen div which contains the teletext display.
+
+For browsers that don't support ES6 module imports, you can use the UMD module. The exports are exported to the `ttx` global, so you need to prefix API calls with that.
+
+```html
+<script src="./node_modules/@techandsoftware/teletext/dist/teletext.umd.min.js"></script>
+<script>
+ttx.teletext.addTo('#teletextscreen');
+</script>
+```
+
+See the [demos directory](./demos/) for some examples of these.
 
 # API
 
+The `teletext` object is exported by `@techandsfotware/teletext`, and supports the methods below.
+
 ## addTo(selector)
 
-`selector` is a DOM selector string, e.g. `#teletextscreen`
+`selector` is a DOM selector string, e.g. `#teletextscreen` to match a `<div id="teletextscreen"></div>` element.
+
+This adds a teletext screen to the DOM element referred to by the selector, which will create an inline SVG document to render the screen. If you want to export a snapshot of the SVG, you can access it with `document.querySelector(selector).innerHTML`
 
 ## setDefaultG0Charset(charset, withUpdate)
 
@@ -64,11 +85,11 @@ Sets the default g0 character set. The character set applies until the function 
 
 Display the content in the strings. Array of up to 25 elements. Each element is a string up to 40 characters. This is used to set the contents of the whole screen.
 
-Display attributes such as text or graphic colour, flashing and other features are set with control codes defined by ETSI EN 300 706. These can be embedded directly in the strings or are exposed via an Attribtes class to generate them. See the section below. 
+Display attributes such as text or graphic colour, flashing and other features are set with control codes defined by ETSI EN 300 706. These can be embedded directly in the strings or are exposed via an `Attributes` class to generate them. See the section below. 
 
 ## setRow(rowNum, string)
 
-Display the string on the row number. The string is up to 40 characters.
+Display the string on the row number. `rowNum` is between 0 and 24. The string is up to 40 characters.  Display attributes in the string can be used - see the section below.
 
 ## loadPageFromEncodingString(base64input)
 
