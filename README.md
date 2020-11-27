@@ -137,6 +137,8 @@ Special values are:
 * `Unscii` - a blocky retro-computing font by Viznut. [Source](http://pelulamu.net/unscii/)
 * `native` - uses the native font specific to your operating system. The actual font used depends on your system. Sourced from [bootstrap 4's native font stack](https://getbootstrap.com/docs/4.1/content/reboot/#native-font-stack).
 
+For Bedstead and Unscii to work correctly, you need to put them in a `fonts` subdirectory relative to the page containing the teletext display div.
+
 Normal values include `serif`, `sans-serif`, `monospace` and specific font family names of the sort you'd use in a CSS stylesheet, which might be browser- or OS-specific. Your containing HTML page can supply its own font family (using Google Fonts, for example) and then refer to it here. Even though the teletext layout is grid-based, you can use a proportional font and the grid is maintained.
 
 When using the `arabic_g0` character set, the cursive Arabic characters are displayed but not in the right way, yet, as the characters aren't in the joined form.
@@ -147,7 +149,7 @@ When using the `arabic_g0` character set, the cursive Arabic characters are disp
 * `classic__font-for-mosaic` - render mosaic graphics using a font
 * `classic__graphic-for-mosaic` - render mosaic graphics using SVG shapes.  This is the default view.
 
-When using `classic__font-for-mosaic`, the contiguous mosaic characters use codepoints defined in Unicode [Symbols for Legacy Computing](https://en.wikipedia.org/wiki/Symbols_for_Legacy_Computing). The separated mosaic characters use private use codepoints because the separated mosaics are missing from the legacy computing block.  The mosaic characters use the Unscii font.
+When using `classic__font-for-mosaic`, the contiguous mosaic characters use codepoints defined in Unicode [Symbols for Legacy Computing](https://en.wikipedia.org/wiki/Symbols_for_Legacy_Computing). The separated mosaic characters use private use codepoints because the separated mosaics are missing from the legacy computing block.  The mosaic characters use the Unscii font. For this to work, you need to supply Unscii in a `fonts` directory relative to the page containing the teletext display div.
 
 Using the font will result in a smaller SVG.  If you export the SVG from the DOM then you will need to ensure the Unscii font is available so that the SVG can be viewed properly in isolation. Because of issues with getting the edges of the mosaics to join up without gaps, the font size is slightly bigger than it should be. Using SVG graphics for the mosaics is more portable, and the mosaics are more precisely positioned.
 
