@@ -7,8 +7,8 @@
   "dependencies": {
     "uint1array": "^1.1.1"
   },
+  "private": true,
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^16.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
     "eslint": "^7.9.0",
@@ -22,7 +22,15 @@
     "builddist": "rollup -c rollup.prod.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["teletext", "телетекст", "teletexto", "télétexte", "teletekst", "Videotext", "τελετέξτ"],
+  "keywords": [
+    "teletext",
+    "телетекст",
+    "teletexto",
+    "télétexte",
+    "teletekst",
+    "Videotext",
+    "τελετέξτ"
+  ],
   "author": "Tech & Software Ltd.",
   "license": "UNLICENSED"
 }

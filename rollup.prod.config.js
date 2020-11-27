@@ -1,5 +1,4 @@
 import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs'; // needed for js-hqx
 import { terser } from "rollup-plugin-terser";
 import sourcemaps from 'rollup-plugin-sourcemaps';
 import json from '@rollup/plugin-json';
@@ -41,9 +40,6 @@ export default {
       },
     }),
     resolve(),
-    commonjs({
-      include: 'node_modules/**/hqx.js'
-    }),
     sourcemaps(),
     json(),
   ],
