@@ -423,10 +423,11 @@ export class VectorViewBase {
 VectorViewBase._CELL_WIDTH = CELL_WIDTH;
 VectorViewBase._CELL_HEIGHT = CELL_HEIGHT;
 VectorViewBase._CELL_DOUBLE_HEIGHT = CELL_DOUBLE_HEIGHT;
-VectorViewBase._ROWS = ROWS;
-VectorViewBase._COLS = COLS;
 VectorViewBase._WIDTH_PX = WIDTH_PX;
 VectorViewBase._HEIGHT_PX = HEIGHT_PX;
+// constants for plugins
+VectorViewBase.ROWS = ROWS;
+VectorViewBase.COLS = COLS;
 
 // helper functions used by plugin
 const colourLookupFn = colourSymbol => Attributes.fillColourFromColourAttrib(colourSymbol);
