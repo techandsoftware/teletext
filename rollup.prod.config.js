@@ -35,7 +35,7 @@ export default {
       },
       mangle: {
         properties: {
-          regex: /^_/,
+          regex: /^_.+/,
         },
       },
     }),
