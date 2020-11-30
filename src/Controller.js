@@ -15,6 +15,7 @@ export class TeletextController {
         this._testPageIndex = 0;
         this._initEventHandlers();
         this._viewSelector = null;
+        this._height = null;
         console.debug('TeletextController constructed');
     }
 
@@ -100,9 +101,10 @@ export class TeletextController {
     }
 
     setHeight(height) {
-        height = parseFloat(height);
-        if (Number.isNaN(height)) throw new Error("E98 setHeight: bad number");
-        this._view.setHeight(height);
+        const newHeight = parseFloat(height);
+        if (Number.isNaN(newHeight)) throw new Error("E98 setHeight: bad number");
+        this._view.setHeight(newHeight);
+        this._height = newHeight;
     }
 
     setDefaultG0Charset(...args) {
@@ -111,12 +113,15 @@ export class TeletextController {
 
     remove() {
         this._view.detach();
-        const el = document.querySelector(this._selector);
-        if (el) el.removeChild(el.firstChild);
+        if (this._selector) {
+            const el = document.querySelector(this._selector);
+            if (el) el.removeChild(el.firstChild);
+        }
         this._view = null;
     }
 
     setView(view) {
+        this.remove();
         switch (view) {
             case 'classic__font-for-mosaic':
                 this._view = new ViewClassic(this._model);
@@ -127,12 +132,14 @@ export class TeletextController {
             default:
                 throw new Error("setView E126: bad view name:" + view);
         }
+        if (this._height) this._view.setHeight(this._height);
         if (this._selector) this._view.addTo(this._selector);
         this._model.notify();
     }
 
     registerViewPlugin(plugin) {
         plugin.registerWithView(this._view);
+        this._model.notify();
     }
 
     // dumpToConsole() {

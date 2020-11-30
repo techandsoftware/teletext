@@ -84,6 +84,8 @@ Sets the default g0 character set. The character set applies until the function 
 
 `withUpdate` is an optional boolean. When `true` the display is updated immediately. Defaults to `false`.
 
+For reference, the code charts are on (Wikipedia)[https://en.wikipedia.org/wiki/Teletext_character_set], however the character codepoints there don't necessarily match the tables in this codebase (see `src/data/characterEncodings.json`).  The control codes for characters 0 to 1f are used for attributes - see the Attributes section below.
+
 ## setPageRows([strings])
 
 Display the content in the strings. Array of up to 25 elements. Each element is a string up to 40 characters. This is used to set the contents of the whole screen.
@@ -149,7 +151,7 @@ When using the `arabic_g0` character set, the cursive Arabic characters are disp
 * `classic__font-for-mosaic` - render mosaic graphics using a font
 * `classic__graphic-for-mosaic` - render mosaic graphics using SVG shapes.  This is the default view.
 
-When using `classic__font-for-mosaic`, the contiguous mosaic characters use codepoints defined in Unicode [Symbols for Legacy Computing](https://en.wikipedia.org/wiki/Symbols_for_Legacy_Computing). The separated mosaic characters use private use codepoints because the separated mosaics are missing from the legacy computing block.  The mosaic characters use the Unscii font. For this to work, you need to supply Unscii in a `fonts` directory relative to the page containing the teletext display div.
+When using `classic__font-for-mosaic`, the contiguous mosaic characters use codepoints defined in Unicode [Symbols for Legacy Computing](https://en.wikipedia.org/wiki/Symbols_for_Legacy_Computing). The separated mosaic characters use private use codepoints because the separated mosaics are missing from Unicode's legacy computing block.  The mosaic characters use the Unscii font. For this to work, you need to supply Unscii in a `fonts` directory relative to the page containing the teletext display div.
 
 Using the font will result in a smaller SVG.  If you export the SVG from the DOM then you will need to ensure the Unscii font is available so that the SVG can be viewed properly in isolation. Because of issues with getting the edges of the mosaics to join up without gaps, the font size is slightly bigger than it should be. Using SVG graphics for the mosaics is more portable, and the mosaics are more precisely positioned.
 
@@ -161,7 +163,7 @@ Sets the teletext level used to display the page. The value is a property on the
 import { Level } from '@techandsoftware/teletext'
 ```
 
-Values are `Level[0]`, `Level[1]`, `Level[1.5]`.  Level 0 isn't a real teletext level, but uses a subset of the spacing attributes roughly corresponding to Ceefax test pages from 1975.  The default is Level 1.
+Values are `Level[0]`, `Level[1]`, `Level[1.5]`.  Level 0 isn't a real teletext level, but uses a subset of the spacing attributes roughly corresponding to Ceefax test pages from 1975 (no background colours, double height, reveal, boxed or held mosaic).  Level 1 and 1.5 are from the ETSI spec. The default is Level 1.
 
 ## registerViewPlugin(plugin)
 
@@ -217,7 +219,7 @@ Sets text mode or graphic mode for the specified colour. `colour` is one of thes
 * Colour.WHITE
 * Colour.BLACK - black was added in level 2.5, but is included here at level 1.5 and ignored at level 1
 
- Characters in the string after this attribute are processed depending on the text or graphics mode that has been set. For text mode, the characters are mapped according to the g0 character set.  For graphics mode, characters draw block mosaics from the g1 character set, for character codes 20 to 3f and 60 to 7f; characters 40 to 5f show text from the g0 set with the same code.
+ Characters in the string after this attribute are processed depending on the text or graphics mode that has been set. For text mode, the characters are mapped according to the g0 character set.  For graphics mode, characters draw block mosaics from the g1 character set, for character codes 20 to 3f and 60 to 7f; characters 40 to 5f show the character from the g0 set with the same code.
 
 ## Attributes.charFromAttribute(attribute)
 
@@ -232,8 +234,8 @@ Gets the code for an attribute. `attribute` is one of these:
 * Attributes.NORMAL_SIZE - set text/mosaic to normal height
 * Attributes.DOUBLE_HEIGHT - set text/mosaic to double height. The row below will be hidden. Background colours on this row will be extended to the row below. Single height characters on the top row stay single height but their background colour is still extended to the lower row
 * Attributes.CONCEAL - text/mosaic characters show as spaces until reveal is pressed. For use with `toggleReveal()` / `ttx.reveal`. The concealed atttribute is active until the next colour attribute (or the end of the row)
-* Attributes.HOLD_MOSAICS - stores the last mosaic character seen on a row (going left to right) so that on the next spacing attribute the held mosaic is used instead of a space. A practical use is in a row of graphics, so that the colour could be changed without a space, with the space being filled in with the mosaic before the colour change 
-* Attributes.RELEASE_MOSAICS - releases the held mosaic, and spacing attributes will show a space
+* Attributes.HOLD_MOSAICS - stores the last mosaic character seen on a row (going left to right) so that on the next spacing attribute the held mosaic is used instead of a space. A practical use is in a row of graphics, so that the colour could be changed without a space, with the space being filled in with the mosaic before the colour change. The held mosaic is reset to a space with a change of size or text/graphics mode
+* Attributes.RELEASE_MOSAICS - cancels held mosaic mode, so that attributes will show a space and not the held mosaic. The held mosaic isn't reset to a space
 * Attributes.START_BOX - starts boxed characters (used for subtitles, newsflash). Two adjacent start box characters need to be used, with the box starting between the two. For use with `toggleBoxMode()`
 * Attributes.END_BOX - ends boxed characters
 
@@ -267,7 +269,7 @@ These features of [ETSI EN 300 706](https://www.etsi.org/deliver/etsi_en/300700_
     * Place 4 characters from the g3 set
     * Place `@` which is missing from most g0 sets
 * Level 2.5 and 3.5
-    * all features apart from black foreground text/graphics, which I've included in 1.5
+    * all features need to be added apart from black foreground text/graphics, which I've included in 1.5
 
 For Level 2.5 and 3.5, the ETSI spec includes double width and double size text, full g3 character set support (smoothed block mosaic and line drawing characters), g2 character set selection, 32 colours via 4 colour tables, colour table selection and remapping, side panels, non-spacing attributes, default screen/row colours, redefinable characters.  The non-spacing attributes include underline, inverse, bold, italic, proportional text and extra flashing modes in addition to level 1 attributes.  I'm not sure how much is worth implementing.
 
@@ -291,4 +293,4 @@ Arabic script isn't rendered correctly.
 * Native font stack adapted from Bootstrap's - https://getbootstrap.com/docs/4.5/content/reboot/#native-font-stack
 * The internal API used for drawing SVG is a subset of svg.js v3 - https://svgjs.com/docs/3.0/
 * Teletext test pages from https://archive.teletextarchaeologist.org/
-* The data format for stored test pages and for the `loadPageFromEncodingString` API is from Simon Rawles' teletext editor, edit.tf - https://edit.tf/
+* The data format for stored test pages and for the `loadPageFromEncodingString` API is from Simon Rawles' teletext editor - https://edit.tf/
