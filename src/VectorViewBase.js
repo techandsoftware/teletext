@@ -456,9 +456,6 @@ src: url('fonts/bedstead.otf') format('opentype');
 unicode-range: U+0000-00FF;
 }
 @keyframes blink {
-66% {
-visibility: hidden;
-}
 to {
 visibility: hidden;
 }
@@ -466,7 +463,7 @@ visibility: hidden;
 @keyframes fancyblink {
 0% {
 filter: none;
-opacity: 0.8;
+opacity: 0.7;
 }
 33% {
 filter: none;
@@ -476,8 +473,12 @@ opacity: 1;
 filter: none;
 opacity: 1;
 }
+99% {
+filter: blur(2px);
+opacity: 0;
+}
 to {
-filter: blur(1px);
+filter: none;
 opacity: 0;
 }
 }
@@ -509,5 +510,6 @@ background-color: transparent;
 svg use {
 shape-rendering: crispEdges;
 }
+rect { color: orange; }
 `;
 }
