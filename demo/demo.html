@@ -12,12 +12,12 @@
         }
     </style>
     <script type="module">
-        import { teletextjs } from '../dist/teletextjs.js';
+        import { teletext } from '../dist/teletext.js';
         import { DemoApp } from '../dist/DemoApp.js';
-        teletextjs.setDefaultG0Charset('latin_g0__english');
-        teletextjs.addTo('#teletextscreen');
-        teletextjs.showTestPage();
-        const demo = new DemoApp(teletextjs);
+        teletext.setDefaultG0Charset('latin_g0__english');
+        teletext.addTo('#teletextscreen');
+        teletext.showTestPage();
+        const demo = new DemoApp(teletext);
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu&amp;display=swap" rel="stylesheet"> 
 </head>
@@ -35,6 +35,7 @@
         <option>0</option>
         <option selected>1</option>
         <option>1.5</option>
+        <option>2.5</option>
     </select>
 </body>
 

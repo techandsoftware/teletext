@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Module and API to render teletext pages using vector graphics",
   "browser": "dist/teletext.umd.min.js",
-  "module": "dist/teletext.min.js",
+  "module": "dist/teletext.js",
   "dependencies": {
     "uint1array": "^1.1.1"
   },
@@ -18,7 +18,7 @@
     "rollup-plugin-terser": "^7.0.2"
   },
   "scripts": {
-    "start": "rollup -c -w",
+    "start": "rollup -c -w --watch.exclude 'dist/*'",
     "build": "rollup -c rollup.prod.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -29,7 +29,9 @@
     "télétexte",
     "teletekst",
     "Videotext",
-    "τελετέξτ"
+    "τελετέξτ",
+    "World System Teletext",
+    "WST"
   ],
   "author": "Tech & Software Ltd.",
   "license": "UNLICENSED"
