@@ -25,12 +25,7 @@ export class View extends Base {
         }
 
         if (cell.type == CellType.ALPHA || !isMosaic) {
-            cellView.plain(cell.char).attr(attr).fill(fill);
-            if (cell.size == CellSize.DOUBLE_HEIGHT) {
-                cellView.attr('transform', View._getDoubleHeightTransform(rowIndex));
-            }
-            if (cell.flashing) cellView.addClass('flash');
-            if (cell.concealed) cellView.addClass('conceal');
+            this._renderText(cellView, cell, attr, fill, cellIndex, rowIndex);
         } else if (isMosaic) {
             cellView.plain(' ').attr(attr);
             this._renderMosaic(rowIndex, cellIndex, cell, fill);

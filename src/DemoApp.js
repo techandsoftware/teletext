@@ -1,5 +1,4 @@
-import { teletextjs, Attributes, Colour, Level } from '../dist/teletextjs.js';
-import { SmoothMosaicPlugin } from '@techandsoftware/teletext-plugin-smooth-mosaic';
+import { Attributes, Colour, Level } from '../dist/teletext.js';
 
 const ASPECT_RATIOS = [1.2, 1.22, 1.33, 'natural'];
 const FONTS = ['sans-serif', 'Bedstead', 'native', 'serif', 'Unscii', 'Ubuntu'];
@@ -28,8 +27,8 @@ const CHARACTER_SETS = [
 const VIEWS = ['classic__font-for-mosaic', 'classic__graphic-for-mosaic'];
 
 export class DemoApp {
-    constructor(teletextjs) {
-        this.t = teletextjs;
+    constructor(teletext) {
+        this.t = teletext;
         this.KEY_EVENTS = {
             '?': 'ttx.reveal',
             'm': 'ttx.mix',
@@ -56,18 +55,18 @@ export class DemoApp {
                     window.dispatchEvent(new Event(this.KEY_EVENTS[e.key]));
                     break;
                 case 't':
-                    teletextjs.showTestPage();
+                    this.t.showTestPage();
                     break;
                 case 'x':
-                    teletextjs.showRandomisedPage();
+                    this.t.showRandomisedPage();
                     break;
                 case 'c': // for cells
-                    teletextjs.toggleGrid();
+                    this.t.toggleGrid();
                     break;
                 case 'a':
                     this._aspectRatioIndex++;
                     if (this._aspectRatioIndex == ASPECT_RATIOS.length) this._aspectRatioIndex = 0;
-                    teletextjs.setAspectRatio(ASPECT_RATIOS[this._aspectRatioIndex]);
+                    this.t.setAspectRatio(ASPECT_RATIOS[this._aspectRatioIndex]);
                     break;
                 case 'd':
                     this.setPageRows();
@@ -76,27 +75,28 @@ export class DemoApp {
                     this._fontIndex++;
                     if (this._fontIndex == FONTS.length) this._fontIndex = 0;
                     console.debug('setting font to', FONTS[this._fontIndex]);
-                    teletextjs.setFont(FONTS[this._fontIndex]);
+                    this.t.setFont(FONTS[this._fontIndex]);
                     break;
                 case 'w': // for wipe
-                    teletextjs.clearScreen();
+                    this.t.clearScreen(true);
                     break;
                 case 'h':
-                    teletextjs.setHeight(document.head.parentElement.clientHeight * 0.8);
+                    this.t.setHeight(document.head.parentElement.clientHeight * 0.8);
                     break;
                 case 'e': // for encoding
                     this._charSetIndex++;
                     if (this._charSetIndex == CHARACTER_SETS.length) this._charSetIndex = 0;
-                    teletextjs.setDefaultG0Charset(CHARACTER_SETS[this._charSetIndex], true);
+                    this.t.setDefaultG0Charset(CHARACTER_SETS[this._charSetIndex], true);
                     break;
                 case 'v':
-                    teletextjs.remove();
+                    this.t.remove();
                     this._viewIndex++;
                     if (this._viewIndex == VIEWS.length) this._viewIndex = 0;
-                    teletextjs.setView(VIEWS[this._viewIndex]);
+                    this.t.setView(VIEWS[this._viewIndex]);
                     break;
-                case 'p':
-                    teletextjs.registerViewPlugin(SmoothMosaicPlugin);
+                case 'z':
+                    this.t.clearScreen(false);
+                    this.setPageWithSizingAttributes();
                     break;
                 default:
             }
@@ -106,7 +106,7 @@ export class DemoApp {
                 window.dispatchEvent(new Event('ttx.reveal'));
             });
             document.getElementById('levelSelect').addEventListener('input', e => {
-                teletextjs.setLevel(Level[e.target.value]);
+                this.t.setLevel(Level[e.target.value]);
             });
         });
     }
@@ -150,5 +150,31 @@ export class DemoApp {
             'SHELD' + Attributes.charFromGraphicColour(Colour.GREEN) + '5' + Attributes.charFromAttribute(Attributes.SEPARATED_GRAPHICS) + Attributes.charFromAttribute(Attributes.HOLD_MOSAICS) + '7' + Attributes.charFromGraphicColour(Colour.YELLOW) + '9' + Attributes.charFromAttribute(Attributes.RELEASE_MOSAICS) + Attributes.charFromTextColour(Colour.WHITE) + 'X ' +
             Attributes.charFromGraphicColour(Colour.GREEN) + Attributes.charFromAttribute(Attributes.CONTIGUOUS_GRAPHICS) +  Attributes.charFromAttribute(Attributes.HOLD_MOSAICS) + '3' + Attributes.charFromAttribute(Attributes.SEPARATED_GRAPHICS) + '5' + Attributes.charFromAttribute(Attributes.CONTIGUOUS_GRAPHICS) + '7',
         ]);
+    }
+
+    setPageWithSizingAttributes() {
+        this.t.setPageRows([
+            Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'D o u b l e   w i d t h',
+            '01234567890123456789',
+            ' ' + Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'D o u b l e   w i d t h',
+            '01234567890123456789',
+            Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'D' +
+                Attributes.charFromTextColour(Colour.BLUE) +'o' +
+                Attributes.charFromTextColour(Colour.RED) +'u' +
+                Attributes.charFromTextColour(Colour.MAGENTA) +'b' +
+                Attributes.charFromTextColour(Colour.GREEN) +'l' +
+                Attributes.charFromTextColour(Colour.YELLOW) +'e' +
+                Attributes.charFromTextColour(Colour.YELLOW) +' ' +
+                Attributes.charFromTextColour(Colour.CYAN) +'w' +
+                Attributes.charFromTextColour(Colour.YELLOW) +'i' +
+                Attributes.charFromTextColour(Colour.GREEN) +'d' +
+                Attributes.charFromTextColour(Colour.MAGENTA) +'t' +
+                Attributes.charFromTextColour(Colour.RED) +'h',
+            '01234567890123456789',
+             Attributes.charFromTextColour(Colour.RED) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) + Attributes.charFromTextColour(Colour.YELLOW) + Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'R e d' + Attributes.charFromAttribute(Attributes.BLACK_BACKGROUND) + 'B a c k g r o u n d',
+             Attributes.charFromAttribute(Attributes.START_BOX) + Attributes.charFromAttribute(Attributes.START_BOX) + Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'B o x e d' + Attributes.charFromAttribute(Attributes.END_BOX) + 'U n b o x e d'
+
+        ]);
+        
     }
 }

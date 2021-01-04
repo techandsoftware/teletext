@@ -76,10 +76,11 @@ export class VectorViewBase {
 
     _update() {
         console.debug('## View._update');
-        let nextRowHidden = false;
+        let nextRowHidden = false;  // row might be hidden if row above contains double height or size
         let pageContainsFlash = false;
         this._pageContainsBox = false;
         this._gridrows.forEach((rowView, rowIndex) => {
+            let nextCellObscured = false;   // cell might be obscured if previous cell contains double width or size
             this._resetRow(rowIndex);
             if (nextRowHidden) {
                 nextRowHidden = false;
@@ -91,25 +92,33 @@ export class VectorViewBase {
             let previousBg, previousBoxed;
             rowView.forEach((cellView, cellIndex) => {
                 const cell = rowModel.getCell(cellIndex);
-                const isMosaicByte = cell.isMosaicByte();
-                const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
                 const bg = Attributes.fillColourFromColourAttrib(cell.bgColour);
-                const attr = this._getCellAttr(cell.type, isMosaicByte);
-
-                this._renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaicByte);
-
-                if (cell.boxed) {
+                if (nextCellObscured) {
+                    nextCellObscured = false;
+                    this._clearCell(cellView);
+                    this._extendBackgroundForRow(rowIndex);
                     if (previousBoxed) this._extendBox();
-                    else this._setBoxForRow(rowIndex, cellIndex);
-                    this._pageContainsBox = true;
+                } else {
+                    const isMosaicByte = cell.isMosaicByte();
+                    const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
+                    const attr = this._getCellAttr(cell.type, isMosaicByte);
+
+                    this._renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaicByte);
+
+                    if (cell.boxed) {
+                        if (previousBoxed) this._extendBox();
+                        else this._setBoxForRow(rowIndex, cellIndex);
+                        this._pageContainsBox = true;
+                    }
+
+                    if (previousBg == bg) this._extendBackgroundForRow(rowIndex);
+                    else this._setBackgroundForRow(rowIndex, cellIndex, bg);
+
+                    if (cell.size == CellSize.DOUBLE_WIDTH) nextCellObscured = true;
+                    previousBg = bg;
+                    previousBoxed = cell.boxed;
+                    if (cell.flashing) pageContainsFlash = true;
                 }
-
-                if (previousBg == bg) this._extendBackgroundForRow(rowIndex);
-                else this._setBackgroundForRow(rowIndex, cellIndex, bg);
-
-                previousBoxed = cell.boxed;
-                previousBg = bg;
-                if (cell.flashing) pageContainsFlash = true;
             });
 
             if (rowModel.doubleHeight) {
@@ -141,30 +150,37 @@ export class VectorViewBase {
         if ('_clearCellsForRow' in this._plugins)
             this._plugins._clearCellsForRow(rowView.length, rowNum);
 
-        rowView.forEach((cellView) => {
-            cellView.plain(' ')
-                .attr({
-                    dx: null,
-                    dy: null,
-                    textLength: null,
-                    lengthAdjust: null,
-                    'text-anchor': null,
-                    transform: null,
-                    class: null,
-                })
-            ;
-        });
+        rowView.forEach(cellView => this._clearCell(cellView));
+    }
+
+    _clearCell(cellView) {
+        cellView.plain(' ')
+            .attr({
+                dx: null,
+                dy: null,
+                textLength: null,
+                lengthAdjust: null,
+                'text-anchor': null,
+                transform: null,
+                class: null,
+            })
+        ;
     }
 
     _renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaic) {
-        cellView.plain(cell.char).attr(attr).fill(fill);
-        if (cell.size == CellSize.DOUBLE_HEIGHT) {
-            cellView.attr('transform', VectorViewBase._getDoubleHeightTransform(rowIndex));
-        }
+        this._renderText(cellView, cell, attr, fill, cellIndex, rowIndex);
 
         if (cell.type == CellType.MOSAIC_CONTIGUOUS && isMosaic) cellView.addClass('mosaic');
         else if (cell.type == CellType.MOSAIC_SEPARATED && isMosaic) cellView.addClass('mosaic_separated');
-    
+    }
+
+    _renderText(cellView, cell, attr, fill, cellIndex, rowIndex) {
+        cellView.plain(cell.char).attr(attr).fill(fill);
+        if (cell.size == CellSize.DOUBLE_HEIGHT) {
+            cellView.attr('transform', VectorViewBase._getDoubleHeightTransform(rowIndex));
+        } else if (cell.size == CellSize.DOUBLE_WIDTH) {
+            cellView.attr('transform', VectorViewBase._getDoubleWidthTransform(cellIndex));
+        }
         if (cell.flashing) cellView.addClass('flash');
         if (cell.concealed) cellView.addClass('conceal');
     }
@@ -391,7 +407,14 @@ export class VectorViewBase {
 
     static _getDoubleHeightTransform(row) {
         const yTranslate = (2 * ((CELL_HEIGHT * row) + TEXT_Y_OFFSET)) - ((CELL_HEIGHT * row) + (2 * TEXT_Y_OFFSET));
+        // TODO - can that be simplified
         return `translate(0 -${yTranslate}) scale(1 2)`;
+    }
+
+    static _getDoubleWidthTransform(col) {
+        const xTranslate = 0 - (col * CELL_WIDTH);
+        // const xTranslate = (2 * ((CELL_WIDTH * col) + TEXT_X_OFFSET)) - ((CELL_WIDTH * col) + (2 * TEXT_X_OFFSET));
+        return `translate(${xTranslate} 0) scale(2 1)`;
     }
 
     registerPlugin(name, methods) {

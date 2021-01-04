@@ -196,8 +196,7 @@ export class PageModel {
                     cell.setSpace(heldMosaic);
                     break;
                 case Attributes.DOUBLE_WIDTH: // set after
-                    // nextSize = CellSize.DOUBLE_WIDTH;
-                    // TODO - double width
+                    nextSize = CellSize.DOUBLE_WIDTH;
                     cell.setSpace(heldMosaic);
                     break;
                 case Attributes.DOUBLE_SIZE: // set after
