@@ -233,16 +233,13 @@ Gets the code for an attribute. `attribute` is one of these:
 * Attributes.STEADY - deactivate flashing for text/mosaic
 * Attributes.NORMAL_SIZE - set text/mosaic to normal height
 * Attributes.DOUBLE_HEIGHT - set text/mosaic to double height. The row below will be hidden. Background colours on this row will be extended to the row below. Single height characters on the top row stay single height but their background colour is still extended to the lower row
+* Attributes.DOUBLE_WIDTH - set text/mosaic to double width. Double width characters use two cells, and the character in the next cell is hidden. Requires Level 2.5 to be set
+* Attributes.DOUBLE_SIZE - set text/mosaic to double size. Double size characters use four cells. The row below is hidden as per double height, and the character in the cell after a double size character is hidden as per double width. Requires Level 2.5 to be set
 * Attributes.CONCEAL - text/mosaic characters show as spaces until reveal is pressed. For use with `toggleReveal()` / `ttx.reveal`. The concealed atttribute is active until the next colour attribute (or the end of the row)
 * Attributes.HOLD_MOSAICS - stores the last mosaic character seen on a row (going left to right) so that on the next spacing attribute the held mosaic is used instead of a space. A practical use is in a row of graphics, so that the colour could be changed without a space, with the space being filled in with the mosaic before the colour change. The held mosaic is reset to a space with a change of size or text/graphics mode
 * Attributes.RELEASE_MOSAICS - cancels held mosaic mode, so that attributes will show a space and not the held mosaic. The held mosaic isn't reset to a space
 * Attributes.START_BOX - starts boxed characters (used for subtitles, newsflash). Two adjacent start box characters need to be used, with the box starting between the two. For use with `toggleBoxMode()`
 * Attributes.END_BOX - ends boxed characters
-
-These attributes are defined from level 2.5, but have no effect right now:
-
-* Attributes.DOUBLE_WIDTH
-* Attributes.DOUBLE_SIZE
 
 As an example, to set red text on a yellow background, you will need:
 
@@ -269,9 +266,9 @@ These features of [ETSI EN 300 706](https://www.etsi.org/deliver/etsi_en/300700_
     * Place 4 characters from the g3 set
     * Place `@` which is missing from most g0 sets
 * Level 2.5 and 3.5
-    * all features need to be added apart from black foreground text/graphics, which I've included in 1.5
+    * all features need to be added apart from black foreground text/graphics (which I've included in 1.5), and double width and double size spacing attributes
 
-For Level 2.5 and 3.5, the ETSI spec includes double width and double size text, full g3 character set support (smoothed block mosaic and line drawing characters), g2 character set selection, 32 colours via 4 colour tables, colour table selection and remapping, side panels, non-spacing attributes, default screen/row colours, redefinable characters.  The non-spacing attributes include underline, inverse, bold, italic, proportional text and extra flashing modes in addition to level 1 attributes.  I'm not sure how much is worth implementing.
+For Level 2.5 and 3.5, the ETSI spec includes full g3 character set support (smoothed block mosaic and line drawing characters), g2 character set selection, 32 colours via 4 colour tables, colour table selection and remapping, side panels, non-spacing attributes, default screen/row colours, redefinable characters.  The non-spacing attributes include underline, inverse, bold, italic, proportional text and extra flashing modes in addition to level 1 attributes.  I'm not sure how much is worth implementing.
 
 The spec also defines navigation and object pages, which I consider out of scope.
 
@@ -284,7 +281,7 @@ TODO
 Switching out of boxed mode on a page without boxed characters fails to show the page in Chrome. This is an SVG bug in Chrome:
 https://bugs.chromium.org/p/chromium/issues/detail?id=1138917
 
-Arabic script isn't rendered correctly.
+Arabic script isn't rendered correctly as the characters aren't joined.
 
 # Credits
 
