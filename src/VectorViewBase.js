@@ -16,6 +16,7 @@ const DEFAULT_ASPECT_RATIO = 1.2;
 const CELL_HEIGHT = HEIGHT_PX / ROWS;
 const CELL_WIDTH = WIDTH_PX / COLS;
 const CELL_DOUBLE_HEIGHT = CELL_HEIGHT * 2;
+const CELL_DOUBLE_WIDTH = CELL_WIDTH * 2;
 
 const TEXT_X_OFFSET = CELL_WIDTH / 2;           // middle of cell
 const TEXT_Y_OFFSET = CELL_HEIGHT * (4 / 5);    // font baseline
@@ -182,7 +183,7 @@ export class VectorViewBase {
         } else if (cell.size == CellSize.DOUBLE_WIDTH) {
             cellView.attr('transform', VectorViewBase._getDoubleWidthTransform(cellIndex));
         }
-        if (cell.flashing) cellView.addClass('flash');
+        if (cell.flashing) cellView.addClass('flash'); // TODO should these be in renderCell
         if (cell.concealed) cellView.addClass('conceal');
     }
 
@@ -446,6 +447,7 @@ export class VectorViewBase {
 // expose constants here for subclasses
 VectorViewBase._CELL_WIDTH = CELL_WIDTH;
 VectorViewBase._CELL_HEIGHT = CELL_HEIGHT;
+VectorViewBase._CELL_DOUBLE_WIDTH = CELL_DOUBLE_WIDTH;
 VectorViewBase._CELL_DOUBLE_HEIGHT = CELL_DOUBLE_HEIGHT;
 VectorViewBase._WIDTH_PX = WIDTH_PX;
 VectorViewBase._HEIGHT_PX = HEIGHT_PX;

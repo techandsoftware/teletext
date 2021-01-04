@@ -153,7 +153,8 @@ export class DemoApp {
 
     setPageWithSizingAttributes() {
         this.t.setPageRows([
-            Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'D o u b l e   w i d t h' + Attributes.charFromGraphicColour(Colour.WHITE) + 'g r a p h i c s',
+            Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'D o u b l e   w i d t h',
+            Attributes.charFromGraphicColour(Colour.WHITE) + Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'g r a p h i c s' + Attributes.charFromAttribute(Attributes.SEPARATED_GRAPHICS) + '  s e p a r a t e d',
             '0123456789012345678901234567890123456789',
             ' ' + Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'D' +
                 Attributes.charFromTextColour(Colour.BLUE) +'o' +
