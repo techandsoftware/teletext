@@ -423,6 +423,7 @@ export class VectorViewBase {
             lookupColour: colourLookupFn,
             isDoubleHeight: isDoubleHeightFn,
             isDoubleWidth: isDoubleWidthFn,
+            isDoubleSize: isDoubleSizeFn,
             isSeparatedMosaic: isSeparatedMosaicFn,
             createImageOverlay: this._createImageOverlay.bind(this)
         };
@@ -450,6 +451,7 @@ VectorViewBase.COLS = COLS;
 const colourLookupFn = colourSymbol => Attributes.fillColourFromColourAttrib(colourSymbol);
 const isDoubleHeightFn = size => size == CellSize.DOUBLE_HEIGHT;
 const isDoubleWidthFn = size => size == CellSize.DOUBLE_WIDTH;
+const isDoubleSizeFn = size => size == CellSize.DOUBLE_SIZE;
 const isSeparatedMosaicFn = type => type == CellType.MOSAIC_SEPARATED;
 
 // functions used for cell transforms

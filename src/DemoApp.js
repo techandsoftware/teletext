@@ -191,6 +191,8 @@ export class DemoApp {
                 Attributes.charFromAttribute(Attributes.NORMAL_SIZE) + 'normal',
             'row hidden',
             Attributes.charFromTextColour(Colour.GREEN) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) + Attributes.charFromGraphicColour(Colour.BLUE) + Attributes.charFromAttribute(Attributes.DOUBLE_SIZE) + 'g r a p h i c s' + Attributes.charFromAttribute(Attributes.SEPARATED_GRAPHICS) + '  s e p a r a t e d',
+            'row hidden',
+            Attributes.charFromAttribute(Attributes.START_BOX) + Attributes.charFromAttribute(Attributes.START_BOX) + Attributes.charFromAttribute(Attributes.DOUBLE_SIZE) + 'B o x e d' + Attributes.charFromAttribute(Attributes.END_BOX) + 'U n b o x e d',
 
         ]);
         
