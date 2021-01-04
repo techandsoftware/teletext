@@ -367,6 +367,14 @@ class Rect extends Element {
         return this;
     }
 
+    height(height) {
+        if (height === undefined)
+            return parseInt(this._e.getAttribute('height'));
+
+        this._e.setAttribute('height', parseInt(height));
+        return this;
+    }
+
     remove() {
         this._e.parentNode && this._e.parentNode.removeChild(this._e);
         this._e = null;
