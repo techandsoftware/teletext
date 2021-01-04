@@ -180,6 +180,17 @@ export class DemoApp {
             'row hidden',
             Attributes.charFromAttribute(Attributes.START_BOX) + Attributes.charFromAttribute(Attributes.START_BOX) + 'Boxed' + Attributes.charFromTextColour(Colour.RED) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) + Attributes.charFromTextColour(Colour.YELLOW) + Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + '2 * w' + Attributes.charFromAttribute(Attributes.NORMAL_SIZE) + 'Normal' + Attributes.charFromAttribute(Attributes.DOUBLE_HEIGHT) + '2 * h',
             'row hidden',
+            Attributes.charFromAttribute(Attributes.DOUBLE_SIZE) + 'D o u b l e ' + 
+                Attributes.charFromTextColour(Colour.RED) + ' s i z e' +
+                Attributes.charFromAttribute(Attributes.DOUBLE_HEIGHT) + 'height' +
+                Attributes.charFromAttribute(Attributes.NORMAL_SIZE) + 'normal',
+            'row hidden',
+            Attributes.charFromTextColour(Colour.MAGENTA) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) + Attributes.charFromTextColour(Colour.WHITE) + Attributes.charFromAttribute(Attributes.DOUBLE_SIZE) + 'D o u b l e ' + 
+                Attributes.charFromTextColour(Colour.YELLOW) + ' s i z e' +
+                Attributes.charFromAttribute(Attributes.DOUBLE_HEIGHT) + 'height' +
+                Attributes.charFromAttribute(Attributes.NORMAL_SIZE) + 'normal',
+            'row hidden',
+            Attributes.charFromTextColour(Colour.GREEN) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) + Attributes.charFromGraphicColour(Colour.BLUE) + Attributes.charFromAttribute(Attributes.DOUBLE_SIZE) + 'g r a p h i c s' + Attributes.charFromAttribute(Attributes.SEPARATED_GRAPHICS) + '  s e p a r a t e d',
 
         ]);
         

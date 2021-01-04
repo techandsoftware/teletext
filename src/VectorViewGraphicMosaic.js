@@ -75,9 +75,9 @@ export class View extends Base {
             use = this._graphicrows[row].use(id).move(col * Base._CELL_WIDTH - 0.15, row * Base._CELL_HEIGHT - 0.1).fill(fill);
         else
             use = this._graphicrows[row].use(id).move(col * Base._CELL_WIDTH, row * Base._CELL_HEIGHT).fill(fill);
-        if (cell.size == CellSize.DOUBLE_HEIGHT)
+        if (cell.size == CellSize.DOUBLE_HEIGHT || cell.size == CellSize.DOUBLE_SIZE)
             use.attr('height', Base._CELL_DOUBLE_HEIGHT);
-        else if (cell.size == CellSize.DOUBLE_WIDTH)
+        if (cell.size == CellSize.DOUBLE_WIDTH || cell.size == CellSize.DOUBLE_SIZE)
             use.attr('width', Base._CELL_DOUBLE_WIDTH);
         if (cell.flashing) use.addClass('flash');
         if (cell.concealed) use.addClass('conceal');

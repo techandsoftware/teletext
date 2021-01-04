@@ -117,7 +117,7 @@ export class VectorViewBase {
                 if (previousBg == bg) this._extendBackgroundForRow(rowIndex);
                 else this._setBackgroundForRow(rowIndex, cellIndex, bg);
 
-                if (cell.size == CellSize.DOUBLE_WIDTH) nextCellObscured = true;
+                if (cell.size == CellSize.DOUBLE_WIDTH || cell.size == CellSize.DOUBLE_SIZE) nextCellObscured = true;
                 previousBg = bg;
                 previousBoxed = cell.boxed;
                 if (cell.flashing) pageContainsFlash = true;
@@ -178,12 +178,14 @@ export class VectorViewBase {
 
     _renderText(cellView, cell, attr, fill, cellIndex, rowIndex) {
         cellView.plain(cell.char).attr(attr).fill(fill);
-        if (cell.size == CellSize.DOUBLE_HEIGHT) {
-            cellView.attr('transform', VectorViewBase._getDoubleHeightTransform(rowIndex));
-        } else if (cell.size == CellSize.DOUBLE_WIDTH) {
-            cellView.attr('transform', VectorViewBase._getDoubleWidthTransform(cellIndex));
-        }
-        if (cell.flashing) cellView.addClass('flash'); // TODO should these be in renderCell
+        if (cell.size == CellSize.DOUBLE_HEIGHT)
+            cellView.attr('transform', `translate(0 ${_getYTranslate(rowIndex)}) scale(1 2)`);
+        else if (cell.size == CellSize.DOUBLE_WIDTH)
+            cellView.attr('transform', `translate(${_getXTranslate(cellIndex)} 0) scale(2 1)`);
+        else if (cell.size == CellSize.DOUBLE_SIZE)
+            cellView.attr('transform', `translate(${_getXTranslate(cellIndex)} ${_getYTranslate(rowIndex)}) scale(2 2)`);
+
+        if (cell.flashing) cellView.addClass('flash');
         if (cell.concealed) cellView.addClass('conceal');
     }
 
@@ -407,18 +409,6 @@ export class VectorViewBase {
         };
     }
 
-    static _getDoubleHeightTransform(row) {
-        const yTranslate = (2 * ((CELL_HEIGHT * row) + TEXT_Y_OFFSET)) - ((CELL_HEIGHT * row) + (2 * TEXT_Y_OFFSET));
-        // TODO - can that be simplified
-        return `translate(0 -${yTranslate}) scale(1 2)`;
-    }
-
-    static _getDoubleWidthTransform(col) {
-        const xTranslate = 0 - (col * CELL_WIDTH);
-        // const xTranslate = (2 * ((CELL_WIDTH * col) + TEXT_X_OFFSET)) - ((CELL_WIDTH * col) + (2 * TEXT_X_OFFSET));
-        return `translate(${xTranslate} 0) scale(2 1)`;
-    }
-
     registerPlugin(name, methods) {
         if ('renderBackground' in methods)
             this._plugins._background = methods.renderBackground;
@@ -461,6 +451,10 @@ const colourLookupFn = colourSymbol => Attributes.fillColourFromColourAttrib(col
 const isDoubleHeightFn = size => size == CellSize.DOUBLE_HEIGHT;
 const isDoubleWidthFn = size => size == CellSize.DOUBLE_WIDTH;
 const isSeparatedMosaicFn = type => type == CellType.MOSAIC_SEPARATED;
+
+// functions used for cell transforms
+const _getYTranslate = row => 0 - (row * CELL_HEIGHT);
+const _getXTranslate = col => 0 - (col * CELL_WIDTH);
 
 function getRandomLetter() {
     return String.fromCharCode(32 + Math.random() * 95); // returns letter in ASCII range

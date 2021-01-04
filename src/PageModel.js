@@ -200,9 +200,8 @@ export class PageModel {
                     cell.setSpace(heldMosaic);
                     break;
                 case Attributes.DOUBLE_SIZE: // set after
-                    // nextSize = CellSize.DOUBLE_SIZE;
-                    // rowModel.doubleHeight = true;
-                    // TODO - double size
+                    nextSize = CellSize.DOUBLE_SIZE;
+                    rowModel.doubleHeight = true;
                     cell.setSpace(heldMosaic);
                     break;
                 case Attributes.CONCEAL: // set at
