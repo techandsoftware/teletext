@@ -91,8 +91,6 @@ export class VectorViewBase {
             const rowModel = this._model.getRow(rowIndex);
             let previousBg, previousBoxed;
             rowView.forEach((cellView, cellIndex) => {
-                const cell = rowModel.getCell(cellIndex);
-                const bg = Attributes.fillColourFromColourAttrib(cell.bgColour);
                 if (nextCellObscured) {
                     nextCellObscured = false;
                     this._clearCell(cellView);
@@ -101,6 +99,8 @@ export class VectorViewBase {
                     return;
                 }
 
+                const cell = rowModel.getCell(cellIndex);
+                const bg = Attributes.fillColourFromColourAttrib(cell.bgColour);
                 const isMosaicByte = cell.isMosaicByte();
                 const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
                 const attr = this._getCellAttr(cell.type, isMosaicByte);

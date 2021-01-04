@@ -24,7 +24,7 @@ const CHARACTER_SETS = [
     'arabic_g0',
     'hebrew_g0',
 ];
-const VIEWS = ['classic__font-for-mosaic', 'classic__graphic-for-mosaic'];
+const VIEWS = ['classic__graphic-for-mosaic', 'classic__font-for-mosaic'];
 
 export class DemoApp {
     constructor(teletext) {
@@ -89,7 +89,6 @@ export class DemoApp {
                     this.t.setDefaultG0Charset(CHARACTER_SETS[this._charSetIndex], true);
                     break;
                 case 'v':
-                    this.t.remove();
                     this._viewIndex++;
                     if (this._viewIndex == VIEWS.length) this._viewIndex = 0;
                     this.t.setView(VIEWS[this._viewIndex]);
@@ -154,11 +153,9 @@ export class DemoApp {
 
     setPageWithSizingAttributes() {
         this.t.setPageRows([
-            Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'D o u b l e   w i d t h',
-            '01234567890123456789',
-            ' ' + Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'D o u b l e   w i d t h',
-            '01234567890123456789',
-            Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'D' +
+            Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'D o u b l e   w i d t h' + Attributes.charFromGraphicColour(Colour.WHITE) + 'g r a p h i c s',
+            '0123456789012345678901234567890123456789',
+            ' ' + Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'D' +
                 Attributes.charFromTextColour(Colour.BLUE) +'o' +
                 Attributes.charFromTextColour(Colour.RED) +'u' +
                 Attributes.charFromTextColour(Colour.MAGENTA) +'b' +
@@ -175,7 +172,8 @@ export class DemoApp {
             Attributes.charFromAttribute(Attributes.START_BOX) + Attributes.charFromAttribute(Attributes.START_BOX) + Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'B o x e d' + Attributes.charFromAttribute(Attributes.END_BOX) + 'U n b o x e d',
             Attributes.charFromTextColour(Colour.RED) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) + Attributes.charFromTextColour(Colour.YELLOW) + Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + '2 * w' + Attributes.charFromAttribute(Attributes.NORMAL_SIZE) + 'Normal' + Attributes.charFromAttribute(Attributes.DOUBLE_HEIGHT) + '2 * h',
             'row hidden',
-            Attributes.charFromAttribute(Attributes.START_BOX) + Attributes.charFromAttribute(Attributes.START_BOX) + 'Boxed' + Attributes.charFromTextColour(Colour.RED) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) + Attributes.charFromTextColour(Colour.YELLOW) + Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + '2 * w' + Attributes.charFromAttribute(Attributes.NORMAL_SIZE) + 'Normal' + Attributes.charFromAttribute(Attributes.DOUBLE_HEIGHT) + '2 * h'
+            Attributes.charFromAttribute(Attributes.START_BOX) + Attributes.charFromAttribute(Attributes.START_BOX) + 'Boxed' + Attributes.charFromTextColour(Colour.RED) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) + Attributes.charFromTextColour(Colour.YELLOW) + Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + '2 * w' + Attributes.charFromAttribute(Attributes.NORMAL_SIZE) + 'Normal' + Attributes.charFromAttribute(Attributes.DOUBLE_HEIGHT) + '2 * h',
+            'row hidden',
 
         ]);
         
