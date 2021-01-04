@@ -1,4 +1,5 @@
 import { Attributes, Colour, Level } from '../dist/teletext.js';
+import { SmoothMosaicPlugin } from '@techandsoftware/teletext-plugin-smooth-mosaic';
 
 const ASPECT_RATIOS = [1.2, 1.22, 1.33, 'natural'];
 const FONTS = ['sans-serif', 'Bedstead', 'native', 'serif', 'Unscii', 'Ubuntu'];
@@ -93,6 +94,9 @@ export class DemoApp {
                     if (this._viewIndex == VIEWS.length) this._viewIndex = 0;
                     this.t.setView(VIEWS[this._viewIndex]);
                     break;
+                case 'p':
+                    this.t.registerViewPlugin(SmoothMosaicPlugin);
+                    break;
                 case 'z':
                     this.t.clearScreen(false);
                     this.setPageWithSizingAttributes();
@@ -155,6 +159,7 @@ export class DemoApp {
         this.t.setPageRows([
             Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'D o u b l e   w i d t h',
             Attributes.charFromGraphicColour(Colour.WHITE) + Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'g r a p h i c s' + Attributes.charFromAttribute(Attributes.SEPARATED_GRAPHICS) + '  s e p a r a t e d',
+            Attributes.charFromTextColour(Colour.GREEN) + Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) + Attributes.charFromGraphicColour(Colour.WHITE) + Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'g r a p h i c s' + Attributes.charFromAttribute(Attributes.SEPARATED_GRAPHICS) + '  s e p a r a t e d',
             '0123456789012345678901234567890123456789',
             ' ' + Attributes.charFromAttribute(Attributes.DOUBLE_WIDTH) + 'D' +
                 Attributes.charFromTextColour(Colour.BLUE) +'o' +

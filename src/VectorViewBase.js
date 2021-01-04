@@ -432,6 +432,7 @@ export class VectorViewBase {
         return {
             lookupColour: colourLookupFn,
             isDoubleHeight: isDoubleHeightFn,
+            isDoubleWidth: isDoubleWidthFn,
             isSeparatedMosaic: isSeparatedMosaicFn,
             createImageOverlay: this._createImageOverlay.bind(this)
         };
@@ -458,6 +459,7 @@ VectorViewBase.COLS = COLS;
 // helper functions used by plugin
 const colourLookupFn = colourSymbol => Attributes.fillColourFromColourAttrib(colourSymbol);
 const isDoubleHeightFn = size => size == CellSize.DOUBLE_HEIGHT;
+const isDoubleWidthFn = size => size == CellSize.DOUBLE_WIDTH;
 const isSeparatedMosaicFn = type => type == CellType.MOSAIC_SEPARATED;
 
 function getRandomLetter() {
