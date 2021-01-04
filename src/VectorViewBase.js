@@ -98,27 +98,28 @@ export class VectorViewBase {
                     this._clearCell(cellView);
                     this._extendBackgroundForRow(rowIndex);
                     if (previousBoxed) this._extendBox();
-                } else {
-                    const isMosaicByte = cell.isMosaicByte();
-                    const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
-                    const attr = this._getCellAttr(cell.type, isMosaicByte);
-
-                    this._renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaicByte);
-
-                    if (cell.boxed) {
-                        if (previousBoxed) this._extendBox();
-                        else this._setBoxForRow(rowIndex, cellIndex);
-                        this._pageContainsBox = true;
-                    }
-
-                    if (previousBg == bg) this._extendBackgroundForRow(rowIndex);
-                    else this._setBackgroundForRow(rowIndex, cellIndex, bg);
-
-                    if (cell.size == CellSize.DOUBLE_WIDTH) nextCellObscured = true;
-                    previousBg = bg;
-                    previousBoxed = cell.boxed;
-                    if (cell.flashing) pageContainsFlash = true;
+                    return;
                 }
+
+                const isMosaicByte = cell.isMosaicByte();
+                const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
+                const attr = this._getCellAttr(cell.type, isMosaicByte);
+
+                this._renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaicByte);
+
+                if (cell.boxed) {
+                    if (previousBoxed) this._extendBox();
+                    else this._setBoxForRow(rowIndex, cellIndex);
+                    this._pageContainsBox = true;
+                }
+
+                if (previousBg == bg) this._extendBackgroundForRow(rowIndex);
+                else this._setBackgroundForRow(rowIndex, cellIndex, bg);
+
+                if (cell.size == CellSize.DOUBLE_WIDTH) nextCellObscured = true;
+                previousBg = bg;
+                previousBoxed = cell.boxed;
+                if (cell.flashing) pageContainsFlash = true;
             });
 
             if (rowModel.doubleHeight) {
