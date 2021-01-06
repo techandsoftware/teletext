@@ -485,7 +485,7 @@ visibility: hidden;
 }
 }
 @keyframes fancyblink {
-0% {
+from {
 filter: none;
 opacity: 0.7;
 }
@@ -494,15 +494,15 @@ filter: none;
 opacity: 1;
 }
 66% {
-filter: none;
+filter: blur(0px);
 opacity: 1;
 }
-99% {
-filter: blur(2px);
+95% {
+filter: blur(4px);
 opacity: 0;
 }
 to {
-filter: none;
+filter: blur(0px);
 opacity: 0;
 }
 }
