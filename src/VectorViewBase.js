@@ -80,6 +80,7 @@ export class VectorViewBase {
         let nextRowHidden = false;  // row might be hidden if row above contains double height or size
         let pageContainsFlash = false;
         this._pageContainsBox = false;
+        this.d.removeClass('flash_flashing');
         this._gridrows.forEach((rowView, rowIndex) => {
             let nextCellObscured = false;   // cell might be obscured if previous cell contains double width or size
             this._resetRow(rowIndex);
@@ -136,10 +137,7 @@ export class VectorViewBase {
         if ('_endOfUpdate' in this._plugins) this._plugins._endOfUpdate(this._svg.width(), this._svg.height());
         this.d.addClass('conceal_concealed');
         // FUDGE keep flashing synchronised
-        if (pageContainsFlash) {
-            this.d.removeClass('flash_flashing');
-            setTimeout(() => this.d.addClass('flash_flashing'), 10);
-        }
+        if (pageContainsFlash) setTimeout(() => this.d.addClass('flash_flashing'), 100);
         this._refreshMixMode();
     }
 
