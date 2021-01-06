@@ -111,6 +111,10 @@ export class TeletextController {
         this._model.setPrimaryG0CharacterEncoding(...args);
     }
 
+    setSecondG0Charset(...args) {
+        this._model.setSecondaryG0CharacterEncoding(...args);
+    }
+
     remove() {
         this._view.detach();
         if (this._selector) {

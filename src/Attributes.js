@@ -70,6 +70,7 @@ Attributes.NEW_BACKGROUND      = Symbol('NEW_BACKGROUND');
 Attributes.BLACK_BACKGROUND    = Symbol('BLACK_BACKGROUND');
 Attributes.CONTIGUOUS_GRAPHICS = CellType.MOSAIC_CONTIGUOUS;
 Attributes.SEPARATED_GRAPHICS  = CellType.MOSAIC_SEPARATED;
+Attributes.ESC                 = Symbol('ESC');
 Attributes.FLASH               = Symbol('FLASH');
 Attributes.STEADY              = Symbol('STEADY');
 Attributes.NORMAL_SIZE         = CellSize.NORMAL_SIZE;
@@ -97,6 +98,7 @@ const colourAttribToFillColour = {
 };
 Object.freeze(colourAttribToFillColour);
 
+// TODO - tidy up strings
 const charToTextColour = {
     [String.fromCharCode(0x0)] : Colour.BLACK,
     [String.fromCharCode(0x1)] : Colour.RED,
@@ -131,6 +133,7 @@ const attributeChars = {
     [String.fromCharCode(0x18)] : Attributes.CONCEAL,
     [String.fromCharCode(0x19)] : Attributes.CONTIGUOUS_GRAPHICS,
     [String.fromCharCode(0x1a)] : Attributes.SEPARATED_GRAPHICS,
+    [String.fromCharCode(0x1b)] : Attributes.ESC,
     [String.fromCharCode(0x1c)] : Attributes.BLACK_BACKGROUND,
     [String.fromCharCode(0x1d)] : Attributes.NEW_BACKGROUND,
     [String.fromCharCode(0x1e)] : Attributes.HOLD_MOSAICS,
@@ -174,7 +177,7 @@ charCodesByLevel[Level[0]] = [     // fictional level 0
     0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
 ];
 charCodesByLevel[Level[1]] = [...charCodesByLevel[Level[0]]].concat([
-    0x0a, 0x0b, 0x0c, 0x0d, 0x18, 0x19, 0x1a, 0x1c, 0x1d, 0x1e, 0x1f,
+    0x0a, 0x0b, 0x0c, 0x0d, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
 ]);
 charCodesByLevel[Level[1.5]] = [...charCodesByLevel[Level[1]]].concat([0x0, 0x10]);
 charCodesByLevel[Level[2.5]] = [...charCodesByLevel[Level[1.5]]].concat([0xe, 0xf]);

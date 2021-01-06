@@ -18,6 +18,7 @@ export class PageModel {
             this._screen.push(row);
         }
         this._primaryG0CharacterEncoding = DEFAULT_PRIMARY_G0_CHARACTER_SET;
+        this._secondaryG0CharacterEncoding = null;
         this._startBoxChar = Attributes.charFromAttribute(Attributes.START_BOX)
         this._level = Level[1];
         
@@ -99,18 +100,25 @@ export class PageModel {
         if (withUpdate) this.onSet.notify();
     }
 
+    setSecondaryG0CharacterEncoding(encoding, withUpdate) {
+        this._secondaryG0CharacterEncoding = encoding;
+        console.debug('PageModel.setSecondaryG0CharacterEncoding: set second g0 encoding to', encoding);
+        if (withUpdate) this.onSet.notify();
+    }
+
     getRow(rowNum) {
         if (rowNum >= ROWS) {
             throw new Error("PageModel.getRow E42 bad rowNum");
         }
         const rowModel = new RowModel();
-        let textColour;
+        let textColour, switchedG0CharacterEncoding;
 
         // start of row defaults for 'set-after' attributes
         let nextCellType = CellType.ALPHA;
         let nextTextColour = Colour.WHITE;
         let nextFlashing = false;
         let nextSize = CellSize.NORMAL_SIZE;
+        let nextSwitchedG0CharacterEncoding = false;
         let nextConcealed = false; // setting is set-at, unsetting is set-after
         let cancelNextHoldMosaics = false; // setting is set-at, cancelling is set-after
         let nextBoxed = false;
@@ -132,6 +140,7 @@ export class PageModel {
             textColour = nextTextColour;
             cell.type = nextCellType;
             cell.boxed = nextBoxed;
+            switchedG0CharacterEncoding = nextSwitchedG0CharacterEncoding;
             if (attrib.attribute != Attributes.STEADY) cell.flashing = nextFlashing;
             if (attrib.attribute != Attributes.NORMAL_SIZE) cell.size = nextSize;
             if (attrib.attribute != Attributes.CONCEAL) cell.concealed = nextConcealed;
@@ -174,6 +183,12 @@ export class PageModel {
                     graphicType = CellType.MOSAIC_SEPARATED;
                     if (cell.type == CellType.MOSAIC_CONTIGUOUS) cell.type = CellType.MOSAIC_SEPARATED;
                     if (nextCellType == CellType.MOSAIC_CONTIGUOUS) nextCellType = CellType.MOSAIC_SEPARATED;
+                    cell.setSpace(heldMosaic);
+                    break;
+                case Attributes.ESC: // for switching g0 sets. Set after
+                    if (this._secondaryG0CharacterEncoding) {
+                        nextSwitchedG0CharacterEncoding = !switchedG0CharacterEncoding;
+                    }
                     cell.setSpace(heldMosaic);
                     break;
                 case Attributes.FLASH: // set after
@@ -234,7 +249,10 @@ export class PageModel {
                     cell.setSpace(heldMosaic);
                     break;
                 default:
-                    cell.setMappedChar(this._primaryG0CharacterEncoding);
+                    if (switchedG0CharacterEncoding)
+                        cell.setMappedChar(this._secondaryG0CharacterEncoding);
+                    else
+                        cell.setMappedChar(this._primaryG0CharacterEncoding);
                     // mosaic chars are held for use when 'hold mosaics' is active
                     if (cell.isMosaic()) {
                         heldMosaic.char = char;

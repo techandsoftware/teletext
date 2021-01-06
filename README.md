@@ -86,6 +86,10 @@ Sets the default g0 character set. The character set applies until the function 
 
 For reference, the code charts are on (Wikipedia)[https://en.wikipedia.org/wiki/Teletext_character_set], however the character codepoints there don't necessarily match the tables in this codebase (see `src/data/characterEncodings.json`).  The control codes for characters 0 to 1f are used for attributes - see the Attributes section below.
 
+## setSecondG0Charset(charset, withUpdate)
+
+Sets the second g0 character set.  This is used with Attributes.ESC (character code 1b) to switch between the default g0 character set and the second g0 character set. The parameters are the same as for `setDefaultG0Charset`.
+
 ## setPageRows([strings])
 
 Display the content in the strings. Array of up to 25 elements. Each element is a string up to 40 characters. This is used to set the contents of the whole screen.
@@ -163,7 +167,7 @@ Sets the teletext level used to display the page. The value is a property on the
 import { Level } from '@techandsoftware/teletext'
 ```
 
-Values are `Level[0]`, `Level[1]`, `Level[1.5]`.  Level 0 isn't a real teletext level, but uses a subset of the spacing attributes roughly corresponding to Ceefax test pages from 1975 (no background colours, double height, reveal, boxed or held mosaic).  Level 1 and 1.5 are from the ETSI spec. The default is Level 1.
+Values are `Level[0]`, `Level[1]`, `Level[1.5]`, `Level[2.5]`.  Level 0 isn't a real teletext level, but uses a subset of the spacing attributes roughly corresponding to Ceefax test pages from 1975 (no background colours, double height, reveal, boxed or held mosaic).  Levels 1 to 2.5 are from the ETSI spec. The default is Level 1.
 
 ## registerViewPlugin(plugin)
 
@@ -240,6 +244,7 @@ Gets the code for an attribute. `attribute` is one of these:
 * Attributes.RELEASE_MOSAICS - cancels held mosaic mode, so that attributes will show a space and not the held mosaic. The held mosaic isn't reset to a space
 * Attributes.START_BOX - starts boxed characters (used for subtitles, newsflash). Two adjacent start box characters need to be used, with the box starting between the two. For use with `toggleBoxMode()`
 * Attributes.END_BOX - ends boxed characters
+* Attributes.ESC - switch between the default g0 character set and the second g0 character set.  This requires the second g0 character set to have been set with `setSecondG0Charset`.  If this hasn't been set, the attribute has no effect
 
 As an example, to set red text on a yellow background, you will need:
 
@@ -257,9 +262,6 @@ If you prefer to use the control codes directly, check the source of Attributes.
 
 These features of [ETSI EN 300 706](https://www.etsi.org/deliver/etsi_en/300700_300799/300706/01.02.01_60/en_300706v010201p.pdf) aren't supported yet:
 
-* Level 1
-    * Set second g0 character set
-    * Switch between the default and second g0 sets with a control code
 * Level 1.5
     * Place 'a few' characters from the g2 supplementary character set, although the g2 set isn't defined precisely at level 1.5
     * Place diacritics from the g2 set onto 'a few' g0 characters

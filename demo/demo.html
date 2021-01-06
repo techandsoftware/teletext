@@ -15,6 +15,7 @@
         import { teletext } from '../dist/teletext.js';
         import { DemoApp } from '../dist/DemoApp.js';
         teletext.setDefaultG0Charset('latin_g0__english');
+        teletext.setSecondG0Charset('greek_g0');
         teletext.addTo('#teletextscreen');
         teletext.showTestPage();
         const demo = new DemoApp(teletext);
