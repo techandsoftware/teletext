@@ -1,8 +1,42 @@
 Renders teletext pages using vector graphics (SVG).  Note this is just the display part of teletext, and operates as a screen or a dumb terminal.  The application using this package will need to supply the page content, implement page numbers, navigation, etc.  The package provides an API to set page content and change the display characteristics such as the screen height and aspect ratio.
 
-This supports up to level 1.5.  Most level 1.5 features are supported, including support for multiple character sets, mix mode, boxed mode, reveal and all spacing attributes. Display features include changing the text font (including proportional fonts), aspect ratio and screen height. Mosaic graphics can be rendered with a font or using SVG graphics.
+This supports most of level 1.5 and a little of level 2.5.  Most level 1.5 features are supported, including support for multiple character sets, mix mode, boxed mode, reveal and all spacing attributes. From level 2.5, double width and double size are supported. Display rendering features include changing the text font (including proportional fonts), aspect ratio and screen height. Mosaic graphics can be rendered with a font or using SVG graphics. A full list follows.
 
 Extensions are supported via plugins.
+
+## Teletext features supported
+
+* Level 1
+    * Screen size of 40 x 25 characters
+    * 6 colour foreground text or mosaic characters (also called semigraphics or sextets)
+    * 7 colour background
+    * Text displayed using the G0 character sets
+    * XX character sets are available, with XX characters per set. Supports Latin, Greek, Cyrillic, Hebrew and Arabic scripts
+    * Primary and secondary g0 sets selectable and switchable
+    * Mosaics are contiguous or separated
+    * Double height, flashing, concealed, boxed characters
+    * Held mosaic characters, to replace the display of a spacing attributes with the last held graphic
+    * Newsflash page display mode
+    * Mix display mode, which isn't part of the teletext spec but is normal on TVs
+* Level 1.5
+    * Black foreground text or mosaic (this is level 2.5 in the teletext spec but included here at 1.5 as with some TVs)
+    * g2 set selectable
+    * ~~Diacritical marks on characters from the g0 sets placeable~~ TODO
+    * ~~g2 character sets and character placement~~ TODO
+    * ~~4 characters from the g3 character set placeable~~ TODO
+    * ~~`@` is placeable (it isn't in most g0 sets or the g2 sets)~~ TODO
+* Level 2.5
+    * Double width and double size characters
+    * ~~Modify g0/g2 set selectable for placing characters~~ TODO
+
+Additional features:
+
+* Chromecast support
+* API to populate the screen
+* Screen drawn with SVG graphics. The SVG is exportable for display in any SVG viewer
+* The API supports setting the font for text, change height and aspect ratio, switch teletext levels, set on-screen grid
+* Use characters or SVG shapes for rendering mosaics
+* Plugin architecture. Plugins can supplement or overwrite the rendering, for example to use pixelart scaling to render smooth graphics instead of the normally blocky mosaics
 
 ## Plugins
 
@@ -31,7 +65,7 @@ teletext.setRow(0, 'Hello world!');
 
 This creates an SVG object in the #teletextscreen div which contains the teletext display.
 
-## As a <script>
+## Using `script src`
 
 For browsers that don't support ES6 module imports, you can use the UMD module. The exports are exported to the `ttx` global, so you need to prefix API calls with that.
 
@@ -47,7 +81,7 @@ See the [demo directory](./demo/index.html) for some examples of these.
 
 # API
 
-The `teletext` object is exported by `@techandsfotware/teletext`, and supports the methods below.
+The `teletext` object is exported by `@techandsfotware/teletext`, and supports the methods below for drawing on the screen and controlling the rendering.
 
 ## addTo(selector)
 
@@ -114,7 +148,7 @@ Removes the teletext display from the DOM.
 
 ## showTestPage()
 
-3 test pages are built-in. This displays a test page, rotating between the 3. The test pages were kindly supplied by https://archive.teletextarchaeologist.org/
+3 test pages are built-in. This displays a test page, rotating between the 3 every time this is called. The test pages were kindly supplied by https://archive.teletextarchaeologist.org/
 
 ## toggleGrid()
 
@@ -223,7 +257,7 @@ Sets text mode or graphic mode for the specified colour. `colour` is one of thes
 * Colour.WHITE
 * Colour.BLACK - black was added in level 2.5, but is included here at level 1.5 and ignored at level 1
 
- Characters in the string after this attribute are processed depending on the text or graphics mode that has been set. For text mode, the characters are mapped according to the g0 character set.  For graphics mode, characters draw block mosaics from the g1 character set, for character codes 20 to 3f and 60 to 7f; characters 40 to 5f show the character from the g0 set with the same code.
+ Characters in the row after this attribute are processed depending on the text or graphics mode that has been set. For text mode, the characters are mapped according to the g0 character set.  For graphics mode, characters draw block mosaics from the g1 character set if the character code is 20 to 3f or 60 to 7f; characters 40 to 5f show the character from the g0 set with the same code.
 
 ## Attributes.charFromAttribute(attribute)
 
@@ -273,9 +307,10 @@ These features of [ETSI EN 300 706](https://www.etsi.org/deliver/etsi_en/300700_
 
 For Level 2.5 and 3.5, the ETSI spec includes full g3 character set support (smoothed block mosaic and line drawing characters), g2 character set selection, 32 colours via 4 colour tables, colour table selection and remapping, side panels, non-spacing attributes, default screen/row colours, redefinable characters.  The non-spacing attributes include underline, inverse, bold, italic, proportional text and extra flashing modes in addition to level 1 attributes.  I'm not sure how much is worth implementing.
 
-The spec also defines navigation and object pages, which I consider out of scope.
+The spec also defines navigation and object pages, which I consider out of scope as they're more in the domain of the application rather than the display.
 
 APIs needed:
+0. enhance()
 1. setPosition(row, col)
 2. putCharFromCharset(charset, string, diacriticalCode)
 g0 // 1.5
@@ -284,42 +319,9 @@ g2 // 1.5
 g3 // 1.5 for 4 chars or 2.5 for the rest
 3. putAtSign() // 1.5
 4. putChars(string)
+5. update()
 
 Level 2.5/3.5 allows for a 'modified g0 and g2 character set', then writing g0/g2 characters uses that.
-
-# Teletext features supported
-
-* Level 1
-    * Screen size of 40 x 25 characters
-    * 6 colour foreground text or mosaic characters (also called semigraphics or sextets)
-    * 7 colour background
-    * Text displayed using the G0 character sets
-    * XX character sets are available, with XX characters per set. Supports Latin, Greek, Cyrillic, Hebrew and Arabic scripts
-    * Primary and secondary g0 sets selectable and switchable
-    * Mosaics are contiguous or separated
-    * Double height, flashing, concealed, boxed characters
-    * Held mosaic characters, to replace the display of a spacing attributes with the last held graphic
-    * Newsflash page display mode
-    * Mix display mode, which isn't part of the teletext spec but is normal on TVs
-* Level 1.5
-    * Black foreground text or mosaic (this is level 2.5 in the teletext spec but included here at 1.5 as with some TVs)
-    * g2 set selectable
-    * Diacritical marks on characters from the g0 sets placeable TODO
-    * g2 character sets and character placement TODO
-    * 4 characters from the g3 character set placeable TODO
-    * `@` is placeable (it isn't in most g0 sets or the g2 sets) TODO
-* Level 2.5
-    * Double width and double size characters
-    * Modify g0/g2 set selectable for placing characters TODO
-
-Additional features:
-
-* Chromecast support
-* API to populate the screen
-* Screen drawn with SVG graphics. The SVG is exportable for display in any SVG viewer
-* The API supports setting the font for text, change height and aspect ratio, switch teletext levels, set on-screen grid
-* Use characters or SVG shapes for rendering mosaics
-* Plugin architecture. Plugins can supplement or overwrite the rendering, for example to use pixelart scaling to render smooth graphics instead of the normally blocky mosaics
 
 # License
 
