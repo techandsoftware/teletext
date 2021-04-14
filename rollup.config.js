@@ -6,7 +6,6 @@ import json from '@rollup/plugin-json';
 export default {
   input: {
     teletext: 'src/app.js',
-    DemoApp: 'src/DemoApp.js'
   },
   output: {
     entryFileNames: '[name].js',
@@ -14,7 +13,6 @@ export default {
     format: 'es',
     sourcemap: true,
   },
-  external: '../dist/teletext.js',  // so that DemoApp doesn't bundle teletext.js
   plugins: [
     resolve(),
     browsersync({
