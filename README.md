@@ -1,6 +1,6 @@
 Renders teletext pages using vector graphics (SVG).  Note this is just the display part of teletext, and operates as a screen or a dumb terminal.  The application using this package will need to supply the page content, implement page numbers, navigation, etc.  The package provides an API to set page content and change the display characteristics such as the screen height and aspect ratio.
 
-This supports most of level 1.5 and a little of level 2.5.  Most level 1.5 features are supported, including support for multiple character sets, mix mode, boxed mode, reveal and all spacing attributes. From level 2.5, double width and double size are supported. Display rendering features include changing the text font (including proportional fonts), aspect ratio and screen height. Mosaic graphics can be rendered with a font or using SVG graphics. A full list follows.
+This supports most of level 1/1.5 and a little of level 2.5.  A full list follows.  Display rendering features include changing the text font (including proportional fonts), aspect ratio and screen height. Mosaic graphics can be rendered with a font or using SVG graphics. 
 
 Extensions are supported via plugins.
 
@@ -27,12 +27,12 @@ Extensions are supported via plugins.
     * ~~`@` is placeable (it isn't in most g0 sets or the g2 sets)~~ TODO
 * Level 2.5
     * Double width and double size characters
-    * ~~Modify g0/g2 set selectable for placing characters~~ TODO
+    * ~~Modified g0/g2 set selectable for placing characters~~ TODO
 
 Additional features:
 
 * Chromecast support
-* API to populate the screen
+* API to fill the screen
 * Screen drawn with SVG graphics. The SVG is exportable for display in any SVG viewer
 * The API supports setting the font for text, change height and aspect ratio, switch teletext levels, set on-screen grid
 * Use characters or SVG shapes for rendering mosaics
@@ -209,7 +209,7 @@ Pass in a plugin class. The plugin can hook in and override parts of the page re
 
 ## toggleReveal()
 
-Toggles reveal on or off to show or hide concealed characters. See also the `ttx.reveal` event.
+Toggles reveal on or off to show or hide concealed characters. The initial state is to conceal, and the reveal state is reset to concealed on API calls which update the page, set the character set (when `withUpdate` is true) or set the level.  See also the `ttx.reveal` event.
 
 ## toggleMixMode()
 
@@ -223,9 +223,11 @@ Toggles boxed display mode on or off. See also the `ttx.subtitlemode` event.
 
 Your application can dispatch these events as an alternative to using the API.
 
-* `ttx.reveal` - toggles reveal. If the page contains concealed characters, then this shows or hides them.  This is used for things like punchlines or quizzes.  This corresponds to a 'reveal' button on a TV remote cntrol. This has no effect if the page doesn't have any concealed characters. The initial state is to conceal, and the reveal state is reset to concealed on API calls which update the page, set the character set (when `withUpdate` is true) or set the level.
-* `ttx.mix` - toggles mix display mode.  When mixed, the page background colours are hidden. In a real TV this would display the TV picture with text on top. For your app, it would display whatever you have positioned behind the screen or used as the html body background.
-* `ttx.subtitlemode` - toggles boxed display mode.  A page can contain 'boxed' characters. When in boxed mode, the boxed characters display on top of the TV picture, which is used for subtitles or a newsflash page.  Non-boxed characters are hidden. On a broadcast teletext service, the broadcaster decides whether the page is displayed in boxed mode or not. If the page doesn't contain any boxed characters, the page is blank, so that the screen shows the TV picture. For your app, the display shows whatever you have positioned behind the screen or used as the html body background.
+| Event | Use |
+|-------|------|
+|`ttx.reveal` | toggles reveal. If the page contains concealed characters, then this shows or hides them.  This is used for things like punchlines or quizzes.  This corresponds to a 'reveal' button on a TV remote control. This has no effect if the page doesn't have any concealed characters. The initial state is to conceal, and the reveal state is reset to concealed on API calls which update the page, set the character set (when `withUpdate` is true) or set the level. |
+| `ttx.mix` | toggles mix display mode.  When mixed, the page background colours are hidden. In a real TV this would display the TV picture with text on top. For your app, it would display whatever you have positioned behind the screen or used as the html body background. |
+| `ttx.subtitlemode` | toggles boxed display mode.  A page can contain 'boxed' characters. When in boxed mode, the boxed characters display on top of the TV picture, which is used for subtitles or a newsflash page.  Non-boxed characters are hidden. On a broadcast teletext service, the broadcaster decides whether the page is displayed in boxed mode or not. If the page doesn't contain any boxed characters, the page is blank, so that the screen shows the TV picture. For your app, the display shows whatever you have positioned behind the screen or used as the html body background. |
 
 You can send an event like this in your application:
 
@@ -263,22 +265,24 @@ Sets text mode or graphic mode for the specified colour. `colour` is one of thes
 
 Gets the code for an attribute. `attribute` is one of these:
 
-* Attributes.NEW_BACKGROUND - set the background colour to the current foreground colour
-* Attributes.BLACK_BACKGROUND - set the background colour to black
-* Attributes.CONTIGUOUS_GRAPHIC - set the mosaic graphics to contiguous blocks
-* Attributes.SEPARATED_GRAPHIC - set the mosaic graphics to separated blocks
-* Attributes.FLASH - activate flashing for text/mosaic
-* Attributes.STEADY - deactivate flashing for text/mosaic
-* Attributes.NORMAL_SIZE - set text/mosaic to normal height
-* Attributes.DOUBLE_HEIGHT - set text/mosaic to double height. The row below will be hidden. Background colours on this row will be extended to the row below. Single height characters on the top row stay single height but their background colour is still extended to the lower row
-* Attributes.DOUBLE_WIDTH - set text/mosaic to double width. Double width characters use two cells, and the character in the next cell is hidden. Requires Level 2.5 to be set
-* Attributes.DOUBLE_SIZE - set text/mosaic to double size. Double size characters use four cells. The row below is hidden as per double height, and the character in the cell after a double size character is hidden as per double width. Requires Level 2.5 to be set
-* Attributes.CONCEAL - text/mosaic characters show as spaces until reveal is pressed. For use with `toggleReveal()` / `ttx.reveal`. The concealed atttribute is active until the next colour attribute (or the end of the row)
-* Attributes.HOLD_MOSAICS - stores the last mosaic character seen on a row (going left to right) so that on the next spacing attribute the held mosaic is used instead of a space. A practical use is in a row of graphics, so that the colour could be changed without a space, with the space being filled in with the mosaic before the colour change. The held mosaic is reset to a space with a change of size or text/graphics mode
-* Attributes.RELEASE_MOSAICS - cancels held mosaic mode, so that attributes will show a space and not the held mosaic. The held mosaic isn't reset to a space
-* Attributes.START_BOX - starts boxed characters (used for subtitles, newsflash). Two adjacent start box characters need to be used, with the box starting between the two. For use with `toggleBoxMode()`
-* Attributes.END_BOX - ends boxed characters
-* Attributes.ESC - switch between the default g0 character set and the second g0 character set.  This requires the second g0 character set to have been set with `setSecondG0Charset`.  If this hasn't been set, the attribute has no effect
+| Attribute                     | Use                                |
+|-------------------------------|------------------------------------|
+| Attributes.NEW_BACKGROUND     | set the background colour to the current foreground colour |
+| Attributes.BLACK_BACKGROUND   | set the background colour to black |
+| Attributes.CONTIGUOUS_GRAPHIC | set the mosaic graphics to contiguous blocks |
+| Attributes.SEPARATED_GRAPHIC  | set the mosaic graphics to separated blocks |
+| Attributes.FLASH              | activate flashing for text/mosaic |
+| Attributes.STEADY             | deactivate flashing for text/mosaic |
+| Attributes.NORMAL_SIZE        | set text/mosaic to normal height |
+| Attributes.DOUBLE_HEIGHT      | set text/mosaic to double height. The row below will be hidden. Background colours on this row will be extended to the row below. Single height characters on the top row stay single height but their background colour is still extended to the lower row |
+| Attributes.DOUBLE_WIDTH       | set text/mosaic to double width. Double width characters use two cells, and the character in the next cell is hidden. Requires Level 2.5 to be set |
+| Attributes.DOUBLE_SIZE        | set text/mosaic to double size. Double size characters use four cells. The row below is hidden as per double height, and the character in the cell after a double size character is hidden as per double width. Requires Level 2.5 to be set |
+| Attributes.CONCEAL            | text/mosaic characters show as spaces until reveal is pressed. For use with `toggleReveal()` / `ttx.reveal`. The concealed atttribute is active until the next colour attribute (or the end of the row) |
+| Attributes.HOLD_MOSAICS       | stores the last mosaic character seen on a row (going left to right) so that on the next spacing attribute the held mosaic is used instead of a space. A practical use is in a row of graphics, so that the colour could be changed without a space, with the space being filled in with the mosaic before the colour change. The held mosaic is reset to a space with a change of size or text/graphics mode |
+| Attributes.RELEASE_MOSAICS    | cancels held mosaic mode, so that attributes will show a space and not the held mosaic. The held mosaic isn't reset to a space |
+| Attributes.START_BOX          | starts boxed characters (used for subtitles, newsflash). Two adjacent start box characters need to be used, with the box starting between the two. For use with `toggleBoxMode()` |
+| Attributes.END_BOX            | ends boxed characters |
+| Attributes.ESC                | switch between the default g0 character set and the second g0 character set.  This requires the second g0 character set to have been set with `setSecondG0Charset`.  If this hasn't been set, the attribute has no effect |
 
 As an example, to set red text on a yellow background, you will need:
 
@@ -310,16 +314,16 @@ For Level 2.5 and 3.5, the ETSI spec includes full g3 character set support (smo
 The spec also defines navigation and object pages, which I consider out of scope as they're more in the domain of the application rather than the display.
 
 APIs needed:
-0. enhance()
-1. setPosition(row, col)
-2. putCharFromCharset(charset, string, diacriticalCode)
-g0 // 1.5
-g1 // 2.5
-g2 // 1.5
-g3 // 1.5 for 4 chars or 2.5 for the rest
-3. putAtSign() // 1.5
-4. putChars(string)
-5. update()
+1. enhance()
+2. setPosition(row, col)
+3. putCharFromCharset(charset, string, diacriticalCode) where charset is g0, g1, g2 or g3.
+   * g0 // level 1.5
+   * g1 // level 2.5
+   * g2 // level 1.5
+   * g3 // level 1.5 for 4 chars or 2.5 for the rest
+4. putAtSign() // 1.5
+5. putChars(string)
+6. update()
 
 Level 2.5/3.5 allows for a 'modified g0 and g2 character set', then writing g0/g2 characters uses that.
 
