@@ -14,7 +14,7 @@ export default {
     entryFileNames: '[name].js',
     dir: 'dist',
     format: 'es',
-    sourcemap: true,
+    sourcemap: false,
   },
   plugins: [
     resolve(),
