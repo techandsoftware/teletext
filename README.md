@@ -1,3 +1,6 @@
+<!-- SPDX-FileCopyrightText: © 2021 Tech and Software Ltd. -->
+<!-- SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0 -->
+
 Renders teletext pages using vector graphics (SVG).  Note this is just the display part of teletext, and operates as a screen or a dumb terminal.  The application using this package will need to supply the page content, implement page numbers, navigation, etc.  The package provides an API to set page content and change the display characteristics such as the screen height and aspect ratio.
 
 This supports most of level 1/1.5 and a little of level 2.5.  A full list follows.  Display rendering features include changing the text font (including proportional fonts), aspect ratio and screen height. Mosaic graphics can be rendered with a font or using SVG graphics. 
@@ -42,12 +45,13 @@ Additional features:
 
 * [@techandsoftware/teletext-plugin-smooth-mosaic](https://www.npmjs.com/package/@techandsoftware/teletext-plugin-smooth-mosaic) - render smooth mosaic graphics using a pixel art scaling algorithm instead of the usual block mosaics
 
-# License
+# Licensing
 
-* SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
-* SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
+The project is licensed under GNU Affero General Public License 3 ([AGPL-3.0-only](./LICENSES/AGPL-3.0-only.txt)), or under a commerical software license ([LicenseRef-uk.ltd.TechAndSoftware-1.0](./LICENSES/LicenseRef-uk.ltd.TechAndSoftware-1.0.txt)) if you have paid a licensing fee. The AGPL requires that your software is released under AGPL; the commerical license does not have that requirement. In order to pay the fee for the commerical license, contact <ra_hardy@hotmail.com> for enquiries. The text of the licenses is in the `LICENSES` directory.
 
-The project is licensed under AGPL 3.  Alternatively, contact me TODO
+The fonts supplied in the [`demo/fonts`](./demo/fonts) directory have their own licenses. See the `*.license` files in that directory.
+
+This package is compliant with [REUSE 3](https://reuse.software/).
 
 # Using
 
