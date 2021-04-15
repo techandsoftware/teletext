@@ -90,7 +90,7 @@ ttx.teletext.addTo('#teletextscreen');
 <div id="teletextscreen"></div>
 ```
 
-See the [demo directory](./demo/index.html) for some examples of these.
+See the [demo directory](./demo/index.html) for examples of these.
 
 # API
 
