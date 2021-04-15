@@ -3009,3 +3009,4 @@ const model = new PageModel();
 const teletext = new TeletextController(model);
 
 export { Attributes, Colour, Level, teletext };
+//# sourceMappingURL=teletext.js.map
