@@ -325,22 +325,14 @@ For Level 2.5 and 3.5, the ETSI spec includes full g3 character set support (smo
 The spec also defines navigation and object pages, which I consider out of scope as they're more in the domain of the application rather than the display.
 
 APIs needed:
-1. enhance()
-2. setPosition(row, col)
-3. putCharFromCharset(charset, string, diacriticalCode) where charset is g0, g1, g2 or g3.
-   * g0 // level 1.5
-   * g1 // level 2.5
-   * g2 // level 1.5
-   * g3 // level 1.5 for 4 chars or 2.5 for the rest
-4. putAtSign() // 1.5
-5. putChars(string)
-6. update()
+1. `enhance()`
+2. `setPosition(row, col)`
+3. `putCharFromCharset(charset, string, diacriticalCode)` where `charset` is `g0` (level 1.5), `g1` (2.5), `g2` (1.5) or `g3` (1.5 for 4 chars, 2.5 for the rest)
+4. `putAtSign()` (level 1.5)
+5. `putChars(string)`
+6. `update()`
 
 Level 2.5/3.5 allows for a 'modified g0 and g2 character set', then writing g0/g2 characters uses that.
-
-# License
-
-TODO
 
 # Bugs
 
