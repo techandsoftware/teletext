@@ -6,6 +6,11 @@ import { terser } from "rollup-plugin-terser";
 import sourcemaps from 'rollup-plugin-sourcemaps';
 import json from '@rollup/plugin-json';
 
+// preamble in the minified source
+const OUTPUT_PREAMBLE = "// SPDX"+"-FileCopyrightText: (c) 2021 Tech and Software Ltd.\n"
+  + "// SPDX" + "-FileCopyrightText: (c) 2017 dosaygo\n"
+  + "// SPDX" + "-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0";
+
 export default {
   input: 'src/app.js',
   output: [
@@ -41,6 +46,9 @@ export default {
           regex: /^_.+/,
         },
       },
+      format: {
+        preamble: OUTPUT_PREAMBLE
+      }
     }),
     resolve(),
     sourcemaps(),
