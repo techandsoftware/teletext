@@ -42,6 +42,13 @@ Additional features:
 
 * [@techandsoftware/teletext-plugin-smooth-mosaic](https://www.npmjs.com/package/@techandsoftware/teletext-plugin-smooth-mosaic) - render smooth mosaic graphics using a pixel art scaling algorithm instead of the usual block mosaics
 
+# License
+
+* SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
+* SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
+
+The project is licensed under AGPL 3.  Alternatively, contact me TODO
+
 # Using
 
 ```npm install @techandsoftware/teletext```
@@ -174,7 +181,7 @@ Sets the text font. `font` is a string, which can be a string corresponding to a
 
 Special values are:
 * `Bedstead` - a font emulating the mode 7 character generator on a BBC Micro, by bjh21. [Source](https://bjh21.me.uk/bedstead/)
-* `Unscii` - a blocky retro-computing font by Viznut. [Source](http://pelulamu.net/unscii/)
+* `Unscii` - a blocky retro-computing font by Viznut. [Source](http://viznut.fi/unscii/)
 * `native` - uses the native font specific to your operating system. The actual font used depends on your system. Sourced from [bootstrap 4's native font stack](https://getbootstrap.com/docs/4.1/content/reboot/#native-font-stack).
 
 For Bedstead and Unscii to work correctly, you need to put them in a `fonts` subdirectory relative to the page containing the teletext display div.

@@ -1,5 +1,9 @@
-arabic_g2
+SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
+SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 
+WIP
+
+arabic_g2
 
         "!": "ﻉ",
         "\"": "ﺁ",
@@ -16,4 +20,3 @@ arabic_g2
         "-": "ﭖ",
         ".": "ﮊ",
         "/": "ﮔ",
-
