@@ -94,7 +94,7 @@ See the [demo directory](./demo/index.html) for examples of these.
 
 # API
 
-The `teletext` object is exported by `@techandsfotware/teletext`, and supports the methods below for drawing on the screen and controlling the rendering.
+The `teletext` object is exported by `@techandsoftware/teletext`, and supports the methods below for drawing on the screen and controlling the rendering.
 
 ## addTo(selector)
 
