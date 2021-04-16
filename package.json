@@ -33,5 +33,12 @@
     "WST"
   ],
   "author": "Tech & Software Ltd.",
-  "license": "(AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0)"
+  "license": "(AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0)",
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/rahardy/teletext.git"
+  },
+  "bugs": {
+    "url": "https://bitbucket.org/rahardy/teletext/issues"
+  }
 }
