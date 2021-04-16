@@ -52,7 +52,7 @@ Intellectual Property Rights all patents, rights in inventions, rights in design
                              all applications for, and renewals or extensions of, such rights for
                              their full term.
 Licence Fee                  the fee payable to acquire a licence to Use the Licensed Materials for
-                             the Term, payable via ra_hardy+licensing@hotmail.com
+                             the Term, payable via techandsoftwareltd@outlook.com
 Licensed Materials           the Software as may be released and updated from time to time
 Minimum Equipment            the hardware and software prerequisites to use the Licensed Materials
                              as described in the documentation in the package source code, and may
