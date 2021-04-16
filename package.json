@@ -1,7 +1,7 @@
 {
   "name": "@techandsoftware/teletext",
-  "version": "0.0.0",
-  "description": "Module and API to render teletext pages using vector graphics",
+  "version": "0.0.1",
+  "description": "API to render teletext pages using vector graphics in the browser DOM",
   "browser": "dist/teletext.umd.min.js",
   "module": "dist/teletext.js",
   "dependencies": {
@@ -19,8 +19,7 @@
   },
   "scripts": {
     "start": "rollup -c -w --watch.exclude 'dist/*'",
-    "build": "rollup -c rollup.prod.config.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup -c rollup.prod.config.js"
   },
   "keywords": [
     "teletext",
@@ -34,5 +33,5 @@
     "WST"
   ],
   "author": "Tech & Software Ltd.",
-  "license": "UNLICENSED"
+  "license": "(AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0)"
 }
