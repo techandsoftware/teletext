@@ -43,6 +43,7 @@
   },
   "files": [
     "LICENSES",
-    "dist"
+    "dist",
+    "package.json.license"
   ]
 }
