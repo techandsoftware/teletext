@@ -49,9 +49,9 @@ Additional features:
 
 # Licensing
 
-The project is licensed under GNU Affero General Public License 3 ([AGPL-3.0-only](./LICENSES/AGPL-3.0-only.txt)), or under a commerical software license ([LicenseRef-uk.ltd.TechAndSoftware-1.0](./LICENSES/LicenseRef-uk.ltd.TechAndSoftware-1.0.txt)) if you have paid a licensing fee to Tech and Software Ltd. If you combine your own software with this package and distribute publically (whether via network access or not), the AGPL requires that your software is covered by AGPL; the commerical license does not have that requirement. In order to pay the fee for the commerical license, contact <techandsoftwareltd@outlook.com> for enquiries. The text of the licenses is in the `LICENSES` directory.
+The project is licensed under GNU Affero General Public License 3 ([AGPL-3.0-only](https://www.gnu.org/licenses/agpl-3.0.en.html)), or under a commerical software license ([LicenseRef-uk.ltd.TechAndSoftware-1.0](https://bitbucket.org/rahardy/teletext/src/HEAD/LICENSES/LicenseRef-uk.ltd.TechAndSoftware-1.0.txt)) if you have paid a licensing fee to Tech and Software Ltd. If you combine your own software with this package and distribute publically (whether via network access or not), the AGPL requires that your software is covered by AGPL; the commerical license does not have that requirement. In order to pay the fee for the commerical license, contact <techandsoftwareltd@outlook.com> for enquiries. The text of the licenses is in the `LICENSES` directory.
 
-The fonts supplied in the [`demo/fonts`](./demo/fonts) directory have their own licenses. See the `*.license` files in that directory.
+The fonts supplied in the `demo/fonts` directory have their own licenses. See the `*.license` files in that directory.
 
 This package is compliant with [REUSE 3](https://reuse.software/).
 
@@ -90,7 +90,7 @@ ttx.teletext.addTo('#teletextscreen');
 <div id="teletextscreen"></div>
 ```
 
-See the [demo directory](./demo/index.html) for examples of these.
+See the `demo` for examples of these.
 
 # API
 
@@ -131,11 +131,11 @@ Sets the default g0 character set. The character set applies until the function 
 
 `withUpdate` is an optional boolean. When `true` the display is updated immediately. Defaults to `false`.
 
-For reference, the code charts are on (Wikipedia)[https://en.wikipedia.org/wiki/Teletext_character_set], however the character codepoints there don't necessarily match the tables in this codebase (see `src/data/characterEncodings.json`).  The control codes for characters 0 to 1f are used for attributes - see the Attributes section below.
+For reference, the code charts are on [Wikipedia](https://en.wikipedia.org/wiki/Teletext_character_set), however the character codepoints there don't necessarily match the tables in this codebase (see `src/data/characterEncodings.json`).  The control codes for characters 0 to 1f are used for attributes - see the Attributes section below.
 
 ## setSecondG0Charset(charset, withUpdate)
 
-Sets the second g0 character set.  This is used with Attributes.ESC (character code 1b) to switch between the default g0 character set and the second g0 character set. The parameters are the same as for `setDefaultG0Charset`.
+Sets the second g0 character set.  This is used with `Attributes.ESC` (character code 1b) to switch between the default g0 character set and the second g0 character set. The parameters are the same as for `setDefaultG0Charset`.
 
 ## setPageRows([strings])
 
@@ -337,9 +337,6 @@ APIs needed:
 Level 2.5/3.5 allows for a 'modified g0 and g2 character set', then writing g0/g2 characters uses that.
 
 # Bugs
-
-Switching out of boxed mode on a page without boxed characters fails to show the page in Chrome. This is an SVG bug in Chrome:
-https://bugs.chromium.org/p/chromium/issues/detail?id=1138917
 
 Arabic script isn't rendered correctly as the characters aren't joined.
 
