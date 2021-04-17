@@ -8,7 +8,7 @@ import { VectorViewBase } from './VectorViewBase.js';
 class ViewClassic extends VectorViewBase {}
 import { View as ViewGraphicMosaic } from './VectorViewGraphicMosaic.js';
 
-const TEST_PAGE_NAMES = ['ENGINEERING', 'ADVERT', 'UK'];
+const TEST_PAGE_NAMES = ['SPLASH', 'ENGINEERING', 'ADVERT', 'UK'];
 
 export class TeletextController {
     constructor(model) {
