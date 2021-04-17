@@ -51,7 +51,7 @@ Additional features:
 
 # Licensing
 
-The project is licensed under GNU Affero General Public License 3 ([AGPL-3.0-only](https://www.gnu.org/licenses/agpl-3.0.en.html)), or under a commerical software license ([LicenseRef-uk.ltd.TechAndSoftware-1.0](https://bitbucket.org/rahardy/teletext/src/HEAD/LICENSES/LicenseRef-uk.ltd.TechAndSoftware-1.0.txt)) if you have paid a licensing fee to Tech and Software Ltd. If you combine your own software with this package and distribute publically (whether via network access or not), the AGPL requires that your software is covered by AGPL; the commerical license does not have that requirement. In order to pay the fee for the commerical license, contact <techandsoftwareltd@outlook.com> for enquiries. The text of the licenses is in the `LICENSES` directory.
+The project is licensed under GNU Affero General Public License 3 ([AGPL-3.0-only](https://www.gnu.org/licenses/agpl-3.0.en.html)), or under a commercial software license ([LicenseRef-uk.ltd.TechAndSoftware-1.0](https://bitbucket.org/rahardy/teletext/src/HEAD/LICENSES/LicenseRef-uk.ltd.TechAndSoftware-1.0.txt)) if you have paid a licensing fee to Tech and Software Ltd. If you combine your own software with this package and distribute publically (whether via network access or not), the AGPL requires that your software is covered by AGPL; the commercial license does not have that requirement. In order to pay the fee for the commercial license, contact <techandsoftwareltd@outlook.com> for enquiries. The text of the licenses is in the `LICENSES` directory.
 
 The fonts supplied in the `demo/fonts` directory have their own licenses. See the `*.license` files in that directory.
 
