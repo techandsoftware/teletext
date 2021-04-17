@@ -40,5 +40,9 @@
   },
   "bugs": {
     "url": "https://bitbucket.org/rahardy/teletext/issues"
-  }
+  },
+  "files": [
+    "LICENSES",
+    "dist"
+  ]
 }
