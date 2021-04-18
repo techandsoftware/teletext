@@ -59,17 +59,18 @@ This package is compliant with [REUSE 3](https://reuse.software/).
 
 # Using
 
+1. Install dependency:
+
 ```npm install @techandsoftware/teletext```
 
-## As an ES6 module
+2. In your HTML, include the following to use an an ES6 module:
 
 ```html
 <script type="module">
-// Import as an ES6 module
 import { teletext } from './node_modules/@techandsoftware/teletext/dist/teletext.min.js';
 
-// Or import the npm module (you will also need tooling to resolve the module for the browser)
-import { teletext } from '@techandsoftware/teletext';
+// Or if you import the npm module directly, use the following import instead of the one above. (You will also need tooling to resolve the module for the browser, like @rollup/plugin-node-resolve)
+// import { teletext } from '@techandsoftware/teletext';
 
 teletext.addTo('#teletextscreen');
 teletext.setRow(0, 'Hello world!');
@@ -80,9 +81,7 @@ teletext.setRow(0, 'Hello world!');
 
 This creates an SVG object in the #teletextscreen div which contains the teletext display.
 
-## Using `script src`
-
-For browsers that don't support ES6 module imports, you can use the UMD module. The exports are exported to the `ttx` global, so you need to prefix API calls with that.
+Alternatively, for browsers that don't support ES6 module imports, you can use the UMD module. The exports are exported to the `ttx` global, so you need to prefix API calls with that. The syntax in the Javascript is likely to be too new so you will also need to arrange transpiling to your target browser.
 
 ```html
 <script src="./node_modules/@techandsoftware/teletext/dist/teletext.umd.min.js"></script>
@@ -92,7 +91,11 @@ ttx.teletext.addTo('#teletextscreen');
 <div id="teletextscreen"></div>
 ```
 
-See the `demo` for examples of these.
+# Demos
+
+See the `demo` directory for examples of using with an ES6 module import or a UMD import.
+
+For a live demo, see https://teletextmoduledemo.robdev.org.uk/
 
 # API
 
