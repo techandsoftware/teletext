@@ -1685,6 +1685,13 @@ class View extends VectorViewBase {
         let id = cell.type == CellType.MOSAIC_CONTIGUOUS ? 'c' : 's';
         id += sextants.join('');
 
+        let width = VectorViewBase._CELL_WIDTH;
+        let height = VectorViewBase._CELL_HEIGHT;
+        if (cell.type == CellType.MOSAIC_CONTIGUOUS) {
+            width = VectorViewBase._CELL_WIDTH + 0.3;
+            height = VectorViewBase._CELL_HEIGHT + 0.2;
+        }
+
         if (!this._mosaicSymbols.has(id)) {
             this._mosaicSymbols.add(id);
             const symbol = this._svg.symbol(id);
@@ -1692,8 +1699,8 @@ class View extends VectorViewBase {
             if (cell.type == CellType.MOSAIC_CONTIGUOUS) {
                 symbol.attr({
                     preserveAspectRatio: 'none',
-                    width: VectorViewBase._CELL_WIDTH + 0.3,     // FUDGE cell is bigger than it should be
-                    height: VectorViewBase._CELL_HEIGHT + 0.2,   // to close tiny gaps on Chromecast
+                    width: width,     // FUDGE cell is bigger than it should be
+                    height: height,   // to close tiny gaps on Chromecast
                     viewBox: '0 0 12 18',
                 });
                 for (let i = 0; i < 6; i++) {
@@ -1702,8 +1709,8 @@ class View extends VectorViewBase {
             } else {
                 symbol.attr({
                     preserveAspectRatio: 'none',
-                    width: VectorViewBase._CELL_WIDTH,
-                    height: VectorViewBase._CELL_HEIGHT,
+                    width: width,
+                    height: height,
                     viewBox: '0 0 12 18',
                 });
                 for (let i = 0; i < 6; i++) {
@@ -1714,9 +1721,17 @@ class View extends VectorViewBase {
 
         let use;
         if (cell.type == CellType.MOSAIC_CONTIGUOUS)
-            use = this._graphicrows[row].use(id).move(col * VectorViewBase._CELL_WIDTH - 0.15, row * VectorViewBase._CELL_HEIGHT - 0.1).fill(fill);
+            use = this._graphicrows[row]
+                .use(id)
+                .attr({width: width, height: height}) // FUDGE need width/height for webkit browsers as they don't inherit them from symbol
+                .move(col * VectorViewBase._CELL_WIDTH - 0.15, row * VectorViewBase._CELL_HEIGHT - 0.1)
+                .fill(fill);
         else
-            use = this._graphicrows[row].use(id).move(col * VectorViewBase._CELL_WIDTH, row * VectorViewBase._CELL_HEIGHT).fill(fill);
+            use = this._graphicrows[row]
+                .use(id)
+                .attr({width: width, height: height})
+                .move(col * VectorViewBase._CELL_WIDTH, row * VectorViewBase._CELL_HEIGHT)
+                .fill(fill);
         if (cell.size == CellSize.DOUBLE_HEIGHT || cell.size == CellSize.DOUBLE_SIZE)
             use.attr('height', VectorViewBase._CELL_DOUBLE_HEIGHT);
         if (cell.size == CellSize.DOUBLE_WIDTH || cell.size == CellSize.DOUBLE_SIZE)
