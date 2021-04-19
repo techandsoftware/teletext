@@ -42,7 +42,8 @@
     "url": "https://bitbucket.org/rahardy/teletext/issues"
   },
   "files": [
-    "LICENSES",
+    "LICENSES/AGPL-3.0-only.txt",
+    "LICENSES/LicenseRef-uk.ltd.TechAndSoftware-1.0.txt",
     "dist",
     "package.json.license"
   ]
