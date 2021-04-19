@@ -44,7 +44,6 @@
   "files": [
     "LICENSES",
     "dist",
-    "package.json.license",
-    "demo"
+    "package.json.license"
   ]
 }
