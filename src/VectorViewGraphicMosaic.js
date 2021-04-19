@@ -5,8 +5,11 @@ import { CellType, CellSize } from './Attributes.js';
 import { VectorViewBase as Base } from './VectorViewBase.js';
 
 export class View extends Base {
-    constructor(model) {
+    constructor(model, webkitCompat) {
         super(model);
+        // webkit doesn't use the width/height on <symbol> which is SVG2.
+        // When webkitCompat is true, the width/height are duplicated on <use>
+        this._webkitCompat = webkitCompat;
         this._mosaicSymbols = new Set();
         console.debug('VectorViewGraphicMosaic constructed');
     }
@@ -84,15 +87,15 @@ export class View extends Base {
         if (cell.type == CellType.MOSAIC_CONTIGUOUS)
             use = this._graphicrows[row]
                 .use(id)
-                .attr({width: width, height: height}) // FUDGE need width/height for webkit browsers as they don't inherit them from symbol
                 .move(col * Base._CELL_WIDTH - 0.15, row * Base._CELL_HEIGHT - 0.1)
                 .fill(fill);
         else
             use = this._graphicrows[row]
                 .use(id)
-                .attr({width: width, height: height})
                 .move(col * Base._CELL_WIDTH, row * Base._CELL_HEIGHT)
                 .fill(fill);
+        if (this._webkitCompat) // FUDGE need width/height for webkit browsers as they don't inherit them from symbol
+            use.attr({width: width, height: height})
         if (cell.size == CellSize.DOUBLE_HEIGHT || cell.size == CellSize.DOUBLE_SIZE)
             use.attr('height', Base._CELL_DOUBLE_HEIGHT);
         if (cell.size == CellSize.DOUBLE_WIDTH || cell.size == CellSize.DOUBLE_SIZE)

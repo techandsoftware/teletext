@@ -5,6 +5,9 @@ import { TeletextController } from './Controller.js';
 import { PageModel } from "./PageModel.js";
 
 const model = new PageModel();
-export const teletext = new TeletextController(model);
+
+export function Teletext(options) {
+    return new TeletextController(model, options);
+}
 
 export { Level, Attributes, Colour } from './Attributes.js';

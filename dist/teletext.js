@@ -1644,8 +1644,11 @@ rect { color: orange; }
 // SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
 
 class View extends VectorViewBase {
-    constructor(model) {
+    constructor(model, webkitCompat) {
         super(model);
+        // webkit doesn't use the width/height on <symbol> which is SVG2.
+        // When webkitCompat is true, the width/height are duplicated on <use>
+        this._webkitCompat = webkitCompat;
         this._mosaicSymbols = new Set();
         console.debug('VectorViewGraphicMosaic constructed');
     }
@@ -1723,15 +1726,15 @@ class View extends VectorViewBase {
         if (cell.type == CellType.MOSAIC_CONTIGUOUS)
             use = this._graphicrows[row]
                 .use(id)
-                .attr({width: width, height: height}) // FUDGE need width/height for webkit browsers as they don't inherit them from symbol
                 .move(col * VectorViewBase._CELL_WIDTH - 0.15, row * VectorViewBase._CELL_HEIGHT - 0.1)
                 .fill(fill);
         else
             use = this._graphicrows[row]
                 .use(id)
-                .attr({width: width, height: height})
                 .move(col * VectorViewBase._CELL_WIDTH, row * VectorViewBase._CELL_HEIGHT)
                 .fill(fill);
+        if (this._webkitCompat) // FUDGE need width/height for webkit browsers as they don't inherit them from symbol
+            use.attr({width: width, height: height});
         if (cell.size == CellSize.DOUBLE_HEIGHT || cell.size == CellSize.DOUBLE_SIZE)
             use.attr('height', VectorViewBase._CELL_DOUBLE_HEIGHT);
         if (cell.size == CellSize.DOUBLE_WIDTH || cell.size == CellSize.DOUBLE_SIZE)
@@ -1765,8 +1768,14 @@ class ViewClassic extends VectorViewBase {}
 const TEST_PAGE_NAMES = ['SPLASH', 'ENGINEERING', 'ADVERT', 'UK'];
 
 class TeletextController {
-    constructor(model) {
-        this._view = new View(model);
+    constructor(model, options) {
+        this._opt = {
+            webkitCompat: true // generate SVG that's compatible with webkit by default. The resulting SVG is larger
+        };
+        if (typeof options == 'object')
+            if ('webkitCompat' in options && !options.webkitCompat) this._opt.webkitCompat = false;
+
+        this._view = new View(model, this._opt.webkitCompat);
         this._model = model;
         this._levelIndex = 1;
         this._testPageIndex = 0;
@@ -1888,7 +1897,7 @@ class TeletextController {
                 this._view = new ViewClassic(this._model);
                 break;
             case 'classic__graphic-for-mosaic':
-                this._view = new View(this._model);
+                this._view = new View(this._model, this._opt.webkitCompat);
                 break;
             default:
                 throw new Error("setView E126: bad view name:" + view);
@@ -3026,7 +3035,10 @@ class PageModel {
 // SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
 
 const model = new PageModel();
-const teletext = new TeletextController(model);
 
-export { Attributes, Colour, Level, teletext };
+function Teletext(options) {
+    return new TeletextController(model, options);
+}
+
+export { Attributes, Colour, Level, Teletext };
 //# sourceMappingURL=teletext.js.map

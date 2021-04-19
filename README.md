@@ -67,13 +67,14 @@ This package is compliant with [REUSE 3](https://reuse.software/).
 
 ```html
 <script type="module">
-import { teletext } from './node_modules/@techandsoftware/teletext/dist/teletext.min.js';
+  import { Teletext } from './node_modules/@techandsoftware/teletext/dist/teletext.min.js';
 
-// Or if you import the npm module directly, use the following import instead of the one above. (You will also need tooling to resolve the module for the browser, like @rollup/plugin-node-resolve)
-// import { teletext } from '@techandsoftware/teletext';
+  // Or if you import the npm module directly, use the following import instead of the one above. (You will also need tooling to resolve the module for the browser, like @rollup/plugin-node-resolve)
+  // import { Teletext } from '@techandsoftware/teletext';
 
-teletext.addTo('#teletextscreen');
-teletext.setRow(0, 'Hello world!');
+  const teletext = Teletext();
+  teletext.addTo('#teletextscreen');
+  teletext.setRow(0, 'Hello world!');
 </script>
 
 <div id="teletextscreen"></div>
@@ -86,8 +87,10 @@ Alternatively, for browsers that don't support ES6 module imports, you can use t
 ```html
 <script src="./node_modules/@techandsoftware/teletext/dist/teletext.umd.min.js"></script>
 <script>
-ttx.teletext.addTo('#teletextscreen');
+  const teletext = ttx.Teletext();
+  teletext.addTo('#teletextscreen');
 </script>
+
 <div id="teletextscreen"></div>
 ```
 
@@ -99,7 +102,16 @@ For a live demo, see https://teletextmoduledemo.robdev.org.uk/
 
 # API
 
-The `teletext` object is exported by `@techandsoftware/teletext`, and supports the methods below for drawing on the screen and controlling the rendering.
+## Teletext(options)
+
+Returns the teletext instance with the API functions below.
+
+The `options` parameter object is optional, with properties:
+* `webkitCompat`: boolean
+   * `true` (default) - the generated SVG is compatible with Safari/Webkit browsers (all browsers on iOS), but it's bigger
+   * `false` - uses SVG2 features which work in most browsers but not Safari or any browser on iOS, as they fail to render the graphics properly unless you use `setView` to switch the view to `classic__font-for-mosaic` (documented below)
+
+Call the following methods on the teletext instance to draw on the screen and control the rendering.
 
 ## addTo(selector)
 

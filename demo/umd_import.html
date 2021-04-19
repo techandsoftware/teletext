@@ -38,9 +38,10 @@
             });
         });
         window.addEventListener("load", () => {
-            ttx.teletext.addTo('#teletextscreen');
-            ttx.teletext.setDefaultG0Charset('latin_g0__english');
-            ttx.teletext.showTestPage();
+            const t = ttx.Teletext();
+            t.addTo('#teletextscreen');
+            t.setDefaultG0Charset('latin_g0__english');
+            t.showTestPage();
         });
     </script>
 </head>

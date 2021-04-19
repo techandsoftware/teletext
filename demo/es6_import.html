@@ -22,14 +22,15 @@
 
     <script type="module">
         // minimum code to load and show a built-in test page
-        import { teletext as t } from '../dist/teletext.js';
+        import { Teletext } from '../dist/teletext.min.js';
+        const t = Teletext();
         t.addTo('#teletextscreen');
         t.setDefaultG0Charset('latin_g0__english');
         t.showTestPage();
     </script>
 
     <script type="module">
-        // code below is to handle key events and the button. This demonstrates using events
+        // this code is to handle key events and the reveal button below. This demonstrates using events
         const KEY_EVENTS = {
             '?': 'ttx.reveal',
             'm': 'ttx.mix',
