@@ -3,7 +3,7 @@ SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
 SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 -->
 
-![Splash: Prerendered teletext page](https://bitbucket.org/rahardy/teletext/raw/0d1345a4afe61b422b3068e45c95a36da97b9363/demo/prerendered_splash.svg)
+![Splash: Prerendered teletext page](https://bitbucket.org/rahardy/teletext/raw/a8e112783b4530c8b7a6c925fa6e528a57eaf83c/assets/prerendered_splash.svg)
 
 This package renders teletext pages using vector graphics (SVG). Note this is just the display part of teletext, and operates as a screen or a dumb terminal.  The application using this package will need to supply the page content, implement page numbers, navigation, etc.  The package provides an API to set page content and change the display characteristics such as the screen height and aspect ratio.
 
