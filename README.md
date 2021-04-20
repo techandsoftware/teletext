@@ -251,7 +251,7 @@ Toggles boxed display mode on or off. See also the `ttx.subtitlemode` event.
 
 ## Event API
 
-Your application can dispatch these events as an alternative to using the API.
+Your application can dispatch these events as an alternative to using the teletext instance API.
 
 | Event | Use |
 |-------|------|
@@ -317,14 +317,14 @@ Gets the code for an attribute. `attribute` is one of these:
 As an example, to set red text on a yellow background, you will need:
 
 ```javascript
-Attributes.charFromTextColour(Colour.YELLOW) +
-Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) +
-Attributes.charFromTextColour(Colour.RED)
+teletext.setPageRow(0, Attributes.charFromTextColour(Colour.YELLOW) +
+    Attributes.charFromAttribute(Attributes.NEW_BACKGROUND) +
+    Attributes.charFromTextColour(Colour.RED) + "Red on yellow");
 ```
 
-This takes up 3 spaces.
+The attributes take up 3 spaces before the text.
 
-If you prefer to use the control codes directly, check the source of Attributes.js or the teletext spec to get the control code values. Double height is code 13 (or d in hexadecimal), so you could use strings like `"\x0d"`, `"\u{d}"`, `String.fromCharCode(13)`.
+If you prefer to use the control codes directly, check the source of Attributes.js or the teletext spec to get the control code values. Double height, for instance, is code 13 (or d in hexadecimal), so you could use strings like `"\x0d"`, `"\u{d}"`, `String.fromCharCode(13)`.
 
 # TODO
 
