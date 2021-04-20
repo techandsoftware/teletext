@@ -359,9 +359,9 @@ Arabic script isn't rendered correctly as the characters aren't joined.
 
 # Credits
 
-* Unscii font used for block graphics - http://viznut.fi/unscii/
+* Unscii font used for block graphics when `setView` is called - http://viznut.fi/unscii/
 * Bedstead font - http://bjh21.me.uk/bedstead/
 * Native font stack adapted from Bootstrap's - https://getbootstrap.com/docs/4.5/content/reboot/#native-font-stack
 * The internal API used for drawing SVG is a subset of svg.js v3 - https://svgjs.com/docs/3.0/
 * Teletext test pages from https://archive.teletextarchaeologist.org/
-* The data format for stored test pages and for the `loadPageFromEncodingString` API is from Simon Rawles' teletext editor - https://edit.tf/
+* The data format for stored test pages and for the `loadPageFromEncodedString` API is from Simon Rawles' teletext editor - https://edit.tf/
