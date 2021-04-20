@@ -1147,7 +1147,7 @@ class VectorViewBase {
             .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO])
             .attr({
                 'preserveAspectRatio': 'none',
-                'style': 'font-family: "sans-serif"'
+                'style': 'font-family: sans-serif'
             })
             .style(getStyle());
 
@@ -1297,7 +1297,7 @@ class VectorViewBase {
     }
 
     setFont(font) {
-        let newFont = '"' + font + '"';
+        let newFont = font;
         if (font == 'native')
             newFont = '-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif';
         else if (font == 'default')
