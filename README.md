@@ -203,13 +203,14 @@ Sets the screen height to the number of pixels you passed in. The aspect ratio i
 Sets the text font. `font` is a string, which can be a string corresponding to a CSS [font family](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) or a couple of special values.
 
 Special values are:
-* `Bedstead` - a font emulating the mode 7 character generator on a BBC Micro, by bjh21. [Source](https://bjh21.me.uk/bedstead/)
-* `Unscii` - a blocky retro-computing font by Viznut. [Source](http://viznut.fi/unscii/)
 * `native` - uses the native font specific to your operating system. The actual font used depends on your system. Sourced from [bootstrap 4's native font stack](https://getbootstrap.com/docs/4.1/content/reboot/#native-font-stack).
+* `default` - uses the generic font family sans-serif 
 
-For Bedstead and Unscii to work correctly, you need to put them in a `fonts` subdirectory relative to the page containing the teletext display div.
+Bedstead and Unscii are retro fonts you might want to use in your app if that's the look you want.  You can get them with `npm install @techandsoftware/teletext-fonts` . For Bedstead and Unscii to work correctly, you need to put them in a `fonts` subdirectory relative to the page containing the teletext display div
+* `Bedstead` - a font emulating the mode 7 character generator on a BBC Micro, by bjh21.
+* `Unscii` - a blocky retro-computing font by Viznut.
 
-Normal values include `serif`, `sans-serif`, `monospace` and specific font family names of the sort you'd use in a CSS stylesheet, which might be browser- or OS-specific. Your containing HTML page can supply its own font family (using Google Fonts, for example) and then refer to it here. Even though the teletext layout is grid-based, you can use a proportional font and the grid is maintained.
+Normal values for `font` include `serif`, `sans-serif`, `monospace` and specific font family names of the sort you'd use in a CSS stylesheet, which might be browser- or OS-specific. Your containing HTML page can supply its own font family (using Google Fonts, for example) and then refer to it here. Even though the teletext layout is grid-based, you can use a proportional font and the grid is maintained.
 
 When using the `arabic_g0` character set, the cursive Arabic characters are displayed but not in the right way, yet, as the characters aren't in the joined form.
 
