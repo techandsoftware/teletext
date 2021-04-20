@@ -164,7 +164,7 @@ Display attributes such as text or graphic colour, flashing and other features a
 
 Display the string on the row number. `rowNum` is between 0 and 24. The string is up to 40 characters.  Display attributes in the string can be used - see the section below.
 
-## loadPageFromEncodingString(base64input)
+## loadPageFromEncodedString(base64input)
 
 Displays a page from the `base64input`.  The input is a base64-encoded string of 7-bit characters for the 25 rows x 40 characters concatenated together. The encoded string uses the character repertoire defined in the [base64url encoding](https://tools.ietf.org/html/rfc4648#section-5). This format is taken from the querystring format used by Simon Rawles' online edit.tf teletext editor. See further details here: https://github.com/rawles/edit.tf
 
