@@ -6,7 +6,7 @@
   "module": "dist/teletext.min.js",
   "type": "module",
   "exports": {
-    ".": "./dist/teletext.js"
+    ".": "./dist/teletext.min.js"
   },
   "engines": {
     "node": ">=16"
