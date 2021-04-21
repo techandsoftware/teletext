@@ -8,6 +8,9 @@
   "exports": {
     ".": "./dist/teletext.js"
   },
+  "engines": {
+    "node": ">=16"
+  },
   "dependencies": {
     "uint1array": "^1.2.0"
   },
