@@ -282,7 +282,7 @@ Toggles boxed display mode on or off. See also the `ttx.subtitlemode` event.
 
 ## Event API
 
-Your application can dispatch these events as an alternative to using the teletext instance API.
+Your application can dispatch these events as an alternative to using the teletext instance API.  Note: The event API isn't available if running in node, but you can call the equivalent API methods instead.
 
 | Event | Use |
 |-------|------|
