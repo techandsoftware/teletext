@@ -102,7 +102,8 @@ Alternatively, for browsers that don't support ES6 module imports, you can use t
 
 Your package needs to be an ECMAScript module ('type' is 'module' in package.json), and requires Node v16. Your code needs to pass in a document object model to the `Teletext()` function.
 
-1. Install dependencies
+1. Install dependencies:
+
 ```npm install @techandsoftware/teletext jsdom```
 
 2. Example code:
