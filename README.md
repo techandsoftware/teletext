@@ -59,6 +59,8 @@ This package is compliant with [REUSE 3](https://reuse.software/).
 
 # Using
 
+Note: If you get a warning from npm about the wrong node version when you install, that applies only if you plan to run the package in node and not a browser.
+
 ## For browers
 
 1. Install dependency:
