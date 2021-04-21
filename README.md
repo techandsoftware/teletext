@@ -65,7 +65,7 @@ Note: If you get a warning from npm about the wrong node version when you instal
 
 1. Install dependency:
 
-```npm install @techandsoftware/teletext```
+`npm install @techandsoftware/teletext`
 
 2. In your HTML, include the following to use an an ES6 module:
 
@@ -104,7 +104,7 @@ Your package needs to be an ECMAScript module ('type' is 'module' in package.jso
 
 1. Install dependencies:
 
-```npm install @techandsoftware/teletext jsdom```
+`npm install @techandsoftware/teletext jsdom`
 
 2. Example code:
 
