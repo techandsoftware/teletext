@@ -4,12 +4,13 @@
   "description": "API to render teletext pages using vector graphics in the browser DOM",
   "browser": "dist/teletext.umd.min.js",
   "module": "dist/teletext.min.js",
+  "main": "dist/teletext.min.cjs",
   "type": "module",
   "exports": {
     ".": "./dist/teletext.min.js"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=12"
   },
   "dependencies": {
     "uint1array": "^1.2.0"

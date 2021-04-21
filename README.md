@@ -59,8 +59,6 @@ This package is compliant with [REUSE 3](https://reuse.software/).
 
 # Using
 
-Note: If you get a warning from npm about the wrong node version when you install, that applies only if you plan to run the package in node and not a browser.
-
 ## For browers
 
 1. Install dependency:
@@ -100,26 +98,34 @@ Alternatively, for browsers that don't support ES6 module imports, you can use t
 
 ## For nodejs
 
-Your package needs to be an ECMAScript module ('type' is 'module' in package.json), and requires Node v16. Your code needs to pass in a document object model window to the `Teletext()` function.
+Your code needs to pass in a document object model window to the `Teletext()` function.
 
 1. Install dependencies:
 
 `npm install @techandsoftware/teletext jsdom`
 
-2. Example code:
+2. Example code if using ECMAScript modules (requires node >= 16)
 
 ```javascript
 import { Teletext } from '@techandsoftware/teletext';
-import jsdom from 'jsdom';
+import { JSDOM } from 'jsdom';
 
-const dom = new jsdom.JSDOM('<div id="teletextscreen"></div>');
+const dom = new JSDOM('<div id="teletextscreen"></div>');
 
 const teletext = Teletext({
     dom: dom.window
 });
 teletext.addTo('#teletextscreen');
 teletext.setRow(0, 'Hello from node');
+
 const svg = dom.window.document.querySelector('#teletextscreen').innerHTML;
+```
+
+If using CommonJS, use require statements:
+
+```javascript
+const { Teletext } = require('@techandsoftware/teletext');
+const { JSDOM } = require('jsdom');
 ```
 
 # Demos

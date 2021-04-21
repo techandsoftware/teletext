@@ -27,6 +27,12 @@ export default {
       preferConst: true,
       sourcemap: true,
       compact: true,
+    },{
+      file: 'dist/teletext.min.cjs',
+      format: 'cjs',
+      preferConst: true,
+      sourcemap: true,
+      compact: true,
     }
   ],
   plugins: [
