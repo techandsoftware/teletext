@@ -68,6 +68,8 @@ This package is compliant with [REUSE 3](https://reuse.software/).
 2. In your HTML, include the following to use an an ES6 module:
 
 ```html
+<div id="teletextscreen"></div>
+
 <script type="module">
   import { Teletext } from './node_modules/@techandsoftware/teletext/dist/teletext.min.js';
 
@@ -78,8 +80,6 @@ This package is compliant with [REUSE 3](https://reuse.software/).
   teletext.addTo('#teletextscreen');
   teletext.setRow(0, 'Hello world!');
 </script>
-
-<div id="teletextscreen"></div>
 ```
 
 This creates an SVG object in the #teletextscreen div which contains the teletext display.
@@ -87,13 +87,13 @@ This creates an SVG object in the #teletextscreen div which contains the teletex
 Alternatively, for browsers that don't support ES6 module imports, you can use the UMD module. The exports are exported to the `ttx` global, so you need to prefix API calls with that. The syntax in the Javascript is likely to be too new so you will also need to arrange transpiling to your target browser.
 
 ```html
+<div id="teletextscreen"></div>
+
 <script src="./node_modules/@techandsoftware/teletext/dist/teletext.umd.min.js"></script>
 <script>
   const teletext = ttx.Teletext();
   teletext.addTo('#teletextscreen');
 </script>
-
-<div id="teletextscreen"></div>
 ```
 
 ## For nodejs
