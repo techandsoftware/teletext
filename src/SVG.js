@@ -4,13 +4,16 @@
 const NS = "http://www.w3.org/2000/svg";
 
 let clipPathId = 0;
+let _doc;
+if (typeof document == 'object') _doc = document;
+// _doc can be overridden by the SVG constructor so that a document can be passed in if running in node
 
 // The API exposed here is a subset of svg.js v3 - https://svgjs.com/docs/3.0/
 // This wraps objects around DOM Elements
 
 class Element {
     constructor() {
-        // subclass to create this._e
+        // subclass should create this._e
     }
 
     _node() {
@@ -94,15 +97,20 @@ class Element {
 }
 
 export class SVG extends Element {
-    constructor() {
+    constructor(doc) {
         super();
-        this._e = document.createElementNS(NS, "svg");
+        if (typeof doc == 'object')
+            _doc = doc;
+        if (typeof _doc == 'undefined') {
+            throw new Error("@techandsoftware/teletext: E105: No document object available.");
+        }
+        this._e = _doc.createElementNS(NS, "svg");
         this._e.setAttribute('xmlns', NS);
         return this;
     }
 
     addTo(selector) {
-        document.querySelector(selector).appendChild(this._e);
+        _doc.querySelector(selector).appendChild(this._e);
         return this;
     }
 
@@ -118,7 +126,7 @@ export class SVG extends Element {
     }
 
     style(style) {
-        const styleNode = document.createElementNS(NS, 'style');
+        const styleNode = _doc.createElementNS(NS, 'style');
         styleNode.append(style);
         this._e.append(styleNode);
         return this;
@@ -149,7 +157,7 @@ export class SVG extends Element {
 class Group extends Element {
     constructor() {
         super();
-        this._e = document.createElementNS(NS, 'g');
+        this._e = _doc.createElementNS(NS, 'g');
         this._c = [];
         return this;
     }
@@ -231,7 +239,7 @@ class Group extends Element {
 class Image extends Element {
     constructor(width, height) {
         super();
-        this._e = document.createElementNS(NS, 'image');
+        this._e = _doc.createElementNS(NS, 'image');
         this._e.setAttribute('width', parseInt(width));
         this._e.setAttribute('height', parseInt(height));
         return this;
@@ -241,7 +249,7 @@ class Image extends Element {
 class Use extends Element {
     constructor(id) {
         super();
-        this._e = document.createElementNS(NS, 'use');
+        this._e = _doc.createElementNS(NS, 'use');
         this._e.setAttribute('href', `#${id}`);
         return this;
     }
@@ -262,7 +270,7 @@ class Use extends Element {
 class SVGSymbol extends Element {
     constructor(id) {
         super();
-        this._e = document.createElementNS(NS, 'symbol');
+        this._e = _doc.createElementNS(NS, 'symbol');
         this._e.setAttribute('id', id);
         return this;
     }
@@ -277,7 +285,7 @@ class SVGSymbol extends Element {
 class Text extends Element {
     constructor(text) {
         super();
-        this._e = document.createElementNS(NS, 'text');
+        this._e = _doc.createElementNS(NS, 'text');
         this._e.append(text);
         return this;
     }
@@ -297,7 +305,7 @@ class Text extends Element {
 class Defs extends Element {
     constructor() {
         super();
-        this._e = document.createElementNS(NS, 'defs');
+        this._e = _doc.createElementNS(NS, 'defs');
         return this;
     }
 
@@ -322,7 +330,7 @@ class Defs extends Element {
 class ClipPath extends Element {
     constructor() {
         super();
-        this._e = document.createElementNS(NS, 'clipPath');
+        this._e = _doc.createElementNS(NS, 'clipPath');
         this._e.setAttribute('id', `clipPath-${clipPathId}`);
         clipPathId++;
         return this;
@@ -345,7 +353,7 @@ class Rect extends Element {
             return this;
         }
         const width = widthOrEl;
-        this._e = document.createElementNS(NS, 'rect');
+        this._e = _doc.createElementNS(NS, 'rect');
         this._e.setAttribute('width', parseInt(width));
         this._e.setAttribute('height', parseInt(height));
         return this;
@@ -388,7 +396,7 @@ class Rect extends Element {
 class Line extends Element {
     constructor(x1, y1, x2, y2) {
         super();
-        this._e = document.createElementNS(NS, 'line');
+        this._e = _doc.createElementNS(NS, 'line');
         this._e.setAttribute('x1', x1);
         this._e.setAttribute('y1', y1);
         this._e.setAttribute('x2', x2);

@@ -510,13 +510,16 @@ var testpages = {
 const NS = "http://www.w3.org/2000/svg";
 
 let clipPathId = 0;
+let _doc;
+if (typeof document == 'object') _doc = document;
+// _doc can be overridden by the SVG constructor so that a document can be passed in if running in node
 
 // The API exposed here is a subset of svg.js v3 - https://svgjs.com/docs/3.0/
 // This wraps objects around DOM Elements
 
 class Element {
     constructor() {
-        // subclass to create this._e
+        // subclass should create this._e
     }
 
     _node() {
@@ -600,15 +603,20 @@ class Element {
 }
 
 class SVG extends Element {
-    constructor() {
+    constructor(doc) {
         super();
-        this._e = document.createElementNS(NS, "svg");
+        if (typeof doc == 'object')
+            _doc = doc;
+        if (typeof _doc == 'undefined') {
+            throw new Error("@techandsoftware/teletext: E105: No document object available.");
+        }
+        this._e = _doc.createElementNS(NS, "svg");
         this._e.setAttribute('xmlns', NS);
         return this;
     }
 
     addTo(selector) {
-        document.querySelector(selector).appendChild(this._e);
+        _doc.querySelector(selector).appendChild(this._e);
         return this;
     }
 
@@ -624,7 +632,7 @@ class SVG extends Element {
     }
 
     style(style) {
-        const styleNode = document.createElementNS(NS, 'style');
+        const styleNode = _doc.createElementNS(NS, 'style');
         styleNode.append(style);
         this._e.append(styleNode);
         return this;
@@ -655,7 +663,7 @@ class SVG extends Element {
 class Group extends Element {
     constructor() {
         super();
-        this._e = document.createElementNS(NS, 'g');
+        this._e = _doc.createElementNS(NS, 'g');
         this._c = [];
         return this;
     }
@@ -737,7 +745,7 @@ class Group extends Element {
 class Image extends Element {
     constructor(width, height) {
         super();
-        this._e = document.createElementNS(NS, 'image');
+        this._e = _doc.createElementNS(NS, 'image');
         this._e.setAttribute('width', parseInt(width));
         this._e.setAttribute('height', parseInt(height));
         return this;
@@ -747,7 +755,7 @@ class Image extends Element {
 class Use extends Element {
     constructor(id) {
         super();
-        this._e = document.createElementNS(NS, 'use');
+        this._e = _doc.createElementNS(NS, 'use');
         this._e.setAttribute('href', `#${id}`);
         return this;
     }
@@ -768,7 +776,7 @@ class Use extends Element {
 class SVGSymbol extends Element {
     constructor(id) {
         super();
-        this._e = document.createElementNS(NS, 'symbol');
+        this._e = _doc.createElementNS(NS, 'symbol');
         this._e.setAttribute('id', id);
         return this;
     }
@@ -783,7 +791,7 @@ class SVGSymbol extends Element {
 class Text extends Element {
     constructor(text) {
         super();
-        this._e = document.createElementNS(NS, 'text');
+        this._e = _doc.createElementNS(NS, 'text');
         this._e.append(text);
         return this;
     }
@@ -803,7 +811,7 @@ class Text extends Element {
 class Defs extends Element {
     constructor() {
         super();
-        this._e = document.createElementNS(NS, 'defs');
+        this._e = _doc.createElementNS(NS, 'defs');
         return this;
     }
 
@@ -828,7 +836,7 @@ class Defs extends Element {
 class ClipPath extends Element {
     constructor() {
         super();
-        this._e = document.createElementNS(NS, 'clipPath');
+        this._e = _doc.createElementNS(NS, 'clipPath');
         this._e.setAttribute('id', `clipPath-${clipPathId}`);
         clipPathId++;
         return this;
@@ -851,7 +859,7 @@ class Rect extends Element {
             return this;
         }
         const width = widthOrEl;
-        this._e = document.createElementNS(NS, 'rect');
+        this._e = _doc.createElementNS(NS, 'rect');
         this._e.setAttribute('width', parseInt(width));
         this._e.setAttribute('height', parseInt(height));
         return this;
@@ -894,7 +902,7 @@ class Rect extends Element {
 class Line extends Element {
     constructor(x1, y1, x2, y2) {
         super();
-        this._e = document.createElementNS(NS, 'line');
+        this._e = _doc.createElementNS(NS, 'line');
         this._e.setAttribute('x1', x1);
         this._e.setAttribute('y1', y1);
         this._e.setAttribute('x2', x2);
@@ -1141,8 +1149,8 @@ const MOSAIC_METRIC = {
 Object.freeze(MOSAIC_METRIC);
 
 class VectorViewBase {
-    constructor(model) {
-        this._svg = new SVG()
+    constructor(model, doc) {
+        this._svg = new SVG(doc)
             .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
             .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO])
             .attr({
@@ -1644,8 +1652,8 @@ rect { color: orange; }
 // SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
 
 class View extends VectorViewBase {
-    constructor(model, webkitCompat) {
-        super(model);
+    constructor(model, webkitCompat, doc) {
+        super(model, doc);
         // webkit doesn't use the width/height on <symbol> which is SVG2.
         // When webkitCompat is true, the width/height are duplicated on <use>
         this._webkitCompat = webkitCompat;
@@ -1772,10 +1780,12 @@ class TeletextController {
         this._opt = {
             webkitCompat: true // generate SVG that's compatible with webkit by default. The resulting SVG is larger
         };
-        if (typeof options == 'object')
+        if (typeof options == 'object') {
             if ('webkitCompat' in options && !options.webkitCompat) this._opt.webkitCompat = false;
+            if ('doc' in options) this._document = options.doc;
+        }
 
-        this._view = new View(model, this._opt.webkitCompat);
+        this._view = new View(model, this._opt.webkitCompat, this._document);
         this._model = model;
         this._levelIndex = 1;
         this._testPageIndex = 0;
@@ -1818,9 +1828,11 @@ class TeletextController {
     }
 
     _initEventHandlers() {
-        window.addEventListener('ttx.reveal', () => this._view.reveal());
-        window.addEventListener('ttx.mix', () => this._view.mixMode());
-        window.addEventListener('ttx.subtitlemode', () => this._view.boxMode());
+        if (typeof window == 'object') {
+            window.addEventListener('ttx.reveal', () => this._view.reveal());
+            window.addEventListener('ttx.mix', () => this._view.mixMode());
+            window.addEventListener('ttx.subtitlemode', () => this._view.boxMode());
+        }
     }
 
     toggleReveal() {
@@ -1894,10 +1906,10 @@ class TeletextController {
         this.remove();
         switch (view) {
             case 'classic__font-for-mosaic':
-                this._view = new ViewClassic(this._model);
+                this._view = new ViewClassic(this._model, this._document);
                 break;
             case 'classic__graphic-for-mosaic':
-                this._view = new View(this._model, this._opt.webkitCompat);
+                this._view = new View(this._model, this._opt.webkitCompat, this._document);
                 break;
             default:
                 throw new Error("setView E126: bad view name:" + view);
