@@ -39,8 +39,8 @@ const MOSAIC_METRIC = {
 Object.freeze(MOSAIC_METRIC);
 
 export class VectorViewBase {
-    constructor(model, doc) {
-        this._svg = new SVG(doc)
+    constructor(model, dom) {
+        this._svg = new SVG(dom)
             .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
             .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO])
             .attr({

@@ -5,8 +5,8 @@ import { CellType, CellSize } from './Attributes.js';
 import { VectorViewBase as Base } from './VectorViewBase.js';
 
 export class View extends Base {
-    constructor(model, webkitCompat, doc) {
-        super(model, doc);
+    constructor(model, webkitCompat, dom) {
+        super(model, dom);
         // webkit doesn't use the width/height on <symbol> which is SVG2.
         // When webkitCompat is true, the width/height are duplicated on <use>
         this._webkitCompat = webkitCompat;

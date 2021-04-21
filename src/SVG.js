@@ -4,9 +4,10 @@
 const NS = "http://www.w3.org/2000/svg";
 
 let clipPathId = 0;
+let _window;
 let _doc;
-if (typeof document == 'object') _doc = document;
-// _doc can be overridden by the SVG constructor so that a document can be passed in if running in node
+if (typeof window == 'object') _window = window;
+// _window can be overridden by the SVG constructor so that a dom can be passed in if running in node
 
 // The API exposed here is a subset of svg.js v3 - https://svgjs.com/docs/3.0/
 // This wraps objects around DOM Elements
@@ -97,12 +98,14 @@ class Element {
 }
 
 export class SVG extends Element {
-    constructor(doc) {
+    constructor(dom) {
         super();
-        if (typeof doc == 'object')
-            _doc = doc;
-        if (typeof _doc == 'undefined') {
-            throw new Error("@techandsoftware/teletext: E105: No document object available.");
+        if (typeof dom == 'object')
+            _window = dom;
+        if (typeof _window == 'undefined') {
+            throw new Error("@techandsoftware/teletext: E105: No window object available.");
+        } else {
+            _doc = _window.document;
         }
         this._e = _doc.createElementNS(NS, "svg");
         this._e.setAttribute('xmlns', NS);
@@ -353,7 +356,7 @@ class ClipPath extends Element {
 class Rect extends Element {
     constructor(widthOrEl, height) {
         super();
-        if (widthOrEl instanceof SVGElement) {
+        if (widthOrEl instanceof _window.SVGElement) {
             this._e = widthOrEl;
             return this;
         }

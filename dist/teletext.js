@@ -510,9 +510,10 @@ var testpages = {
 const NS = "http://www.w3.org/2000/svg";
 
 let clipPathId = 0;
+let _window;
 let _doc;
-if (typeof document == 'object') _doc = document;
-// _doc can be overridden by the SVG constructor so that a document can be passed in if running in node
+if (typeof window == 'object') _window = window;
+// _window can be overridden by the SVG constructor so that a dom can be passed in if running in node
 
 // The API exposed here is a subset of svg.js v3 - https://svgjs.com/docs/3.0/
 // This wraps objects around DOM Elements
@@ -603,12 +604,14 @@ class Element {
 }
 
 class SVG extends Element {
-    constructor(doc) {
+    constructor(dom) {
         super();
-        if (typeof doc == 'object')
-            _doc = doc;
-        if (typeof _doc == 'undefined') {
-            throw new Error("@techandsoftware/teletext: E105: No document object available.");
+        if (typeof dom == 'object')
+            _window = dom;
+        if (typeof _window == 'undefined') {
+            throw new Error("@techandsoftware/teletext: E105: No window object available.");
+        } else {
+            _doc = _window.document;
         }
         this._e = _doc.createElementNS(NS, "svg");
         this._e.setAttribute('xmlns', NS);
@@ -859,7 +862,7 @@ class ClipPath extends Element {
 class Rect extends Element {
     constructor(widthOrEl, height) {
         super();
-        if (widthOrEl instanceof SVGElement) {
+        if (widthOrEl instanceof _window.SVGElement) {
             this._e = widthOrEl;
             return this;
         }
@@ -1154,8 +1157,8 @@ const MOSAIC_METRIC = {
 Object.freeze(MOSAIC_METRIC);
 
 class VectorViewBase {
-    constructor(model, doc) {
-        this._svg = new SVG(doc)
+    constructor(model, dom) {
+        this._svg = new SVG(dom)
             .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
             .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO])
             .attr({
@@ -1657,8 +1660,8 @@ rect { color: orange; }
 // SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
 
 class View extends VectorViewBase {
-    constructor(model, webkitCompat, doc) {
-        super(model, doc);
+    constructor(model, webkitCompat, dom) {
+        super(model, dom);
         // webkit doesn't use the width/height on <symbol> which is SVG2.
         // When webkitCompat is true, the width/height are duplicated on <use>
         this._webkitCompat = webkitCompat;
@@ -1787,10 +1790,10 @@ class TeletextController {
         };
         if (typeof options == 'object') {
             if ('webkitCompat' in options && !options.webkitCompat) this._opt.webkitCompat = false;
-            if ('doc' in options) this._document = options.doc;
+            if ('dom' in options) this._dom = options.dom;
         }
 
-        this._view = new View(model, this._opt.webkitCompat, this._document);
+        this._view = new View(model, this._opt.webkitCompat, this._dom);
         this._model = model;
         this._levelIndex = 1;
         this._testPageIndex = 0;
@@ -1833,10 +1836,16 @@ class TeletextController {
     }
 
     _initEventHandlers() {
-        if (typeof window == 'object') {
-            window.addEventListener('ttx.reveal', () => this._view.reveal());
-            window.addEventListener('ttx.mix', () => this._view.mixMode());
-            window.addEventListener('ttx.subtitlemode', () => this._view.boxMode());
+        let w;
+        if ('_dom' in this) {
+            w = this._dom;
+        } else if (typeof window == 'object') {
+            w = window;
+        }
+        if (w) {
+            w.addEventListener('ttx.reveal', () => this._view.reveal());
+            w.addEventListener('ttx.mix', () => this._view.mixMode());
+            w.addEventListener('ttx.subtitlemode', () => this._view.boxMode());
         }
     }
 
@@ -1911,10 +1920,10 @@ class TeletextController {
         this.remove();
         switch (view) {
             case 'classic__font-for-mosaic':
-                this._view = new ViewClassic(this._model, this._document);
+                this._view = new ViewClassic(this._model, this._dom);
                 break;
             case 'classic__graphic-for-mosaic':
-                this._view = new View(this._model, this._opt.webkitCompat, this._document);
+                this._view = new View(this._model, this._opt.webkitCompat, this._dom);
                 break;
             default:
                 throw new Error("setView E126: bad view name:" + view);

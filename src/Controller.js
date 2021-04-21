@@ -17,10 +17,10 @@ export class TeletextController {
         };
         if (typeof options == 'object') {
             if ('webkitCompat' in options && !options.webkitCompat) this._opt.webkitCompat = false;
-            if ('doc' in options) this._document = options.doc;
+            if ('dom' in options) this._dom = options.dom;
         }
 
-        this._view = new ViewGraphicMosaic(model, this._opt.webkitCompat, this._document);
+        this._view = new ViewGraphicMosaic(model, this._opt.webkitCompat, this._dom);
         this._model = model;
         this._levelIndex = 1;
         this._testPageIndex = 0;
@@ -63,10 +63,16 @@ export class TeletextController {
     }
 
     _initEventHandlers() {
-        if (typeof window == 'object') {
-            window.addEventListener('ttx.reveal', () => this._view.reveal());
-            window.addEventListener('ttx.mix', () => this._view.mixMode());
-            window.addEventListener('ttx.subtitlemode', () => this._view.boxMode());
+        let w;
+        if ('_dom' in this) {
+            w = this._dom;
+        } else if (typeof window == 'object') {
+            w = window;
+        }
+        if (w) {
+            w.addEventListener('ttx.reveal', () => this._view.reveal());
+            w.addEventListener('ttx.mix', () => this._view.mixMode());
+            w.addEventListener('ttx.subtitlemode', () => this._view.boxMode());
         }
     }
 
@@ -141,10 +147,10 @@ export class TeletextController {
         this.remove();
         switch (view) {
             case 'classic__font-for-mosaic':
-                this._view = new ViewClassic(this._model, this._document);
+                this._view = new ViewClassic(this._model, this._dom);
                 break;
             case 'classic__graphic-for-mosaic':
-                this._view = new ViewGraphicMosaic(this._model, this._opt.webkitCompat, this._document);
+                this._view = new ViewGraphicMosaic(this._model, this._opt.webkitCompat, this._dom);
                 break;
             default:
                 throw new Error("setView E126: bad view name:" + view);

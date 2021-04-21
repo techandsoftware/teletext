@@ -100,7 +100,7 @@ Alternatively, for browsers that don't support ES6 module imports, you can use t
 
 ## For nodejs
 
-Your package needs to be an ECMAScript module ('type' is 'module' in package.json), and requires Node v16. Your code needs to pass in a document object model to the `Teletext()` function.
+Your package needs to be an ECMAScript module ('type' is 'module' in package.json), and requires Node v16. Your code needs to pass in a document object model window to the `Teletext()` function.
 
 1. Install dependencies:
 
@@ -115,10 +115,10 @@ import jsdom from 'jsdom';
 const dom = new jsdom.JSDOM('<div id="teletextscreen"></div>');
 
 const teletext = Teletext({
-    doc: dom.window.document
+    dom: dom.window
 });
 teletext.addTo('#teletextscreen');
-
+teletext.setRow(0, 'Hello from node');
 const svg = dom.window.document.querySelector('#teletextscreen').innerHTML;
 ```
 
@@ -138,8 +138,8 @@ The `options` parameter object is optional, with properties:
 * `webkitCompat`: boolean (optional)
    * `true` (default) - the generated SVG is compatible with Safari/Webkit browsers (all browsers on iOS), but it's bigger
    * `false` - uses SVG2 features which work in most browsers but not Safari or any browser on iOS, as they fail to render the graphics properly unless you use `setView` to switch the view to `classic__font-for-mosaic` (documented below)
-* `doc`: object (optional)
-   * if running in nodejs you need to pass in a document object. See the example above
+* `dom`: object (optional)
+   * if running in nodejs you need to pass in a window dom object. See the example above
 
 Call the following methods on the teletext instance to draw on the screen and control the rendering.
 
@@ -282,7 +282,7 @@ Toggles boxed display mode on or off. See also the `ttx.subtitlemode` event.
 
 ## Event API
 
-Your application can dispatch these events as an alternative to using the teletext instance API.  Note: The event API isn't available if running in node, but you can call the equivalent API methods instead.
+Your application can dispatch these events as an alternative to using the teletext instance API.
 
 | Event | Use |
 |-------|------|
