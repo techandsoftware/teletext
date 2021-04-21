@@ -112,7 +112,7 @@ Your package needs to be an ECMAScript module ('type' is 'module' in package.jso
 import { Teletext } from '@techandsoftware/teletext';
 import jsdom from 'jsdom';
 
-const dom = new jsdom.JSDOM('<!DOCTYPE html><div id="teletextscreen"></div>');
+const dom = new jsdom.JSDOM('<div id="teletextscreen"></div>');
 
 const teletext = Teletext({
     doc: dom.window.document
