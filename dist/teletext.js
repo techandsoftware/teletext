@@ -616,7 +616,12 @@ class SVG extends Element {
     }
 
     addTo(selector) {
-        _doc.querySelector(selector).appendChild(this._e);
+        const node = _doc.querySelector(selector);
+        if (node) {
+            node.appendChild(this._e);
+        } else {
+            throw new Error('@techandsoftware/teletext: E117: addTo failed to match provided selector')
+        }
         return this;
     }
 
