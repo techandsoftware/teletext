@@ -41,7 +41,7 @@
     "World System Teletext",
     "WST"
   ],
-  "author": "Tech & Software Ltd.",
+  "author": "Tech & Software Ltd. <techandsoftwareltd@outlook.com>",
   "license": "(AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0)",
   "repository": {
     "type": "git",
