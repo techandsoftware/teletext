@@ -61,6 +61,22 @@ This package is compliant with [REUSE 3](https://reuse.software/).
 
 ## For browers
 
+Quickstart:
+
+```html
+<div id="teletextscreen"></div>
+
+<script type="module">
+  import { Teletext } from 'https://unpkg.com/@techandsoftware/teletext@latest/dist/teletext.min.js';
+
+  const teletext = Teletext();
+  teletext.addTo('#teletextscreen');
+  teletext.setRow(0, 'Hello world!');
+</script>
+```
+
+If you want to use npm to install instead of unpkg:
+
 1. Install dependency:
 
 `npm install @techandsoftware/teletext`
@@ -84,7 +100,7 @@ This package is compliant with [REUSE 3](https://reuse.software/).
 
 This creates an SVG object in the #teletextscreen div which contains the teletext display.
 
-Alternatively, for browsers that don't support ES6 module imports, you can use the UMD module. The exports are exported to the `ttx` global, so you need to prefix API calls with that. The syntax in the Javascript is likely to be too new so you will also need to arrange transpiling to your target browser.
+Alternatively, for browsers that don't support ES6 module imports, you can use the UMD module. The exports are exported to the `ttx` global, so you need to prefix Teletext and the other others exports with that. The syntax in the Javascript is likely to be too new so you will also need to arrange transpiling to your target browser.
 
 ```html
 <div id="teletextscreen"></div>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<!-- SPDX-FileCopyrightText: © 2021 Tech and Software Ltd. -->
+<!-- SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0 -->
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Importing teletext as ES6 module from unpkg</title>
+    <style>
+        body {
+            background-color: darkblue;
+            font-size: 30px;
+            color: white;
+        }
+        input {
+            font-size: 30px;
+        }
+        td {
+            padding: 5px;
+        }
+    </style>
+
+    <script type="module">
+        // minimum code to load and show a built-in test page
+        import { Teletext } from 'https://unpkg.com/@techandsoftware/teletext@latest/dist/teletext.min.js';
+        const t = Teletext();
+        t.addTo('#teletextscreen');
+        t.setDefaultG0Charset('latin_g0__english');
+        t.showTestPage();
+    </script>
+
+    <script type="module">
+        // this code is to handle key events and the reveal button below. This demonstrates using events
+        const KEY_EVENTS = {
+            '?': 'ttx.reveal',
+            'm': 'ttx.mix',
+            's': 'ttx.subtitlemode',
+        };
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('revealButton').addEventListener('click', () => {
+                window.dispatchEvent(new Event(KEY_EVENTS['?']));
+            });
+        });
+        window.addEventListener('keypress', e => {
+            if (e.key in KEY_EVENTS)
+                window.dispatchEvent(new Event(KEY_EVENTS[e.key]));
+        });
+    </script>
+
+    <script nomodule>
+        document.write("<p>Sorry, your browser needs to support ES6 module imports for this to work.</p>");
+        console.debug("=========> If you need to support old browsers, you'll need to use the provided UMD module and transpile the code for your targetted browsers");
+    </script>
+</head>
+
+<body>
+
+    <div id="teletextscreen"></div>
+
+    <input type="button" value="REVEAL" id="revealButton">
+
+    <p>Key controls</p>
+    <table>
+        <tr>
+            <td>?</td><td>Toggle reveal</td>
+        </tr>
+        <tr>
+            <td>m</td><td>Toggle mix</td>
+        </tr>
+        <tr>
+            <td>s</td><td>Toggle subtitle (boxed) mode</td>
+        </tr>
+    </table>
+
+</body>
+
+</html>
