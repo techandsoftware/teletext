@@ -100,7 +100,7 @@ If you want to use npm to install instead of unpkg:
 
 This creates an SVG object in the #teletextscreen div which contains the teletext display.
 
-Alternatively, for browsers that don't support ES6 module imports, you can use the UMD module. The exports are exported to the `ttx` global, so you need to prefix Teletext and the other others exports with that. The syntax in the Javascript is likely to be too new so you will also need to arrange transpiling to your target browser.
+Alternatively, for browsers that don't support ES6 module imports, you can use the UMD module. The exports are exported to the `ttx` global, so you need to prefix Teletext and the other exports with that. The syntax in the Javascript is likely to be too new so you will also need to arrange transpiling to your target browser.
 
 ```html
 <div id="teletextscreen"></div>
