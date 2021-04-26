@@ -933,6 +933,7 @@ function wrapSVGElement(el) {
 // SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
 // SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 
+// Exported in public interface
 const Colour = {
     BLACK  : Symbol('BLACK'),
     RED    : Symbol('RED'),
@@ -960,6 +961,7 @@ const CellSize = {
 };
 Object.freeze(CellSize);
 
+// Exported in public interface
 class Attributes {
     static charFromTextColour(colour) {
         if (colour in textColourToChar) return textColourToChar[colour];
@@ -975,30 +977,8 @@ class Attributes {
         if (attrib in spacingAttributesToChar) return spacingAttributesToChar[attrib];
         throw new Error('Attributes.charFromAttribute: bad attribute');
     }
-
-    static attribFromChar(level, char) {
-        let attribute = null;
-        let colour = null;
-        if (char in attributeChars && charCodesByLevel[level].includes(char.charCodeAt(0))) {
-            if (char in charToTextColour) {
-                attribute = Attributes.TEXT_COLOUR;
-                colour = attributeChars[char];
-            } else if (char in charToGraphicColour) {
-                attribute = Attributes.MOSAIC_COLOUR;
-                colour = attributeChars[char];
-            } else {
-                attribute = attributeChars[char];
-            }
-        } else if (char.charCodeAt(0) <= 0x1f) {
-            attribute = Attributes.UNKNOWN_;
-        }
-        return { attribute, colour };
-    }
-
-    static fillColourFromColourAttrib(colour) {
-        return colourAttribToFillColour[colour];
-    }
 }
+
 Attributes.TEXT_COLOUR         = CellType.ALPHA_;
 Attributes.MOSAIC_COLOUR       = Symbol('MOSAIC_COLOUR');
 Attributes.NEW_BACKGROUND      = Symbol('NEW_BACKGROUND');
@@ -1019,7 +999,30 @@ Attributes.START_BOX           = Symbol('START_BOX');
 Attributes.END_BOX             = Symbol('END_BOX');
 Attributes.UNKNOWN_            = Symbol('UNKNOWN'); // pseudo-attribute
 
-// internal or private data below
+// private functions/data below
+
+function attribFromChar(level, char) {
+    let attribute = null;
+    let colour = null;
+    if (char in attributeChars && charCodesByLevel[level].includes(char.charCodeAt(0))) {
+        if (char in charToTextColour) {
+            attribute = Attributes.TEXT_COLOUR;
+            colour = attributeChars[char];
+        } else if (char in charToGraphicColour) {
+            attribute = Attributes.MOSAIC_COLOUR;
+            colour = attributeChars[char];
+        } else {
+            attribute = attributeChars[char];
+        }
+    } else if (char.charCodeAt(0) <= 0x1f) {
+        attribute = Attributes.UNKNOWN_;
+    }
+    return { attribute, colour };
+}
+
+function fillColourFromColourAttrib(colour) {
+    return colourAttribToFillColour[colour];
+}
 
 const colourAttribToFillColour = {
     [Colour.BLACK]   : '#000',
@@ -1221,9 +1224,9 @@ class VectorViewBase {
                 }
 
                 const cell = rowModel.getCell_(cellIndex);
-                const bg = Attributes.fillColourFromColourAttrib(cell.bgColour_);
+                const bg = fillColourFromColourAttrib(cell.bgColour_);
                 const isMosaicByte = cell.isMosaicByte_();
-                const fill = Attributes.fillColourFromColourAttrib(cell.fgColour_);
+                const fill = fillColourFromColourAttrib(cell.fgColour_);
                 const attr = this._getCellAttr(cell.type_, isMosaicByte);
 
                 this._renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaicByte);
@@ -1565,7 +1568,7 @@ VectorViewBase.ROWS = ROWS$1;
 VectorViewBase.COLS = COLS;
 
 // helper functions used by plugin
-const colourLookupFn = colourSymbol => Attributes.fillColourFromColourAttrib(colourSymbol);
+const colourLookupFn = colourSymbol => fillColourFromColourAttrib(colourSymbol);
 const isDoubleHeightFn = size => size == CellSize.DOUBLE_HEIGHT_;
 const isDoubleWidthFn = size => size == CellSize.DOUBLE_WIDTH_;
 const isDoubleSizeFn = size => size == CellSize.DOUBLE_SIZE_;
@@ -2927,7 +2930,7 @@ class PageModel {
 
         this._screen[rowNum].forEach((cell, cellIndex) => {
             const char = cell.byte_;
-            const attrib = Attributes.attribFromChar(this._level, char);
+            const attrib = attribFromChar(this._level, char);
 
             // 'set-after' attributes from previous cell
             textColour = nextTextColour;
