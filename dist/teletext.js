@@ -421,12 +421,12 @@ class Utils {
     // "base64url" encoding defined here https://tools.ietf.org/html/rfc4648
     // the packed data format is from https://github.com/rawles/edit.tf
     // returns a Uint1Array
-    static decodeBase64URLEncoded(input, atob) {
+    static decodeBase64URLEncoded_(input, atob) {
         // adjust the input before passing to atob
         input = input.replace(/-/g, '+').replace(/_/g, '/');
         const pad = input.length % 4;
         if (pad) {
-            if (pad === 1) throw new Error('Utils.decodeBase64URL: Input base64url string is the wrong length to determine padding');
+            if (pad === 1) throw new Error('Utils.decodeBase64URLEncoded E16: Input base64url string is the wrong length to determine padding');
             input += new Array(5-pad).join('=');
         }
         const packed = atob(input);
@@ -529,7 +529,7 @@ class Element {
         this._e = null;
     }
 
-    attr(objOrName, val) {
+    attr_(objOrName, val) {
         if (typeof objOrName == 'object') {
             for (const attrName in objOrName) {
                 if (objOrName[attrName] == null)
@@ -548,39 +548,39 @@ class Element {
         return this;
     }
 
-    addClass(name) {
-        if (!this.hasClass(name)) {
-            const classes = this.classes();
+    addClass_(name) {
+        if (!this.hasClass_(name)) {
+            const classes = this.classes_();
             classes.push(name);
             this._e.setAttribute('class', classes.join(' '));
         }
         return this;
     }
 
-    hasClass(name) {
-        return this.classes().indexOf(name) !== -1;
+    hasClass_(name) {
+        return this.classes_().indexOf(name) !== -1;
     }
 
-    classes() {
+    classes_() {
         const classes = this._e.getAttribute('class');
         return classes == null ? [] : classes.split(' ');
     }
 
-    removeClass(name) {
-        if (this.hasClass(name))
-            this._e.setAttribute('class', this.classes().filter(c => c !== name).join(' '));
+    removeClass_(name) {
+        if (this.hasClass_(name))
+            this._e.setAttribute('class', this.classes_().filter(c => c !== name).join(' '));
         return this;
     }
 
-    toggleClass(name) {
-        if (this.hasClass(name))
-            this.removeClass(name);
+    toggleClass_(name) {
+        if (this.hasClass_(name))
+            this.removeClass_(name);
         else
-            this.addClass(name);
+            this.addClass_(name);
         return this;
     }
 
-    data(objOrName, val) {
+    data_(objOrName, val) {
         if (typeof objOrName == 'object') {
             for (const dataProp in objOrName) {
                 if (objOrName[dataProp] == null)
@@ -612,7 +612,7 @@ class SVG extends Element {
         return this;
     }
 
-    addTo(selector) {
+    addTo_(selector) {
         const node = _doc.querySelector(selector);
         if (node) {
             node.appendChild(this._e);
@@ -622,39 +622,39 @@ class SVG extends Element {
         return this;
     }
 
-    viewbox(viewbox) {
+    viewbox_(viewbox) {
         this._e.setAttribute('viewBox', viewbox);
         return this;
     }
 
-    size(width, height) {
+    size_(width, height) {
         this._e.setAttribute('width', width);
         this._e.setAttribute('height', height);
         return this;
     }
 
-    style(style) {
+    style_(style) {
         const styleNode = _doc.createElementNS(NS, 'style');
         styleNode.append(style);
         this._e.append(styleNode);
         return this;
     }
 
-    group() {
+    group_() {
         const group = new Group();
         this._e.append(group._node());
         return group;
     }
 
-    width() {
+    width_() {
         return this._e.clientWidth;
     }
 
-    height() {
+    height_() {
         return this._e.clientHeight;
     }
 
-    symbol(id) {
+    symbol_(id) {
         const symbol = new SVGSymbol(id);
         this._e.append(symbol._node());
         return symbol;
@@ -670,73 +670,73 @@ class Group extends Element {
         return this;
     }
 
-    group() {
+    group_() {
         const group = new Group();
         this._e.append(group._node());
         this._c.push(group);
         return group;
     }
 
-    plain(text) {
+    plain_(text) {
         const textObj = new Text(text);
         this._e.append(textObj._node());
         this._c.push(textObj);
         return textObj;
     }
 
-    defs() {
+    defs_() {
         const defs = new Defs();
         this._e.append(defs._node());
         return defs;
     }
 
-    rect(width, height) {
+    rect_(width, height) {
         const rect = new Rect(width, height);
         this._e.append(rect._node());
         this._c.push(rect);
         return rect;
     }
 
-    last() {
+    last_() {
         return this._c[this._c.length - 1];
     }
 
-    children() {
+    children_() {
         return this._c;
     }
 
-    clipWith(clipPath) {
+    clipWith_(clipPath) {
         this._e.setAttribute('clip-path', `url("#${clipPath._node().id}")`);
         return this;
     }
 
-    unclip() {
+    unclip_() {
         this._e.removeAttribute('clip-path');
         return this;
     }
 
-    remove() {
+    remove_() {
         this._e.parentNode && this._e.parentNode.removeChild(this._e);
         this._e = null;
         this._c.forEach(c => c._removeNode());
         this._c = [];
     }
 
-    line(x1, y1, x2, y2) {
+    line_(x1, y1, x2, y2) {
         const line = new Line(x1, y1, x2, y2);
         this._e.append(line._node());
         this._c.push(line);
         return line;
     }
 
-    use(id) {
+    use_(id) {
         const use = new Use(id);
         this._e.append(use._node());
         this._c.push(use);
         return use;
     }
 
-    image(width, height) {
+    image_(width, height) {
         const image = new Image(width, height);
         this._e.append(image._node());
         this._c.push(image);
@@ -752,6 +752,10 @@ class Image extends Element {
         this._e.setAttribute('height', parseInt(height));
         return this;
     }
+
+    attr(...params) {
+        return this.attr_(...params);
+    }
 }
 
 class Use extends Element {
@@ -762,12 +766,12 @@ class Use extends Element {
         return this;
     }
 
-    fill(fill) {
+    fill_(fill) {
         this._e.setAttribute('fill', fill);
         return this;
     }
 
-    move(x, y) {
+    move_(x, y) {
         this._e.setAttribute('x', x);
         this._e.setAttribute('y', y);
         return this;
@@ -783,7 +787,7 @@ class SVGSymbol extends Element {
         return this;
     }
 
-    rect(width, height) {
+    rect_(width, height) {
         const rect = new Rect(width, height);
         this._e.append(rect._node());
         return rect;
@@ -798,12 +802,12 @@ class Text extends Element {
         return this;
     }
 
-    plain(text) {
+    plain_(text) {
         this._e.textContent = text;
         return this;
     }
 
-    fill(fill) {
+    fill_(fill) {
         this._e.setAttribute('fill', fill);
         return this;
     }
@@ -817,18 +821,18 @@ class Defs extends Element {
         return this;
     }
 
-    clip() {
+    clip_() {
         const clip = new ClipPath();
         this._e.append(clip._node());
         return clip;
     }
 
-    find(selector) {
+    find_(selector) {
         const matchedEls = this._e.querySelectorAll(selector);
         return [...matchedEls].map(wrapSVGElement);
     }
 
-    rect(width, height) {
+    rect_(width, height) {
         const rect = new Rect(width, height);
         this._e.append(rect._node());
         return rect;
@@ -844,11 +848,11 @@ class ClipPath extends Element {
         return this;
     }
 
-    children() {
+    children_() {
         return [...this._e.children].map(wrapSVGElement);
     }
 
-    add(shape) {
+    add_(shape) {
         this._e.appendChild(shape._node());
     }
 }
@@ -867,18 +871,18 @@ class Rect extends Element {
         return this;
     }
 
-    fill(fill) {
+    fill_(fill) {
         this._e.setAttribute('fill', fill);
         return this;
     }
 
-    move(x, y) {
+    move_(x, y) {
         this._e.setAttribute('x', x);
         this._e.setAttribute('y', y);
         return this;
     }
 
-    width(width) {
+    width_(width) {
         if (width === undefined)
             return parseInt(this._e.getAttribute('width'));
 
@@ -886,7 +890,7 @@ class Rect extends Element {
         return this;
     }
 
-    height(height) {
+    height_(height) {
         if (height === undefined)
             return parseInt(this._e.getAttribute('height'));
 
@@ -894,7 +898,7 @@ class Rect extends Element {
         return this;
     }
 
-    remove() {
+    remove_() {
         this._e.parentNode && this._e.parentNode.removeChild(this._e);
         this._e = null;
     }
@@ -942,17 +946,17 @@ const Colour = {
 Object.freeze(Colour);
 
 const CellType = {
-    ALPHA : Symbol('ALPHA'),
-    MOSAIC_CONTIGUOUS: Symbol('MOSAIC_CONTIGUOUS'),
-    MOSAIC_SEPARATED: Symbol('MOSAIC_SEPARATED'),
+    ALPHA_ : Symbol('ALPHA'),
+    MOSAIC_CONTIGUOUS_: Symbol('MOSAIC_CONTIGUOUS'),
+    MOSAIC_SEPARATED_: Symbol('MOSAIC_SEPARATED'),
 };
 Object.freeze(CellType);
 
 const CellSize = {
-    NORMAL_SIZE:   Symbol('NORMAL_SIZE'),
-    DOUBLE_HEIGHT: Symbol('DOUBLE_HEIGHT'),
-    DOUBLE_WIDTH:  Symbol('DOUBLE_WIDTH'),
-    DOUBLE_SIZE:   Symbol('DOUBLE_SIZE'),
+    NORMAL_SIZE_:   Symbol('NORMAL_SIZE'),
+    DOUBLE_HEIGHT_: Symbol('DOUBLE_HEIGHT'),
+    DOUBLE_WIDTH_:  Symbol('DOUBLE_WIDTH'),
+    DOUBLE_SIZE_:   Symbol('DOUBLE_SIZE'),
 };
 Object.freeze(CellSize);
 
@@ -986,7 +990,7 @@ class Attributes {
                 attribute = attributeChars[char];
             }
         } else if (char.charCodeAt(0) <= 0x1f) {
-            attribute = Attributes.UNKNOWN;
+            attribute = Attributes.UNKNOWN_;
         }
         return { attribute, colour };
     }
@@ -995,27 +999,27 @@ class Attributes {
         return colourAttribToFillColour[colour];
     }
 }
-Attributes.TEXT_COLOUR         = CellType.ALPHA;
+Attributes.TEXT_COLOUR         = CellType.ALPHA_;
 Attributes.MOSAIC_COLOUR       = Symbol('MOSAIC_COLOUR');
 Attributes.NEW_BACKGROUND      = Symbol('NEW_BACKGROUND');
 Attributes.BLACK_BACKGROUND    = Symbol('BLACK_BACKGROUND');
-Attributes.CONTIGUOUS_GRAPHICS = CellType.MOSAIC_CONTIGUOUS;
-Attributes.SEPARATED_GRAPHICS  = CellType.MOSAIC_SEPARATED;
+Attributes.CONTIGUOUS_GRAPHICS = CellType.MOSAIC_CONTIGUOUS_;
+Attributes.SEPARATED_GRAPHICS  = CellType.MOSAIC_SEPARATED_;
 Attributes.ESC                 = Symbol('ESC');
 Attributes.FLASH               = Symbol('FLASH');
 Attributes.STEADY              = Symbol('STEADY');
-Attributes.NORMAL_SIZE         = CellSize.NORMAL_SIZE;
-Attributes.DOUBLE_HEIGHT       = CellSize.DOUBLE_HEIGHT;
-Attributes.DOUBLE_WIDTH        = CellSize.DOUBLE_WIDTH;
-Attributes.DOUBLE_SIZE         = CellSize.DOUBLE_SIZE;
+Attributes.NORMAL_SIZE         = CellSize.NORMAL_SIZE_;
+Attributes.DOUBLE_HEIGHT       = CellSize.DOUBLE_HEIGHT_;
+Attributes.DOUBLE_WIDTH        = CellSize.DOUBLE_WIDTH_;
+Attributes.DOUBLE_SIZE         = CellSize.DOUBLE_SIZE_;
 Attributes.CONCEAL             = Symbol('CONCEAL');
 Attributes.HOLD_MOSAICS        = Symbol('HOLD_MOSAICS');
 Attributes.RELEASE_MOSAICS     = Symbol('RELEASE_MOSAICS');
 Attributes.START_BOX           = Symbol('START_BOX');
 Attributes.END_BOX             = Symbol('END_BOX');
-Attributes.UNKNOWN             = Symbol('UNKNOWN'); // pseudo-attribute
+Attributes.UNKNOWN_            = Symbol('UNKNOWN'); // pseudo-attribute
 
-// private data below
+// internal or private data below
 
 const colourAttribToFillColour = {
     [Colour.BLACK]   : '#000',
@@ -1153,15 +1157,15 @@ Object.freeze(MOSAIC_METRIC);
 class VectorViewBase {
     constructor(model, dom) {
         this._svg = new SVG(dom)
-            .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
-            .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO])
-            .attr({
+            .viewbox_(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
+            .size_(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO])
+            .attr_({
                 'preserveAspectRatio': 'none',
                 'style': 'font-family: sans-serif'
             })
-            .style(getStyle());
+            .style_(getStyle());
 
-        this.d = this._svg.group().attr('class', 'conceal_concealed flash_flashing');
+        this.d = this._svg.group_().attr_('class', 'conceal_concealed flash_flashing');
 
         this._aspectRatio = DEFAULT_ASPECT_RATIO;
 
@@ -1170,7 +1174,7 @@ class VectorViewBase {
         this._gridLayer = null;
 
         this._model = model;
-        this._listenerId = this._model.onSet.attach(
+        this._listenerId = this._model.onSet_.attach_(
             () => this._update()
         );
         this._boxMode = false;
@@ -1181,12 +1185,12 @@ class VectorViewBase {
         console.debug('VectorViewBase constructed');
     }
 
-    addTo(selector) {
-        this._svg.addTo(selector);
+    addTo_(selector) {
+        this._svg.addTo_(selector);
     }
 
-    detach() {
-        this._model.onSet.detach(this._listenerId);
+    detach_() {
+        this._model.onSet_.detach_(this._listenerId);
         this._listenerId = null;
     }
 
@@ -1195,7 +1199,7 @@ class VectorViewBase {
         let nextRowHidden = false;  // row might be hidden if row above contains double height or size
         let pageContainsFlash = false;
         this._pageContainsBox = false;
-        this.d.removeClass('flash_flashing');
+        this.d.removeClass_('flash_flashing');
         this._gridrows.forEach((rowView, rowIndex) => {
             let nextCellObscured = false;   // cell might be obscured if previous cell contains double width or size
             this._resetRow(rowIndex);
@@ -1205,7 +1209,7 @@ class VectorViewBase {
                 return;
             }
 
-            const rowModel = this._model.getRow(rowIndex);
+            const rowModel = this._model.getRow_(rowIndex);
             let previousBg, previousBoxed;
             rowView.forEach((cellView, cellIndex) => {
                 if (nextCellObscured) {
@@ -1216,15 +1220,15 @@ class VectorViewBase {
                     return;
                 }
 
-                const cell = rowModel.getCell(cellIndex);
-                const bg = Attributes.fillColourFromColourAttrib(cell.bgColour);
-                const isMosaicByte = cell.isMosaicByte();
-                const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
-                const attr = this._getCellAttr(cell.type, isMosaicByte);
+                const cell = rowModel.getCell_(cellIndex);
+                const bg = Attributes.fillColourFromColourAttrib(cell.bgColour_);
+                const isMosaicByte = cell.isMosaicByte_();
+                const fill = Attributes.fillColourFromColourAttrib(cell.fgColour_);
+                const attr = this._getCellAttr(cell.type_, isMosaicByte);
 
                 this._renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaicByte);
 
-                if (cell.boxed) {
+                if (cell.boxed_) {
                     if (previousBoxed) this._extendBox();
                     else this._setBoxForRow(rowIndex, cellIndex);
                     this._pageContainsBox = true;
@@ -1233,13 +1237,13 @@ class VectorViewBase {
                 if (previousBg == bg) this._extendBackgroundForRow(rowIndex);
                 else this._setBackgroundForRow(rowIndex, cellIndex, bg);
 
-                if (cell.size == CellSize.DOUBLE_WIDTH || cell.size == CellSize.DOUBLE_SIZE) nextCellObscured = true;
+                if (cell.size_ == CellSize.DOUBLE_WIDTH_ || cell.size_ == CellSize.DOUBLE_SIZE_) nextCellObscured = true;
                 previousBg = bg;
-                previousBoxed = cell.boxed;
-                if (cell.flashing) pageContainsFlash = true;
+                previousBoxed = cell.boxed_;
+                if (cell.flashing_) pageContainsFlash = true;
             });
 
-            if (rowModel.doubleHeight) {
+            if (rowModel.doubleHeight_) {
                 this._setRowDoubleHeight(rowIndex);
                 this._setBoxDoubleHeight();
                 nextRowHidden = true;
@@ -1249,10 +1253,10 @@ class VectorViewBase {
 
             this._makeClipFromBoxesForRow(rowIndex);
         });
-        if ('_endOfUpdate' in this._plugins) this._plugins._endOfUpdate(this._svg.width(), this._svg.height());
-        this.d.addClass('conceal_concealed');
+        if ('_endOfUpdate' in this._plugins) this._plugins._endOfUpdate(this._svg.width_(), this._svg.height_());
+        this.d.addClass_('conceal_concealed');
         // FUDGE keep flashing synchronised
-        if (pageContainsFlash) setTimeout(() => this.d.addClass('flash_flashing'), 100);
+        if (pageContainsFlash) setTimeout(() => this.d.addClass_('flash_flashing'), 100);
         this._refreshMixMode();
     }
 
@@ -1269,8 +1273,8 @@ class VectorViewBase {
     }
 
     _clearCell(cellView) {
-        cellView.plain(' ')
-            .attr({
+        cellView.plain_(' ')
+            .attr_({
                 dx: null,
                 dy: null,
                 textLength: null,
@@ -1285,86 +1289,86 @@ class VectorViewBase {
     _renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaic) {
         this._renderText(cellView, cell, attr, fill, cellIndex, rowIndex);
 
-        if (cell.type == CellType.MOSAIC_CONTIGUOUS && isMosaic) cellView.addClass('mosaic');
-        else if (cell.type == CellType.MOSAIC_SEPARATED && isMosaic) cellView.addClass('mosaic_separated');
+        if (cell.type_ == CellType.MOSAIC_CONTIGUOUS_ && isMosaic) cellView.addClass_('mosaic');
+        else if (cell.type_ == CellType.MOSAIC_SEPARATED_ && isMosaic) cellView.addClass_('mosaic_separated');
     }
 
     _renderText(cellView, cell, attr, fill, cellIndex, rowIndex) {
-        cellView.plain(cell.char).attr(attr).fill(fill);
-        if (cell.size == CellSize.DOUBLE_HEIGHT)
-            cellView.attr('transform', `translate(0 ${_getYTranslate(rowIndex)}) scale(1 2)`);
-        else if (cell.size == CellSize.DOUBLE_WIDTH)
-            cellView.attr('transform', `translate(${_getXTranslate(cellIndex)} 0) scale(2 1)`);
-        else if (cell.size == CellSize.DOUBLE_SIZE)
-            cellView.attr('transform', `translate(${_getXTranslate(cellIndex)} ${_getYTranslate(rowIndex)}) scale(2 2)`);
+        cellView.plain_(cell.char_).attr_(attr).fill_(fill);
+        if (cell.size_ == CellSize.DOUBLE_HEIGHT_)
+            cellView.attr_('transform', `translate(0 ${_getYTranslate(rowIndex)}) scale(1 2)`);
+        else if (cell.size_ == CellSize.DOUBLE_WIDTH_)
+            cellView.attr_('transform', `translate(${_getXTranslate(cellIndex)} 0) scale(2 1)`);
+        else if (cell.size_ == CellSize.DOUBLE_SIZE_)
+            cellView.attr_('transform', `translate(${_getXTranslate(cellIndex)} ${_getYTranslate(rowIndex)}) scale(2 2)`);
 
-        if (cell.flashing) cellView.addClass('flash');
-        if (cell.concealed) cellView.addClass('conceal');
+        if (cell.flashing_) cellView.addClass_('flash');
+        if (cell.concealed_) cellView.addClass_('conceal');
     }
 
-    reveal() {
-        this.d.toggleClass('conceal_concealed');
+    reveal_() {
+        this.d.toggleClass_('conceal_concealed');
     }
 
-    setFont(font) {
+    setFont_(font) {
         let newFont = font;
         if (font == 'native')
             newFont = '-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif';
         else if (font == 'default')
             newFont = 'sans-serif';
 
-        this._svg.attr('style', `font-family: ${newFont}`);
+        this._svg.attr_('style', `font-family: ${newFont}`);
     }
 
-    grid() {
+    grid_() {
         if (this._gridLayer) {
-            this._gridLayer.remove();
+            this._gridLayer.remove_();
             this._gridLayer = null;
         } else {
             this._drawGrid();
         }
     }
 
-    mixMode() {
+    mixMode_() {
         if (this._mixMode) {
             this._mixMode = false;
-            this._bgLayer.attr('opacity', null).unclip();
+            this._bgLayer.attr_('opacity', null).unclip_();
         } else {
             this._mixMode = true;
             this._setMixMode();
         }
     }
 
-    setAspectRatio(aspectRatio) {
+    setAspectRatio_(aspectRatio) {
         this._aspectRatio = aspectRatio;
-        this.setHeight(this._svg.height());
+        this.setHeight_(this._svg.height_());
     }
 
-    setHeight(height) {
+    setHeight_(height) {
         const width = this._aspectRatio == 'natural' ? height * (WIDTH_PX / HEIGHT_PX) : height * this._aspectRatio;
-        this._svg.size(width, height);
+        this._svg.size_(width, height);
     }
 
     _setMixMode() {
         if (this._boxMode && this._pageContainsBox)
-            this._bgLayer.attr('opacity', 0.3);
+            this._bgLayer.attr_('opacity', 0.3);
         else if (this._pageContainsBox)
-            this._bgLayer.clipWith(this._boxLayer).attr('opacity', 0.3);
+            this._bgLayer.clipWith_(this._boxLayer).attr_('opacity', 0.3);
         else
-            this._bgLayer.attr('opacity', 0);
+            this._bgLayer.attr_('opacity', 0);
     }
 
     _refreshMixMode() {
         if (this._mixMode) this._setMixMode();
     }
 
-    boxMode() {
+    boxMode_() {
         if (!this._boxMode) {
-            this.d.clipWith(this._boxLayer);
+            this.d.clipWith_(this._boxLayer);
             this._boxMode = true;
             console.log('box activated');
         } else {
-            this.d.unclip();
+            this.d.unclip_();
             this._boxMode = false;
             console.log('box deactivated');
         }
@@ -1372,15 +1376,15 @@ class VectorViewBase {
     }
 
     _drawGrid() {
-        this._gridLayer = this.d.group();
+        this._gridLayer = this.d.group_();
         for (let row = 0; row < ROWS$1; row++) {
-            this._gridLayer.line(0, row * CELL_HEIGHT, WIDTH_PX - 1, row * CELL_HEIGHT).attr({
+            this._gridLayer.line_(0, row * CELL_HEIGHT, WIDTH_PX - 1, row * CELL_HEIGHT).attr_({
                 stroke: '#555',
                 'stroke-width': 0.5,
             });
         }
         for (let col = 0; col < COLS; col++) {
-            this._gridLayer.line(col * CELL_WIDTH, 0, col * CELL_WIDTH, HEIGHT_PX - 1).attr({
+            this._gridLayer.line_(col * CELL_WIDTH, 0, col * CELL_WIDTH, HEIGHT_PX - 1).attr_({
                 stroke: '#555',
                 'stroke-width': 0.5,
             });
@@ -1391,9 +1395,9 @@ class VectorViewBase {
         // FUDGE can't use groups directly in <clipPath> https://github.com/w3c/fxtf-drafts/issues/17
         // Boxed cells are buffered and tagged with data-boxbuffer as the row is constructed
         // Then moved to the <clipPath> stored in this._boxLayer and tagged with data-r=rowNum
-        this._defs = this.d.defs();
+        this._defs = this.d.defs_();
         this._lastBoxBuffer = null;
-        this._boxLayer = this._defs.clip();
+        this._boxLayer = this._defs.clip_();
     }
 
     _createDisplay() {
@@ -1403,8 +1407,8 @@ class VectorViewBase {
 
     _createRowBackgrounds() {
         const bgrows = [];
-        const bgGroup = this.d.group();
-        bgGroup.attr({
+        const bgGroup = this.d.group_();
+        bgGroup.attr_({
             'shape-rendering': 'crispEdges',
             id: 'background'
         });
@@ -1414,14 +1418,14 @@ class VectorViewBase {
 
     _createCells() {
         const gridrows = [];
-        const textGroup = this.d.group().attr({
+        const textGroup = this.d.group_().attr_({
             'text-anchor': 'middle',
             'fill': '#fff'
-        }).attr('id', 'textlayer');
+        }).attr_('id', 'textlayer');
         for (let rowNum = 0; rowNum < ROWS$1; rowNum++) {
             const rowCells = [];
             for (let colNum = 0; colNum < COLS; colNum++) {
-                rowCells.push(textGroup.plain(getRandomLetter()).attr({
+                rowCells.push(textGroup.plain_(getRandomLetter()).attr_({
                     x: (colNum * CELL_WIDTH) + TEXT_X_OFFSET,
                     y: (rowNum * CELL_HEIGHT) + TEXT_Y_OFFSET,
                 }));
@@ -1433,64 +1437,64 @@ class VectorViewBase {
     }
 
     _resetBoxClipForRow(rowNum) {
-        this._boxLayer.children()
-            .filter(b => b.data('r') == rowNum)
-            .forEach(b => b.remove());
+        this._boxLayer.children_()
+            .filter(b => b.data_('r') == rowNum)
+            .forEach(b => b.remove_());
     }
 
     _resetBackgroundForRow(rowNum) {
-        if (this._bgrows[rowNum]) this._bgrows[rowNum].remove();
-        this._bgrows[rowNum] = this._bgLayer.group();
+        if (this._bgrows[rowNum]) this._bgrows[rowNum].remove_();
+        this._bgrows[rowNum] = this._bgLayer.group_();
     }
 
     _extendBackgroundForRow(rowNum) {
-        const last = this._bgrows[rowNum].last();
-        const width = last.width();
-        last.width(width + CELL_WIDTH);
+        const last = this._bgrows[rowNum].last_();
+        const width = last.width_();
+        last.width_(width + CELL_WIDTH);
     }
 
     _setBackgroundForRow(rowNum, colNum, colour) {
         const x = colNum * CELL_WIDTH;
         const y = rowNum * CELL_HEIGHT;
         this._bgrows[rowNum]
-            .rect(CELL_WIDTH, CELL_HEIGHT)
-            .fill(colour)
-            .move(x, y);
+            .rect_(CELL_WIDTH, CELL_HEIGHT)
+            .fill_(colour)
+            .move_(x, y);
     }
 
     _extendBox() {
-        const width = this._lastBoxBuffer.width();
-        this._lastBoxBuffer.width(width + CELL_WIDTH);
+        const width = this._lastBoxBuffer.width_();
+        this._lastBoxBuffer.width_(width + CELL_WIDTH);
     }
 
     _setRowDoubleHeight(rowNum) {
-        this._bgrows[rowNum].children().forEach(bg => bg.attr('height', CELL_DOUBLE_HEIGHT));
+        this._bgrows[rowNum].children_().forEach(bg => bg.attr_('height', CELL_DOUBLE_HEIGHT));
     }
 
     _setBoxDoubleHeight() {
-        this._defs.find('[data-boxbuffer]').forEach(box => box.height(CELL_DOUBLE_HEIGHT));
+        this._defs.find_('[data-boxbuffer]').forEach(box => box.height_(CELL_DOUBLE_HEIGHT));
         // TODO might be quicker to filter instead of using a selector
     }
 
     _setBoxForRow(rowNum, colNum) {
         const x = colNum * CELL_WIDTH;
         const y = rowNum * CELL_HEIGHT;
-        this._lastBoxBuffer = this._defs.rect(CELL_WIDTH, CELL_HEIGHT).data('boxbuffer', true).move(x, y);
+        this._lastBoxBuffer = this._defs.rect_(CELL_WIDTH, CELL_HEIGHT).data_('boxbuffer', true).move_(x, y);
     }
 
     // FUDGE move boxes tagged with data-boxbuffer into the clip layer.
     _makeClipFromBoxesForRow(rowNum) {
-        this._defs.find('[data-boxbuffer]').forEach(box => {
-            box.data({
+        this._defs.find_('[data-boxbuffer]').forEach(box => {
+            box.data_({
                 r: rowNum,
                 boxbuffer: null
             });
-            this._boxLayer.add(box);
+            this._boxLayer.add_(box);
         });
     }
 
     _getCellAttr(cellType, isMosaicChar) {
-        if (cellType == CellType.MOSAIC_CONTIGUOUS && isMosaicChar) {
+        if (cellType == CellType.MOSAIC_CONTIGUOUS_ && isMosaicChar) {
             return {
                 dx: MOSAIC_METRIC._contiguous._DX,
                 dy: -0.15,
@@ -1500,7 +1504,7 @@ class VectorViewBase {
                 transform: null,
                 class: null,
             };
-        } else if (cellType == CellType.MOSAIC_SEPARATED && isMosaicChar) {
+        } else if (cellType == CellType.MOSAIC_SEPARATED_ && isMosaicChar) {
             return {
                 dx: MOSAIC_METRIC._separated._DX,
                 dy: null,
@@ -1543,8 +1547,8 @@ class VectorViewBase {
     }
 
     _createImageOverlay() {
-        const image = this.d.image(WIDTH_PX, HEIGHT_PX);
-        image.attr('preserveAspectRatio', 'none');
+        const image = this.d.image_(WIDTH_PX, HEIGHT_PX);
+        image.attr_('preserveAspectRatio', 'none');
         return image;
     }
 }
@@ -1562,10 +1566,10 @@ VectorViewBase.COLS = COLS;
 
 // helper functions used by plugin
 const colourLookupFn = colourSymbol => Attributes.fillColourFromColourAttrib(colourSymbol);
-const isDoubleHeightFn = size => size == CellSize.DOUBLE_HEIGHT;
-const isDoubleWidthFn = size => size == CellSize.DOUBLE_WIDTH;
-const isDoubleSizeFn = size => size == CellSize.DOUBLE_SIZE;
-const isSeparatedMosaicFn = type => type == CellType.MOSAIC_SEPARATED;
+const isDoubleHeightFn = size => size == CellSize.DOUBLE_HEIGHT_;
+const isDoubleWidthFn = size => size == CellSize.DOUBLE_WIDTH_;
+const isDoubleSizeFn = size => size == CellSize.DOUBLE_SIZE_;
+const isSeparatedMosaicFn = type => type == CellType.MOSAIC_SEPARATED_;
 
 // functions used for cell transforms
 const _getYTranslate = row => 0 - (row * CELL_HEIGHT);
@@ -1649,295 +1653,6 @@ shape-rendering: crispEdges;
 }
 rect { color: orange; }
 `;
-}
-
-// SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
-
-class View extends VectorViewBase {
-    constructor(model, webkitCompat, dom) {
-        super(model, dom);
-        // webkit doesn't use the width/height on <symbol> which is SVG2.
-        // When webkitCompat is true, the width/height are duplicated on <use>
-        this._webkitCompat = webkitCompat;
-        this._mosaicSymbols = new Set();
-        console.debug('VectorViewGraphicMosaic constructed');
-    }
-
-    _createDisplay() {
-        super._createDisplay();
-        this._graphicrows = [];
-        this._graphicLayer = this.d.group();
-    }
-
-    _resetRow(rowIndex) {
-        super._resetRow(rowIndex);
-        this._resetGraphicRow(rowIndex);
-    }
-
-    _renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaic) {
-        if ('_background' in this._plugins) {
-            this._plugins._background(rowIndex, cellIndex, cell.size, cell.bgColour);
-        }
-
-        if (cell.type == CellType.ALPHA || !isMosaic) {
-            this._renderText(cellView, cell, attr, fill, cellIndex, rowIndex);
-        } else if (isMosaic) {
-            cellView.plain(' ').attr(attr);
-            this._renderMosaic(rowIndex, cellIndex, cell, fill);
-        }
-    }
-
-    _renderMosaic(row, col, cell, fill) {
-        if ('_mosaic' in this._plugins) {
-            const rendered = this._plugins._mosaic(row, col, cell, fill);
-            if (rendered) return;
-        }
-
-        const sextants = cell.getSextants();
-        if (!sextants.includes('1')) return;
-        let id = cell.type == CellType.MOSAIC_CONTIGUOUS ? 'c' : 's';
-        id += sextants.join('');
-
-        let width = VectorViewBase._CELL_WIDTH;
-        let height = VectorViewBase._CELL_HEIGHT;
-        if (cell.type == CellType.MOSAIC_CONTIGUOUS) {
-            width = VectorViewBase._CELL_WIDTH + 0.3;
-            height = VectorViewBase._CELL_HEIGHT + 0.2;
-        }
-
-        if (!this._mosaicSymbols.has(id)) {
-            this._mosaicSymbols.add(id);
-            const symbol = this._svg.symbol(id);
-
-            if (cell.type == CellType.MOSAIC_CONTIGUOUS) {
-                symbol.attr({
-                    preserveAspectRatio: 'none',
-                    width: width,     // FUDGE cell is bigger than it should be
-                    height: height,   // to close tiny gaps on Chromecast
-                    viewBox: '0 0 12 18',
-                });
-                for (let i = 0; i < 6; i++) {
-                    sextants[i] == '1' && symbol.rect(6, 6).move((i % 2) * 6, Math.floor(i/2) * 6);
-                }
-            } else {
-                symbol.attr({
-                    preserveAspectRatio: 'none',
-                    width: width,
-                    height: height,
-                    viewBox: '0 0 12 18',
-                });
-                for (let i = 0; i < 6; i++) {
-                    sextants[i] == '1' && symbol.rect(4, 4).move(((i % 2) * 6) + 1, (Math.floor(i/2) * 6) + 2);
-                }
-            }
-        }
-
-        let use;
-        if (cell.type == CellType.MOSAIC_CONTIGUOUS)
-            use = this._graphicrows[row]
-                .use(id)
-                .move(col * VectorViewBase._CELL_WIDTH - 0.15, row * VectorViewBase._CELL_HEIGHT - 0.1)
-                .fill(fill);
-        else
-            use = this._graphicrows[row]
-                .use(id)
-                .move(col * VectorViewBase._CELL_WIDTH, row * VectorViewBase._CELL_HEIGHT)
-                .fill(fill);
-        if (this._webkitCompat) // FUDGE need width/height for webkit browsers as they don't inherit them from symbol
-            use.attr({width: width, height: height});
-        if (cell.size == CellSize.DOUBLE_HEIGHT || cell.size == CellSize.DOUBLE_SIZE)
-            use.attr('height', VectorViewBase._CELL_DOUBLE_HEIGHT);
-        if (cell.size == CellSize.DOUBLE_WIDTH || cell.size == CellSize.DOUBLE_SIZE)
-            use.attr('width', VectorViewBase._CELL_DOUBLE_WIDTH);
-        if (cell.flashing) use.addClass('flash');
-        if (cell.concealed) use.addClass('conceal');
-    }
-
-    _resetGraphicRow(rowNum) {
-        if (this._graphicrows[rowNum]) this._graphicrows[rowNum].remove();
-        this._graphicrows[rowNum] = this._graphicLayer.group();
-    }
-
-    // eslint-disable-next-line no-unused-vars
-    _getCellAttr(cellType, isMosaicChar) {
-        return {
-            dx: null,
-            dy: null,
-            textLength: null,
-            lengthAdjust: null,
-            'text-anchor': null,
-            transform: null,
-            class: null,
-        };
-    }
-}
-
-// SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
-class ViewClassic extends VectorViewBase {}
-
-const TEST_PAGE_NAMES = ['SPLASH', 'ENGINEERING', 'ADVERT', 'UK'];
-
-class TeletextController {
-    constructor(model, options) {
-        this._windowDom = null;
-        if (typeof window == 'object') this._windowDom = window;
-        this._opt = {
-            webkitCompat: true // generate SVG that's compatible with webkit by default. The resulting SVG is larger
-        };
-        if (typeof options == 'object') {
-            if ('webkitCompat' in options && !options.webkitCompat) this._opt.webkitCompat = false;
-            if ('dom' in options) this._windowDom = options.dom;
-        }
-        if (this._windowDom == null)
-            throw new Error('TeletextController E24: No window dom object available');
-
-        this._view = new View(model, this._opt.webkitCompat, this._windowDom);
-        this._model = model;
-        this._levelIndex = 1;
-        this._testPageIndex = 0;
-        this._initEventHandlers();
-        this._viewSelector = null;
-        this._height = null;
-        console.debug('TeletextController constructed');
-    }
-
-    setRow(rowNum, string) {
-        this._model.setRowFromChars(rowNum, string);
-    }
-
-    setPageRows(rows) {
-        this._model.setRows(rows);
-    }
-
-    showTestPage() {
-        this.loadPageFromEncodedString(testpages[TEST_PAGE_NAMES[this._testPageIndex]]);
-        this._testPageIndex++;
-        if (this._testPageIndex == TEST_PAGE_NAMES.length) this._testPageIndex = 0;
-    }
-    
-    showRandomisedPage() {
-        const rows = [];
-        for (let row = 0; row < 25; row++) {
-            const cols = [];
-            for (let col = 0; col < 40; col++) {
-                cols.push(String.fromCharCode(Math.random() * 127));
-            }
-            rows.push(cols.join(''));
-        }
-        this.setPageRows(rows);
-    }
-
-    loadPageFromEncodedString(input) {
-        const decoded = Utils.decodeBase64URLEncoded(input, this._windowDom.atob);
-        this.setPageRows(decoded);
-    }
-
-    _initEventHandlers() {
-        let w;
-        if ('_dom' in this) {
-            w = this._dom;
-        } else if (typeof window == 'object') {
-            w = window;
-        }
-        if (w) {
-            w.addEventListener('ttx.reveal', () => this._view.reveal());
-            w.addEventListener('ttx.mix', () => this._view.mixMode());
-            w.addEventListener('ttx.subtitlemode', () => this._view.boxMode());
-        }
-    }
-
-    toggleReveal() {
-        this._view.reveal();
-    }
-
-    toggleMixMode() {
-        this._view.mixMode();
-    }
-
-    toggleBoxMode() {
-        this._view.boxMode();
-    }
-
-    toggleGrid() {
-        this._view.grid();
-    }
-
-    setLevel(level) {
-        this._model.setLevel(level);
-    }
-
-    addTo(selector) {
-        this._selector = selector;
-        this._view.addTo(selector);
-    }
-
-    setFont(font) {
-        this._view.setFont(font);
-    }
-
-    clearScreen(withUpdate) {
-        this._model.clearScreen(withUpdate);
-    }
-
-    setAspectRatio(aspectRatio) {
-        if (aspectRatio == 'natural') {
-            this._view.setAspectRatio(aspectRatio);
-            return;
-        }
-        const ar = parseFloat(aspectRatio);
-        if (Number.isNaN(ar)) throw new Error("E80 setAspectRatio: bad number");
-        this._view.setAspectRatio(ar);
-    }
-
-    setHeight(height) {
-        const newHeight = parseFloat(height);
-        if (Number.isNaN(newHeight)) throw new Error("E98 setHeight: bad number");
-        this._view.setHeight(newHeight);
-        this._height = newHeight;
-    }
-
-    setDefaultG0Charset(...args) {
-        this._model.setPrimaryG0CharacterEncoding(...args);
-    }
-
-    setSecondG0Charset(...args) {
-        this._model.setSecondaryG0CharacterEncoding(...args);
-    }
-
-    remove() {
-        this._view.detach();
-        if (this._selector) {
-            const el = document.querySelector(this._selector);
-            if (el) el.removeChild(el.firstChild);
-        }
-        this._view = null;
-    }
-
-    setView(view) {
-        this.remove();
-        switch (view) {
-            case 'classic__font-for-mosaic':
-                this._view = new ViewClassic(this._model, this._dom);
-                break;
-            case 'classic__graphic-for-mosaic':
-                this._view = new View(this._model, this._opt.webkitCompat, this._dom);
-                break;
-            default:
-                throw new Error("setView E126: bad view name:" + view);
-        }
-        if (this._height) this._view.setHeight(this._height);
-        if (this._selector) this._view.addTo(this._selector);
-        this._model.notify();
-    }
-
-    registerViewPlugin(plugin) {
-        plugin.registerWithView(this._view);
-        this._model.notify();
-    }
-
-    // dumpToConsole() {
-    //     this._model.dumpToConsole();
-    // }
 }
 
 var latin_g0 = {
@@ -2586,48 +2301,59 @@ var encodings = {
 
 const sextants = {};
 
+// for plugins
+class WrappedCell {
+    constructor(cell) {
+        this.type = cell.type_;
+        this.flashing = cell.flashing_;
+        this.concealed = cell.concealed_;
+        this.size = cell.size_;
+        this.sextants = cell.getSextants_();
+    }
+}
+
 class Cell {
     constructor() {
         this._byte = ' ';
         this._char = ' ';
         this._fgColour = Colour.WHITE;
         this._bgColour = Colour.BLACK;
-        this._type = CellType.ALPHA;
+        this._type = CellType.ALPHA_;
         this._flashing = false;
-        this._size = CellSize.NORMAL_SIZE;
+        this._size = CellSize.NORMAL_SIZE_;
         this._concealed = false;
         this._boxed = false;
         this._byteHeld = null;
     }
 
-    set byte(byte) {
+    set byte_(byte) {
         this._byte = byte;
     }
 
-    get byte() {
+    get byte_() {
         return this._byte;
     }
 
-    set fgColour(colour) {
+    set fgColour_(colour) {
         this._fgColour = colour;
     }
 
-    get fgColour() {
+    get fgColour_() {
         return this._fgColour;
     }
 
-    set bgColour(colour) {
+    set bgColour_(colour) {
         this._bgColour = colour;
     }
 
-    get bgColour() {
+    get bgColour_() {
         return this._bgColour;
     }
 
-    setMappedChar(encoding) {
-        if (this._type == CellType.ALPHA || ((this._byte.charCodeAt(0) & 0b100000) == 0))
+    setMappedChar_(encoding) {
+        if (this._type == CellType.ALPHA_ || ((this._byte.charCodeAt(0) & 0b100000) == 0))
             this._char = getCharWithEncoding(this._byte, encoding);
-        else if (this._type == CellType.MOSAIC_CONTIGUOUS)
+        else if (this._type == CellType.MOSAIC_CONTIGUOUS_)
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__legacy_computing');
         else
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__unscii_separated');
@@ -2635,13 +2361,13 @@ class Cell {
         this._byteHeld = null;
     }
 
-    setSpace(heldMosaic) {
-        if ((this._type == CellType.MOSAIC_CONTIGUOUS || this._type == CellType.MOSAIC_SEPARATED)
+    setSpace_(heldMosaic) {
+        if ((this._type == CellType.MOSAIC_CONTIGUOUS_ || this._type == CellType.MOSAIC_SEPARATED_)
             && heldMosaic.active) {
             this._byteHeld = heldMosaic.char;
             this._type = heldMosaic.type;
             let charEncoding = 'g1_block_mosaic_to_unicode__legacy_computing';
-            if (this._type == CellType.MOSAIC_SEPARATED) charEncoding = 'g1_block_mosaic_to_unicode__unscii_separated';
+            if (this._type == CellType.MOSAIC_SEPARATED_) charEncoding = 'g1_block_mosaic_to_unicode__unscii_separated';
             this._char = getCharWithEncoding(heldMosaic.char, charEncoding);
         } else {
             this._byteHeld = null;
@@ -2649,66 +2375,66 @@ class Cell {
         }
     }
 
-    get char() {
+    get char_() {
         return this._char;
     }
 
-    get type() {
+    get type_() {
         return this._type;
     }
 
-    set type(type) {
+    set type_(type) {
         this._type = type;
     }
 
-    set flashing(state) {
+    set flashing_(state) {
         this._flashing = state;
     }
 
-    get flashing() {
+    get flashing_() {
         return this._flashing;
     }
 
-    get size() {
+    get size_() {
         return this._size;
     }
 
-    set size(size) {
+    set size_(size) {
         this._size = size;
     }
 
-    set concealed(concealed) {
+    set concealed_(concealed) {
         this._concealed = concealed;
     }
 
-    get concealed() {
+    get concealed_() {
         return this._concealed;
     }
 
-    set boxed(boxed) {
+    set boxed_(boxed) {
         this._boxed = boxed;
     }
 
-    get boxed() {
+    get boxed_() {
         return this._boxed;
     }
 
     // used in rendering to distinguish burn-through characters in G1 set
-    isMosaicByte() {
+    isMosaicByte_() {
         const code = this._byteHeld != null ? this._byteHeld.charCodeAt(0) : this._byte.charCodeAt(0);
         return (code <= 0x7f) && ((code & 0b100000) == 0b100000);
     }
     
     // used in page model to keep track of mosaic to hold 
-    isMosaic() {
+    isMosaic_() {
         const code = this._byte.charCodeAt(0);
-        const isMosaic = (this._type == CellType.MOSAIC_CONTIGUOUS || this._type == CellType.MOSAIC_SEPARATED)
+        const isMosaic = (this._type == CellType.MOSAIC_CONTIGUOUS_ || this._type == CellType.MOSAIC_SEPARATED_)
                 && (code <= 0x7f) 
                 && ((code & 0b100000) == 0b100000);
         return isMosaic;
     }
 
-    getSextants() {
+    getSextants_() {
         const code = this._byteHeld != null ? this._byteHeld.charCodeAt(0) : this._byte.charCodeAt(0);
         if (code > 0x7f) return null;
         if (code in sextants) return sextants[code];
@@ -2737,6 +2463,288 @@ function getCharWithEncoding(byte, encoding) {
 }
 
 // SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
+
+class View extends VectorViewBase {
+    constructor(model, webkitCompat, dom) {
+        super(model, dom);
+        // webkit doesn't use the width/height on <symbol> which is SVG2.
+        // When webkitCompat is true, the width/height are duplicated on <use>
+        this._webkitCompat = webkitCompat;
+        this._mosaicSymbols = new Set();
+        console.debug('VectorViewGraphicMosaic constructed');
+    }
+
+    _createDisplay() {
+        super._createDisplay();
+        this._graphicrows = [];
+        this._graphicLayer = this.d.group_();
+    }
+
+    _resetRow(rowIndex) {
+        super._resetRow(rowIndex);
+        this._resetGraphicRow(rowIndex);
+    }
+
+    _renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaic) {
+        if ('_background' in this._plugins) {
+            this._plugins._background(rowIndex, cellIndex, cell.size_, cell.bgColour_);
+        }
+
+        if (cell.type_ == CellType.ALPHA_ || !isMosaic) {
+            this._renderText(cellView, cell, attr, fill, cellIndex, rowIndex);
+        } else if (isMosaic) {
+            cellView.plain_(' ').attr_(attr);
+            this._renderMosaic(rowIndex, cellIndex, cell, fill);
+        }
+    }
+
+    _renderMosaic(row, col, cell, fill) {
+        if ('_mosaic' in this._plugins) {
+            const wrappedCell = new WrappedCell(cell);
+            const rendered = this._plugins._mosaic(row, col, wrappedCell, fill);
+            if (rendered) return;
+        }
+
+        const sextants = cell.getSextants_();
+        if (!sextants.includes('1')) return;
+        let id = cell.type_ == CellType.MOSAIC_CONTIGUOUS_ ? 'c' : 's';
+        id += sextants.join('');
+
+        let width = VectorViewBase._CELL_WIDTH;
+        let height = VectorViewBase._CELL_HEIGHT;
+        if (cell.type_ == CellType.MOSAIC_CONTIGUOUS_) {
+            width = VectorViewBase._CELL_WIDTH + 0.3;
+            height = VectorViewBase._CELL_HEIGHT + 0.2;
+        }
+
+        if (!this._mosaicSymbols.has(id)) {
+            this._mosaicSymbols.add(id);
+            const symbol = this._svg.symbol_(id);
+
+            if (cell.type_ == CellType.MOSAIC_CONTIGUOUS_) {
+                symbol.attr_({
+                    preserveAspectRatio: 'none',
+                    width: width,     // FUDGE cell is bigger than it should be
+                    height: height,   // to close tiny gaps on Chromecast
+                    viewBox: '0 0 12 18',
+                });
+                for (let i = 0; i < 6; i++) {
+                    sextants[i] == '1' && symbol.rect_(6, 6).move_((i % 2) * 6, Math.floor(i/2) * 6);
+                }
+            } else {
+                symbol.attr_({
+                    preserveAspectRatio: 'none',
+                    width: width,
+                    height: height,
+                    viewBox: '0 0 12 18',
+                });
+                for (let i = 0; i < 6; i++) {
+                    sextants[i] == '1' && symbol.rect_(4, 4).move_(((i % 2) * 6) + 1, (Math.floor(i/2) * 6) + 2);
+                }
+            }
+        }
+
+        let use;
+        if (cell.type_ == CellType.MOSAIC_CONTIGUOUS_)
+            use = this._graphicrows[row]
+                .use_(id)
+                .move_(col * VectorViewBase._CELL_WIDTH - 0.15, row * VectorViewBase._CELL_HEIGHT - 0.1)
+                .fill_(fill);
+        else
+            use = this._graphicrows[row]
+                .use_(id)
+                .move_(col * VectorViewBase._CELL_WIDTH, row * VectorViewBase._CELL_HEIGHT)
+                .fill_(fill);
+        if (this._webkitCompat) // FUDGE need width/height for webkit browsers as they don't inherit them from symbol
+            use.attr_({width: width, height: height});
+        if (cell.size_ == CellSize.DOUBLE_HEIGHT_ || cell.size_ == CellSize.DOUBLE_SIZE_)
+            use.attr_('height', VectorViewBase._CELL_DOUBLE_HEIGHT);
+        if (cell.size_ == CellSize.DOUBLE_WIDTH_ || cell.size_ == CellSize.DOUBLE_SIZE_)
+            use.attr_('width', VectorViewBase._CELL_DOUBLE_WIDTH);
+        if (cell.flashing_) use.addClass_('flash');
+        if (cell.concealed_) use.addClass_('conceal');
+    }
+
+    _resetGraphicRow(rowNum) {
+        if (this._graphicrows[rowNum]) this._graphicrows[rowNum].remove_();
+        this._graphicrows[rowNum] = this._graphicLayer.group_();
+    }
+
+    // eslint-disable-next-line no-unused-vars
+    _getCellAttr(cellType, isMosaicChar) {
+        return {
+            dx: null,
+            dy: null,
+            textLength: null,
+            lengthAdjust: null,
+            'text-anchor': null,
+            transform: null,
+            class: null,
+        };
+    }
+}
+
+// SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
+class ViewClassic extends VectorViewBase {}
+
+const TEST_PAGE_NAMES = ['SPLASH', 'ENGINEERING', 'ADVERT', 'UK'];
+
+class TeletextController {
+    constructor(model, options) {
+        this._windowDom = null;
+        if (typeof window == 'object') this._windowDom = window;
+        this._opt = {
+            webkitCompat: true // generate SVG that's compatible with webkit by default. The resulting SVG is larger
+        };
+        if (typeof options == 'object') {
+            if ('webkitCompat' in options && !options.webkitCompat) this._opt.webkitCompat = false;
+            if ('dom' in options) this._windowDom = options.dom;
+        }
+        if (this._windowDom == null)
+            throw new Error('TeletextController E24: No window dom object available');
+
+        this._view = new View(model, this._opt.webkitCompat, this._windowDom);
+        this._model = model;
+        this._levelIndex = 1;
+        this._testPageIndex = 0;
+        this._initEventHandlers();
+        this._viewSelector = null;
+        this._height = null;
+        console.debug('TeletextController constructed');
+    }
+
+    setRow(rowNum, string) {
+        this._model.setRowFromChars_(rowNum, string);
+    }
+
+    setPageRows(rows) {
+        this._model.setRows_(rows);
+    }
+
+    showTestPage() {
+        this.loadPageFromEncodedString(testpages[TEST_PAGE_NAMES[this._testPageIndex]]);
+        this._testPageIndex++;
+        if (this._testPageIndex == TEST_PAGE_NAMES.length) this._testPageIndex = 0;
+    }
+    
+    showRandomisedPage() {
+        const rows = [];
+        for (let row = 0; row < 25; row++) {
+            const cols = [];
+            for (let col = 0; col < 40; col++) {
+                cols.push(String.fromCharCode(Math.random() * 127));
+            }
+            rows.push(cols.join(''));
+        }
+        this.setPageRows(rows);
+    }
+
+    loadPageFromEncodedString(input) {
+        const decoded = Utils.decodeBase64URLEncoded_(input, this._windowDom.atob);
+        this.setPageRows(decoded);
+    }
+
+    _initEventHandlers() {
+        this._windowDom.addEventListener('ttx.reveal', () => this._view.reveal_());
+        this._windowDom.addEventListener('ttx.mix', () => this._view.mixMode_());
+        this._windowDom.addEventListener('ttx.subtitlemode', () => this._view.boxMode_());
+    }
+
+    toggleReveal() {
+        this._view.reveal_();
+    }
+
+    toggleMixMode() {
+        this._view.mixMode_();
+    }
+
+    toggleBoxMode() {
+        this._view.boxMode_();
+    }
+
+    toggleGrid() {
+        this._view.grid_();
+    }
+
+    setLevel(level) {
+        this._model.setLevel_(level);
+    }
+
+    addTo(selector) {
+        this._selector = selector;
+        this._view.addTo_(selector);
+    }
+
+    setFont(font) {
+        this._view.setFont_(font);
+    }
+
+    clearScreen(withUpdate) {
+        this._model.clearScreen_(withUpdate);
+    }
+
+    setAspectRatio(aspectRatio) {
+        if (aspectRatio == 'natural') {
+            this._view.setAspectRatio_(aspectRatio);
+            return;
+        }
+        const ar = parseFloat(aspectRatio);
+        if (Number.isNaN(ar)) throw new Error("E80 setAspectRatio: bad number");
+        this._view.setAspectRatio_(ar);
+    }
+
+    setHeight(height) {
+        const newHeight = parseFloat(height);
+        if (Number.isNaN(newHeight)) throw new Error("E98 setHeight: bad number");
+        this._view.setHeight_(newHeight);
+        this._height = newHeight;
+    }
+
+    setDefaultG0Charset(...args) {
+        this._model.setPrimaryG0CharacterEncoding_(...args);
+    }
+
+    setSecondG0Charset(...args) {
+        this._model.setSecondaryG0CharacterEncoding_(...args);
+    }
+
+    remove() {
+        this._view.detach_();
+        if (this._selector) {
+            const el = document.querySelector(this._selector);
+            if (el) el.removeChild(el.firstChild);
+        }
+        this._view = null;
+    }
+
+    setView(view) {
+        this.remove();
+        switch (view) {
+            case 'classic__font-for-mosaic':
+                this._view = new ViewClassic(this._model, this._windowDom);
+                break;
+            case 'classic__graphic-for-mosaic':
+                this._view = new View(this._model, this._opt.webkitCompat, this._windowDom);
+                break;
+            default:
+                throw new Error("setView E126: bad view name:" + view);
+        }
+        if (this._height) this._view.setHeight_(this._height);
+        if (this._selector) this._view.addTo_(this._selector);
+        this._model.notify_();
+    }
+
+    registerViewPlugin(plugin) {
+        plugin.registerWithView(this._view);
+        this._model.notify_();
+    }
+
+    // dumpToConsole() {
+    //     this._model.dumpToConsole();
+    // }
+}
+
+// SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
 // SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 
 class Event {
@@ -2745,16 +2753,16 @@ class Event {
         this._listeners = [];
     }
 
-    attach(listener) {
+    attach_(listener) {
         this._listeners.push(listener);
         return this._listeners.length - 1;
     }
 
-    notify(args) {
+    notify_(args) {
         this._listeners.forEach(fn => fn != null && fn(this._sender, args));
     }
 
-    detach(index) {
+    detach_(index) {
         this._listeners[index] = null;
     }
 }
@@ -2768,19 +2776,19 @@ class RowModel {
         this._cells = [];
     }
 
-    get doubleHeight() {
+    get doubleHeight_() {
         return this._doubleHeight;
     }
 
-    set doubleHeight(isDoubleHeight) {
+    set doubleHeight_(isDoubleHeight) {
         this._doubleHeight = isDoubleHeight;
     }
 
-    addCell(cell) {
+    addCell_(cell) {
         this._cells.push(cell);
     }
 
-    getCell(i) {
+    getCell_(i) {
         if (i >= this._cells.length) throw new Error('RowModel.getCell E20 bad cell index');
         return this._cells[i];
     }
@@ -2807,28 +2815,28 @@ class PageModel {
         this._startBoxChar = Attributes.charFromAttribute(Attributes.START_BOX);
         this._level = Level[1];
         
-        this.onSet = new Event(this);
+        this.onSet_ = new Event(this);
         console.debug('PageModel constructed');
     }
 
-    notify() {
-        this.onSet.notify();
+    notify_() {
+        this.onSet_.notify_();
     }
 
-    setRowFromChars(rowNum, text) {
+    setRowFromChars_(rowNum, text) {
         if (rowNum >= ROWS) {
             throw new Error("PageModel E29 bad row number");
         }
         this._setRowFromChars(rowNum, text);
-        this.onSet.notify();
+        this.onSet_.notify_();
     }
 
-    setRows(rows) {
+    setRows_(rows) {
         rows = rows.slice(0, ROWS);
         rows.forEach((row, index) => {
             this._setRowFromChars(index, row);
         });
-        this.onSet.notify();
+        this.onSet_.notify_();
     }
 
     _setRowFromChars(rowNum, text) {
@@ -2839,11 +2847,11 @@ class PageModel {
             if (Number.isNaN(code) || code > 127) {
                 throw new Error(`PageModel E51 failed to write row: bad character code (${code}) at row ${rowNum} col ${colNum}`);
             }
-            this._screen[rowNum][colNum].byte = c;
+            this._screen[rowNum][colNum].byte_ = c;
         });
         if (textArray.length < CELLS_PER_ROW) {
             for (let colNum = textArray.length; colNum < CELLS_PER_ROW; colNum++) {
-                this._screen[rowNum][colNum].byte = ' ';
+                this._screen[rowNum][colNum].byte_ = ' ';
             }
         }
     }
@@ -2858,20 +2866,20 @@ class PageModel {
     //     });
     // }
 
-    setLevel(level) {
+    setLevel_(level) {
         this._level = level;
         console.debug('PageModel.setLevel: switching to Level', level);
-        this.onSet.notify();
+        this.onSet_.notify_();
     }
 
-    clearScreen(withUpdate) {
+    clearScreen_(withUpdate) {
         const updateAfterClear = typeof withUpdate != 'undefined' ? withUpdate : true;
         if (updateAfterClear) {
             const rows = [];
             for (let rowNum = 0; rowNum < ROWS; rowNum++) {
                 rows.push("");
             }
-            this.setRows(rows);
+            this.setRows_(rows);
         } else {
             for (let rowNum = 0; rowNum < ROWS; rowNum++) {
                 this._setRowFromChars(rowNum, "");
@@ -2879,19 +2887,19 @@ class PageModel {
         }
     }
 
-    setPrimaryG0CharacterEncoding(encoding, withUpdate) {
+    setPrimaryG0CharacterEncoding_(encoding, withUpdate) {
         this._primaryG0CharacterEncoding = encoding;
         console.debug('PageModel.setPrimaryG0CharacterEncoding: set default g0 encoding to', encoding);
-        if (withUpdate) this.onSet.notify();
+        if (withUpdate) this.onSet_.notify_();
     }
 
-    setSecondaryG0CharacterEncoding(encoding, withUpdate) {
+    setSecondaryG0CharacterEncoding_(encoding, withUpdate) {
         this._secondaryG0CharacterEncoding = encoding;
         console.debug('PageModel.setSecondaryG0CharacterEncoding: set second g0 encoding to', encoding);
-        if (withUpdate) this.onSet.notify();
+        if (withUpdate) this.onSet_.notify_();
     }
 
-    getRow(rowNum) {
+    getRow_(rowNum) {
         if (rowNum >= ROWS) {
             throw new Error("PageModel.getRow E42 bad rowNum");
         }
@@ -2899,10 +2907,10 @@ class PageModel {
         let textColour, switchedG0CharacterEncoding;
 
         // start of row defaults for 'set-after' attributes
-        let nextCellType = CellType.ALPHA;
+        let nextCellType = CellType.ALPHA_;
         let nextTextColour = Colour.WHITE;
         let nextFlashing = false;
-        let nextSize = CellSize.NORMAL_SIZE;
+        let nextSize = CellSize.NORMAL_SIZE_;
         let nextSwitchedG0CharacterEncoding = false;
         let nextConcealed = false; // setting is set-at, unsetting is set-after
         let cancelNextHoldMosaics = false; // setting is set-at, cancelling is set-after
@@ -2910,25 +2918,25 @@ class PageModel {
 
         // start of row defaults for 'set-at' attributes
         let backgroundColour = Colour.BLACK;
-        let graphicType = CellType.MOSAIC_CONTIGUOUS;
+        let graphicType = CellType.MOSAIC_CONTIGUOUS_;
         let heldMosaic = {
             active: false,
             char: ' ',
-            type: CellType.MOSAIC_CONTIGUOUS
+            type: CellType.MOSAIC_CONTIGUOUS_
         };
 
         this._screen[rowNum].forEach((cell, cellIndex) => {
-            const char = cell.byte;
+            const char = cell.byte_;
             const attrib = Attributes.attribFromChar(this._level, char);
 
             // 'set-after' attributes from previous cell
             textColour = nextTextColour;
-            cell.type = nextCellType;
-            cell.boxed = nextBoxed;
+            cell.type_ = nextCellType;
+            cell.boxed_ = nextBoxed;
             switchedG0CharacterEncoding = nextSwitchedG0CharacterEncoding;
-            if (attrib.attribute != Attributes.STEADY) cell.flashing = nextFlashing;
-            if (attrib.attribute != Attributes.NORMAL_SIZE) cell.size = nextSize;
-            if (attrib.attribute != Attributes.CONCEAL) cell.concealed = nextConcealed;
+            if (attrib.attribute != Attributes.STEADY) cell.flashing_ = nextFlashing;
+            if (attrib.attribute != Attributes.NORMAL_SIZE) cell.size_ = nextSize;
+            if (attrib.attribute != Attributes.CONCEAL) cell.concealed_ = nextConcealed;
             if (cancelNextHoldMosaics) {
                 if (attrib.attribute != Attributes.HOLD_MOSAICS) {
                     heldMosaic.active = false;
@@ -2939,115 +2947,115 @@ class PageModel {
 
             switch (attrib.attribute) {
                 case Attributes.TEXT_COLOUR: // set after this cell
-                    nextCellType = CellType.ALPHA;
+                    nextCellType = CellType.ALPHA_;
                     nextTextColour = attrib.colour;
                     nextConcealed = false;
-                    cell.setSpace(heldMosaic);
+                    cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.MOSAIC_COLOUR: // set after this cell
                     nextCellType = graphicType;
                     nextTextColour = attrib.colour;
                     nextConcealed = false;
-                    cell.setSpace(heldMosaic);
+                    cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.NEW_BACKGROUND: // set at this cell
                     backgroundColour = textColour;
-                    cell.setSpace(heldMosaic);
+                    cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.BLACK_BACKGROUND: // set at
                     backgroundColour = Colour.BLACK;
-                    cell.setSpace(heldMosaic);
+                    cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.CONTIGUOUS_GRAPHICS: // set at
-                    graphicType = CellType.MOSAIC_CONTIGUOUS;
-                    if (cell.type == CellType.MOSAIC_SEPARATED) cell.type = CellType.MOSAIC_CONTIGUOUS;
-                    if (nextCellType == CellType.MOSAIC_SEPARATED) nextCellType = CellType.MOSAIC_CONTIGUOUS;
-                    cell.setSpace(heldMosaic);
+                    graphicType = CellType.MOSAIC_CONTIGUOUS_;
+                    if (cell.type_ == CellType.MOSAIC_SEPARATED_) cell.type_ = CellType.MOSAIC_CONTIGUOUS_;
+                    if (nextCellType == CellType.MOSAIC_SEPARATED_) nextCellType = CellType.MOSAIC_CONTIGUOUS_;
+                    cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.SEPARATED_GRAPHICS: // set at
-                    graphicType = CellType.MOSAIC_SEPARATED;
-                    if (cell.type == CellType.MOSAIC_CONTIGUOUS) cell.type = CellType.MOSAIC_SEPARATED;
-                    if (nextCellType == CellType.MOSAIC_CONTIGUOUS) nextCellType = CellType.MOSAIC_SEPARATED;
-                    cell.setSpace(heldMosaic);
+                    graphicType = CellType.MOSAIC_SEPARATED_;
+                    if (cell.type_ == CellType.MOSAIC_CONTIGUOUS_) cell.type_ = CellType.MOSAIC_SEPARATED_;
+                    if (nextCellType == CellType.MOSAIC_CONTIGUOUS_) nextCellType = CellType.MOSAIC_SEPARATED_;
+                    cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.ESC: // for switching g0 sets. Set after
                     if (this._secondaryG0CharacterEncoding) {
                         nextSwitchedG0CharacterEncoding = !switchedG0CharacterEncoding;
                     }
-                    cell.setSpace(heldMosaic);
+                    cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.FLASH: // set after
                     nextFlashing = true;
-                    cell.setSpace(heldMosaic);
+                    cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.STEADY: // set at
-                    cell.flashing = false;
+                    cell.flashing_ = false;
                     nextFlashing = false;
-                    cell.setSpace(heldMosaic);
+                    cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.NORMAL_SIZE: // set at
-                    cell.size = CellSize.NORMAL_SIZE;
-                    nextSize = CellSize.NORMAL_SIZE;
-                    cell.setSpace(heldMosaic);
+                    cell.size_ = CellSize.NORMAL_SIZE_;
+                    nextSize = CellSize.NORMAL_SIZE_;
+                    cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.DOUBLE_HEIGHT: // set after
-                    nextSize = CellSize.DOUBLE_HEIGHT;
-                    rowModel.doubleHeight = true;
-                    cell.setSpace(heldMosaic);
+                    nextSize = CellSize.DOUBLE_HEIGHT_;
+                    rowModel.doubleHeight_ = true;
+                    cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.DOUBLE_WIDTH: // set after
-                    nextSize = CellSize.DOUBLE_WIDTH;
-                    cell.setSpace(heldMosaic);
+                    nextSize = CellSize.DOUBLE_WIDTH_;
+                    cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.DOUBLE_SIZE: // set after
-                    nextSize = CellSize.DOUBLE_SIZE;
-                    rowModel.doubleHeight = true;
-                    cell.setSpace(heldMosaic);
+                    nextSize = CellSize.DOUBLE_SIZE_;
+                    rowModel.doubleHeight_ = true;
+                    cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.CONCEAL: // set at
-                    cell.concealed = true;
+                    cell.concealed_ = true;
                     nextConcealed = true;
-                    cell.setSpace(heldMosaic);
+                    cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.HOLD_MOSAICS: // set at
                     heldMosaic.active = true;
-                    cell.setSpace(heldMosaic);
+                    cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.RELEASE_MOSAICS: // set after
                     cancelNextHoldMosaics = true;
-                    cell.setSpace(heldMosaic);
+                    cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.START_BOX: // set between two start box chars
                     if (cellIndex >= 1) {
-                        if (this._screen[rowNum][cellIndex-1].byte == this._startBoxChar) {
-                            cell.boxed = true;
+                        if (this._screen[rowNum][cellIndex-1].byte_ == this._startBoxChar) {
+                            cell.boxed_ = true;
                             nextBoxed = true;
                         }
                     }
-                    cell.setSpace(heldMosaic);
+                    cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.END_BOX: // set after
                     nextBoxed = false;
-                    cell.setSpace(heldMosaic);
+                    cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.UNKNOWN:
-                    cell.setSpace(heldMosaic);
+                    cell.setSpace_(heldMosaic);
                     break;
                 default:
                     if (switchedG0CharacterEncoding)
-                        cell.setMappedChar(this._secondaryG0CharacterEncoding);
+                        cell.setMappedChar_(this._secondaryG0CharacterEncoding);
                     else
-                        cell.setMappedChar(this._primaryG0CharacterEncoding);
+                        cell.setMappedChar_(this._primaryG0CharacterEncoding);
                     // mosaic chars are held for use when 'hold mosaics' is active
-                    if (cell.isMosaic()) {
+                    if (cell.isMosaic_()) {
                         heldMosaic.char = char;
-                        heldMosaic.type = cell.type;
+                        heldMosaic.type = cell.type_;
                     }
             }
 
-            cell.fgColour = textColour;
-            cell.bgColour = backgroundColour;
-            rowModel.addCell(cell);
+            cell.fgColour_ = textColour;
+            cell.bgColour_ = backgroundColour;
+            rowModel.addCell_(cell);
         });
         // console.dir(rowModel);
         return rowModel;
