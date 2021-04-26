@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 
 import { SVG } from './SVG.js'
-import { Attributes, CellType, CellSize } from './Attributes.js';
+import { Attributes, CellType, CellSize, fillColourFromColourAttrib } from './Attributes.js';
 
 const WIDTH_PX = 400;
 const HEIGHT_PX = 250;
@@ -105,9 +105,9 @@ export class VectorViewBase {
                 }
 
                 const cell = rowModel.getCell_(cellIndex);
-                const bg = Attributes.fillColourFromColourAttrib(cell.bgColour_);
+                const bg = fillColourFromColourAttrib(cell.bgColour_);
                 const isMosaicByte = cell.isMosaicByte_();
-                const fill = Attributes.fillColourFromColourAttrib(cell.fgColour_);
+                const fill = fillColourFromColourAttrib(cell.fgColour_);
                 const attr = this._getCellAttr(cell.type_, isMosaicByte);
 
                 this._renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaicByte);
@@ -449,7 +449,7 @@ VectorViewBase.ROWS = ROWS;
 VectorViewBase.COLS = COLS;
 
 // helper functions used by plugin
-const colourLookupFn = colourSymbol => Attributes.fillColourFromColourAttrib(colourSymbol);
+const colourLookupFn = colourSymbol => fillColourFromColourAttrib(colourSymbol);
 const isDoubleHeightFn = size => size == CellSize.DOUBLE_HEIGHT_;
 const isDoubleWidthFn = size => size == CellSize.DOUBLE_WIDTH_;
 const isDoubleSizeFn = size => size == CellSize.DOUBLE_SIZE_;

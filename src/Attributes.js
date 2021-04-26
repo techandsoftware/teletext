@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
 // SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 
+// Exported in public interface
 export const Colour = {
     BLACK  : Symbol('BLACK'),
     RED    : Symbol('RED'),
@@ -28,6 +29,7 @@ export const CellSize = {
 };
 Object.freeze(CellSize);
 
+// Exported in public interface
 export class Attributes {
     static charFromTextColour(colour) {
         if (colour in textColourToChar) return textColourToChar[colour];
@@ -43,30 +45,8 @@ export class Attributes {
         if (attrib in spacingAttributesToChar) return spacingAttributesToChar[attrib];
         throw new Error('Attributes.charFromAttribute: bad attribute');
     }
-
-    static attribFromChar(level, char) {
-        let attribute = null;
-        let colour = null;
-        if (char in attributeChars && charCodesByLevel[level].includes(char.charCodeAt(0))) {
-            if (char in charToTextColour) {
-                attribute = Attributes.TEXT_COLOUR;
-                colour = attributeChars[char];
-            } else if (char in charToGraphicColour) {
-                attribute = Attributes.MOSAIC_COLOUR;
-                colour = attributeChars[char];
-            } else {
-                attribute = attributeChars[char];
-            }
-        } else if (char.charCodeAt(0) <= 0x1f) {
-            attribute = Attributes.UNKNOWN_;
-        }
-        return { attribute, colour };
-    }
-
-    static fillColourFromColourAttrib(colour) {
-        return colourAttribToFillColour[colour];
-    }
 }
+
 Attributes.TEXT_COLOUR         = CellType.ALPHA_;
 Attributes.MOSAIC_COLOUR       = Symbol('MOSAIC_COLOUR');
 Attributes.NEW_BACKGROUND      = Symbol('NEW_BACKGROUND');
@@ -87,7 +67,30 @@ Attributes.START_BOX           = Symbol('START_BOX');
 Attributes.END_BOX             = Symbol('END_BOX');
 Attributes.UNKNOWN_            = Symbol('UNKNOWN'); // pseudo-attribute
 
-// internal or private data below
+// private functions/data below
+
+export function attribFromChar(level, char) {
+    let attribute = null;
+    let colour = null;
+    if (char in attributeChars && charCodesByLevel[level].includes(char.charCodeAt(0))) {
+        if (char in charToTextColour) {
+            attribute = Attributes.TEXT_COLOUR;
+            colour = attributeChars[char];
+        } else if (char in charToGraphicColour) {
+            attribute = Attributes.MOSAIC_COLOUR;
+            colour = attributeChars[char];
+        } else {
+            attribute = attributeChars[char];
+        }
+    } else if (char.charCodeAt(0) <= 0x1f) {
+        attribute = Attributes.UNKNOWN_;
+    }
+    return { attribute, colour };
+}
+
+export function fillColourFromColourAttrib(colour) {
+    return colourAttribToFillColour[colour];
+}
 
 const colourAttribToFillColour = {
     [Colour.BLACK]   : '#000',

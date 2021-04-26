@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
 // SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 
-import { Level, Attributes, Colour, CellType, CellSize } from './Attributes.js';
+import { Level, Attributes, Colour, CellType, CellSize, attribFromChar } from './Attributes.js';
 import { Cell } from './Cell.js';
 import { Event } from './Event.js';
 import { RowModel } from './RowModel.js';
@@ -137,7 +137,7 @@ export class PageModel {
 
         this._screen[rowNum].forEach((cell, cellIndex) => {
             const char = cell.byte_;
-            const attrib = Attributes.attribFromChar(this._level, char);
+            const attrib = attribFromChar(this._level, char);
 
             // 'set-after' attributes from previous cell
             textColour = nextTextColour;
