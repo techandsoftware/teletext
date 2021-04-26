@@ -12,15 +12,19 @@ const TEST_PAGE_NAMES = ['SPLASH', 'ENGINEERING', 'ADVERT', 'UK'];
 
 export class TeletextController {
     constructor(model, options) {
+        this._windowDom = null;
+        if (typeof window == 'object') this._windowDom = window;
         this._opt = {
             webkitCompat: true // generate SVG that's compatible with webkit by default. The resulting SVG is larger
         };
         if (typeof options == 'object') {
             if ('webkitCompat' in options && !options.webkitCompat) this._opt.webkitCompat = false;
-            if ('dom' in options) this._dom = options.dom;
+            if ('dom' in options) this._windowDom = options.dom;
         }
+        if (this._windowDom == null)
+            throw new Error('TeletextController E24: No window dom object available');
 
-        this._view = new ViewGraphicMosaic(model, this._opt.webkitCompat, this._dom);
+        this._view = new ViewGraphicMosaic(model, this._opt.webkitCompat, this._windowDom);
         this._model = model;
         this._levelIndex = 1;
         this._testPageIndex = 0;
@@ -57,8 +61,7 @@ export class TeletextController {
     }
 
     loadPageFromEncodedString(input) {
-        const decoded = Utils.decodeBase64URLEncoded(input);
-        // this.setRow(0, decoded[2]);
+        const decoded = Utils.decodeBase64URLEncoded(input, this._windowDom.atob);
         this.setPageRows(decoded);
     }
 

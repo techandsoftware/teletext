@@ -8,7 +8,7 @@ export class Utils {
     // "base64url" encoding defined here https://tools.ietf.org/html/rfc4648
     // the packed data format is from https://github.com/rawles/edit.tf
     // returns a Uint1Array
-    static decodeBase64URLEncoded(input) {
+    static decodeBase64URLEncoded(input, atob) {
         // adjust the input before passing to atob
         input = input.replace(/-/g, '+').replace(/_/g, '/');
         const pad = input.length % 4;
