@@ -14,17 +14,17 @@ export const Colour = {
 Object.freeze(Colour);
 
 export const CellType = {
-    ALPHA : Symbol('ALPHA'),
-    MOSAIC_CONTIGUOUS: Symbol('MOSAIC_CONTIGUOUS'),
-    MOSAIC_SEPARATED: Symbol('MOSAIC_SEPARATED'),
+    ALPHA_ : Symbol('ALPHA'),
+    MOSAIC_CONTIGUOUS_: Symbol('MOSAIC_CONTIGUOUS'),
+    MOSAIC_SEPARATED_: Symbol('MOSAIC_SEPARATED'),
 };
 Object.freeze(CellType);
 
 export const CellSize = {
-    NORMAL_SIZE:   Symbol('NORMAL_SIZE'),
-    DOUBLE_HEIGHT: Symbol('DOUBLE_HEIGHT'),
-    DOUBLE_WIDTH:  Symbol('DOUBLE_WIDTH'),
-    DOUBLE_SIZE:   Symbol('DOUBLE_SIZE'),
+    NORMAL_SIZE_:   Symbol('NORMAL_SIZE'),
+    DOUBLE_HEIGHT_: Symbol('DOUBLE_HEIGHT'),
+    DOUBLE_WIDTH_:  Symbol('DOUBLE_WIDTH'),
+    DOUBLE_SIZE_:   Symbol('DOUBLE_SIZE'),
 };
 Object.freeze(CellSize);
 
@@ -58,7 +58,7 @@ export class Attributes {
                 attribute = attributeChars[char];
             }
         } else if (char.charCodeAt(0) <= 0x1f) {
-            attribute = Attributes.UNKNOWN;
+            attribute = Attributes.UNKNOWN_;
         }
         return { attribute, colour };
     }
@@ -67,27 +67,27 @@ export class Attributes {
         return colourAttribToFillColour[colour];
     }
 }
-Attributes.TEXT_COLOUR         = CellType.ALPHA;
+Attributes.TEXT_COLOUR         = CellType.ALPHA_;
 Attributes.MOSAIC_COLOUR       = Symbol('MOSAIC_COLOUR');
 Attributes.NEW_BACKGROUND      = Symbol('NEW_BACKGROUND');
 Attributes.BLACK_BACKGROUND    = Symbol('BLACK_BACKGROUND');
-Attributes.CONTIGUOUS_GRAPHICS = CellType.MOSAIC_CONTIGUOUS;
-Attributes.SEPARATED_GRAPHICS  = CellType.MOSAIC_SEPARATED;
+Attributes.CONTIGUOUS_GRAPHICS = CellType.MOSAIC_CONTIGUOUS_;
+Attributes.SEPARATED_GRAPHICS  = CellType.MOSAIC_SEPARATED_;
 Attributes.ESC                 = Symbol('ESC');
 Attributes.FLASH               = Symbol('FLASH');
 Attributes.STEADY              = Symbol('STEADY');
-Attributes.NORMAL_SIZE         = CellSize.NORMAL_SIZE;
-Attributes.DOUBLE_HEIGHT       = CellSize.DOUBLE_HEIGHT;
-Attributes.DOUBLE_WIDTH        = CellSize.DOUBLE_WIDTH;
-Attributes.DOUBLE_SIZE         = CellSize.DOUBLE_SIZE;
+Attributes.NORMAL_SIZE         = CellSize.NORMAL_SIZE_;
+Attributes.DOUBLE_HEIGHT       = CellSize.DOUBLE_HEIGHT_;
+Attributes.DOUBLE_WIDTH        = CellSize.DOUBLE_WIDTH_;
+Attributes.DOUBLE_SIZE         = CellSize.DOUBLE_SIZE_;
 Attributes.CONCEAL             = Symbol('CONCEAL');
 Attributes.HOLD_MOSAICS        = Symbol('HOLD_MOSAICS');
 Attributes.RELEASE_MOSAICS     = Symbol('RELEASE_MOSAICS');
 Attributes.START_BOX           = Symbol('START_BOX');
 Attributes.END_BOX             = Symbol('END_BOX');
-Attributes.UNKNOWN             = Symbol('UNKNOWN'); // pseudo-attribute
+Attributes.UNKNOWN_            = Symbol('UNKNOWN'); // pseudo-attribute
 
-// private data below
+// internal or private data below
 
 const colourAttribToFillColour = {
     [Colour.BLACK]   : '#000',

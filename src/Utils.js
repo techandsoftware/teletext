@@ -8,12 +8,12 @@ export class Utils {
     // "base64url" encoding defined here https://tools.ietf.org/html/rfc4648
     // the packed data format is from https://github.com/rawles/edit.tf
     // returns a Uint1Array
-    static decodeBase64URLEncoded(input, atob) {
+    static decodeBase64URLEncoded_(input, atob) {
         // adjust the input before passing to atob
         input = input.replace(/-/g, '+').replace(/_/g, '/');
         const pad = input.length % 4;
         if (pad) {
-            if (pad === 1) throw new Error('Utils.decodeBase64URL: Input base64url string is the wrong length to determine padding');
+            if (pad === 1) throw new Error('Utils.decodeBase64URLEncoded E16: Input base64url string is the wrong length to determine padding');
             input += new Array(5-pad).join('=');
         }
         const packed = atob(input);

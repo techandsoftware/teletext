@@ -49,7 +49,7 @@ export default {
       },
       mangle: {
         properties: {
-          regex: /^_.+/,
+          regex: /^_|_$/,
         },
       },
       format: {

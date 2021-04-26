@@ -6,48 +6,59 @@ import encodings from './data/characterEncodings.json';
 
 const sextants = {};
 
+// for plugins
+export class WrappedCell {
+    constructor(cell) {
+        this.type = cell.type_;
+        this.flashing = cell.flashing_;
+        this.concealed = cell.concealed_;
+        this.size = cell.size_;
+        this.sextants = cell.getSextants_();
+    }
+}
+
 export class Cell {
     constructor() {
         this._byte = ' ';
         this._char = ' ';
         this._fgColour = Colour.WHITE;
         this._bgColour = Colour.BLACK;
-        this._type = CellType.ALPHA;
+        this._type = CellType.ALPHA_;
         this._flashing = false;
-        this._size = CellSize.NORMAL_SIZE;
+        this._size = CellSize.NORMAL_SIZE_;
         this._concealed = false;
         this._boxed = false;
         this._byteHeld = null;
     }
 
-    set byte(byte) {
+    set byte_(byte) {
         this._byte = byte;
     }
 
-    get byte() {
+    get byte_() {
         return this._byte;
     }
 
-    set fgColour(colour) {
+    set fgColour_(colour) {
         this._fgColour = colour;
     }
 
-    get fgColour() {
+    get fgColour_() {
         return this._fgColour;
     }
 
-    set bgColour(colour) {
+    set bgColour_(colour) {
         this._bgColour = colour;
     }
 
-    get bgColour() {
+    get bgColour_() {
         return this._bgColour;
     }
 
-    setMappedChar(encoding) {
-        if (this._type == CellType.ALPHA || ((this._byte.charCodeAt(0) & 0b100000) == 0))
+    setMappedChar_(encoding) {
+        if (this._type == CellType.ALPHA_ || ((this._byte.charCodeAt(0) & 0b100000) == 0))
             this._char = getCharWithEncoding(this._byte, encoding);
-        else if (this._type == CellType.MOSAIC_CONTIGUOUS)
+        else if (this._type == CellType.MOSAIC_CONTIGUOUS_)
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__legacy_computing');
         else
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__unscii_separated');
@@ -55,13 +66,13 @@ export class Cell {
         this._byteHeld = null;
     }
 
-    setSpace(heldMosaic) {
-        if ((this._type == CellType.MOSAIC_CONTIGUOUS || this._type == CellType.MOSAIC_SEPARATED)
+    setSpace_(heldMosaic) {
+        if ((this._type == CellType.MOSAIC_CONTIGUOUS_ || this._type == CellType.MOSAIC_SEPARATED_)
             && heldMosaic.active) {
             this._byteHeld = heldMosaic.char;
             this._type = heldMosaic.type;
             let charEncoding = 'g1_block_mosaic_to_unicode__legacy_computing';
-            if (this._type == CellType.MOSAIC_SEPARATED) charEncoding = 'g1_block_mosaic_to_unicode__unscii_separated';
+            if (this._type == CellType.MOSAIC_SEPARATED_) charEncoding = 'g1_block_mosaic_to_unicode__unscii_separated';
             this._char = getCharWithEncoding(heldMosaic.char, charEncoding);
         } else {
             this._byteHeld = null;
@@ -69,66 +80,66 @@ export class Cell {
         }
     }
 
-    get char() {
+    get char_() {
         return this._char;
     }
 
-    get type() {
+    get type_() {
         return this._type;
     }
 
-    set type(type) {
+    set type_(type) {
         this._type = type;
     }
 
-    set flashing(state) {
+    set flashing_(state) {
         this._flashing = state;
     }
 
-    get flashing() {
+    get flashing_() {
         return this._flashing;
     }
 
-    get size() {
+    get size_() {
         return this._size;
     }
 
-    set size(size) {
+    set size_(size) {
         this._size = size;
     }
 
-    set concealed(concealed) {
+    set concealed_(concealed) {
         this._concealed = concealed;
     }
 
-    get concealed() {
+    get concealed_() {
         return this._concealed;
     }
 
-    set boxed(boxed) {
+    set boxed_(boxed) {
         this._boxed = boxed;
     }
 
-    get boxed() {
+    get boxed_() {
         return this._boxed;
     }
 
     // used in rendering to distinguish burn-through characters in G1 set
-    isMosaicByte() {
+    isMosaicByte_() {
         const code = this._byteHeld != null ? this._byteHeld.charCodeAt(0) : this._byte.charCodeAt(0);
         return (code <= 0x7f) && ((code & 0b100000) == 0b100000);
     }
     
     // used in page model to keep track of mosaic to hold 
-    isMosaic() {
+    isMosaic_() {
         const code = this._byte.charCodeAt(0);
-        const isMosaic = (this._type == CellType.MOSAIC_CONTIGUOUS || this._type == CellType.MOSAIC_SEPARATED)
+        const isMosaic = (this._type == CellType.MOSAIC_CONTIGUOUS_ || this._type == CellType.MOSAIC_SEPARATED_)
                 && (code <= 0x7f) 
                 && ((code & 0b100000) == 0b100000);
         return isMosaic;
     }
 
-    getSextants() {
+    getSextants_() {
         const code = this._byteHeld != null ? this._byteHeld.charCodeAt(0) : this._byte.charCodeAt(0);
         if (code > 0x7f) return null;
         if (code in sextants) return sextants[code];

@@ -41,15 +41,15 @@ Object.freeze(MOSAIC_METRIC);
 export class VectorViewBase {
     constructor(model, dom) {
         this._svg = new SVG(dom)
-            .viewbox(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
-            .size(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO])
-            .attr({
+            .viewbox_(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
+            .size_(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO])
+            .attr_({
                 'preserveAspectRatio': 'none',
                 'style': 'font-family: sans-serif'
             })
-            .style(getStyle());
+            .style_(getStyle());
 
-        this.d = this._svg.group().attr('class', 'conceal_concealed flash_flashing');
+        this.d = this._svg.group_().attr_('class', 'conceal_concealed flash_flashing');
 
         this._aspectRatio = DEFAULT_ASPECT_RATIO;
 
@@ -58,7 +58,7 @@ export class VectorViewBase {
         this._gridLayer = null;
 
         this._model = model;
-        this._listenerId = this._model.onSet.attach(
+        this._listenerId = this._model.onSet_.attach_(
             () => this._update()
         );
         this._boxMode = false;
@@ -69,12 +69,12 @@ export class VectorViewBase {
         console.debug('VectorViewBase constructed');
     }
 
-    addTo(selector) {
-        this._svg.addTo(selector);
+    addTo_(selector) {
+        this._svg.addTo_(selector);
     }
 
-    detach() {
-        this._model.onSet.detach(this._listenerId);
+    detach_() {
+        this._model.onSet_.detach_(this._listenerId);
         this._listenerId = null;
     }
 
@@ -83,7 +83,7 @@ export class VectorViewBase {
         let nextRowHidden = false;  // row might be hidden if row above contains double height or size
         let pageContainsFlash = false;
         this._pageContainsBox = false;
-        this.d.removeClass('flash_flashing');
+        this.d.removeClass_('flash_flashing');
         this._gridrows.forEach((rowView, rowIndex) => {
             let nextCellObscured = false;   // cell might be obscured if previous cell contains double width or size
             this._resetRow(rowIndex);
@@ -93,7 +93,7 @@ export class VectorViewBase {
                 return;
             }
 
-            const rowModel = this._model.getRow(rowIndex);
+            const rowModel = this._model.getRow_(rowIndex);
             let previousBg, previousBoxed;
             rowView.forEach((cellView, cellIndex) => {
                 if (nextCellObscured) {
@@ -104,15 +104,15 @@ export class VectorViewBase {
                     return;
                 }
 
-                const cell = rowModel.getCell(cellIndex);
-                const bg = Attributes.fillColourFromColourAttrib(cell.bgColour);
-                const isMosaicByte = cell.isMosaicByte();
-                const fill = Attributes.fillColourFromColourAttrib(cell.fgColour);
-                const attr = this._getCellAttr(cell.type, isMosaicByte);
+                const cell = rowModel.getCell_(cellIndex);
+                const bg = Attributes.fillColourFromColourAttrib(cell.bgColour_);
+                const isMosaicByte = cell.isMosaicByte_();
+                const fill = Attributes.fillColourFromColourAttrib(cell.fgColour_);
+                const attr = this._getCellAttr(cell.type_, isMosaicByte);
 
                 this._renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaicByte);
 
-                if (cell.boxed) {
+                if (cell.boxed_) {
                     if (previousBoxed) this._extendBox();
                     else this._setBoxForRow(rowIndex, cellIndex);
                     this._pageContainsBox = true;
@@ -121,13 +121,13 @@ export class VectorViewBase {
                 if (previousBg == bg) this._extendBackgroundForRow(rowIndex);
                 else this._setBackgroundForRow(rowIndex, cellIndex, bg);
 
-                if (cell.size == CellSize.DOUBLE_WIDTH || cell.size == CellSize.DOUBLE_SIZE) nextCellObscured = true;
+                if (cell.size_ == CellSize.DOUBLE_WIDTH_ || cell.size_ == CellSize.DOUBLE_SIZE_) nextCellObscured = true;
                 previousBg = bg;
-                previousBoxed = cell.boxed;
-                if (cell.flashing) pageContainsFlash = true;
+                previousBoxed = cell.boxed_;
+                if (cell.flashing_) pageContainsFlash = true;
             });
 
-            if (rowModel.doubleHeight) {
+            if (rowModel.doubleHeight_) {
                 this._setRowDoubleHeight(rowIndex);
                 this._setBoxDoubleHeight();
                 nextRowHidden = true;
@@ -137,10 +137,10 @@ export class VectorViewBase {
 
             this._makeClipFromBoxesForRow(rowIndex);
         });
-        if ('_endOfUpdate' in this._plugins) this._plugins._endOfUpdate(this._svg.width(), this._svg.height());
-        this.d.addClass('conceal_concealed');
+        if ('_endOfUpdate' in this._plugins) this._plugins._endOfUpdate(this._svg.width_(), this._svg.height_());
+        this.d.addClass_('conceal_concealed');
         // FUDGE keep flashing synchronised
-        if (pageContainsFlash) setTimeout(() => this.d.addClass('flash_flashing'), 100);
+        if (pageContainsFlash) setTimeout(() => this.d.addClass_('flash_flashing'), 100);
         this._refreshMixMode();
     }
 
@@ -157,8 +157,8 @@ export class VectorViewBase {
     }
 
     _clearCell(cellView) {
-        cellView.plain(' ')
-            .attr({
+        cellView.plain_(' ')
+            .attr_({
                 dx: null,
                 dy: null,
                 textLength: null,
@@ -173,86 +173,86 @@ export class VectorViewBase {
     _renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaic) {
         this._renderText(cellView, cell, attr, fill, cellIndex, rowIndex);
 
-        if (cell.type == CellType.MOSAIC_CONTIGUOUS && isMosaic) cellView.addClass('mosaic');
-        else if (cell.type == CellType.MOSAIC_SEPARATED && isMosaic) cellView.addClass('mosaic_separated');
+        if (cell.type_ == CellType.MOSAIC_CONTIGUOUS_ && isMosaic) cellView.addClass_('mosaic');
+        else if (cell.type_ == CellType.MOSAIC_SEPARATED_ && isMosaic) cellView.addClass_('mosaic_separated');
     }
 
     _renderText(cellView, cell, attr, fill, cellIndex, rowIndex) {
-        cellView.plain(cell.char).attr(attr).fill(fill);
-        if (cell.size == CellSize.DOUBLE_HEIGHT)
-            cellView.attr('transform', `translate(0 ${_getYTranslate(rowIndex)}) scale(1 2)`);
-        else if (cell.size == CellSize.DOUBLE_WIDTH)
-            cellView.attr('transform', `translate(${_getXTranslate(cellIndex)} 0) scale(2 1)`);
-        else if (cell.size == CellSize.DOUBLE_SIZE)
-            cellView.attr('transform', `translate(${_getXTranslate(cellIndex)} ${_getYTranslate(rowIndex)}) scale(2 2)`);
+        cellView.plain_(cell.char_).attr_(attr).fill_(fill);
+        if (cell.size_ == CellSize.DOUBLE_HEIGHT_)
+            cellView.attr_('transform', `translate(0 ${_getYTranslate(rowIndex)}) scale(1 2)`);
+        else if (cell.size_ == CellSize.DOUBLE_WIDTH_)
+            cellView.attr_('transform', `translate(${_getXTranslate(cellIndex)} 0) scale(2 1)`);
+        else if (cell.size_ == CellSize.DOUBLE_SIZE_)
+            cellView.attr_('transform', `translate(${_getXTranslate(cellIndex)} ${_getYTranslate(rowIndex)}) scale(2 2)`);
 
-        if (cell.flashing) cellView.addClass('flash');
-        if (cell.concealed) cellView.addClass('conceal');
+        if (cell.flashing_) cellView.addClass_('flash');
+        if (cell.concealed_) cellView.addClass_('conceal');
     }
 
-    reveal() {
-        this.d.toggleClass('conceal_concealed');
+    reveal_() {
+        this.d.toggleClass_('conceal_concealed');
     }
 
-    setFont(font) {
+    setFont_(font) {
         let newFont = font;
         if (font == 'native')
             newFont = '-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif';
         else if (font == 'default')
             newFont = 'sans-serif';
 
-        this._svg.attr('style', `font-family: ${newFont}`);
+        this._svg.attr_('style', `font-family: ${newFont}`);
     }
 
-    grid() {
+    grid_() {
         if (this._gridLayer) {
-            this._gridLayer.remove();
+            this._gridLayer.remove_();
             this._gridLayer = null;
         } else {
             this._drawGrid();
         }
     }
 
-    mixMode() {
+    mixMode_() {
         if (this._mixMode) {
             this._mixMode = false;
-            this._bgLayer.attr('opacity', null).unclip();
+            this._bgLayer.attr_('opacity', null).unclip_();
         } else {
             this._mixMode = true;
             this._setMixMode();
         }
     }
 
-    setAspectRatio(aspectRatio) {
+    setAspectRatio_(aspectRatio) {
         this._aspectRatio = aspectRatio;
-        this.setHeight(this._svg.height());
+        this.setHeight_(this._svg.height_());
     }
 
-    setHeight(height) {
+    setHeight_(height) {
         const width = this._aspectRatio == 'natural' ? height * (WIDTH_PX / HEIGHT_PX) : height * this._aspectRatio;
-        this._svg.size(width, height);
+        this._svg.size_(width, height);
     }
 
     _setMixMode() {
         if (this._boxMode && this._pageContainsBox)
-            this._bgLayer.attr('opacity', 0.3);
+            this._bgLayer.attr_('opacity', 0.3);
         else if (this._pageContainsBox)
-            this._bgLayer.clipWith(this._boxLayer).attr('opacity', 0.3);
+            this._bgLayer.clipWith_(this._boxLayer).attr_('opacity', 0.3);
         else
-            this._bgLayer.attr('opacity', 0);
+            this._bgLayer.attr_('opacity', 0);
     }
 
     _refreshMixMode() {
         if (this._mixMode) this._setMixMode();
     }
 
-    boxMode() {
+    boxMode_() {
         if (!this._boxMode) {
-            this.d.clipWith(this._boxLayer)
+            this.d.clipWith_(this._boxLayer)
             this._boxMode = true;
             console.log('box activated');
         } else {
-            this.d.unclip();
+            this.d.unclip_();
             this._boxMode = false;
             console.log('box deactivated');
         }
@@ -260,15 +260,15 @@ export class VectorViewBase {
     }
 
     _drawGrid() {
-        this._gridLayer = this.d.group();
+        this._gridLayer = this.d.group_();
         for (let row = 0; row < ROWS; row++) {
-            this._gridLayer.line(0, row * CELL_HEIGHT, WIDTH_PX - 1, row * CELL_HEIGHT).attr({
+            this._gridLayer.line_(0, row * CELL_HEIGHT, WIDTH_PX - 1, row * CELL_HEIGHT).attr_({
                 stroke: '#555',
                 'stroke-width': 0.5,
             });
         }
         for (let col = 0; col < COLS; col++) {
-            this._gridLayer.line(col * CELL_WIDTH, 0, col * CELL_WIDTH, HEIGHT_PX - 1).attr({
+            this._gridLayer.line_(col * CELL_WIDTH, 0, col * CELL_WIDTH, HEIGHT_PX - 1).attr_({
                 stroke: '#555',
                 'stroke-width': 0.5,
             });
@@ -279,9 +279,9 @@ export class VectorViewBase {
         // FUDGE can't use groups directly in <clipPath> https://github.com/w3c/fxtf-drafts/issues/17
         // Boxed cells are buffered and tagged with data-boxbuffer as the row is constructed
         // Then moved to the <clipPath> stored in this._boxLayer and tagged with data-r=rowNum
-        this._defs = this.d.defs();
+        this._defs = this.d.defs_();
         this._lastBoxBuffer = null;
-        this._boxLayer = this._defs.clip();
+        this._boxLayer = this._defs.clip_();
     }
 
     _createDisplay() {
@@ -291,8 +291,8 @@ export class VectorViewBase {
 
     _createRowBackgrounds() {
         const bgrows = [];
-        const bgGroup = this.d.group();
-        bgGroup.attr({
+        const bgGroup = this.d.group_();
+        bgGroup.attr_({
             'shape-rendering': 'crispEdges',
             id: 'background'
         });
@@ -302,14 +302,14 @@ export class VectorViewBase {
 
     _createCells() {
         const gridrows = [];
-        const textGroup = this.d.group().attr({
+        const textGroup = this.d.group_().attr_({
             'text-anchor': 'middle',
             'fill': '#fff'
-        }).attr('id', 'textlayer');
+        }).attr_('id', 'textlayer');
         for (let rowNum = 0; rowNum < ROWS; rowNum++) {
             const rowCells = [];
             for (let colNum = 0; colNum < COLS; colNum++) {
-                rowCells.push(textGroup.plain(getRandomLetter()).attr({
+                rowCells.push(textGroup.plain_(getRandomLetter()).attr_({
                     x: (colNum * CELL_WIDTH) + TEXT_X_OFFSET,
                     y: (rowNum * CELL_HEIGHT) + TEXT_Y_OFFSET,
                 }));
@@ -321,64 +321,64 @@ export class VectorViewBase {
     }
 
     _resetBoxClipForRow(rowNum) {
-        this._boxLayer.children()
-            .filter(b => b.data('r') == rowNum)
-            .forEach(b => b.remove());
+        this._boxLayer.children_()
+            .filter(b => b.data_('r') == rowNum)
+            .forEach(b => b.remove_());
     }
 
     _resetBackgroundForRow(rowNum) {
-        if (this._bgrows[rowNum]) this._bgrows[rowNum].remove();
-        this._bgrows[rowNum] = this._bgLayer.group();
+        if (this._bgrows[rowNum]) this._bgrows[rowNum].remove_();
+        this._bgrows[rowNum] = this._bgLayer.group_();
     }
 
     _extendBackgroundForRow(rowNum) {
-        const last = this._bgrows[rowNum].last();
-        const width = last.width();
-        last.width(width + CELL_WIDTH);
+        const last = this._bgrows[rowNum].last_();
+        const width = last.width_();
+        last.width_(width + CELL_WIDTH);
     }
 
     _setBackgroundForRow(rowNum, colNum, colour) {
         const x = colNum * CELL_WIDTH;
         const y = rowNum * CELL_HEIGHT;
         this._bgrows[rowNum]
-            .rect(CELL_WIDTH, CELL_HEIGHT)
-            .fill(colour)
-            .move(x, y)
+            .rect_(CELL_WIDTH, CELL_HEIGHT)
+            .fill_(colour)
+            .move_(x, y)
     }
 
     _extendBox() {
-        const width = this._lastBoxBuffer.width();
-        this._lastBoxBuffer.width(width + CELL_WIDTH);
+        const width = this._lastBoxBuffer.width_();
+        this._lastBoxBuffer.width_(width + CELL_WIDTH);
     }
 
     _setRowDoubleHeight(rowNum) {
-        this._bgrows[rowNum].children().forEach(bg => bg.attr('height', CELL_DOUBLE_HEIGHT));
+        this._bgrows[rowNum].children_().forEach(bg => bg.attr_('height', CELL_DOUBLE_HEIGHT));
     }
 
     _setBoxDoubleHeight() {
-        this._defs.find('[data-boxbuffer]').forEach(box => box.height(CELL_DOUBLE_HEIGHT));
+        this._defs.find_('[data-boxbuffer]').forEach(box => box.height_(CELL_DOUBLE_HEIGHT));
         // TODO might be quicker to filter instead of using a selector
     }
 
     _setBoxForRow(rowNum, colNum) {
         const x = colNum * CELL_WIDTH;
         const y = rowNum * CELL_HEIGHT;
-        this._lastBoxBuffer = this._defs.rect(CELL_WIDTH, CELL_HEIGHT).data('boxbuffer', true).move(x, y);
+        this._lastBoxBuffer = this._defs.rect_(CELL_WIDTH, CELL_HEIGHT).data_('boxbuffer', true).move_(x, y);
     }
 
     // FUDGE move boxes tagged with data-boxbuffer into the clip layer.
     _makeClipFromBoxesForRow(rowNum) {
-        this._defs.find('[data-boxbuffer]').forEach(box => {
-            box.data({
+        this._defs.find_('[data-boxbuffer]').forEach(box => {
+            box.data_({
                 r: rowNum,
                 boxbuffer: null
             });
-            this._boxLayer.add(box);
+            this._boxLayer.add_(box);
         });
     }
 
     _getCellAttr(cellType, isMosaicChar) {
-        if (cellType == CellType.MOSAIC_CONTIGUOUS && isMosaicChar) {
+        if (cellType == CellType.MOSAIC_CONTIGUOUS_ && isMosaicChar) {
             return {
                 dx: MOSAIC_METRIC._contiguous._DX,
                 dy: -0.15,
@@ -388,7 +388,7 @@ export class VectorViewBase {
                 transform: null,
                 class: null,
             };
-        } else if (cellType == CellType.MOSAIC_SEPARATED && isMosaicChar) {
+        } else if (cellType == CellType.MOSAIC_SEPARATED_ && isMosaicChar) {
             return {
                 dx: MOSAIC_METRIC._separated._DX,
                 dy: null,
@@ -431,8 +431,8 @@ export class VectorViewBase {
     }
 
     _createImageOverlay() {
-        const image = this.d.image(WIDTH_PX, HEIGHT_PX);
-        image.attr('preserveAspectRatio', 'none');
+        const image = this.d.image_(WIDTH_PX, HEIGHT_PX);
+        image.attr_('preserveAspectRatio', 'none');
         return image;
     }
 }
@@ -450,10 +450,10 @@ VectorViewBase.COLS = COLS;
 
 // helper functions used by plugin
 const colourLookupFn = colourSymbol => Attributes.fillColourFromColourAttrib(colourSymbol);
-const isDoubleHeightFn = size => size == CellSize.DOUBLE_HEIGHT;
-const isDoubleWidthFn = size => size == CellSize.DOUBLE_WIDTH;
-const isDoubleSizeFn = size => size == CellSize.DOUBLE_SIZE;
-const isSeparatedMosaicFn = type => type == CellType.MOSAIC_SEPARATED;
+const isDoubleHeightFn = size => size == CellSize.DOUBLE_HEIGHT_;
+const isDoubleWidthFn = size => size == CellSize.DOUBLE_WIDTH_;
+const isDoubleSizeFn = size => size == CellSize.DOUBLE_SIZE_;
+const isSeparatedMosaicFn = type => type == CellType.MOSAIC_SEPARATED_;
 
 // functions used for cell transforms
 const _getYTranslate = row => 0 - (row * CELL_HEIGHT);

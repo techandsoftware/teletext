@@ -35,11 +35,11 @@ export class TeletextController {
     }
 
     setRow(rowNum, string) {
-        this._model.setRowFromChars(rowNum, string);
+        this._model.setRowFromChars_(rowNum, string);
     }
 
     setPageRows(rows) {
-        this._model.setRows(rows);
+        this._model.setRows_(rows);
     }
 
     showTestPage() {
@@ -61,84 +61,76 @@ export class TeletextController {
     }
 
     loadPageFromEncodedString(input) {
-        const decoded = Utils.decodeBase64URLEncoded(input, this._windowDom.atob);
+        const decoded = Utils.decodeBase64URLEncoded_(input, this._windowDom.atob);
         this.setPageRows(decoded);
     }
 
     _initEventHandlers() {
-        let w;
-        if ('_dom' in this) {
-            w = this._dom;
-        } else if (typeof window == 'object') {
-            w = window;
-        }
-        if (w) {
-            w.addEventListener('ttx.reveal', () => this._view.reveal());
-            w.addEventListener('ttx.mix', () => this._view.mixMode());
-            w.addEventListener('ttx.subtitlemode', () => this._view.boxMode());
-        }
+        this._windowDom.addEventListener('ttx.reveal', () => this._view.reveal_());
+        this._windowDom.addEventListener('ttx.mix', () => this._view.mixMode_());
+        this._windowDom.addEventListener('ttx.subtitlemode', () => this._view.boxMode_());
     }
 
     toggleReveal() {
-        this._view.reveal();
+        this._view.reveal_();
     }
 
     toggleMixMode() {
-        this._view.mixMode();
+        this._view.mixMode_();
     }
 
     toggleBoxMode() {
-        this._view.boxMode();
+        this._view.boxMode_();
     }
 
     toggleGrid() {
-        this._view.grid();
+        this._view.grid_();
     }
 
     setLevel(level) {
-        this._model.setLevel(level);
+        this._model.setLevel_(level);
     }
 
     addTo(selector) {
         this._selector = selector;
-        this._view.addTo(selector);
+        this._view.addTo_(selector);
     }
 
     setFont(font) {
-        this._view.setFont(font);
+        this._view.setFont_(font);
     }
 
     clearScreen(withUpdate) {
-        this._model.clearScreen(withUpdate);
+        this._model.clearScreen_(withUpdate);
     }
 
     setAspectRatio(aspectRatio) {
         if (aspectRatio == 'natural') {
-            this._view.setAspectRatio(aspectRatio);
+            this._view.setAspectRatio_(aspectRatio);
             return;
         }
         const ar = parseFloat(aspectRatio);
         if (Number.isNaN(ar)) throw new Error("E80 setAspectRatio: bad number");
-        this._view.setAspectRatio(ar);
+        this._view.setAspectRatio_(ar);
     }
 
     setHeight(height) {
         const newHeight = parseFloat(height);
         if (Number.isNaN(newHeight)) throw new Error("E98 setHeight: bad number");
-        this._view.setHeight(newHeight);
+        this._view.setHeight_(newHeight);
         this._height = newHeight;
     }
 
     setDefaultG0Charset(...args) {
-        this._model.setPrimaryG0CharacterEncoding(...args);
+        this._model.setPrimaryG0CharacterEncoding_(...args);
     }
 
     setSecondG0Charset(...args) {
-        this._model.setSecondaryG0CharacterEncoding(...args);
+        this._model.setSecondaryG0CharacterEncoding_(...args);
     }
 
     remove() {
-        this._view.detach();
+        this._view.detach_();
         if (this._selector) {
             const el = document.querySelector(this._selector);
             if (el) el.removeChild(el.firstChild);
@@ -150,22 +142,22 @@ export class TeletextController {
         this.remove();
         switch (view) {
             case 'classic__font-for-mosaic':
-                this._view = new ViewClassic(this._model, this._dom);
+                this._view = new ViewClassic(this._model, this._windowDom);
                 break;
             case 'classic__graphic-for-mosaic':
-                this._view = new ViewGraphicMosaic(this._model, this._opt.webkitCompat, this._dom);
+                this._view = new ViewGraphicMosaic(this._model, this._opt.webkitCompat, this._windowDom);
                 break;
             default:
                 throw new Error("setView E126: bad view name:" + view);
         }
-        if (this._height) this._view.setHeight(this._height);
-        if (this._selector) this._view.addTo(this._selector);
-        this._model.notify();
+        if (this._height) this._view.setHeight_(this._height);
+        if (this._selector) this._view.addTo_(this._selector);
+        this._model.notify_();
     }
 
     registerViewPlugin(plugin) {
         plugin.registerWithView(this._view);
-        this._model.notify();
+        this._model.notify_();
     }
 
     // dumpToConsole() {

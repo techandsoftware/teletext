@@ -7,19 +7,19 @@ export class RowModel {
         this._cells = [];
     }
 
-    get doubleHeight() {
+    get doubleHeight_() {
         return this._doubleHeight;
     }
 
-    set doubleHeight(isDoubleHeight) {
+    set doubleHeight_(isDoubleHeight) {
         this._doubleHeight = isDoubleHeight;
     }
 
-    addCell(cell) {
+    addCell_(cell) {
         this._cells.push(cell);
     }
 
-    getCell(i) {
+    getCell_(i) {
         if (i >= this._cells.length) throw new Error('RowModel.getCell E20 bad cell index');
         return this._cells[i];
     }

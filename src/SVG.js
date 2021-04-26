@@ -23,7 +23,7 @@ class Element {
         this._e = null;
     }
 
-    attr(objOrName, val) {
+    attr_(objOrName, val) {
         if (typeof objOrName == 'object') {
             for (const attrName in objOrName) {
                 if (objOrName[attrName] == null)
@@ -42,39 +42,39 @@ class Element {
         return this;
     }
 
-    addClass(name) {
-        if (!this.hasClass(name)) {
-            const classes = this.classes();
+    addClass_(name) {
+        if (!this.hasClass_(name)) {
+            const classes = this.classes_();
             classes.push(name);
             this._e.setAttribute('class', classes.join(' '));
         }
         return this;
     }
 
-    hasClass(name) {
-        return this.classes().indexOf(name) !== -1;
+    hasClass_(name) {
+        return this.classes_().indexOf(name) !== -1;
     }
 
-    classes() {
+    classes_() {
         const classes = this._e.getAttribute('class');
         return classes == null ? [] : classes.split(' ');
     }
 
-    removeClass(name) {
-        if (this.hasClass(name))
-            this._e.setAttribute('class', this.classes().filter(c => c !== name).join(' '));
+    removeClass_(name) {
+        if (this.hasClass_(name))
+            this._e.setAttribute('class', this.classes_().filter(c => c !== name).join(' '));
         return this;
     }
 
-    toggleClass(name) {
-        if (this.hasClass(name))
-            this.removeClass(name);
+    toggleClass_(name) {
+        if (this.hasClass_(name))
+            this.removeClass_(name);
         else
-            this.addClass(name);
+            this.addClass_(name);
         return this;
     }
 
-    data(objOrName, val) {
+    data_(objOrName, val) {
         if (typeof objOrName == 'object') {
             for (const dataProp in objOrName) {
                 if (objOrName[dataProp] == null)
@@ -106,7 +106,7 @@ export class SVG extends Element {
         return this;
     }
 
-    addTo(selector) {
+    addTo_(selector) {
         const node = _doc.querySelector(selector);
         if (node) {
             node.appendChild(this._e);
@@ -116,39 +116,39 @@ export class SVG extends Element {
         return this;
     }
 
-    viewbox(viewbox) {
+    viewbox_(viewbox) {
         this._e.setAttribute('viewBox', viewbox);
         return this;
     }
 
-    size(width, height) {
+    size_(width, height) {
         this._e.setAttribute('width', width);
         this._e.setAttribute('height', height);
         return this;
     }
 
-    style(style) {
+    style_(style) {
         const styleNode = _doc.createElementNS(NS, 'style');
         styleNode.append(style);
         this._e.append(styleNode);
         return this;
     }
 
-    group() {
+    group_() {
         const group = new Group();
         this._e.append(group._node());
         return group;
     }
 
-    width() {
+    width_() {
         return this._e.clientWidth;
     }
 
-    height() {
+    height_() {
         return this._e.clientHeight;
     }
 
-    symbol(id) {
+    symbol_(id) {
         const symbol = new SVGSymbol(id);
         this._e.append(symbol._node());
         return symbol;
@@ -164,73 +164,73 @@ class Group extends Element {
         return this;
     }
 
-    group() {
+    group_() {
         const group = new Group();
         this._e.append(group._node());
         this._c.push(group);
         return group;
     }
 
-    plain(text) {
+    plain_(text) {
         const textObj = new Text(text);
         this._e.append(textObj._node());
         this._c.push(textObj);
         return textObj;
     }
 
-    defs() {
+    defs_() {
         const defs = new Defs();
         this._e.append(defs._node());
         return defs;
     }
 
-    rect(width, height) {
+    rect_(width, height) {
         const rect = new Rect(width, height);
         this._e.append(rect._node());
         this._c.push(rect);
         return rect;
     }
 
-    last() {
+    last_() {
         return this._c[this._c.length - 1];
     }
 
-    children() {
+    children_() {
         return this._c;
     }
 
-    clipWith(clipPath) {
+    clipWith_(clipPath) {
         this._e.setAttribute('clip-path', `url("#${clipPath._node().id}")`);
         return this;
     }
 
-    unclip() {
+    unclip_() {
         this._e.removeAttribute('clip-path');
         return this;
     }
 
-    remove() {
+    remove_() {
         this._e.parentNode && this._e.parentNode.removeChild(this._e);
         this._e = null;
         this._c.forEach(c => c._removeNode());
         this._c = [];
     }
 
-    line(x1, y1, x2, y2) {
+    line_(x1, y1, x2, y2) {
         const line = new Line(x1, y1, x2, y2);
         this._e.append(line._node());
         this._c.push(line);
         return line;
     }
 
-    use(id) {
+    use_(id) {
         const use = new Use(id);
         this._e.append(use._node());
         this._c.push(use);
         return use;
     }
 
-    image(width, height) {
+    image_(width, height) {
         const image = new Image(width, height);
         this._e.append(image._node());
         this._c.push(image);
@@ -246,6 +246,10 @@ class Image extends Element {
         this._e.setAttribute('height', parseInt(height));
         return this;
     }
+
+    attr(...params) {
+        return this.attr_(...params);
+    }
 }
 
 class Use extends Element {
@@ -256,12 +260,12 @@ class Use extends Element {
         return this;
     }
 
-    fill(fill) {
+    fill_(fill) {
         this._e.setAttribute('fill', fill);
         return this;
     }
 
-    move(x, y) {
+    move_(x, y) {
         this._e.setAttribute('x', x);
         this._e.setAttribute('y', y);
         return this;
@@ -277,7 +281,7 @@ class SVGSymbol extends Element {
         return this;
     }
 
-    rect(width, height) {
+    rect_(width, height) {
         const rect = new Rect(width, height);
         this._e.append(rect._node());
         return rect;
@@ -292,12 +296,12 @@ class Text extends Element {
         return this;
     }
 
-    plain(text) {
+    plain_(text) {
         this._e.textContent = text;
         return this;
     }
 
-    fill(fill) {
+    fill_(fill) {
         this._e.setAttribute('fill', fill);
         return this;
     }
@@ -311,18 +315,18 @@ class Defs extends Element {
         return this;
     }
 
-    clip() {
+    clip_() {
         const clip = new ClipPath();
         this._e.append(clip._node());
         return clip;
     }
 
-    find(selector) {
+    find_(selector) {
         const matchedEls = this._e.querySelectorAll(selector);
         return [...matchedEls].map(wrapSVGElement);
     }
 
-    rect(width, height) {
+    rect_(width, height) {
         const rect = new Rect(width, height);
         this._e.append(rect._node());
         return rect;
@@ -338,11 +342,11 @@ class ClipPath extends Element {
         return this;
     }
 
-    children() {
+    children_() {
         return [...this._e.children].map(wrapSVGElement);
     }
 
-    add(shape) {
+    add_(shape) {
         this._e.appendChild(shape._node());
     }
 }
@@ -361,18 +365,18 @@ class Rect extends Element {
         return this;
     }
 
-    fill(fill) {
+    fill_(fill) {
         this._e.setAttribute('fill', fill);
         return this;
     }
 
-    move(x, y) {
+    move_(x, y) {
         this._e.setAttribute('x', x);
         this._e.setAttribute('y', y);
         return this;
     }
 
-    width(width) {
+    width_(width) {
         if (width === undefined)
             return parseInt(this._e.getAttribute('width'));
 
@@ -380,7 +384,7 @@ class Rect extends Element {
         return this;
     }
 
-    height(height) {
+    height_(height) {
         if (height === undefined)
             return parseInt(this._e.getAttribute('height'));
 
@@ -388,7 +392,7 @@ class Rect extends Element {
         return this;
     }
 
-    remove() {
+    remove_() {
         this._e.parentNode && this._e.parentNode.removeChild(this._e);
         this._e = null;
     }

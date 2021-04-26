@@ -7,16 +7,16 @@ export class Event {
         this._listeners = [];
     }
 
-    attach(listener) {
+    attach_(listener) {
         this._listeners.push(listener);
         return this._listeners.length - 1;
     }
 
-    notify(args) {
+    notify_(args) {
         this._listeners.forEach(fn => fn != null && fn(this._sender, args));
     }
 
-    detach(index) {
+    detach_(index) {
         this._listeners[index] = null;
     }
 }
