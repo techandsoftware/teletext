@@ -421,7 +421,7 @@ class Utils {
     // "base64url" encoding defined here https://tools.ietf.org/html/rfc4648
     // the packed data format is from https://github.com/rawles/edit.tf
     // returns a Uint1Array
-    static decodeBase64URLEncoded(input) {
+    static decodeBase64URLEncoded(input, atob) {
         // adjust the input before passing to atob
         input = input.replace(/-/g, '+').replace(/_/g, '/');
         const pad = input.length % 4;
@@ -509,11 +509,9 @@ var testpages = {
 
 const NS = "http://www.w3.org/2000/svg";
 
-let clipPathId = 0;
-let _window;
-let _doc;
-if (typeof window == 'object') _window = window;
-// _window can be overridden by the SVG constructor so that a dom can be passed in if running in node
+let clipPathId = 0; // used by ClipPath constructor
+let _window;        // set by SVG constructor
+let _doc;           // set by SVG constructor
 
 // The API exposed here is a subset of svg.js v3 - https://svgjs.com/docs/3.0/
 // This wraps objects around DOM Elements
@@ -604,15 +602,11 @@ class Element {
 }
 
 class SVG extends Element {
-    constructor(dom) {
+    constructor(windowDom) {
         super();
-        if (typeof dom == 'object')
-            _window = dom;
-        if (typeof _window == 'undefined') {
-            throw new Error("@techandsoftware/teletext: E105: No window object available.");
-        } else {
-            _doc = _window.document;
-        }
+        _window = windowDom;
+        _doc = _window.document;
+
         this._e = _doc.createElementNS(NS, "svg");
         this._e.setAttribute('xmlns', NS);
         return this;
@@ -1785,15 +1779,19 @@ const TEST_PAGE_NAMES = ['SPLASH', 'ENGINEERING', 'ADVERT', 'UK'];
 
 class TeletextController {
     constructor(model, options) {
+        this._windowDom = null;
+        if (typeof window == 'object') this._windowDom = window;
         this._opt = {
             webkitCompat: true // generate SVG that's compatible with webkit by default. The resulting SVG is larger
         };
         if (typeof options == 'object') {
             if ('webkitCompat' in options && !options.webkitCompat) this._opt.webkitCompat = false;
-            if ('dom' in options) this._dom = options.dom;
+            if ('dom' in options) this._windowDom = options.dom;
         }
+        if (this._windowDom == null)
+            throw new Error('TeletextController E24: No window dom object available');
 
-        this._view = new View(model, this._opt.webkitCompat, this._dom);
+        this._view = new View(model, this._opt.webkitCompat, this._windowDom);
         this._model = model;
         this._levelIndex = 1;
         this._testPageIndex = 0;
@@ -1830,8 +1828,7 @@ class TeletextController {
     }
 
     loadPageFromEncodedString(input) {
-        const decoded = Utils.decodeBase64URLEncoded(input);
-        // this.setRow(0, decoded[2]);
+        const decoded = Utils.decodeBase64URLEncoded(input, this._windowDom.atob);
         this.setPageRows(decoded);
     }
 
