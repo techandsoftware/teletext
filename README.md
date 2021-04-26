@@ -59,7 +59,7 @@ This package is compliant with [REUSE 3](https://reuse.software/).
 
 # Using
 
-## For browers
+## For browsers
 
 Quickstart:
 
