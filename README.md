@@ -38,7 +38,7 @@ Extensions are supported via plugins.
 
 Additional features:
 
-* Chromecast support
+* Chromecast support via the [@techandsoftware/teletext-caster](https://www.npmjs.com/package/@techandsoftware/teletext-caster) npm package
 * API to fill the screen
 * Screen drawn with SVG graphics. The SVG is exportable for display in any SVG viewer
 * The API supports setting the font for text, change height and aspect ratio, switch teletext levels, set on-screen grid
