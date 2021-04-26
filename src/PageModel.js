@@ -248,7 +248,7 @@ export class PageModel {
                     nextBoxed = false;
                     cell.setSpace_(heldMosaic);
                     break;
-                case Attributes.UNKNOWN:
+                case Attributes.UNKNOWN_:
                     cell.setSpace_(heldMosaic);
                     break;
                 default:
