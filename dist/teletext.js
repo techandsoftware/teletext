@@ -1228,8 +1228,7 @@ class VectorViewBase {
                 const bg = fillColourFromColourAttrib(cell.bgColour_);
                 const isMosaicByte = cell.isMosaicByte_();
                 const fill = fillColourFromColourAttrib(cell.fgColour_);
-                const attr = this._getCellAttr(cell.type_, isMosaicByte);
-
+                const attr = this._getCellAttr(cell.type_, isMosaicByte, cell.isCursive_);
                 this._renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaicByte);
 
                 if (cell.boxed_) {
@@ -1497,7 +1496,7 @@ class VectorViewBase {
         });
     }
 
-    _getCellAttr(cellType, isMosaicChar) {
+    _getCellAttr(cellType, isMosaicChar, isCursive) {
         if (cellType == CellType.MOSAIC_CONTIGUOUS_ && isMosaicChar) {
             return {
                 dx: MOSAIC_METRIC._contiguous._DX,
@@ -1522,8 +1521,8 @@ class VectorViewBase {
         return {
             dx: null,
             dy: null,
-            textLength: null,
-            lengthAdjust: null,
+            textLength: isCursive ? CELL_WIDTH : null,
+            lengthAdjust: isCursive ? 'spacingAndGlyphs' : null,
             'text-anchor': null,
             transform: null,
             class: null,
@@ -2328,6 +2327,7 @@ class Cell {
         this._concealed = false;
         this._boxed = false;
         this._byteHeld = null;
+        this._isCursive = false;
     }
 
     set byte_(byte) {
@@ -2354,10 +2354,21 @@ class Cell {
         return this._bgColour;
     }
 
+    get isCursive_() {
+        return this._isCursive;
+    }
+
     setMappedChar_(encoding) {
-        if (this._type == CellType.ALPHA_ || ((this._byte.charCodeAt(0) & 0b100000) == 0))
+        if (this._type == CellType.ALPHA_ || ((this._byte.charCodeAt(0) & 0b100000) == 0)) {
             this._char = getCharWithEncoding(this._byte, encoding);
-        else if (this._type == CellType.MOSAIC_CONTIGUOUS_)
+            this._isCursive = false;
+            if (encoding == 'arabic_g0') {
+                const code = this._byte.charCodeAt(0);
+                if (code == 38 || code == 39 || (code >= 64 && code <= 94) || (code >= 96 && code <= 125)) {
+                    this._isCursive = true;
+                }
+            }
+        } else if (this._type == CellType.MOSAIC_CONTIGUOUS_)
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__legacy_computing');
         else
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__unscii_separated');
@@ -2575,12 +2586,12 @@ class View extends VectorViewBase {
     }
 
     // eslint-disable-next-line no-unused-vars
-    _getCellAttr(cellType, isMosaicChar) {
+    _getCellAttr(cellType, isMosaicChar, isCursive) {
         return {
             dx: null,
             dy: null,
-            textLength: null,
-            lengthAdjust: null,
+            textLength: isCursive ? VectorViewBase._CELL_WIDTH : null,
+            lengthAdjust: isCursive ? 'spacingAndGlyphs' : null,
             'text-anchor': null,
             transform: null,
             class: null,
