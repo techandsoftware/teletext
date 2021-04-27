@@ -28,7 +28,7 @@
     "rollup-plugin-terser": "^7.0.2"
   },
   "scripts": {
-    "start": "echo !! Update es6_import.html to import teletext.js for live reloading; rollup -c -w --watch.exclude 'dist/*' --no-watch.clearScreen",
+    "start": "rollup -c -w --watch.exclude 'dist/*' --no-watch.clearScreen",
     "build": "rollup -c rollup.prod.config.js",
     "coverage": "c8 --exclude node_modules --exclude tests node tests/tests.js",
     "reuselint": "reuse lint"

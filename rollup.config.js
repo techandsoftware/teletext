@@ -7,7 +7,9 @@ import json from '@rollup/plugin-json';
 
 const OUTPUT_BANNER = `// SPDX${''}-FileCopyrightText: (c) 2021 Tech and Software Ltd.
 // SPDX${''}-FileCopyrightText: (c) 2017 dosaygo
-// SPDX${''}-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0`;
+// SPDX${''}-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
+// LicenseRef-uk.ltd.TechAndSoftware-1.0 refers to https://techandsoftware.robdev.org.uk/LICENSES/LicenseRef-uk.ltd.TechAndSoftware-1.0.txt`;
+
 
 export default {
   input: {
@@ -25,7 +27,7 @@ export default {
     resolve(),
     browsersync({
       server: '.',
-      startPath: "/demo/es6_import.html"
+      startPath: "/demo/es6_import_live_reload.html"
     }),
     json(),
   ]
