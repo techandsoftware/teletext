@@ -264,7 +264,7 @@ Bedstead and Unscii are retro fonts you might want to use in your app if that's 
 
 Normal values for `font` include `serif`, `sans-serif`, `monospace` and specific font family names of the sort you'd use in a CSS stylesheet, which might be browser- or OS-specific. Your containing HTML page can supply its own font family (using Google Fonts, for example) and then refer to it here. Even though the teletext layout is grid-based, you can use a proportional font and the grid is maintained.
 
-When using the `arabic_g0` character set, the cursive Arabic characters are displayed but not in the right way, yet, as the characters aren't in the joined form.
+If `arabic_g0` was set as the character set, the characters are rendered differently so that they're cursive. Whether this works correctly depends on your font.
 
 ## setView(view)
 
@@ -408,7 +408,7 @@ Level 2.5/3.5 allows for a 'modified g0 and g2 character set', then writing g0/g
 
 # Bugs
 
-Arabic script isn't rendered correctly as the characters aren't joined.
+If you encounter any issues, contact techandsoftwareltd@outlook.com
 
 # Credits
 
