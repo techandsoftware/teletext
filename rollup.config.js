@@ -3,7 +3,6 @@
 
 import resolve from '@rollup/plugin-node-resolve';
 import browsersync from 'rollup-plugin-browsersync';
-import sourcemaps from 'rollup-plugin-sourcemaps';
 import json from '@rollup/plugin-json';
 
 const OUTPUT_BANNER = `// SPDX${''}-FileCopyrightText: (c) 2021 Tech and Software Ltd.
@@ -19,6 +18,7 @@ export default {
     dir: 'dist',
     format: 'es',
     sourcemap: true,
+    sourcemapExcludeSources: true,
     banner: OUTPUT_BANNER
   },
   plugins: [
@@ -27,7 +27,6 @@ export default {
       server: '.',
       startPath: "/demo/es6_import.html"
     }),
-    sourcemaps(),
     json(),
   ]
 };
