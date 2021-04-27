@@ -52,7 +52,7 @@ export default {
       },
       mangle: {
         properties: {
-          regex: /^_.+|.+_$/,
+          regex: /^_.+|.+_$/, // ^_.+ for private methods, and .+_$ for internal methods. We don't match _ as that's used in the character mappings
         },
       },
       format: {
