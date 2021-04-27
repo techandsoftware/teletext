@@ -52,7 +52,7 @@ export default {
       },
       mangle: {
         properties: {
-          regex: /^_|_$/,
+          regex: /^_.+|.+_$/,
         },
       },
       format: {
