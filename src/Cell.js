@@ -29,6 +29,7 @@ export class Cell {
         this._concealed = false;
         this._boxed = false;
         this._byteHeld = null;
+        this._isCursive = false;
     }
 
     set byte_(byte) {
@@ -55,10 +56,21 @@ export class Cell {
         return this._bgColour;
     }
 
+    get isCursive_() {
+        return this._isCursive;
+    }
+
     setMappedChar_(encoding) {
-        if (this._type == CellType.ALPHA_ || ((this._byte.charCodeAt(0) & 0b100000) == 0))
+        if (this._type == CellType.ALPHA_ || ((this._byte.charCodeAt(0) & 0b100000) == 0)) {
             this._char = getCharWithEncoding(this._byte, encoding);
-        else if (this._type == CellType.MOSAIC_CONTIGUOUS_)
+            this._isCursive = false;
+            if (encoding == 'arabic_g0') {
+                const code = this._byte.charCodeAt(0);
+                if (code == 38 || code == 39 || (code >= 64 && code <= 94) || (code >= 96 && code <= 125)) {
+                    this._isCursive = true;
+                }
+            }
+        } else if (this._type == CellType.MOSAIC_CONTIGUOUS_)
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__legacy_computing');
         else
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__unscii_separated');

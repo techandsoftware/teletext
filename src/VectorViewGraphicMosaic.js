@@ -112,12 +112,12 @@ export class View extends Base {
     }
 
     // eslint-disable-next-line no-unused-vars
-    _getCellAttr(cellType, isMosaicChar) {
+    _getCellAttr(cellType, isMosaicChar, isCursive) {
         return {
             dx: null,
             dy: null,
-            textLength: null,
-            lengthAdjust: null,
+            textLength: isCursive ? Base._CELL_WIDTH : null,
+            lengthAdjust: isCursive ? 'spacingAndGlyphs' : null,
             'text-anchor': null,
             transform: null,
             class: null,

@@ -108,8 +108,7 @@ export class VectorViewBase {
                 const bg = fillColourFromColourAttrib(cell.bgColour_);
                 const isMosaicByte = cell.isMosaicByte_();
                 const fill = fillColourFromColourAttrib(cell.fgColour_);
-                const attr = this._getCellAttr(cell.type_, isMosaicByte);
-
+                const attr = this._getCellAttr(cell.type_, isMosaicByte, cell.isCursive_);
                 this._renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaicByte);
 
                 if (cell.boxed_) {
@@ -377,7 +376,7 @@ export class VectorViewBase {
         });
     }
 
-    _getCellAttr(cellType, isMosaicChar) {
+    _getCellAttr(cellType, isMosaicChar, isCursive) {
         if (cellType == CellType.MOSAIC_CONTIGUOUS_ && isMosaicChar) {
             return {
                 dx: MOSAIC_METRIC._contiguous._DX,
@@ -402,8 +401,8 @@ export class VectorViewBase {
         return {
             dx: null,
             dy: null,
-            textLength: null,
-            lengthAdjust: null,
+            textLength: isCursive ? CELL_WIDTH : null,
+            lengthAdjust: isCursive ? 'spacingAndGlyphs' : null,
             'text-anchor': null,
             transform: null,
             class: null,
