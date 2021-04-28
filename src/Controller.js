@@ -41,6 +41,7 @@ export class TeletextController {
     }
 
     setPageRows(rows) {
+        this._model.clearEnhancements_();
         this._model.setRows_(rows);
     }
 
@@ -103,6 +104,7 @@ export class TeletextController {
     }
 
     clearScreen(withUpdate) {
+        this._model.clearEnhancements_();
         this._model.clearScreen_(withUpdate);
     }
 

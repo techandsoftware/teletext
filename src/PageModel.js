@@ -294,4 +294,8 @@ export class PageModel {
         this._enhancement = data;
     }
 
+    clearEnhancements_() {
+        this._enhancement = [];
+    }
+
 }
