@@ -139,24 +139,21 @@ export class PageModel {
         };
 
         let rowEnhancements = [];
-        let enhanceable = false;
-        if (ENHANCEMENT_LEVELS.includes(this._level)) {
+        if (ENHANCEMENT_LEVELS.includes(this._level))
             rowEnhancements = this._enhancement.filter(e => e.y_ == rowNum);
-            enhanceable = true;
-        }
 
         this._screen[rowNum].forEach((cell, cellIndex) => {
-            if (enhanceable) {
-                const cellEnhancements = rowEnhancements.filter(e => e.x_ == cellIndex);
-                cellEnhancements.forEach(e => {
-                    const ecell = new EnhancedCell(cell);
-                    cell = ecell;
-                    if (e.type_ == 'g0') {
-                        cell.byte_ = e.char_;
-                        cell.diacritic_ = e.diacritic_;
-                    }
-                });
-            }
+            const cellEnhancements = rowEnhancements.filter(e => e.x_ == cellIndex);
+            cellEnhancements.forEach(e => {
+                const ecell = new EnhancedCell(cell);
+                cell = ecell;
+                if (e.type_ == 'g0') {
+                    cell.byte_ = e.char_;
+                    cell.diacritic_ = e.diacritic_;
+                } else if (e.type_ == 'char') {
+                    cell.enhancedChar_ = e.char_;
+                }
+            });
 
             const char = cell.byte_;
             const attrib = attribFromChar(this._level, char);

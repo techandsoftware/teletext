@@ -31,6 +31,7 @@ export class Cell {
         this._byteHeld = null;
         this._isCursive = false;
         this._diacriticCode = null;
+        this._enhancedChar = null;
     }
 
     set byte_(byte) {
@@ -170,7 +171,6 @@ export class EnhancedCell extends Cell {
     constructor(cell) {
         super();
         Object.assign(this, cell);
-        this._diacritic = null;
     }
 
     set diacritic_(diacriticCode) {
@@ -179,6 +179,15 @@ export class EnhancedCell extends Cell {
 
     get diacritic_() {
         return this._diacriticCode;
+    }
+
+    set enhancedChar_(char) {
+        this._enhancedChar = char;
+        this._type = CellType.ALPHA_;
+    }
+
+    get char_() {
+        return this._enhancedChar == null ? this._char : this._enhancedChar;
     }
 }
 
