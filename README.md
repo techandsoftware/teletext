@@ -29,11 +29,13 @@ Extensions are supported via plugins.
     * Mix display mode, which isn't part of the teletext spec but is normal on TVs
 * Level 1.5
     * Black foreground text or mosaic (this is level 2.5 in the teletext spec but included here at 1.5 as with some TVs)
-    * g2 set selectable
-    * ~~Diacritical marks on characters from the g0 sets placeable~~ TODO
-    * ~~g2 character sets and character placement~~ TODO
-    * ~~4 characters from the g3 character set placeable~~ TODO
-    * ~~`@` is placeable (it isn't in most g0 sets or the g2 sets)~~ TODO
+    * ~~g2 set selectable~~ TODO
+    * API for enhancements to base page at row, col locations:
+       * Place characters from the g0 sets
+       * Place diacritical marks on characters from the g0 sets
+       * Place characters from g2 sets
+       * Place `@` symbol (it isn't in most g0 sets or the g2 sets)
+       * ~~4 characters from the g3 character set placeable~~ TODO
 * Level 2.5
     * Double width and double size characters
     * ~~Modified g0/g2 set selectable for placing characters~~ TODO
@@ -399,12 +401,14 @@ For Level 2.5 and 3.5, the ETSI spec includes full g3 character set support (smo
 The spec also defines navigation and object pages, which I consider out of scope as they're more in the domain of the application rather than the display.
 
 APIs needed:
-1. `enhance()`
-2. `setPosition(row, col)`
-3. `putCharFromCharset(charset, string, diacriticalCode)` where `charset` is `g0` (level 1.5), `g1` (2.5), `g2` (1.5) or `g3` (1.5 for 4 chars, 2.5 for the rest)
-4. `putAtSign()` (level 1.5)
-5. `putChars(string)`
-6. `update()`
+1. `enhance()` DONE - to document
+2. `pos(row, col)` DONE - to document
+3. `putG0(char, diacriticCode)` (level 1.5) DONE - to document
+4. `putAt()` (level 1.5) DONE - to document
+5. `putG2(char)` (level 1.5) DONE - to document
+6. `putG1(char)` (level 2.5)
+7. `putG3(char)` (level 1.5 for 4 chars, 2.5 for the rest)
+9. `end()` DONE - to document
 
 Level 2.5/3.5 allows for a 'modified g0 and g2 character set', then writing g0/g2 characters uses that.
 
