@@ -188,6 +188,15 @@ export class EnhancedCell extends Cell {
     get char_() {
         return this._enhancedChar == null ? this._char : this._enhancedChar;
     }
+
+    printEnhancements() {
+        console.log({
+            byte: this._byte,
+            diacriticCode: this._diacriticCode,
+            enhancedChar: this._enhancedChar,
+            char: this.char_
+        });
+    }
 }
 
 // private

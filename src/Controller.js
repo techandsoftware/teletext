@@ -204,12 +204,26 @@ class Enhancement {
             if (code >= 0 && code <= 15)
                 dcode = code;
         }
+        const charCode = char.charCodeAt(0);
+        if (charCode < 0x32 || charCode > 0x7f) return this;
         this._data.push({
             x_: this._x,
             y_: this._y,
             type_: 'g0',
             char_: char,
             diacritic_: dcode
+        });
+        return this;
+    }
+
+    putG2(char) {
+        const charCode = char.charCodeAt(0);
+        if (charCode < 0x32 || charCode > 0x7f) return this;
+        this._data.push({
+            x_: this._x,
+            y_: this._y,
+            type_: 'g2',
+            char_: char,
         });
         return this;
     }

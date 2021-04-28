@@ -286,11 +286,16 @@ export class PageModel {
                         cell.setMappedChar_(this._secondaryG0CharacterEncoding);
                     else
                         cell.setMappedChar_(this._primaryG0CharacterEncoding);
+                } else if (e.type_ == 'g2') {
+                    cell.byte_ = e.char_;
+                    cell.type_ = CellType.ALPHA_;
+                    cell.setMappedChar_('latin_g2');
                 } else if (e.type_ == 'char') {
                     cell.enhancedChar_ = e.char_;
                     cell.type_ = CellType.ALPHA_;
                 }
                 // console.log(cell);
+                // console.log(cell.printEnhancements());
             });
 
             rowModel.addCell_(cell);
