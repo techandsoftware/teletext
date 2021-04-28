@@ -82,6 +82,7 @@ export class PageModel {
     setLevel_(level) {
         this._level = level;
         console.debug('PageModel.setLevel: switching to Level', level);
+        console.debug('new level: ', this._level);
         this.onSet_.notify_();
     }
 
@@ -143,18 +144,6 @@ export class PageModel {
             rowEnhancements = this._enhancement.filter(e => e.y_ == rowNum);
 
         this._screen[rowNum].forEach((cell, cellIndex) => {
-            const cellEnhancements = rowEnhancements.filter(e => e.x_ == cellIndex);
-            cellEnhancements.forEach(e => {
-                const ecell = new EnhancedCell(cell);
-                cell = ecell;
-                if (e.type_ == 'g0') {
-                    cell.byte_ = e.char_;
-                    cell.diacritic_ = e.diacritic_;
-                } else if (e.type_ == 'char') {
-                    cell.enhancedChar_ = e.char_;
-                }
-            });
-
             const char = cell.byte_;
             const attrib = attribFromChar(this._level, char);
 
@@ -284,6 +273,26 @@ export class PageModel {
 
             cell.fgColour_ = textColour;
             cell.bgColour_ = backgroundColour;
+
+            const cellEnhancements = rowEnhancements.filter(e => e.x_ == cellIndex);
+            cellEnhancements.forEach(e => {
+                const ecell = new EnhancedCell(cell);
+                cell = ecell;
+                if (e.type_ == 'g0') {
+                    cell.byte_ = e.char_;
+                    cell.diacritic_ = e.diacritic_;
+                    cell.type_ = CellType.ALPHA_;
+                    if (switchedG0CharacterEncoding)
+                        cell.setMappedChar_(this._secondaryG0CharacterEncoding);
+                    else
+                        cell.setMappedChar_(this._primaryG0CharacterEncoding);
+                } else if (e.type_ == 'char') {
+                    cell.enhancedChar_ = e.char_;
+                    cell.type_ = CellType.ALPHA_;
+                }
+                // console.log(cell);
+            });
+
             rowModel.addCell_(cell);
         });
         // console.dir(rowModel);

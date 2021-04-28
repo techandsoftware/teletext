@@ -183,7 +183,6 @@ export class EnhancedCell extends Cell {
 
     set enhancedChar_(char) {
         this._enhancedChar = char;
-        this._type = CellType.ALPHA_;
     }
 
     get char_() {
