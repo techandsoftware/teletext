@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 
 import { Utils } from './Utils.js';
-import testpages from'./data/testpages.json';
+import testpages from './data/testpages.json';
 
 import { VectorViewBase } from './VectorViewBase.js';
 class ViewClassic extends VectorViewBase {}
@@ -31,6 +31,8 @@ export class TeletextController {
         this._initEventHandlers();
         this._viewSelector = null;
         this._height = null;
+        this._posX = 0;
+        this._posY = 0;
         console.debug('TeletextController constructed');
     }
 
@@ -160,7 +162,69 @@ export class TeletextController {
         this._model.notify_();
     }
 
+    enhance() {
+        return new Enhancement(this._model);
+    }
+
+
     // dumpToConsole() {
     //     this._model.dumpToConsole();
     // }
+}
+
+class Enhancement {
+    constructor(model) {
+        this._model = model;
+        this._x = 0;
+        this._y = 0;
+        this._data = [];
+    }
+
+    printPos() {
+        console.log(this._x, this._y);
+        return this;
+    }
+
+    pos(x, y) {
+        x = parseInt(x);
+        y = parseInt(y);
+        if (x < 0 || x > 39) return this;
+        if (y < 0 || y > 24) return this;
+        this._x = x;
+        this._y = y;
+        return this;
+    }
+
+    putG0(char, diacriticCode) {
+        let dcode = null;
+        if (typeof diacriticCode != 'undefined') {
+            const code = parseInt(diacriticCode);
+            if (code >= 0 && code <= 15)
+                dcode = code;
+        }
+        this._data.push({
+            x_: this._x,
+            y_: this._y,
+            type_: 'g0',
+            char_: char,
+            diacritic_: dcode
+        });
+        return this;
+    }
+
+    putAt() {
+        this._data.push({
+            x_: this._x,
+            y_: this._y,
+            type_: 'char',
+            char_: '@'
+        });
+        return this;
+    }
+
+    end() {
+        this._model.enhance_(this._data);
+        this._model.notify_();
+        return this;
+    }
 }

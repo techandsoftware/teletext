@@ -30,6 +30,7 @@ export class Cell {
         this._boxed = false;
         this._byteHeld = null;
         this._isCursive = false;
+        this._diacriticCode = null;
     }
 
     set byte_(byte) {
@@ -63,6 +64,7 @@ export class Cell {
     setMappedChar_(encoding) {
         if (this._type == CellType.ALPHA_ || ((this._byte.charCodeAt(0) & 0b100000) == 0)) {
             this._char = getCharWithEncoding(this._byte, encoding);
+            if (this._diacriticCode > 0) this._char += encodings["latin_g2"][String.fromCharCode(this._diacriticCode + 0x40)];
             this._isCursive = false;
             if (encoding == 'arabic_g0') {
                 const code = this._byte.charCodeAt(0);
@@ -160,6 +162,23 @@ export class Cell {
         if (sextant >= 0x40) sextant -= 0x20;
         sextants[code] = [...sextant.toString(2).padStart(6, '0')].reverse();
         return sextants[code];
+    }
+}
+
+// clones a cell so that its values can be overriden by enhancement data
+export class EnhancedCell extends Cell {
+    constructor(cell) {
+        super();
+        Object.assign(this, cell);
+        this._diacritic = null;
+    }
+
+    set diacritic_(diacriticCode) {
+        this._diacriticCode = diacriticCode;
+    }
+
+    get diacritic_() {
+        return this._diacriticCode;
     }
 }
 

@@ -2,13 +2,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 
 import { Level, Attributes, Colour, CellType, CellSize, attribFromChar } from './Attributes.js';
-import { Cell } from './Cell.js';
+import { Cell, EnhancedCell } from './Cell.js';
 import { Event } from './Event.js';
 import { RowModel } from './RowModel.js';
 
 const ROWS = 25;
 const CELLS_PER_ROW = 40;
 const DEFAULT_PRIMARY_G0_CHARACTER_SET = 'latin_g0';
+
+const ENHANCEMENT_LEVELS = [Level[1.5], Level[2.5]];
 
 export class PageModel {
     constructor() {
@@ -24,6 +26,7 @@ export class PageModel {
         this._secondaryG0CharacterEncoding = null;
         this._startBoxChar = Attributes.charFromAttribute(Attributes.START_BOX)
         this._level = Level[1];
+        this._enhancement = [];
         
         this.onSet_ = new Event(this);
         console.debug('PageModel constructed');
@@ -135,7 +138,26 @@ export class PageModel {
             type: CellType.MOSAIC_CONTIGUOUS_
         };
 
+        let rowEnhancements = [];
+        let enhanceable = false;
+        if (ENHANCEMENT_LEVELS.includes(this._level)) {
+            rowEnhancements = this._enhancement.filter(e => e.y_ == rowNum);
+            enhanceable = true;
+        }
+
         this._screen[rowNum].forEach((cell, cellIndex) => {
+            if (enhanceable) {
+                const cellEnhancements = rowEnhancements.filter(e => e.x_ == cellIndex);
+                cellEnhancements.forEach(e => {
+                    const ecell = new EnhancedCell(cell);
+                    cell = ecell;
+                    if (e.type_ == 'g0') {
+                        cell.byte_ = e.char_;
+                        cell.diacritic_ = e.diacritic_;
+                    }
+                });
+            }
+
             const char = cell.byte_;
             const attrib = attribFromChar(this._level, char);
 
@@ -269,6 +291,10 @@ export class PageModel {
         });
         // console.dir(rowModel);
         return rowModel;
+    }
+
+    enhance_(data) {
+        this._enhancement = data;
     }
 
 }
