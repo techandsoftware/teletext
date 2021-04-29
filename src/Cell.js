@@ -68,14 +68,7 @@ export class Cell {
             this._char = getCharWithEncoding(this._byte, encoding);
             if (this._diacriticCode > 0) this._char += encodings["latin_g2"][String.fromCharCode(this._diacriticCode + 0x40)];
             this._isCursive = false;
-            if (encoding == 'arabic_g0') {
-                const code = this._byte.charCodeAt(0);
-                if (code == 38 || code == 39 || (code >= 64 && code <= 94) || (code >= 96 && code <= 125)) {
-                    this._isCursive = true;
-                }
-            } else if (encoding == 'arabic_g2') {
-                this._isCursive = Utils.isCursive_(this._char);
-            }
+            if (encoding == 'arabic_g0' || encoding == 'arabic_g2') this._isCursive = Utils.isCursive_(this._char);
         } else if (this._type == CellType.MOSAIC_CONTIGUOUS_)
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__legacy_computing');
         else

@@ -4,7 +4,7 @@
 import Uint1Array from 'uint1array';
 
 // Arabic chars in initial, medial or final form are cursive
-const CURSIVE_CHARS = "ﺋﺊﭼﭽﭘﭙﮔﻎﻼﻬﻪﻊ";
+const CURSIVE_CHARS = "ﻰﺋﺊﭼﭽﭘﭙﮔﻎﻼﻬﻪﻊﺔﺒﺘﺎﺑﺗﺛﺟﺣﺧﺳﺷﺻﺿﻃﻇﻋﻏﺜﺠﺤﺨـﻓﻗﻛﻟﻣﻧﻫﻰﻳﻴﻌﻐﻔﻘﻠﻤﻨ";
 
 export class Utils {
 
