@@ -29,8 +29,8 @@ Extensions are supported via plugins.
     * Mix display mode, which isn't part of the teletext spec but is normal on TVs
 * Level 1.5
     * Black foreground text or mosaic (this is level 2.5 in the teletext spec but included here at 1.5 as with some TVs)
-    * ~~g2 set selectable~~ TODO
-    * API for enhancements to base page at row, col locations:
+    * g2 character set selectable
+    * Add enhancements to the base page at (row, col) locations:
        * Place characters from the g0 sets
        * Place diacritical marks on characters from the g0 sets
        * Place characters from g2 sets
