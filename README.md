@@ -29,11 +29,11 @@ Extensions are supported via plugins.
     * Mix display mode, which isn't part of the teletext spec but is normal on TVs
 * Level 1.5
     * Black foreground text or mosaic (this is level 2.5 in the teletext spec but included here at 1.5 as with some TVs)
-    * g2 character set selectable
+    * g2 character set selectable from 4 available sets (Latin, Greek, Cyrillic and Arabic)
     * Add enhancements to the base page at (row, col) locations:
        * Place characters from the g0 sets
        * Place diacritical marks on characters from the g0 sets
-       * Place characters from g2 sets
+       * Place characters from the g2 sets
        * Place `@` symbol (it isn't in most g0 sets or the g2 sets)
        * ~~4 characters from the g3 character set placeable~~ TODO
 * Level 2.5
@@ -47,7 +47,7 @@ Additional features:
 * Screen drawn with SVG graphics. The SVG is exportable for display in any SVG viewer
 * The API supports setting the font for text, change height and aspect ratio, switch teletext levels, set on-screen grid
 * Use characters or SVG shapes for rendering mosaics
-* Plugin architecture. Plugins can supplement or overwrite the rendering, for example to use pixelart scaling to render smooth graphics instead of the normally blocky mosaics
+* Plugin architecture. Plugins can supplement or overwrite the rendering
 
 ## Plugins
 
