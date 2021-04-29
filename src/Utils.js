@@ -3,6 +3,9 @@
 
 import Uint1Array from 'uint1array';
 
+// Arabic chars in initial, medial or final form are cursive
+const CURSIVE_CHARS = "ﺋﺊﭼﭽﭘﭙﮔﻎﻼﻬﻪﻊ";
+
 export class Utils {
 
     // "base64url" encoding defined here https://tools.ietf.org/html/rfc4648
@@ -27,6 +30,10 @@ export class Utils {
         const bits = new Uint1Array(buffer);
 
         return getUnpackedData(bits);
+    }
+
+    static isCursive_(char) {
+        return CURSIVE_CHARS.indexOf(char) != -1;
     }
 }
 

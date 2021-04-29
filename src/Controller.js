@@ -215,7 +215,7 @@ class Enhancement {
                 dcode = code;
         }
         const charCode = char.charCodeAt(0);
-        if (charCode < 0x32 || charCode > 0x7f) return this;
+        if (charCode < 0x20 || charCode > 0x7f) return this;
         this._data.push({
             x_: this._x,
             y_: this._y,
@@ -228,7 +228,7 @@ class Enhancement {
 
     putG2(char) {
         const charCode = char.charCodeAt(0);
-        if (charCode < 0x32 || charCode > 0x7f) return this;
+        if (charCode < 0x20 || charCode > 0x7f) return this;
         this._data.push({
             x_: this._x,
             y_: this._y,

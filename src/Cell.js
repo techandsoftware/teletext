@@ -3,6 +3,7 @@
 
 import { Colour, CellType, CellSize } from './Attributes.js';
 import encodings from './data/characterEncodings.json';
+import { Utils } from './Utils.js';
 
 const sextants = {};
 
@@ -72,6 +73,8 @@ export class Cell {
                 if (code == 38 || code == 39 || (code >= 64 && code <= 94) || (code >= 96 && code <= 125)) {
                     this._isCursive = true;
                 }
+            } else if (encoding == 'arabic_g2') {
+                this._isCursive = Utils.isCursive_(this._char);
             }
         } else if (this._type == CellType.MOSAIC_CONTIGUOUS_)
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__legacy_computing');
