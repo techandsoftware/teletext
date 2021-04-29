@@ -5,10 +5,12 @@ import { Level, Attributes, Colour, CellType, CellSize, attribFromChar } from '.
 import { Cell, EnhancedCell } from './Cell.js';
 import { Event } from './Event.js';
 import { RowModel } from './RowModel.js';
+import encodings from './data/characterEncodings.json';
 
 const ROWS = 25;
 const CELLS_PER_ROW = 40;
 const DEFAULT_PRIMARY_G0_CHARACTER_SET = 'latin_g0';
+const DEFAULT_G2_CHARACTER_SET = 'latin_g2';
 
 const ENHANCEMENT_LEVELS = [Level[1.5], Level[2.5]];
 
@@ -24,6 +26,7 @@ export class PageModel {
         }
         this._primaryG0CharacterEncoding = DEFAULT_PRIMARY_G0_CHARACTER_SET;
         this._secondaryG0CharacterEncoding = null;
+        this._g2CharacterEncoding = DEFAULT_G2_CHARACTER_SET;
         this._startBoxChar = Attributes.charFromAttribute(Attributes.START_BOX)
         this._level = Level[1];
         this._enhancement = [];
@@ -103,13 +106,26 @@ export class PageModel {
 
     setPrimaryG0CharacterEncoding_(encoding, withUpdate) {
         this._primaryG0CharacterEncoding = encoding;
-        console.debug('PageModel.setPrimaryG0CharacterEncoding: set default g0 encoding to', encoding);
+        const g0base = encoding.match(/^(.+?)_/);
+        if (g0base != null) {
+            // the g2 set selected is derived from the g0 set, apart from hebrew which has no _g2 set
+            const g2 = `${g0base[1]}_g2`;
+            if (g2 in encodings) this._g2CharacterEncoding = g2;
+            else if (g0base[1] == 'hebrew') this._g2CharacterEncoding = 'arabic_g2';
+        }
+        console.debug('PageModel.setPrimaryG0CharacterEncoding: set default g0 encoding to', encoding, 'with g2 encoding to', this._g2CharacterEncoding);
         if (withUpdate) this.onSet_.notify_();
     }
 
     setSecondaryG0CharacterEncoding_(encoding, withUpdate) {
         this._secondaryG0CharacterEncoding = encoding;
         console.debug('PageModel.setSecondaryG0CharacterEncoding: set second g0 encoding to', encoding);
+        if (withUpdate) this.onSet_.notify_();
+    }
+
+    setG2CharacterEncoding_(encoding, withUpdate) {
+        this._g2CharacterEncoding = encoding;
+        console.debug('PageModel.setG2CharacterEncoding: set g2 encoding to', encoding);
         if (withUpdate) this.onSet_.notify_();
     }
 
@@ -265,6 +281,7 @@ export class PageModel {
                     else
                         cell.setMappedChar_(this._primaryG0CharacterEncoding);
                     // mosaic chars are held for use when 'hold mosaics' is active
+                    // ?? spec question. what's the impact of enhancements on held mosaics? is the held mosaic from the base page or the enhancement?
                     if (cell.isMosaic_()) {
                         heldMosaic.char = char;
                         heldMosaic.type = cell.type_;
@@ -289,7 +306,7 @@ export class PageModel {
                 } else if (e.type_ == 'g2') {
                     cell.byte_ = e.char_;
                     cell.type_ = CellType.ALPHA_;
-                    cell.setMappedChar_('latin_g2');
+                    cell.setMappedChar_(this._g2CharacterEncoding);
                 } else if (e.type_ == 'char') {
                     cell.enhancedChar_ = e.char_;
                     cell.type_ = CellType.ALPHA_;
