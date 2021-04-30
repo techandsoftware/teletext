@@ -226,6 +226,19 @@ class Enhancement {
         return this;
     }
 
+    putG1(char) {
+        const charCode = char.charCodeAt(0);
+        if (charCode < 0x20 || charCode > 0x7f ||
+            (charCode >= 0x40 && charCode <= 0x5f)) return this;
+        this._data.push({
+            x_: this._x,
+            y_: this._y,
+            type_: 'g1',
+            char_: char,
+        });
+        return this;
+    }
+
     putG2(char) {
         const charCode = char.charCodeAt(0);
         if (charCode < 0x20 || charCode > 0x7f) return this;

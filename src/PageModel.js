@@ -304,6 +304,12 @@ export class PageModel {
                         cell.setMappedChar_(this._secondaryG0CharacterEncoding);
                     else
                         cell.setMappedChar_(this._primaryG0CharacterEncoding);
+                } else if (e.type_ == 'g1') {
+                    if (this._level == Level[2.5]) {
+                        cell.byte_ = e.char_;
+                        cell.type_ = graphicType
+                        cell.setMappedChar_();
+                    }
                 } else if (e.type_ == 'g2') {
                     cell.byte_ = e.char_;
                     cell.type_ = CellType.ALPHA_;
