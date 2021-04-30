@@ -35,10 +35,12 @@ Extensions are supported via plugins.
        * Place diacritical marks on characters from the g0 sets
        * Place characters from the g2 sets
        * Place `@` symbol (it isn't in most g0 sets or the g2 sets)
-       * ~~4 characters from the g3 character set placeable~~ TODO
+       * 4 characters from the g3 character set placeable
 * Level 2.5
     * Double width and double size characters
-    * ~~Modified g0/g2 set selectable for placing characters~~ TODO
+    * Add enhancements to base page at (row, col) locations:
+      * ~~Place characters from the g1 set (mosaics)~~ TODO
+      * Place characters from the g3 set (smooth mosaics and line drawing)
 
 Additional features:
 
@@ -407,10 +409,8 @@ APIs needed:
 4. `putAt()` (level 1.5) DONE - to document
 5. `putG2(char)` (level 1.5) DONE - to document
 6. `putG1(char)` (level 2.5)
-7. `putG3(char)` (level 1.5 for 4 chars, 2.5 for the rest)
+7. `putG3(char)` (level 1.5 for 4 chars, 2.5 for the rest) DONE - to document
 9. `end()` DONE - to document
-
-Level 2.5/3.5 allows for a 'modified g0 and g2 character set', then writing g0/g2 characters uses that.
 
 # Bugs
 
