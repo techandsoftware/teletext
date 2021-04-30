@@ -307,6 +307,10 @@ export class PageModel {
                     cell.byte_ = e.char_;
                     cell.type_ = CellType.ALPHA_;
                     cell.setMappedChar_(this._g2CharacterEncoding);
+                } else if (e.type_ == 'g3') {
+                    cell.byte_ = e.char_;
+                    cell.type_ = CellType.G3_;
+                    cell.setMappedChar_();
                 } else if (e.type_ == 'char') {
                     cell.enhancedChar_ = e.char_;
                     cell.type_ = CellType.ALPHA_;

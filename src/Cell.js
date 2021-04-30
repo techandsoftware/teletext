@@ -64,16 +64,19 @@ export class Cell {
     }
 
     setMappedChar_(encoding) {
-        if (this._type == CellType.ALPHA_ || ((this._byte.charCodeAt(0) & 0b100000) == 0)) {
+        const isG1 = this._type == CellType.MOSAIC_CONTIGUOUS_ || this._type == CellType.MOSAIC_SEPARATED_;
+        if (this._type == CellType.ALPHA_ || (((this._byte.charCodeAt(0) & 0b100000) == 0) && isG1)) {
             this._char = getCharWithEncoding(this._byte, encoding);
             if (this._diacriticCode > 0) this._char += encodings["latin_g2"][String.fromCharCode(this._diacriticCode + 0x40)];
             this._isCursive = false;
             if (encoding == 'arabic_g0' || encoding == 'arabic_g2') this._isCursive = Utils.isCursive_(this._char);
         } else if (this._type == CellType.MOSAIC_CONTIGUOUS_)
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__legacy_computing');
-        else
+        else if (this._type == CellType.MOSAIC_SEPARATED_)
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__unscii_separated');
-
+        else if (this._type == CellType.G3_) {
+            this._char = getCharWithEncoding(this._byte, 'g3');
+        }
         this._byteHeld = null;
     }
 

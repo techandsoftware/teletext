@@ -31,8 +31,9 @@ export class View extends Base {
             this._plugins._background(rowIndex, cellIndex, cell.size_, cell.bgColour_);
         }
 
-        if (cell.type_ == CellType.ALPHA_ || !isMosaic) {
+        if (cell.type_ == CellType.ALPHA_ || cell.type_ == CellType.G3_ || !isMosaic) {
             this._renderText(cellView, cell, attr, fill, cellIndex, rowIndex);
+            if (cell.type_ == CellType.G3_) cellView.addClass_('mosaic');
         } else if (isMosaic) {
             cellView.plain_(' ').attr_(attr);
             this._renderMosaic(rowIndex, cellIndex, cell, fill);
@@ -72,7 +73,7 @@ export class View extends Base {
                 for (let i = 0; i < 6; i++) {
                     sextants[i] == '1' && symbol.rect_(6, 6).move_((i % 2) * 6, Math.floor(i/2) * 6);
                 }
-            } else {
+            } else { // MOSAIC_SEPARATED_
                 symbol.attr_({
                     preserveAspectRatio: 'none',
                     width: width,
@@ -91,7 +92,7 @@ export class View extends Base {
                 .use_(id)
                 .move_(col * Base._CELL_WIDTH - 0.15, row * Base._CELL_HEIGHT - 0.1)
                 .fill_(fill);
-        else
+        else // MOSAIC_SEPARATED
             use = this._graphicrows[row]
                 .use_(id)
                 .move_(col * Base._CELL_WIDTH, row * Base._CELL_HEIGHT)
@@ -113,6 +114,17 @@ export class View extends Base {
 
     // eslint-disable-next-line no-unused-vars
     _getCellAttr(cellType, isMosaicChar, isCursive) {
+        if (cellType == CellType.G3_) {
+            return {
+                dx: Base._MOSAIC_METRIC._contiguous._DX,
+                dy: -0.15,
+                textLength: Base._MOSAIC_METRIC._contiguous._textLength,
+                lengthAdjust: 'spacingAndGlyphs',
+                'text-anchor': 'start',
+                transform: null,
+                class: null,
+            };
+        }
         return {
             dx: null,
             dy: null,

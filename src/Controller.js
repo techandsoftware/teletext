@@ -238,6 +238,18 @@ class Enhancement {
         return this;
     }
 
+    putG3(char) {
+        const charCode = char.charCodeAt(0);
+        if (charCode < 0x20 || charCode > 0x7f) return this;
+        this._data.push({
+            x_: this._x,
+            y_: this._y,
+            type_: 'g3',
+            char_: char,
+        });
+        return this;
+    }
+
     putAt() {
         this._data.push({
             x_: this._x,

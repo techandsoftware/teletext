@@ -172,7 +172,7 @@ export class VectorViewBase {
     _renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaic) {
         this._renderText(cellView, cell, attr, fill, cellIndex, rowIndex);
 
-        if (cell.type_ == CellType.MOSAIC_CONTIGUOUS_ && isMosaic) cellView.addClass_('mosaic');
+        if ((cell.type_ == CellType.MOSAIC_CONTIGUOUS_ && isMosaic) || cell.type_ == CellType.G3_) cellView.addClass_('mosaic');
         else if (cell.type_ == CellType.MOSAIC_SEPARATED_ && isMosaic) cellView.addClass_('mosaic_separated');
     }
 
@@ -377,7 +377,7 @@ export class VectorViewBase {
     }
 
     _getCellAttr(cellType, isMosaicChar, isCursive) {
-        if (cellType == CellType.MOSAIC_CONTIGUOUS_ && isMosaicChar) {
+        if ((cellType == CellType.MOSAIC_CONTIGUOUS_ && isMosaicChar) || cellType == CellType.G3_) {
             return {
                 dx: MOSAIC_METRIC._contiguous._DX,
                 dy: -0.15,
@@ -397,7 +397,7 @@ export class VectorViewBase {
                 transform: null,
                 class: null,
             };
-        } 
+        }
         return {
             dx: null,
             dy: null,
@@ -443,6 +443,7 @@ VectorViewBase._CELL_DOUBLE_WIDTH = CELL_DOUBLE_WIDTH;
 VectorViewBase._CELL_DOUBLE_HEIGHT = CELL_DOUBLE_HEIGHT;
 VectorViewBase._WIDTH_PX = WIDTH_PX;
 VectorViewBase._HEIGHT_PX = HEIGHT_PX;
+VectorViewBase._MOSAIC_METRIC = MOSAIC_METRIC;
 // constants for plugins
 VectorViewBase.ROWS = ROWS;
 VectorViewBase.COLS = COLS;

@@ -18,6 +18,7 @@ export const CellType = {
     ALPHA_ : Symbol('ALPHA'),
     MOSAIC_CONTIGUOUS_: Symbol('MOSAIC_CONTIGUOUS'),
     MOSAIC_SEPARATED_: Symbol('MOSAIC_SEPARATED'),
+    G3_    : Symbol('G3')
 };
 Object.freeze(CellType);
 
