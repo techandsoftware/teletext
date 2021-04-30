@@ -39,7 +39,7 @@ Extensions are supported via plugins.
 * Level 2.5
     * Double width and double size characters
     * Add enhancements to base page at (row, col) locations:
-      * ~~Place characters from the g1 set (mosaics)~~ TODO
+      * Place characters from the g1 set (mosaics)
       * Place characters from the g3 set (smooth mosaics and line drawing)
 
 Additional features:
@@ -408,7 +408,7 @@ APIs needed:
 3. `putG0(char, diacriticCode)` (level 1.5) DONE - to document
 4. `putAt()` (level 1.5) DONE - to document
 5. `putG2(char)` (level 1.5) DONE - to document
-6. `putG1(char)` (level 2.5)
+6. `putG1(char)` (level 2.5) DONE - to document
 7. `putG3(char)` (level 1.5 for 4 chars, 2.5 for the rest) DONE - to document
 9. `end()` DONE - to document
 
