@@ -22,11 +22,20 @@
 
     <script type="module">
         // minimum code to load and show a built-in test page
-        import { Teletext } from '../dist/teletext.js';
+        import { Teletext, Level } from '../dist/teletext.js';
         const t = Teletext();
         t.addTo('#teletextscreen');
         t.setDefaultG0Charset('latin_g0__english');
         t.showTestPage();
+
+        // following is for testing enhancements at level 1.5
+        // let enhance = t.enhance()
+        //     .pos(0, 10).putG0('e')
+        //     .pos(1, 10).putG0('e', 2)
+        //     .pos(2, 10).putAt()
+        //     .pos(3, 10).putG2('\u0055')
+        //     .pos(4, 10).putG3('\u0025')
+        //     .end();
     </script>
 
     <script type="module">
