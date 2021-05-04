@@ -21,7 +21,7 @@ Extensions are supported via plugins.
     * 7 colour background
     * Text displayed using the G0 character sets
     * XX character sets are available, with XX characters per set. Supports Latin, Greek, Cyrillic, Hebrew and Arabic scripts
-    * Primary and secondary g0 sets selectable and switchable
+    * Primary and secondary G0 sets selectable and switchable
     * Mosaics are contiguous or separated
     * Double height, flashing, concealed, boxed characters
     * Held mosaic characters, to replace the display of a spacing attributes with the last held graphic
@@ -29,12 +29,12 @@ Extensions are supported via plugins.
     * Mix display mode, which isn't part of the teletext spec but is normal on TVs
 * Level 1.5
     * Black foreground text or mosaic (this is level 2.5 in the teletext spec but included here at 1.5 as with some TVs)
-    * g2 character set selectable from 4 available sets (Latin, Greek, Cyrillic and Arabic)
+    * G2 character set selectable from 4 available sets (Latin, Greek, Cyrillic and Arabic)
     * Add enhancements to the base page at (row, col) locations:
-       * Place characters from the g0 sets
-       * Place diacritical marks on characters from the g0 sets
-       * Place characters from the g2 sets
-       * Place `@` symbol (it isn't in most g0 sets or the g2 sets)
+       * Place characters from the G0 sets
+       * Place diacritical marks on characters from the G0 sets
+       * Place characters from the G2 sets
+       * Place `@` symbol (it isn't in most G0 sets or the G2 sets)
        * 4 characters from the g3 character set placeable
 * Level 2.5
     * Double width and double size characters
@@ -179,38 +179,53 @@ This adds a teletext screen to the DOM element referred to by the selector, whic
 
 ## setDefaultG0Charset(charset, withUpdate)
 
-Sets the default g0 character set. The character set applies until the function is called again. The default set is `latin_g0`, which is similar to ASCII (it has `¤` instead of `$` and `■` instead of the delete control code). The suffix on the `latin_g0` character set names below correspond to the national option selections defined in ETSI EN 300 706, which modify certain characters from the `latin_g0` set. 
+Sets the default G0 character set, and the G2 set with the script matching the G0 set. The character set applies until the function is called again. The default G0 set is `g0_latin`, which is similar to ASCII (it has `¤` instead of `$` and `■` instead of the delete control code). The suffix on the `g0_latin` character set names below correspond to the national option selections defined in ETSI EN 300 706, which modify certain characters from the `g0_latin` set.
 
 `charset` is a string corresponding to one of these:
 
-* latin_g0
-* latin_g0\__czech_slovak
-* latin_g0\__english
-* latin_g0\__estonian
-* latin_g0\__french
-* latin_g0\__german
-* latin_g0\__italian
-* latin_g0\__latvian_lithuanian
-* latin_g0\__polish
-* latin_g0\__portuguese_spanish
-* latin_g0\__romanian
-* latin_g0\__serbian_croatian_slovenian
-* latin_g0\__swedish_finnish_hungarian
-* latin_g0\__turkish
-* greek_g0
-* cyrillic_g0\__russian_bulgarian
-* cyrillic_g0\__serbian_croatian
-* cyrillic_g0\__ukranian
-* arabic_g0
-* hebrew_g0
+* g0_latin
+* g0_latin\__czech_slovak
+* g0_latin\__english
+* g0_latin\__estonian
+* g0_latin\__french
+* g0_latin\__german
+* g0_latin\__italian
+* g0_latin\__latvian_lithuanian
+* g0_latin\__polish
+* g0_latin\__portuguese_spanish
+* g0_latin\__romanian
+* g0_latin\__serbian_croatian_slovenian
+* g0_latin\__swedish_finnish_hungarian
+* g0_latin\__turkish
+* g0_greek
+* g0_cyrillic\__russian_bulgarian
+* g0_cyrillic\__serbian_croatian
+* g0_cyrillic\__ukranian
+* g0_arabic
+* g0_hebrew
 
 `withUpdate` is an optional boolean. When `true` the display is updated immediately. Defaults to `false`.
+
+There are four G2 sets available. The G2 set which is selected has the same script passed in as the `charset` (for example, if `charset` is `g0_greek` then G2 is set to `g2_greek`.) Hebrew doesn't have a corresponding G2 set, and G2 is set to `g2_arabic`.
 
 For reference, the code charts are on [Wikipedia](https://en.wikipedia.org/wiki/Teletext_character_set), however the character codepoints there don't necessarily match the tables in this codebase (see `src/data/characterEncodings.json`).  The control codes for characters 0 to 1f are used for attributes - see the Attributes section below.
 
 ## setSecondG0Charset(charset, withUpdate)
 
-Sets the second g0 character set.  This is used with `Attributes.ESC` (character code 1b) to switch between the default g0 character set and the second g0 character set. The parameters are the same as for `setDefaultG0Charset`.
+Sets the second G0 character set.  This is used with `Attributes.ESC` (character code 1b) to switch between the default G0 character set and the second G0 character set. The parameters are the same as for `setDefaultG0Charset`. There is no change to the G2 set.
+
+## setG2Charset(charset, withUpdate)
+
+Sets the G2 character set. This can be called to override the G2 set that was selected if `setDefaultG0Charset()` was called.  The G2 set applies until the function is called again or if `setDefaultG0Charset()` is called.
+
+`charset` is a string corresponding to one of these:
+
+* g2_latin
+* g2_greek
+* g2_cyrillic
+* g2_arabic
+
+`withUpdate` is an optional boolean. When `true` the display is updated immediately. Defaults to `false`.
 
 ## setPageRows([strings])
 
@@ -270,7 +285,7 @@ Bedstead and Unscii are retro fonts you might want to use in your app if that's 
 
 Normal values for `font` include `serif`, `sans-serif`, `monospace` and specific font family names of the sort you'd use in a CSS stylesheet, which might be browser- or OS-specific. Your containing HTML page can supply its own font family (using Google Fonts, for example) and then refer to it here. Even though the teletext layout is grid-based, you can use a proportional font and the grid is maintained.
 
-If `arabic_g0` was set as the character set, the characters are rendered differently so that they're cursive. Whether this works correctly depends on your font.
+If `g0_arabic` was set as the character set, the characters are rendered differently so that they're cursive. Whether this works correctly depends on your font.
 
 ## setView(view)
 
@@ -348,7 +363,7 @@ Sets text mode or graphic mode for the specified colour. `colour` is one of thes
 * Colour.WHITE
 * Colour.BLACK - black was added in level 2.5, but is included here at level 1.5 and ignored at level 1
 
- Characters in the row after this attribute are processed depending on the text or graphics mode that has been set. For text mode, the characters are mapped according to the g0 character set.  For graphics mode, characters draw block mosaics from the g1 character set if the character code is 20 to 3f or 60 to 7f; characters 40 to 5f show the character from the g0 set with the same code.
+ Characters in the row after this attribute are processed depending on the text or graphics mode that has been set. For text mode, the characters are mapped according to the G0 character set.  For graphics mode, characters draw block mosaics from the G1 character set if the character code is 20 to 3f or 60 to 7f; characters 40 to 5f show the character from the G0 set with the same code.
 
 ## Attributes.charFromAttribute(attribute)
 
@@ -371,7 +386,7 @@ Gets the code for an attribute. `attribute` is one of these:
 | Attributes.RELEASE_MOSAICS    | cancels held mosaic mode, so that attributes will show a space and not the held mosaic. The held mosaic isn't reset to a space |
 | Attributes.START_BOX          | starts boxed characters (used for subtitles, newsflash). Two adjacent start box characters need to be used, with the box starting between the two. For use with `toggleBoxMode()` |
 | Attributes.END_BOX            | ends boxed characters |
-| Attributes.ESC                | switch between the default g0 character set and the second g0 character set.  This requires the second g0 character set to have been set with `setSecondG0Charset`.  If this hasn't been set, the attribute has no effect |
+| Attributes.ESC                | switch between the default g0 character set and the second G0 character set.  This requires the second G0 character set to have been set with `setSecondG0Charset`.  If this hasn't been set, the attribute has no effect |
 
 As an example, to set red text on a yellow background, you will need:
 
@@ -390,15 +405,15 @@ If you prefer to use the control codes directly, check the source of Attributes.
 These features of [ETSI EN 300 706](https://www.etsi.org/deliver/etsi_en/300700_300799/300706/01.02.01_60/en_300706v010201p.pdf) aren't supported yet:
 
 * Level 1.5
-    * Set g2 charset
-    * Place 'a few' characters from the g2 supplementary character set, although the g2 set isn't defined precisely at level 1.5
-    * Place diacritics from the g2 set onto 'a few' g0 characters
+    * Set G2 charset
+    * Place 'a few' characters from the G2 supplementary character set, although the G2 set isn't defined precisely at level 1.5
+    * Place diacritics from the G2 set onto 'a few' G0 characters
     * Place 4 characters from the g3 set
-    * Place `@` which is missing from most g0 sets and all g2 sets
+    * Place `@` which is missing from most G0 sets and all G2 sets
 * Level 2.5 and 3.5
     * all features need to be added apart from black foreground text/graphics (which I've included in 1.5), and double width and double size spacing attributes
 
-For Level 2.5 and 3.5, the ETSI spec includes full g3 character set support (smoothed block mosaic and line drawing characters), g2 character set selection, 32 colours via 4 colour tables, colour table selection and remapping, side panels, non-spacing attributes, default screen/row colours, redefinable characters.  The non-spacing attributes include underline, inverse, bold, italic, proportional text and extra flashing modes in addition to level 1 attributes.  I'm not sure how much is worth implementing.
+For Level 2.5 and 3.5, the ETSI spec includes full g3 character set support (smoothed block mosaic and line drawing characters), G2 character set selection, 32 colours via 4 colour tables, colour table selection and remapping, side panels, non-spacing attributes, default screen/row colours, redefinable characters.  The non-spacing attributes include underline, inverse, bold, italic, proportional text and extra flashing modes in addition to level 1 attributes.  I'm not sure how much is worth implementing.
 
 The spec also defines navigation and object pages, which I consider out of scope as they're more in the domain of the application rather than the display.
 
