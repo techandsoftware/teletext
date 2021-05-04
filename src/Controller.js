@@ -15,16 +15,16 @@ export class TeletextController {
         this._windowDom = null;
         if (typeof window == 'object') this._windowDom = window;
         this._opt = {
-            webkitCompat: true // generate SVG that's compatible with webkit by default. The resulting SVG is larger
+            webkitCompat_: true // generate SVG that's compatible with webkit by default. The resulting SVG is larger
         };
         if (typeof options == 'object') {
-            if ('webkitCompat' in options && !options.webkitCompat) this._opt.webkitCompat = false;
+            if ('webkitCompat' in options && !options.webkitCompat) this._opt.webkitCompat_ = false;
             if ('dom' in options) this._windowDom = options.dom;
         }
         if (this._windowDom == null)
             throw new Error('TeletextController E24: No window dom object available');
 
-        this._view = new ViewGraphicMosaic(model, this._opt.webkitCompat, this._windowDom);
+        this._view = new ViewGraphicMosaic(model, this._opt.webkitCompat_, this._windowDom);
         this._model = model;
         this._levelIndex = 1;
         this._testPageIndex = 0;
@@ -159,7 +159,7 @@ export class TeletextController {
                 this._view = new ViewClassic(this._model, this._windowDom);
                 break;
             case 'classic__graphic-for-mosaic':
-                this._view = new ViewGraphicMosaic(this._model, this._opt.webkitCompat, this._windowDom);
+                this._view = new ViewGraphicMosaic(this._model, this._opt.webkitCompat_, this._windowDom);
                 break;
             default:
                 throw new Error("setView E126: bad view name:" + view);
