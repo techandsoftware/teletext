@@ -164,7 +164,7 @@ At level 1, there are two character sets on a page: G0 and G1.  From level 1.5, 
 ## G0
 
 - Used on base page for the text
-- 14 character sets available. See the API docs for the list.  None of these are ASCII, but `g0_latin` is close.
+- 20 character sets available. See the API docs for the list.  None of these are ASCII, but `g0_latin` is close.
 - At level 1, a primary set is selectable from the available sets
 - At level 1.5, primary and secondary G0 set can be selected and used simultaneously
 - At level 1.5, can be placed using enhancements
