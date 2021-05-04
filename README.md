@@ -9,7 +9,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 
 This package renders teletext pages using vector graphics (SVG). Note this is just the display part of teletext, and operates as a screen or a dumb terminal.  The application using this package will need to supply the page content, implement page numbers, navigation, etc.  The package provides an API to set page content and change the display characteristics such as the screen height and aspect ratio.
 
-This supports most of level 1/1.5 and a little of level 2.5.  A full list follows.  Display rendering features include changing the text font (including proportional fonts), aspect ratio and screen height. Mosaic graphics can be rendered with a font or using SVG graphics. 
+This supports all of level 1 and level 1.5, and a little of level 2.5.  A full list follows.  Display rendering features include changing the text font (including proportional fonts), aspect ratio and screen height. Mosaic graphics can be rendered with a font or using SVG graphics. 
 
 Extensions are supported via plugins.
 
@@ -357,7 +357,7 @@ Character 5f isn't supported, which is intended to show the level 2.5 row backgr
 
 ### putAt()
 
-Writes a `@` character at the *position*.  This is needed because `@` is missing from most G0 and G2 sets, and the teletext spec has special provision for it.
+Requires level 1.5 or 2.5. Writes a `@` character at the *position*.  This is needed because `@` is missing from most G0 and G2 sets, and the teletext spec has special provision for it.
 
 ### end()
 
