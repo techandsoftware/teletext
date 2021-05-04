@@ -192,10 +192,10 @@ class Enhancement {
         this._data = [];
     }
 
-    printPos() {
-        console.log(this._x, this._y);
-        return this;
-    }
+    // printPos() {
+    //     console.log(this._x, this._y);
+    //     return this;
+    // }
 
     pos(x, y) {
         x = parseInt(x);
