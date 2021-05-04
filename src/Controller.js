@@ -126,19 +126,19 @@ export class TeletextController {
     }
 
     setDefaultG0Charset(encoding, withUpdate) {
-        const matches = encoding.match(/_g0/);
+        const matches = encoding.match(/g0_/);
         if (matches == null) throw new Error("E130 setDefaultG0Charset: Bad g0 set");
         this._model.setPrimaryG0CharacterEncoding_(encoding, withUpdate);
     }
 
     setSecondG0Charset(encoding, withUpdate) {
-        const matches = encoding.match(/_g0/);
+        const matches = encoding.match(/g0_/);
         if (matches == null) throw new Error("E136 setSecondG0Charset: Bad g0 set");
         this._model.setSecondaryG0CharacterEncoding_(encoding, withUpdate);
     }
 
     setG2Charset(encoding, withUpdate) {
-        const matches = encoding.match(/_g2/);
+        const matches = encoding.match(/g2_/);
         if (matches == null) throw new Error("E142 setG2Charset: Bad g2 set");
         this._model.setG2CharacterEncoding_(encoding, withUpdate);
     }

@@ -9,8 +9,8 @@ import encodings from './data/characterEncodings.json';
 
 const ROWS = 25;
 const CELLS_PER_ROW = 40;
-const DEFAULT_PRIMARY_G0_CHARACTER_SET = 'latin_g0';
-const DEFAULT_G2_CHARACTER_SET = 'latin_g2';
+const DEFAULT_PRIMARY_G0_CHARACTER_SET = 'g0_latin';
+const DEFAULT_G2_CHARACTER_SET = 'g2_latin';
 
 const ENHANCEMENT_LEVELS = [Level[1.5], Level[2.5]];
 const G3_CHARS_IN_LEVEL_1_5 = "\u0051\u005b\u005c\u005d";
@@ -107,12 +107,12 @@ export class PageModel {
 
     setPrimaryG0CharacterEncoding_(encoding, withUpdate) {
         this._primaryG0CharacterEncoding = encoding;
-        const g0base = encoding.match(/^(.+?)_/);
+        const g0base = encoding.match(/^g0_([a-z]+)/);
         if (g0base != null) {
-            // the g2 set selected is derived from the g0 set, apart from hebrew which has no _g2 set
-            const g2 = `${g0base[1]}_g2`;
+            // the g2 set selected is derived from the g0 set, apart from hebrew which has no g2_ set
+            const g2 = `g2_${g0base[1]}`;
             if (g2 in encodings) this._g2CharacterEncoding = g2;
-            else if (g0base[1] == 'hebrew') this._g2CharacterEncoding = 'arabic_g2';
+            else if (g0base[1] == 'hebrew') this._g2CharacterEncoding = 'g2_arabic';
         }
         console.debug('PageModel.setPrimaryG0CharacterEncoding: set default g0 encoding to', encoding, 'with g2 encoding to', this._g2CharacterEncoding);
         if (withUpdate) this.onSet_.notify_();
