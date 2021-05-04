@@ -19,7 +19,7 @@
   "private": false,
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^11.2.1",
+    "@rollup/plugin-node-resolve": "^13.0.0",
     "c8": "^7.7.1",
     "eslint": "^7.24.0",
     "jsdom": "^16.5.3",
