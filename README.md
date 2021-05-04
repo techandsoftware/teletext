@@ -20,7 +20,7 @@ Extensions are supported via plugins.
     * 6 colour foreground text or mosaic characters (also called semigraphics or sextets)
     * 7 colour background
     * Text displayed using the G0 character sets
-    * XX character sets are available, with XX characters per set. Supports Latin, Greek, Cyrillic, Hebrew and Arabic scripts
+    * 20 G0 character sets are available, with up to 96 characters per set. Supports Latin, Greek, Cyrillic, Hebrew and Arabic scripts
     * Primary and secondary G0 sets selectable and switchable
     * Mosaics are contiguous or separated
     * Double height, flashing, concealed, boxed characters
@@ -35,12 +35,12 @@ Extensions are supported via plugins.
        * Place diacritical marks on characters from the G0 sets
        * Place characters from the G2 sets
        * Place `@` symbol (it isn't in most G0 sets or the G2 sets)
-       * 4 characters from the g3 character set placeable
+       * 4 characters from the G3 character set placeable
 * Level 2.5
     * Double width and double size characters
     * Add enhancements to base page at (row, col) locations:
-      * Place characters from the g1 set (mosaics)
-      * Place characters from the g3 set (smooth mosaics and line drawing)
+      * Place characters from the G1 set (block mosaics)
+      * Place characters from the G3 set (smooth mosaics and line drawing)
 
 Additional features:
 
@@ -297,6 +297,72 @@ When using `classic__font-for-mosaic`, the contiguous mosaic characters use code
 
 Using the font will result in a smaller SVG.  If you export the SVG from the DOM then you will need to ensure the Unscii font is available so that the SVG can be viewed properly in isolation. Because of issues with getting the edges of the mosaics to join up without gaps, the font size is slightly bigger than it should be. Using SVG graphics for the mosaics is more portable, and the mosaics are more precisely positioned.
 
+## enhance()
+
+Returns an `enhancement` instance.  This is used to overwrite characters on top of the base page. It can be used to write diactitics on G0 characters, and also gives access to characters from the G2 and G3 character sets.  Enhancements aren't displayed at Level 0 or Level 1; you need to call `setLevel()` with `Level[1.5]` or `Level[2.5]`.  The enhancement instance provides the methods below to write the enhancements. The enhancements are cleared with a call to `setPageRows()`, `loadPageFromEncodedString()`, `clearScreen()` or `showTestPage()`.
+
+The *position* is a bit like a cursor and analogous to the Active Position in the teletext spec. Call `pos()` to update it, and subsequent calls apply to that position.  Characters are not displayed until `end()` is called on the enhancement instance.  The methods can be chained together, for example `enhance().pos(2, 5).putG0('e', 2).end()` .
+
+The methods are:
+
+### pos(col, row)
+
+Updates the *position* to the `col` and `row`.  The *position* is only updated when this function is called.  The intitial position is 0, 0.
+
+### putG0(char, diacriticCode)
+
+Requires level 1.5.  Writes a character from the current G0 set at the *position*.
+
+`char` is a character with a code between 0x20 and 0x7f.
+
+`diacriticCode` is optional, and is a number between 0 and 15.  If it's not provided or if its value is 0, the char is written without a diacritic.  Values 1 to 15 correspond to the diacritics in column 4 of the g2_latin set, which are: 
+
+| `diacriticCode` | diacritic |
+|-----------------|-----------|
+| 1               | ◌&#x300;  |
+| 2               | ◌&#x301;  |
+| 3               | ◌&#x302;  |
+| 4               | ◌&#x303;  |
+| 5               | ◌&#x304;  |
+| 6               | ◌&#x306;  |
+| 7               | ◌&#x307;  |
+| 8               | ◌&#x308;  |
+| 9               | ◌&#x323;  |
+| 10              | ◌&#x30a;  |
+| 11              | ◌&#x327;  |
+| 12              | ◌&#x332;  |
+| 13              | ◌&#x30b;  |
+| 14              | ◌&#x328;  |
+| 15              | ◌&#x30c;  |
+
+### putG1(char)
+
+Requires level 2.5. Writes a block mosaic character from the G1 set at the *position*.
+
+`char` is a character with a code between 0x20 to 0x3f or 0x60 to 0x7f. Character codes 0x40 to 0x5f have no effect.
+
+### putG2(char)
+
+Requires level 1.5 or 2.5.  Writes a character from the current G2 set at the *position*.
+
+`char` is a character with a code between 0x20 and 0x7f.
+
+### putG3(char)
+
+Requires level 1.5 or 2.5.  Writes a smooth mosaic or line drawing character from the G3 set at the *position*.  Level 1.5 supports 4 characters. Level 2.5 supports the entire set.
+
+`char` is a character with a code between 0x20 and 0x7d.  At level 1.5, only characters 51, 5b, 5c and 5d are displayed.
+
+Character 5f isn't supported, which is intended to show the level 2.5 row background colour in the teletext spec.
+
+### putAt()
+
+Writes a `@` character at the *position*.  This is needed because `@` is missing from most G0 and G2 sets, and the teletext spec has special provision for it.
+
+### end()
+
+Finish adding enhancements, and the display is updated.
+
 ## setLevel(level)
 
 Sets the teletext level used to display the page. The value is a property on the `Level` object.  `Level` is importable:
@@ -386,7 +452,7 @@ Gets the code for an attribute. `attribute` is one of these:
 | Attributes.RELEASE_MOSAICS    | cancels held mosaic mode, so that attributes will show a space and not the held mosaic. The held mosaic isn't reset to a space |
 | Attributes.START_BOX          | starts boxed characters (used for subtitles, newsflash). Two adjacent start box characters need to be used, with the box starting between the two. For use with `toggleBoxMode()` |
 | Attributes.END_BOX            | ends boxed characters |
-| Attributes.ESC                | switch between the default g0 character set and the second G0 character set.  This requires the second G0 character set to have been set with `setSecondG0Charset`.  If this hasn't been set, the attribute has no effect |
+| Attributes.ESC                | switch between the default G0 character set and the second G0 character set.  This requires the second G0 character set to have been set with `setSecondG0Charset`.  If this hasn't been set, the attribute has no effect |
 
 As an example, to set red text on a yellow background, you will need:
 
@@ -402,30 +468,17 @@ If you prefer to use the control codes directly, check the source of Attributes.
 
 # TODO
 
-These features of [ETSI EN 300 706](https://www.etsi.org/deliver/etsi_en/300700_300799/300706/01.02.01_60/en_300706v010201p.pdf) aren't supported yet:
+These features of [ETSI EN 300 706](https://www.etsi.org/deliver/etsi_en/300700_300799/300706/01.02.01_60/en_300706v010201p.pdf) aren't supported yet. I'm not sure how much is worth doing:
 
-* Level 1.5
-    * Set G2 charset
-    * Place 'a few' characters from the G2 supplementary character set, although the G2 set isn't defined precisely at level 1.5
-    * Place diacritics from the G2 set onto 'a few' G0 characters
-    * Place 4 characters from the g3 set
-    * Place `@` which is missing from most G0 sets and all G2 sets
-* Level 2.5 and 3.5
-    * all features need to be added apart from black foreground text/graphics (which I've included in 1.5), and double width and double size spacing attributes
-
-For Level 2.5 and 3.5, the ETSI spec includes full g3 character set support (smoothed block mosaic and line drawing characters), G2 character set selection, 32 colours via 4 colour tables, colour table selection and remapping, side panels, non-spacing attributes, default screen/row colours, redefinable characters.  The non-spacing attributes include underline, inverse, bold, italic, proportional text and extra flashing modes in addition to level 1 attributes.  I'm not sure how much is worth implementing.
+At Level 2.5 or 3.5:
+* non-spacing attributes. The non-spacing attributes include underline, inverse, bold, italic, proportional text and extra flashing modes in addition to the normal level 1 attributes
+* 32 colours via 4 colour tables
+* colour table selection and remapping
+* default screen/row colours
+* side panels
+* redefinable characters
 
 The spec also defines navigation and object pages, which I consider out of scope as they're more in the domain of the application rather than the display.
-
-APIs needed:
-1. `enhance()` DONE - to document
-2. `pos(row, col)` DONE - to document
-3. `putG0(char, diacriticCode)` (level 1.5) DONE - to document
-4. `putAt()` (level 1.5) DONE - to document
-5. `putG2(char)` (level 1.5) DONE - to document
-6. `putG1(char)` (level 2.5) DONE - to document
-7. `putG3(char)` (level 1.5 for 4 chars, 2.5 for the rest) DONE - to document
-9. `end()` DONE - to document
 
 # Bugs
 
