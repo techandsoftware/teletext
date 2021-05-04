@@ -82,12 +82,12 @@ export class Cell {
 
     setSpace_(heldMosaic) {
         if ((this._type == CellType.MOSAIC_CONTIGUOUS_ || this._type == CellType.MOSAIC_SEPARATED_)
-            && heldMosaic.active) {
-            this._byteHeld = heldMosaic.char;
-            this._type = heldMosaic.type;
+            && heldMosaic.active_) {
+            this._byteHeld = heldMosaic.char_;
+            this._type = heldMosaic.type_;
             let charEncoding = 'g1_block_mosaic_to_unicode__legacy_computing';
             if (this._type == CellType.MOSAIC_SEPARATED_) charEncoding = 'g1_block_mosaic_to_unicode__unscii_separated';
-            this._char = getCharWithEncoding(heldMosaic.char, charEncoding);
+            this._char = getCharWithEncoding(heldMosaic.char_, charEncoding);
         } else {
             this._byteHeld = null;
             this._char = ' ';

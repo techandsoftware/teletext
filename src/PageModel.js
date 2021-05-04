@@ -151,9 +151,9 @@ export class PageModel {
         let backgroundColour = Colour.BLACK;
         let graphicType = CellType.MOSAIC_CONTIGUOUS_;
         let heldMosaic = {
-            active: false,
-            char: ' ',
-            type: CellType.MOSAIC_CONTIGUOUS_
+            active_: false,
+            char_: ' ',
+            type_: CellType.MOSAIC_CONTIGUOUS_
         };
 
         let rowEnhancements = [];
@@ -174,8 +174,8 @@ export class PageModel {
             if (attrib.attribute != Attributes.CONCEAL) cell.concealed_ = nextConcealed;
             if (cancelNextHoldMosaics) {
                 if (attrib.attribute != Attributes.HOLD_MOSAICS) {
-                    heldMosaic.active = false;
-                    heldMosaic.char = ' ';
+                    heldMosaic.active_ = false;
+                    heldMosaic.char_ = ' ';
                 }
                 cancelNextHoldMosaics = false;
             }
@@ -253,7 +253,7 @@ export class PageModel {
                     cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.HOLD_MOSAICS: // set at
-                    heldMosaic.active = true;
+                    heldMosaic.active_ = true;
                     cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.RELEASE_MOSAICS: // set after
@@ -284,8 +284,8 @@ export class PageModel {
                     // mosaic chars are held for use when 'hold mosaics' is active
                     // ?? spec question. what's the impact of enhancements on held mosaics? is the held mosaic from the base page or the enhancement?
                     if (cell.isMosaic_()) {
-                        heldMosaic.char = char;
-                        heldMosaic.type = cell.type_;
+                        heldMosaic.char_ = char;
+                        heldMosaic.type_ = cell.type_;
                     }
             }
 
