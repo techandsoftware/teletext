@@ -417,6 +417,9 @@ const TYPED_ARRAYS = new Set([
 
 // SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
 
+// Arabic chars in initial, medial or final form are cursive
+const CURSIVE_CHARS = "ﻰﺋﺊﭼﭽﭘﭙﮔﻎﻼﻬﻪﻊﺔﺒﺘﺎﺑﺗﺛﺟﺣﺧﺳﺷﺻﺿﻃﻇﻋﻏﺜﺠﺤﺨـﻓﻗﻛﻟﻣﻧﻫﻰﻳﻴﻌﻐﻔﻘﻠﻤﻨ";
+
 class Utils {
 
     // "base64url" encoding defined here https://tools.ietf.org/html/rfc4648
@@ -441,6 +444,10 @@ class Utils {
         const bits = new Uint1Array(buffer);
 
         return getUnpackedData(bits);
+    }
+
+    static isCursive_(char) {
+        return CURSIVE_CHARS.indexOf(char) != -1;
     }
 }
 
@@ -951,6 +958,7 @@ const CellType = {
     ALPHA_ : Symbol('ALPHA'),
     MOSAIC_CONTIGUOUS_: Symbol('MOSAIC_CONTIGUOUS'),
     MOSAIC_SEPARATED_: Symbol('MOSAIC_SEPARATED'),
+    G3_    : Symbol('G3')
 };
 Object.freeze(CellType);
 
@@ -1292,7 +1300,7 @@ class VectorViewBase {
     _renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaic) {
         this._renderText(cellView, cell, attr, fill, cellIndex, rowIndex);
 
-        if (cell.type_ == CellType.MOSAIC_CONTIGUOUS_ && isMosaic) cellView.addClass_('mosaic');
+        if ((cell.type_ == CellType.MOSAIC_CONTIGUOUS_ && isMosaic) || cell.type_ == CellType.G3_) cellView.addClass_('mosaic');
         else if (cell.type_ == CellType.MOSAIC_SEPARATED_ && isMosaic) cellView.addClass_('mosaic_separated');
     }
 
@@ -1497,7 +1505,7 @@ class VectorViewBase {
     }
 
     _getCellAttr(cellType, isMosaicChar, isCursive) {
-        if (cellType == CellType.MOSAIC_CONTIGUOUS_ && isMosaicChar) {
+        if ((cellType == CellType.MOSAIC_CONTIGUOUS_ && isMosaicChar) || cellType == CellType.G3_) {
             return {
                 dx: MOSAIC_METRIC._contiguous._DX,
                 dy: -0.15,
@@ -1517,7 +1525,7 @@ class VectorViewBase {
                 transform: null,
                 class: null,
             };
-        } 
+        }
         return {
             dx: null,
             dy: null,
@@ -1563,6 +1571,7 @@ VectorViewBase._CELL_DOUBLE_WIDTH = CELL_DOUBLE_WIDTH;
 VectorViewBase._CELL_DOUBLE_HEIGHT = CELL_DOUBLE_HEIGHT;
 VectorViewBase._WIDTH_PX = WIDTH_PX;
 VectorViewBase._HEIGHT_PX = HEIGHT_PX;
+VectorViewBase._MOSAIC_METRIC = MOSAIC_METRIC;
 // constants for plugins
 VectorViewBase.ROWS = ROWS$1;
 VectorViewBase.COLS = COLS;
@@ -1658,11 +1667,11 @@ rect { color: orange; }
 `;
 }
 
-var latin_g0 = {
+var g0_latin = {
 	$: "¤",
 	"": "■"
 };
-var latin_g0__czech_slovak = {
+var g0_latin__czech_slovak = {
 	"#": "#",
 	$: "ů",
 	"@": "č",
@@ -1677,7 +1686,7 @@ var latin_g0__czech_slovak = {
 	"}": "ú",
 	"~": "š"
 };
-var latin_g0__english = {
+var g0_latin__english = {
 	"#": "£",
 	$: "$",
 	"@": "@",
@@ -1692,7 +1701,7 @@ var latin_g0__english = {
 	"}": "¾",
 	"~": "÷"
 };
-var latin_g0__estonian = {
+var g0_latin__estonian = {
 	"#": "#",
 	$: "õ",
 	"@": "Š",
@@ -1707,7 +1716,7 @@ var latin_g0__estonian = {
 	"}": "ž",
 	"~": "ü"
 };
-var latin_g0__french = {
+var g0_latin__french = {
 	"#": "é",
 	$: "ï",
 	"@": "à",
@@ -1722,7 +1731,7 @@ var latin_g0__french = {
 	"}": "û",
 	"~": "ç"
 };
-var latin_g0__german = {
+var g0_latin__german = {
 	"#": "#",
 	$: "$",
 	"@": "§",
@@ -1737,7 +1746,7 @@ var latin_g0__german = {
 	"}": "ü",
 	"~": "ß"
 };
-var latin_g0__italian = {
+var g0_latin__italian = {
 	"#": "£",
 	$: "$",
 	"@": "é",
@@ -1752,7 +1761,7 @@ var latin_g0__italian = {
 	"}": "è",
 	"~": "ì"
 };
-var latin_g0__latvian_lithuanian = {
+var g0_latin__latvian_lithuanian = {
 	"#": "#",
 	$: "$",
 	"@": "Š",
@@ -1767,7 +1776,7 @@ var latin_g0__latvian_lithuanian = {
 	"}": "ž",
 	"~": "į"
 };
-var latin_g0__polish = {
+var g0_latin__polish = {
 	"#": "#",
 	$: "ń",
 	"@": "ą",
@@ -1782,7 +1791,7 @@ var latin_g0__polish = {
 	"}": "ł",
 	"~": "ź"
 };
-var latin_g0__portuguese_spanish = {
+var g0_latin__portuguese_spanish = {
 	"#": "ç",
 	$: "$",
 	"@": "¡",
@@ -1797,7 +1806,7 @@ var latin_g0__portuguese_spanish = {
 	"}": "è",
 	"~": "à"
 };
-var latin_g0__romanian = {
+var g0_latin__romanian = {
 	"#": "#",
 	$: "¤",
 	"@": "Ț",
@@ -1812,7 +1821,7 @@ var latin_g0__romanian = {
 	"}": "ă",
 	"~": "î"
 };
-var latin_g0__serbian_croatian_slovenian = {
+var g0_latin__serbian_croatian_slovenian = {
 	"#": "#",
 	$: "Ë",
 	"@": "Č",
@@ -1827,7 +1836,7 @@ var latin_g0__serbian_croatian_slovenian = {
 	"}": "đ",
 	"~": "š"
 };
-var latin_g0__swedish_finnish_hungarian = {
+var g0_latin__swedish_finnish_hungarian = {
 	"#": "#",
 	$: "¤",
 	"@": "É",
@@ -1842,7 +1851,7 @@ var latin_g0__swedish_finnish_hungarian = {
 	"}": "å",
 	"~": "ü"
 };
-var latin_g0__turkish = {
+var g0_latin__turkish = {
 	"#": "₺",
 	$: "ğ",
 	"@": "İ",
@@ -1857,7 +1866,103 @@ var latin_g0__turkish = {
 	"}": "ç",
 	"~": "ü"
 };
-var greek_g0 = {
+var g2_latin = {
+	"0": "°",
+	"1": "±",
+	"2": "²",
+	"3": "³",
+	"4": "×",
+	"5": "µ",
+	"6": "¶",
+	"7": "·",
+	"8": "÷",
+	"9": "’",
+	"!": "¡",
+	"\"": "¢",
+	"#": "£",
+	"%": "¥",
+	"&": "#",
+	"'": "§",
+	"(": "¤",
+	")": "‘",
+	"*": "“",
+	"+": "«",
+	",": "←",
+	"-": "↑",
+	".": "→",
+	"/": "↓",
+	":": "”",
+	";": "»",
+	"<": "¼",
+	"=": "½",
+	">": "¾",
+	"?": "¿",
+	"@": " ",
+	A: "̀",
+	B: "́",
+	C: "̂",
+	D: "̃",
+	E: "̄",
+	F: "̆",
+	G: "̇",
+	H: "̈",
+	I: "̣",
+	J: "̊",
+	K: "̧",
+	L: "̲",
+	M: "̋",
+	N: "̨",
+	O: "̌",
+	P: "—",
+	Q: "¹",
+	R: "®",
+	S: "©",
+	T: "™",
+	U: "♪",
+	V: "₠",
+	W: "‰",
+	X: "α",
+	Y: null,
+	Z: null,
+	"[": null,
+	"\\": "⅛",
+	"]": "⅜",
+	"^": "⅝",
+	_: "⅞",
+	"`": "Ω",
+	a: "Æ",
+	b: "Ð",
+	c: "ª",
+	d: "Ħ",
+	e: null,
+	f: "Ĳ",
+	g: "Ŀ",
+	h: "Ł",
+	i: "Ø",
+	j: "Œ",
+	k: "º",
+	l: "Þ",
+	m: "Ŧ",
+	n: "Ŋ",
+	o: "ŉ",
+	p: "ĸ",
+	q: "æ",
+	r: "đ",
+	s: "ð",
+	t: "ħ",
+	u: "ı",
+	v: "ĳ",
+	w: "ŀ",
+	x: "ł",
+	y: "ø",
+	z: "œ",
+	"{": "ß",
+	"|": "þ",
+	"}": "ŧ",
+	"~": "ŋ",
+	"": "■"
+};
+var g0_greek = {
 	"<": "«",
 	">": "»",
 	"@": "ΐ",
@@ -1925,7 +2030,104 @@ var greek_g0 = {
 	"~": "ώ",
 	"": "■"
 };
-var cyrillic_g0 = {
+var g2_greek = {
+	"0": "°",
+	"1": "±",
+	"2": "²",
+	"3": "³",
+	"4": "×",
+	"5": "m",
+	"6": "n",
+	"7": "p",
+	"8": "÷",
+	"9": "’",
+	"!": "a",
+	"\"": "b",
+	"#": "£",
+	$: "e",
+	"%": "h",
+	"&": "i",
+	"'": "§",
+	"(": ":",
+	")": "‘",
+	"*": "“",
+	"+": "k",
+	",": "←",
+	"-": "↑",
+	".": "→",
+	"/": "↓",
+	":": "”",
+	";": "t",
+	"<": "¼",
+	"=": "½",
+	">": "¾",
+	"?": "x",
+	"@": " ",
+	A: "̀",
+	B: "́",
+	C: "̂",
+	D: "̃",
+	E: "̄",
+	F: "̆",
+	G: "̇",
+	H: "̈",
+	I: "̣",
+	J: "̊",
+	K: "̧",
+	L: "̲",
+	M: "̋",
+	N: "̨",
+	O: "̌",
+	P: "?",
+	Q: "¹",
+	R: "®",
+	S: "©",
+	T: "™",
+	U: "♪",
+	V: "₠",
+	W: "‰",
+	X: "ɑ",
+	Y: "Ί",
+	Z: "Ύ",
+	"[": "Ώ",
+	"\\": "⅛",
+	"]": "⅜",
+	"^": "⅝",
+	_: "⅞",
+	"`": "C",
+	a: "D",
+	b: "F",
+	c: "G",
+	d: "J",
+	e: "L",
+	f: "Q",
+	g: "R",
+	h: "S",
+	i: "U",
+	j: "V",
+	k: "W",
+	l: "Y",
+	m: "Z",
+	n: "Ά",
+	o: "Ή",
+	p: "c",
+	q: "d",
+	r: "f",
+	s: "g",
+	t: "j",
+	u: "l",
+	v: "q",
+	w: "r",
+	x: "s",
+	y: "u",
+	z: "v",
+	"{": "w",
+	"|": "y",
+	"}": "z",
+	"~": "Έ",
+	"": "■"
+};
+var g0_cyrillic = {
 	"@": "Ю",
 	A: "А",
 	B: "Б",
@@ -1986,7 +2188,7 @@ var cyrillic_g0 = {
 	"~": "ч",
 	"": "■"
 };
-var cyrillic_g0__russian_bulgarian = {
+var g0_cyrillic__russian_bulgarian = {
 	"&": "ы",
 	Y: "Ъ",
 	"\\": "Э",
@@ -1994,7 +2196,7 @@ var cyrillic_g0__russian_bulgarian = {
 	y: "ъ",
 	"|": "э"
 };
-var cyrillic_g0__serbian_croatian = {
+var g0_cyrillic__serbian_croatian = {
 	"@": "Ч",
 	J: "Ј",
 	Q: "Ќ",
@@ -2019,7 +2221,7 @@ var cyrillic_g0__serbian_croatian = {
 	"}": "ђ",
 	"~": "ш"
 };
-var cyrillic_g0__ukranian = {
+var g0_cyrillic__ukranian = {
 	"&": "ї",
 	Y: "І",
 	"\\": "Є",
@@ -2027,7 +2229,104 @@ var cyrillic_g0__ukranian = {
 	y: "і",
 	"|": "є"
 };
-var arabic_g0 = {
+var g2_cyrillic = {
+	"0": "m",
+	"1": "n",
+	"2": "p",
+	"3": "t",
+	"4": "x",
+	"5": "x",
+	"6": "°",
+	"7": "±",
+	"8": "²",
+	"9": "³",
+	"!": "a",
+	"\"": "b",
+	"#": "£",
+	$: "e",
+	"%": "h",
+	"&": "i",
+	"'": "§",
+	"(": ":",
+	")": "‘",
+	"*": "“",
+	"+": "k",
+	",": "←",
+	"-": "↑",
+	".": "→",
+	"/": "↓",
+	":": "¼",
+	";": "½",
+	"<": "¾",
+	"=": "÷",
+	">": "’",
+	"?": "”",
+	"@": " ",
+	A: "̀",
+	B: "́",
+	C: "̂",
+	D: "̃",
+	E: "̄",
+	F: "̆",
+	G: "̇",
+	H: "̈",
+	I: "̣",
+	J: "̊",
+	K: "̧",
+	L: "̲",
+	M: "̋",
+	N: "̨",
+	O: "̌",
+	P: "?",
+	Q: "©",
+	R: "®",
+	S: "¹",
+	T: "ɑ",
+	U: "Ί",
+	V: "Ύ",
+	W: "Ώ",
+	X: "‰",
+	Y: "₠",
+	Z: "™",
+	"[": "⅛",
+	"\\": "⅜",
+	"]": "⅝",
+	"^": "⅞",
+	_: "♪",
+	"`": "C",
+	a: "D",
+	b: "F",
+	c: "G",
+	d: "J",
+	e: "L",
+	f: "Q",
+	g: "R",
+	h: "S",
+	i: "U",
+	j: "V",
+	k: "W",
+	l: "Y",
+	m: "Z",
+	n: "Ά",
+	o: "Ή",
+	p: "c",
+	q: "d",
+	r: "f",
+	s: "g",
+	t: "j",
+	u: "l",
+	v: "q",
+	w: "r",
+	x: "s",
+	y: "u",
+	z: "v",
+	"{": "w",
+	"|": "y",
+	"}": "z",
+	"~": "Έ",
+	"": "■"
+};
+var g0_arabic = {
 	"#": "£",
 	"&": "ﻰ",
 	"'": "ﻱ",
@@ -2102,7 +2401,52 @@ var arabic_g0 = {
 	"~": "ﻻ",
 	"": "■"
 };
-var hebrew_g0 = {
+var g2_arabic = {
+	"0": "٠",
+	"1": "١",
+	"2": "٢",
+	"3": "٣",
+	"4": "٤",
+	"5": "٥",
+	"6": "٦",
+	"7": "٧",
+	"8": "٨",
+	"9": "٩",
+	"!": "ﻉ",
+	"\"": "ﺁ",
+	"#": "ﺃ",
+	$: "ﺅ",
+	"%": "ﺇ",
+	"&": "ﺋ",
+	"'": "ﺊ",
+	"(": "ﭼ",
+	")": "ﭽ",
+	"*": "ﭺ",
+	"+": "ﭘ",
+	",": "ﭙ",
+	"-": "ﭖ",
+	".": "ﮊ",
+	"/": "ﮔ",
+	":": "ﻎ",
+	";": "ﻍ",
+	"<": "ﻼ",
+	"=": "ﻬ",
+	">": "ﻪ",
+	"?": "ﻩ",
+	"@": "à",
+	"[": "ë",
+	"\\": "ê",
+	"]": "ù",
+	"^": "î",
+	_: "ﻊ",
+	"`": "é",
+	"{": "â",
+	"|": "ô",
+	"}": "û",
+	"~": "ç",
+	"": "■"
+};
+var g0_hebrew = {
 	"#": "£",
 	"[": "←",
 	"\\": "½",
@@ -2274,30 +2618,133 @@ var g1_block_mosaic_to_unicode__unscii_separated = {
 	"~": "",
 	"": ""
 };
+var g3 = {
+	"0": "🭇",
+	"1": "🭈",
+	"2": "🭉",
+	"3": "🭊",
+	"4": "🭋",
+	"5": "◢",
+	"6": "🭌",
+	"7": "🭍",
+	"8": "🭎",
+	"9": "🭏",
+	" ": "🬼",
+	"!": "🬽",
+	"\"": "🬾",
+	"#": "🬿",
+	$: "🭀",
+	"%": "◣",
+	"&": "🭁",
+	"'": "🭂",
+	"(": "🭃",
+	")": "🭄",
+	"*": "🭅",
+	"+": "🭆",
+	",": "🭨",
+	"-": "🭩",
+	".": "🭰",
+	"/": "▒",
+	":": "🭐",
+	";": "🭑",
+	"<": "🭪",
+	"=": "🭫",
+	">": "🭵",
+	"?": "█",
+	"@": "┷",
+	A: "┯",
+	B: "┝",
+	C: "┥",
+	D: "🮤",
+	E: "🮥",
+	F: "🮦",
+	G: "🮧",
+	H: "🮠",
+	I: "🮡",
+	J: "🮢",
+	K: "🮣",
+	L: "┿",
+	M: "•",
+	N: "●",
+	O: "○",
+	P: "│",
+	Q: "─",
+	R: "┌",
+	S: "┐",
+	T: "└",
+	U: "┘",
+	V: "├",
+	W: "┤",
+	X: "┬",
+	Y: "┴",
+	Z: "┼",
+	"[": "→",
+	"\\": "←",
+	"]": "↑",
+	"^": "↓",
+	_: " ",
+	"`": "🭒",
+	a: "🭓",
+	b: "🭔",
+	c: "🭕",
+	d: "🭖",
+	e: "◥",
+	f: "🭗",
+	g: "🭘",
+	h: "🭙",
+	i: "🭚",
+	j: "🭛",
+	k: "🭜",
+	l: "🭬",
+	m: "🭭",
+	n: null,
+	o: null,
+	p: "🭝",
+	q: "🭞",
+	r: "🭟",
+	s: "🭠",
+	t: "🭡",
+	u: "◤",
+	v: "🭢",
+	w: "🭣",
+	x: "🭤",
+	y: "🭥",
+	z: "🭦",
+	"{": "🭧",
+	"|": "🭮",
+	"}": "🭯",
+	"~": null,
+	"": null
+};
 var encodings = {
-	latin_g0: latin_g0,
-	latin_g0__czech_slovak: latin_g0__czech_slovak,
-	latin_g0__english: latin_g0__english,
-	latin_g0__estonian: latin_g0__estonian,
-	latin_g0__french: latin_g0__french,
-	latin_g0__german: latin_g0__german,
-	latin_g0__italian: latin_g0__italian,
-	latin_g0__latvian_lithuanian: latin_g0__latvian_lithuanian,
-	latin_g0__polish: latin_g0__polish,
-	latin_g0__portuguese_spanish: latin_g0__portuguese_spanish,
-	latin_g0__romanian: latin_g0__romanian,
-	latin_g0__serbian_croatian_slovenian: latin_g0__serbian_croatian_slovenian,
-	latin_g0__swedish_finnish_hungarian: latin_g0__swedish_finnish_hungarian,
-	latin_g0__turkish: latin_g0__turkish,
-	greek_g0: greek_g0,
-	cyrillic_g0: cyrillic_g0,
-	cyrillic_g0__russian_bulgarian: cyrillic_g0__russian_bulgarian,
-	cyrillic_g0__serbian_croatian: cyrillic_g0__serbian_croatian,
-	cyrillic_g0__ukranian: cyrillic_g0__ukranian,
-	arabic_g0: arabic_g0,
-	hebrew_g0: hebrew_g0,
+	g0_latin: g0_latin,
+	g0_latin__czech_slovak: g0_latin__czech_slovak,
+	g0_latin__english: g0_latin__english,
+	g0_latin__estonian: g0_latin__estonian,
+	g0_latin__french: g0_latin__french,
+	g0_latin__german: g0_latin__german,
+	g0_latin__italian: g0_latin__italian,
+	g0_latin__latvian_lithuanian: g0_latin__latvian_lithuanian,
+	g0_latin__polish: g0_latin__polish,
+	g0_latin__portuguese_spanish: g0_latin__portuguese_spanish,
+	g0_latin__romanian: g0_latin__romanian,
+	g0_latin__serbian_croatian_slovenian: g0_latin__serbian_croatian_slovenian,
+	g0_latin__swedish_finnish_hungarian: g0_latin__swedish_finnish_hungarian,
+	g0_latin__turkish: g0_latin__turkish,
+	g2_latin: g2_latin,
+	g0_greek: g0_greek,
+	g2_greek: g2_greek,
+	g0_cyrillic: g0_cyrillic,
+	g0_cyrillic__russian_bulgarian: g0_cyrillic__russian_bulgarian,
+	g0_cyrillic__serbian_croatian: g0_cyrillic__serbian_croatian,
+	g0_cyrillic__ukranian: g0_cyrillic__ukranian,
+	g2_cyrillic: g2_cyrillic,
+	g0_arabic: g0_arabic,
+	g2_arabic: g2_arabic,
+	g0_hebrew: g0_hebrew,
 	g1_block_mosaic_to_unicode__legacy_computing: g1_block_mosaic_to_unicode__legacy_computing,
-	g1_block_mosaic_to_unicode__unscii_separated: g1_block_mosaic_to_unicode__unscii_separated
+	g1_block_mosaic_to_unicode__unscii_separated: g1_block_mosaic_to_unicode__unscii_separated,
+	g3: g3
 };
 
 // SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
@@ -2328,6 +2775,8 @@ class Cell {
         this._boxed = false;
         this._byteHeld = null;
         this._isCursive = false;
+        this._diacriticCode = null;
+        this._enhancedChar = null;
     }
 
     set byte_(byte) {
@@ -2359,31 +2808,30 @@ class Cell {
     }
 
     setMappedChar_(encoding) {
-        if (this._type == CellType.ALPHA_ || ((this._byte.charCodeAt(0) & 0b100000) == 0)) {
+        const isG1 = this._type == CellType.MOSAIC_CONTIGUOUS_ || this._type == CellType.MOSAIC_SEPARATED_;
+        if (this._type == CellType.ALPHA_ || (((this._byte.charCodeAt(0) & 0b100000) == 0) && isG1)) {
             this._char = getCharWithEncoding(this._byte, encoding);
+            if (this._diacriticCode > 0) this._char += encodings["g2_latin"][String.fromCharCode(this._diacriticCode + 0x40)];
             this._isCursive = false;
-            if (encoding == 'arabic_g0') {
-                const code = this._byte.charCodeAt(0);
-                if (code == 38 || code == 39 || (code >= 64 && code <= 94) || (code >= 96 && code <= 125)) {
-                    this._isCursive = true;
-                }
-            }
+            if (encoding == 'g0_arabic' || encoding == 'g2_arabic') this._isCursive = Utils.isCursive_(this._char);
         } else if (this._type == CellType.MOSAIC_CONTIGUOUS_)
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__legacy_computing');
-        else
+        else if (this._type == CellType.MOSAIC_SEPARATED_)
             this._char = getCharWithEncoding(this._byte, 'g1_block_mosaic_to_unicode__unscii_separated');
-
+        else if (this._type == CellType.G3_) {
+            this._char = getCharWithEncoding(this._byte, 'g3');
+        }
         this._byteHeld = null;
     }
 
     setSpace_(heldMosaic) {
         if ((this._type == CellType.MOSAIC_CONTIGUOUS_ || this._type == CellType.MOSAIC_SEPARATED_)
-            && heldMosaic.active) {
-            this._byteHeld = heldMosaic.char;
-            this._type = heldMosaic.type;
+            && heldMosaic.active_) {
+            this._byteHeld = heldMosaic.char_;
+            this._type = heldMosaic.type_;
             let charEncoding = 'g1_block_mosaic_to_unicode__legacy_computing';
             if (this._type == CellType.MOSAIC_SEPARATED_) charEncoding = 'g1_block_mosaic_to_unicode__unscii_separated';
-            this._char = getCharWithEncoding(heldMosaic.char, charEncoding);
+            this._char = getCharWithEncoding(heldMosaic.char_, charEncoding);
         } else {
             this._byteHeld = null;
             this._char = ' ';
@@ -2461,6 +2909,39 @@ class Cell {
     }
 }
 
+// clones a cell so that its values can be overriden by enhancement data
+class EnhancedCell extends Cell {
+    constructor(cell) {
+        super();
+        Object.assign(this, cell);
+    }
+
+    set diacritic_(diacriticCode) {
+        this._diacriticCode = diacriticCode;
+    }
+
+    get diacritic_() {
+        return this._diacriticCode;
+    }
+
+    set enhancedChar_(char) {
+        this._enhancedChar = char;
+    }
+
+    get char_() {
+        return this._enhancedChar == null ? this._char : this._enhancedChar;
+    }
+
+    printEnhancements() {
+        console.log({
+            byte: this._byte,
+            diacriticCode: this._diacriticCode,
+            enhancedChar: this._enhancedChar,
+            char: this.char_
+        });
+    }
+}
+
 // private
 
 function getCharWithEncoding(byte, encoding) {
@@ -2505,8 +2986,9 @@ class View extends VectorViewBase {
             this._plugins._background(rowIndex, cellIndex, cell.size_, cell.bgColour_);
         }
 
-        if (cell.type_ == CellType.ALPHA_ || !isMosaic) {
+        if (cell.type_ == CellType.ALPHA_ || cell.type_ == CellType.G3_ || !isMosaic) {
             this._renderText(cellView, cell, attr, fill, cellIndex, rowIndex);
+            if (cell.type_ == CellType.G3_) cellView.addClass_('mosaic');
         } else if (isMosaic) {
             cellView.plain_(' ').attr_(attr);
             this._renderMosaic(rowIndex, cellIndex, cell, fill);
@@ -2546,7 +3028,7 @@ class View extends VectorViewBase {
                 for (let i = 0; i < 6; i++) {
                     sextants[i] == '1' && symbol.rect_(6, 6).move_((i % 2) * 6, Math.floor(i/2) * 6);
                 }
-            } else {
+            } else { // MOSAIC_SEPARATED_
                 symbol.attr_({
                     preserveAspectRatio: 'none',
                     width: width,
@@ -2565,7 +3047,7 @@ class View extends VectorViewBase {
                 .use_(id)
                 .move_(col * VectorViewBase._CELL_WIDTH - 0.15, row * VectorViewBase._CELL_HEIGHT - 0.1)
                 .fill_(fill);
-        else
+        else // MOSAIC_SEPARATED
             use = this._graphicrows[row]
                 .use_(id)
                 .move_(col * VectorViewBase._CELL_WIDTH, row * VectorViewBase._CELL_HEIGHT)
@@ -2587,6 +3069,17 @@ class View extends VectorViewBase {
 
     // eslint-disable-next-line no-unused-vars
     _getCellAttr(cellType, isMosaicChar, isCursive) {
+        if (cellType == CellType.G3_) {
+            return {
+                dx: VectorViewBase._MOSAIC_METRIC._contiguous._DX,
+                dy: -0.15,
+                textLength: VectorViewBase._MOSAIC_METRIC._contiguous._textLength,
+                lengthAdjust: 'spacingAndGlyphs',
+                'text-anchor': 'start',
+                transform: null,
+                class: null,
+            };
+        }
         return {
             dx: null,
             dy: null,
@@ -2609,22 +3102,24 @@ class TeletextController {
         this._windowDom = null;
         if (typeof window == 'object') this._windowDom = window;
         this._opt = {
-            webkitCompat: true // generate SVG that's compatible with webkit by default. The resulting SVG is larger
+            webkitCompat_: true // generate SVG that's compatible with webkit by default. The resulting SVG is larger
         };
         if (typeof options == 'object') {
-            if ('webkitCompat' in options && !options.webkitCompat) this._opt.webkitCompat = false;
+            if ('webkitCompat' in options && !options.webkitCompat) this._opt.webkitCompat_ = false;
             if ('dom' in options) this._windowDom = options.dom;
         }
         if (this._windowDom == null)
             throw new Error('TeletextController E24: No window dom object available');
 
-        this._view = new View(model, this._opt.webkitCompat, this._windowDom);
+        this._view = new View(model, this._opt.webkitCompat_, this._windowDom);
         this._model = model;
         this._levelIndex = 1;
         this._testPageIndex = 0;
         this._initEventHandlers();
         this._viewSelector = null;
         this._height = null;
+        this._posX = 0;
+        this._posY = 0;
         console.debug('TeletextController constructed');
     }
 
@@ -2633,6 +3128,7 @@ class TeletextController {
     }
 
     setPageRows(rows) {
+        this._model.clearEnhancements_();
         this._model.setRows_(rows);
     }
 
@@ -2695,6 +3191,7 @@ class TeletextController {
     }
 
     clearScreen(withUpdate) {
+        this._model.clearEnhancements_();
         this._model.clearScreen_(withUpdate);
     }
 
@@ -2715,12 +3212,22 @@ class TeletextController {
         this._height = newHeight;
     }
 
-    setDefaultG0Charset(...args) {
-        this._model.setPrimaryG0CharacterEncoding_(...args);
+    setDefaultG0Charset(encoding, withUpdate) {
+        const matches = encoding.match(/g0_/);
+        if (matches == null) throw new Error("E130 setDefaultG0Charset: Bad g0 set");
+        this._model.setPrimaryG0CharacterEncoding_(encoding, withUpdate);
     }
 
-    setSecondG0Charset(...args) {
-        this._model.setSecondaryG0CharacterEncoding_(...args);
+    setSecondG0Charset(encoding, withUpdate) {
+        const matches = encoding.match(/g0_/);
+        if (matches == null) throw new Error("E136 setSecondG0Charset: Bad g0 set");
+        this._model.setSecondaryG0CharacterEncoding_(encoding, withUpdate);
+    }
+
+    setG2Charset(encoding, withUpdate) {
+        const matches = encoding.match(/g2_/);
+        if (matches == null) throw new Error("E142 setG2Charset: Bad g2 set");
+        this._model.setG2CharacterEncoding_(encoding, withUpdate);
     }
 
     remove() {
@@ -2739,7 +3246,7 @@ class TeletextController {
                 this._view = new ViewClassic(this._model, this._windowDom);
                 break;
             case 'classic__graphic-for-mosaic':
-                this._view = new View(this._model, this._opt.webkitCompat, this._windowDom);
+                this._view = new View(this._model, this._opt.webkitCompat_, this._windowDom);
                 break;
             default:
                 throw new Error("setView E126: bad view name:" + view);
@@ -2754,9 +3261,110 @@ class TeletextController {
         this._model.notify_();
     }
 
+    enhance() {
+        return new Enhancement(this._model);
+    }
+
+
     // dumpToConsole() {
     //     this._model.dumpToConsole();
     // }
+}
+
+class Enhancement {
+    constructor(model) {
+        this._model = model;
+        this._x = 0;
+        this._y = 0;
+        this._data = [];
+    }
+
+    printPos() {
+        console.log(this._x, this._y);
+        return this;
+    }
+
+    pos(x, y) {
+        x = parseInt(x);
+        y = parseInt(y);
+        if (x < 0 || x > 39) return this;
+        if (y < 0 || y > 24) return this;
+        this._x = x;
+        this._y = y;
+        return this;
+    }
+
+    putG0(char, diacriticCode) {
+        let dcode = null;
+        if (typeof diacriticCode != 'undefined') {
+            const code = parseInt(diacriticCode);
+            if (code >= 0 && code <= 15)
+                dcode = code;
+        }
+        const charCode = char.charCodeAt(0);
+        if (charCode < 0x20 || charCode > 0x7f) return this;
+        this._data.push({
+            x_: this._x,
+            y_: this._y,
+            type_: 'g0',
+            char_: char,
+            diacritic_: dcode
+        });
+        return this;
+    }
+
+    putG1(char) {
+        const charCode = char.charCodeAt(0);
+        if (charCode < 0x20 || charCode > 0x7f ||
+            (charCode >= 0x40 && charCode <= 0x5f)) return this;
+        this._data.push({
+            x_: this._x,
+            y_: this._y,
+            type_: 'g1',
+            char_: char,
+        });
+        return this;
+    }
+
+    putG2(char) {
+        const charCode = char.charCodeAt(0);
+        if (charCode < 0x20 || charCode > 0x7f) return this;
+        this._data.push({
+            x_: this._x,
+            y_: this._y,
+            type_: 'g2',
+            char_: char,
+        });
+        return this;
+    }
+
+    putG3(char) {
+        const charCode = char.charCodeAt(0);
+        if (charCode < 0x20 || charCode > 0x7f) return this;
+        this._data.push({
+            x_: this._x,
+            y_: this._y,
+            type_: 'g3',
+            char_: char,
+        });
+        return this;
+    }
+
+    putAt() {
+        this._data.push({
+            x_: this._x,
+            y_: this._y,
+            type_: 'char',
+            char_: '@'
+        });
+        return this;
+    }
+
+    end() {
+        this._model.enhance_(this._data);
+        this._model.notify_();
+        return this;
+    }
 }
 
 // SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
@@ -2813,7 +3421,11 @@ class RowModel {
 
 const ROWS = 25;
 const CELLS_PER_ROW = 40;
-const DEFAULT_PRIMARY_G0_CHARACTER_SET = 'latin_g0';
+const DEFAULT_PRIMARY_G0_CHARACTER_SET = 'g0_latin';
+const DEFAULT_G2_CHARACTER_SET = 'g2_latin';
+
+const ENHANCEMENT_LEVELS = [Level[1.5], Level[2.5]];
+const G3_CHARS_IN_LEVEL_1_5 = "\u0051\u005b\u005c\u005d";
 
 class PageModel {
     constructor() {
@@ -2827,8 +3439,10 @@ class PageModel {
         }
         this._primaryG0CharacterEncoding = DEFAULT_PRIMARY_G0_CHARACTER_SET;
         this._secondaryG0CharacterEncoding = null;
+        this._g2CharacterEncoding = DEFAULT_G2_CHARACTER_SET;
         this._startBoxChar = Attributes.charFromAttribute(Attributes.START_BOX);
         this._level = Level[1];
+        this._enhancement = [];
         
         this.onSet_ = new Event(this);
         console.debug('PageModel constructed');
@@ -2884,6 +3498,7 @@ class PageModel {
     setLevel_(level) {
         this._level = level;
         console.debug('PageModel.setLevel: switching to Level', level);
+        console.debug('new level: ', this._level);
         this.onSet_.notify_();
     }
 
@@ -2904,13 +3519,26 @@ class PageModel {
 
     setPrimaryG0CharacterEncoding_(encoding, withUpdate) {
         this._primaryG0CharacterEncoding = encoding;
-        console.debug('PageModel.setPrimaryG0CharacterEncoding: set default g0 encoding to', encoding);
+        const g0base = encoding.match(/^g0_([a-z]+)/);
+        if (g0base != null) {
+            // the g2 set selected is derived from the g0 set, apart from hebrew which has no g2_ set
+            const g2 = `g2_${g0base[1]}`;
+            if (g2 in encodings) this._g2CharacterEncoding = g2;
+            else if (g0base[1] == 'hebrew') this._g2CharacterEncoding = 'g2_arabic';
+        }
+        console.debug('PageModel.setPrimaryG0CharacterEncoding: set default g0 encoding to', encoding, 'with g2 encoding to', this._g2CharacterEncoding);
         if (withUpdate) this.onSet_.notify_();
     }
 
     setSecondaryG0CharacterEncoding_(encoding, withUpdate) {
         this._secondaryG0CharacterEncoding = encoding;
         console.debug('PageModel.setSecondaryG0CharacterEncoding: set second g0 encoding to', encoding);
+        if (withUpdate) this.onSet_.notify_();
+    }
+
+    setG2CharacterEncoding_(encoding, withUpdate) {
+        this._g2CharacterEncoding = encoding;
+        console.debug('PageModel.setG2CharacterEncoding: set g2 encoding to', encoding);
         if (withUpdate) this.onSet_.notify_();
     }
 
@@ -2935,10 +3563,14 @@ class PageModel {
         let backgroundColour = Colour.BLACK;
         let graphicType = CellType.MOSAIC_CONTIGUOUS_;
         let heldMosaic = {
-            active: false,
-            char: ' ',
-            type: CellType.MOSAIC_CONTIGUOUS_
+            active_: false,
+            char_: ' ',
+            type_: CellType.MOSAIC_CONTIGUOUS_
         };
+
+        let rowEnhancements = [];
+        if (ENHANCEMENT_LEVELS.includes(this._level))
+            rowEnhancements = this._enhancement.filter(e => e.y_ == rowNum);
 
         this._screen[rowNum].forEach((cell, cellIndex) => {
             const char = cell.byte_;
@@ -2954,8 +3586,8 @@ class PageModel {
             if (attrib.attribute != Attributes.CONCEAL) cell.concealed_ = nextConcealed;
             if (cancelNextHoldMosaics) {
                 if (attrib.attribute != Attributes.HOLD_MOSAICS) {
-                    heldMosaic.active = false;
-                    heldMosaic.char = ' ';
+                    heldMosaic.active_ = false;
+                    heldMosaic.char_ = ' ';
                 }
                 cancelNextHoldMosaics = false;
             }
@@ -3033,7 +3665,7 @@ class PageModel {
                     cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.HOLD_MOSAICS: // set at
-                    heldMosaic.active = true;
+                    heldMosaic.active_ = true;
                     cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.RELEASE_MOSAICS: // set after
@@ -3062,18 +3694,65 @@ class PageModel {
                     else
                         cell.setMappedChar_(this._primaryG0CharacterEncoding);
                     // mosaic chars are held for use when 'hold mosaics' is active
+                    // ?? spec question. what's the impact of enhancements on held mosaics? is the held mosaic from the base page or the enhancement?
                     if (cell.isMosaic_()) {
-                        heldMosaic.char = char;
-                        heldMosaic.type = cell.type_;
+                        heldMosaic.char_ = char;
+                        heldMosaic.type_ = cell.type_;
                     }
             }
 
             cell.fgColour_ = textColour;
             cell.bgColour_ = backgroundColour;
+
+            const cellEnhancements = rowEnhancements.filter(e => e.x_ == cellIndex);
+            cellEnhancements.forEach(e => {
+                const ecell = new EnhancedCell(cell);
+                cell = ecell;
+                if (e.type_ == 'g0') {
+                    cell.byte_ = e.char_;
+                    cell.diacritic_ = e.diacritic_;
+                    cell.type_ = CellType.ALPHA_;
+                    if (switchedG0CharacterEncoding)
+                        cell.setMappedChar_(this._secondaryG0CharacterEncoding);
+                    else
+                        cell.setMappedChar_(this._primaryG0CharacterEncoding);
+                } else if (e.type_ == 'g1') {
+                    if (this._level == Level[2.5]) {
+                        cell.byte_ = e.char_;
+                        cell.type_ = graphicType;
+                        cell.setMappedChar_();
+                    }
+                } else if (e.type_ == 'g2') {
+                    cell.byte_ = e.char_;
+                    cell.type_ = CellType.ALPHA_;
+                    cell.setMappedChar_(this._g2CharacterEncoding);
+                } else if (e.type_ == 'g3') {
+                    const toKeep = this._level == Level[1.5] && G3_CHARS_IN_LEVEL_1_5.indexOf(e.char_) == -1 ? false : true;
+                    if (toKeep) {
+                        cell.byte_ = e.char_;
+                        cell.type_ = CellType.G3_;
+                        cell.setMappedChar_();
+                    }
+                } else if (e.type_ == 'char') {
+                    cell.enhancedChar_ = e.char_;
+                    cell.type_ = CellType.ALPHA_;
+                }
+                // console.log(cell);
+                // console.log(cell.printEnhancements());
+            });
+
             rowModel.addCell_(cell);
         });
         // console.dir(rowModel);
         return rowModel;
+    }
+
+    enhance_(data) {
+        this._enhancement = data;
+    }
+
+    clearEnhancements_() {
+        this._enhancement = [];
     }
 
 }
