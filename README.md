@@ -352,7 +352,7 @@ Updates the *position* to the `col` and `row`.  The *position* is only updated w
 
 ### putG0(char, diacriticCode)
 
-Requires level 1.5.  Writes a character from the current G0 set at the *position*.
+Requires level 1.5 or 2.5.  Writes a character from the current G0 set at the *position*.
 
 `char` is a character with a code between 0x20 and 0x7f.
 
