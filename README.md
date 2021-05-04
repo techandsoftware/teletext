@@ -348,7 +348,7 @@ The methods are:
 
 ### pos(col, row)
 
-Updates the *position* to the `col` and `row`.  The *position* is only updated when this function is called.  The intitial position is 0, 0.
+Updates the *position* to the `col` and `row`.  The *position* is only updated when this function is called.  The initial position is 0, 0.
 
 ### putG0(char, diacriticCode)
 
