@@ -396,6 +396,8 @@ Requires level 1.5 or 2.5.  Writes a smooth mosaic or line drawing character fro
 
 Character 5f isn't supported, which is intended to show the level 2.5 row background colour in the teletext spec.
 
+The G3 characters are written using the codepoints defined by Unicode for Symbols for Legacy Computing.  You can use the Unscii font to display these correctly. Put Unscii in a `fonts` subdirectory relative to the page containing the teletext display div.  Unscii is available with `npm install @techandsoftware/teletext-fonts` or downloadable from http://viznut.fi/unscii/ .
+
 ### putAt()
 
 Requires level 1.5 or 2.5. Writes a `@` character at the *position*.  This is needed because `@` is missing from most G0 and G2 sets, and the teletext spec has special provision for it.
@@ -528,7 +530,7 @@ If you encounter any issues, contact techandsoftwareltd@outlook.com
 
 # Credits
 
-* Unscii font used for block graphics when `setView` is called - http://viznut.fi/unscii/
+* Unscii font used for block graphics when `setView` or `enhance().putG3()` is called - http://viznut.fi/unscii/
 * Bedstead font - http://bjh21.me.uk/bedstead/
 * Native font stack adapted from Bootstrap's - https://getbootstrap.com/docs/4.5/content/reboot/#native-font-stack
 * The internal API used for drawing SVG is a subset of svg.js v3 - https://svgjs.com/docs/3.0/
