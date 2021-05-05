@@ -37,8 +37,18 @@ export class TeletextController {
         console.debug('TeletextController constructed');
     }
 
+    setRowFromOutputLine(rowNum, string) {
+        const chars = Utils.decodeOutputLine_(string);
+        this._model.setRowFromChars_(rowNum, chars);
+    }
+
     setRow(rowNum, string) {
         this._model.setRowFromChars_(rowNum, string);
+    }
+
+    setPageFromOutputLines(lines) {
+        const rows = Utils.getRowsFromOutputLines_(lines);
+        this.setPageRows(rows);
     }
 
     setPageRows(rows) {

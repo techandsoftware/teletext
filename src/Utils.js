@@ -32,6 +32,43 @@ export class Utils {
         return getUnpackedData(bits);
     }
 
+    // Output Line format from .tti file format https://zxnet.co.uk/teletext/documents/ttiformat.pdf
+    static decodeOutputLine_(line) {
+        const decoded = [];
+        let decodeNextChar = false;
+        for (const c of [...line]) {
+            const code = c.charCodeAt(0);
+            if (code == 27) { // ESC
+                decodeNextChar = true;
+            } else if (code >= 0x80) {
+                const char = String.fromCharCode(code - 0x80);
+                decoded.push(char);
+            } else if (decodeNextChar) {
+                const char = String.fromCharCode(code - 0x40);
+                decoded.push(char);
+                decodeNextChar = false;
+            } else {
+                decoded.push(c);
+            }
+        }
+        return decoded;
+    }
+
+
+    static getRowsFromOutputLines_(lines) {
+        const rows = [];
+        const regEx = /^OL,(\d{1,2}),(.+)/
+        for (const line of [...lines]) {
+            const matches = line.match(regEx);
+            if (matches != null) {
+                rows[matches[1]] = Utils.decodeOutputLine_(matches[2]);
+            } else {
+                console.warn('E66 getRowsFromOutputLines_: bad line', line);
+            }
+        }
+        return rows;
+    }
+
     static isCursive_(char) {
         return CURSIVE_CHARS.indexOf(char) != -1;
     }
