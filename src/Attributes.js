@@ -80,13 +80,14 @@ export function attribFromChar(level, char) {
         } else if (char in charToGraphicColour) {
             attribute = Attributes.MOSAIC_COLOUR;
             colour = attributeChars[char];
-        } else {
+        } else
             attribute = attributeChars[char];
-        }
-    } else if (char.charCodeAt(0) <= 0x1f) {
+    } else if (char.charCodeAt(0) <= 0x1f)
         attribute = Attributes.UNKNOWN_;
-    }
-    return { attribute, colour };
+    return {
+        attribute_: attribute,
+        colour_: colour
+    };
 }
 
 export function fillColourFromColourAttrib(colour) {
