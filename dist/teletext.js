@@ -1020,13 +1020,14 @@ function attribFromChar(level, char) {
         } else if (char in charToGraphicColour) {
             attribute = Attributes.MOSAIC_COLOUR;
             colour = attributeChars[char];
-        } else {
+        } else
             attribute = attributeChars[char];
-        }
-    } else if (char.charCodeAt(0) <= 0x1f) {
+    } else if (char.charCodeAt(0) <= 0x1f)
         attribute = Attributes.UNKNOWN_;
-    }
-    return { attribute, colour };
+    return {
+        attribute_: attribute,
+        colour_: colour
+    };
 }
 
 function fillColourFromColourAttrib(colour) {
@@ -3589,27 +3590,27 @@ class PageModel {
             cell.type_ = nextCellType;
             cell.boxed_ = nextBoxed;
             switchedG0CharacterEncoding = nextSwitchedG0CharacterEncoding;
-            if (attrib.attribute != Attributes.STEADY) cell.flashing_ = nextFlashing;
-            if (attrib.attribute != Attributes.NORMAL_SIZE) cell.size_ = nextSize;
-            if (attrib.attribute != Attributes.CONCEAL) cell.concealed_ = nextConcealed;
+            if (attrib.attribute_ != Attributes.STEADY) cell.flashing_ = nextFlashing;
+            if (attrib.attribute_ != Attributes.NORMAL_SIZE) cell.size_ = nextSize;
+            if (attrib.attribute_ != Attributes.CONCEAL) cell.concealed_ = nextConcealed;
             if (cancelNextHoldMosaics) {
-                if (attrib.attribute != Attributes.HOLD_MOSAICS) {
+                if (attrib.attribute_ != Attributes.HOLD_MOSAICS) {
                     heldMosaic.active_ = false;
                     heldMosaic.char_ = ' ';
                 }
                 cancelNextHoldMosaics = false;
             }
 
-            switch (attrib.attribute) {
+            switch (attrib.attribute_) {
                 case Attributes.TEXT_COLOUR: // set after this cell
                     nextCellType = CellType.ALPHA_;
-                    nextTextColour = attrib.colour;
+                    nextTextColour = attrib.colour_;
                     nextConcealed = false;
                     cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.MOSAIC_COLOUR: // set after this cell
                     nextCellType = graphicType;
-                    nextTextColour = attrib.colour;
+                    nextTextColour = attrib.colour_;
                     nextConcealed = false;
                     cell.setSpace_(heldMosaic);
                     break;
