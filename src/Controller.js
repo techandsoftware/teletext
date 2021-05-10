@@ -46,14 +46,20 @@ export class TeletextController {
         this._model.setRowFromChars_(rowNum, string);
     }
 
-    setPageFromOutputLines(lines) {
+    setPageFromOutputLines(lines, header) {
         const rows = Utils.getRowsFromOutputLines_(lines);
+        if (typeof header != 'undefined') rows[0] = this._processHeader(header);
         this.setPageRows(rows);
     }
 
     setPageRows(rows) {
         this._model.clearEnhancements_();
         this._model.setRows_(rows);
+    }
+
+    _processHeader(header) {
+        header = Utils.decodeOutputLine_(header);
+        return header.join('').substring(0, 32).padStart(40, " ");
     }
 
     showTestPage() {
@@ -74,8 +80,9 @@ export class TeletextController {
         this.setPageRows(rows);
     }
 
-    loadPageFromEncodedString(input) {
+    loadPageFromEncodedString(input, header) {
         const decoded = Utils.decodeBase64URLEncoded_(input, this._windowDom.atob);
+        if (typeof header != 'undefined') decoded[0] = this._processHeader(header);
         this.setPageRows(decoded);
     }
 
