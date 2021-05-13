@@ -446,6 +446,43 @@ class Utils {
         return getUnpackedData(bits);
     }
 
+    // Output Line format from .tti file format https://zxnet.co.uk/teletext/documents/ttiformat.pdf
+    static decodeOutputLine_(line) {
+        const decoded = [];
+        let decodeNextChar = false;
+        for (const c of [...line]) {
+            const code = c.charCodeAt(0);
+            if (code == 27) { // ESC
+                decodeNextChar = true;
+            } else if (code >= 0x80) {
+                const char = String.fromCharCode(code - 0x80);
+                decoded.push(char);
+            } else if (decodeNextChar) {
+                const char = String.fromCharCode(code - 0x40);
+                decoded.push(char);
+                decodeNextChar = false;
+            } else {
+                decoded.push(c);
+            }
+        }
+        return decoded;
+    }
+
+
+    static getRowsFromOutputLines_(lines) {
+        const rows = [];
+        const regEx = /^OL,(\d{1,2}),(.+)/;
+        for (const line of [...lines]) {
+            const matches = line.match(regEx);
+            if (matches != null) {
+                rows[matches[1]] = Utils.decodeOutputLine_(matches[2]);
+            } else {
+                console.warn('E66 getRowsFromOutputLines_: bad line', line);
+            }
+        }
+        return rows;
+    }
+
     static isCursive_(char) {
         return CURSIVE_CHARS.indexOf(char) != -1;
     }
@@ -3219,13 +3256,29 @@ class TeletextController {
         console.debug('TeletextController constructed');
     }
 
+    setRowFromOutputLine(rowNum, string) {
+        const chars = Utils.decodeOutputLine_(string);
+        this._model.setRowFromChars_(rowNum, chars);
+    }
+
     setRow(rowNum, string) {
         this._model.setRowFromChars_(rowNum, string);
+    }
+
+    setPageFromOutputLines(lines, header) {
+        const rows = Utils.getRowsFromOutputLines_(lines);
+        if (typeof header != 'undefined') rows[0] = this._processHeader(header);
+        this.setPageRows(rows);
     }
 
     setPageRows(rows) {
         this._model.clearEnhancements_();
         this._model.setRows_(rows);
+    }
+
+    _processHeader(header) {
+        header = Utils.decodeOutputLine_(header);
+        return header.join('').substring(0, 32).padStart(40, " ");
     }
 
     showTestPage() {
@@ -3246,8 +3299,9 @@ class TeletextController {
         this.setPageRows(rows);
     }
 
-    loadPageFromEncodedString(input) {
+    loadPageFromEncodedString(input, header) {
         const decoded = Utils.decodeBase64URLEncoded_(input, this._windowDom.atob);
+        if (typeof header != 'undefined') decoded[0] = this._processHeader(header);
         this.setPageRows(decoded);
     }
 
