@@ -169,14 +169,14 @@ At level 1, there are two character sets on a page: G0 and G1.  From level 1.5, 
 - At level 1.5, primary and secondary G0 set can be selected and used simultaneously
 - At level 1.5, can be placed using enhancements
 - At level 1.5, diacritics can be placed atop G0 characters as enhancements, from 15 available diacritical marks
-- Use: `loadPageFromEncodedString()`, `setRows()`, `setRow()` write G0 characters to the base page, with attribute characters to switch between G0 and G1.  `enhance().putG0()` writes enhancements with or without diacritics.   `setDefaultG0Encoding()` and `setSecondG0Encoding()` select the G0 sets in use.  `Attributes.ESC` switches between the primary and secondary sets, if `setSecondG0Encoding()` was called.
+- Use: `loadPageFromEncodedString()`, `setRows()`, `setRow()`, `setPageFromOutputLines()`, `setRowFromOutputLine()` write G0 characters to the base page, with attribute characters to switch between G0 and G1.  `enhance().putG0()` writes enhancements with or without diacritics.   `setDefaultG0Encoding()` and `setSecondG0Encoding()` select the G0 sets in use.  `Attributes.ESC` switches between the primary and secondary sets, if `setSecondG0Encoding()` was called.
 
 ## G1 "Block Mosaic set"
 
 - Used on base page for block mosaic graphics. (Unicode refers to these as sextets; Wikipedia as semigraphics)
 - Mosaic characters are at codes 0x20 to 0x3f and 0x60 to 0x7f. Characters 0x40 to 0x5f in G1 instead show the corresponding characters in the G0 set that's currently selected
 - At level 2.5, can be placed using enhancements
-- Use: `loadPageFromEncodedString()`, `setRows()`, `setRow()` write G1 characters to the base page, with attribute characters to switch between G0 and G1.  `enhance().putG1()` writes enhancements.
+- Use: `loadPageFromEncodedString()`, `setRows()`, `setRow()`, `setPageFromOutputLines()`, `setRowFromOutputLine()` write G1 characters to the base page, with attribute characters to switch between G0 and G1.  `enhance().putG1()` writes enhancements.
 
 ## G2 "Supplementary Sets"
 
@@ -278,9 +278,28 @@ Display attributes such as text or graphic colour, flashing and other features a
 
 Display the string on the row number. `rowNum` is between 0 and 24. The string is up to 40 characters.  Display attributes in the string can be used - see the section below.
 
-## loadPageFromEncodedString(base64input)
+## loadPageFromEncodedString(base64input, header)
 
 Displays a page from the `base64input`.  The input is a base64-encoded string of 7-bit characters for the 25 rows x 40 characters concatenated together. The encoded string uses the character repertoire defined in the [base64url encoding](https://tools.ietf.org/html/rfc4648#section-5). This format is taken from the querystring format used by Simon Rawles' online edit.tf teletext editor. See further details here: https://github.com/rawles/edit.tf
+
+`header` is optional. When supplied, it replaces row 0 on the displayed page. It's a string of 32 characters. It can use the Output Line format but without the initial `OL,rowNum,`. See `setPageFromOutputLines` for the format.
+
+## setRowFromOutputLine(rowNum, string)
+
+This is a wrapper around `setRow` which accepts the Output Line format used in .tti files, but without the initial `OL,rowNum,` at the beginning. It displays the string on the row number after decoding the Output Line. See `setPageFromOutputLines` for the format. `rowNum` is between 0 and 24.
+
+## setPageFromOutputLines([lines], header)
+
+This is a wrapper around `setPageRows` which accepts strings in the Output Line format used in MRG's .tti files. The lines are displayed after being decoded. `lines` is an array with up to 25 elements in this format:
+
+`OL,rowNum,line`
+
+In this:
+
+* `rowNum` is between 0 and 24
+* `line` is the string to display. Attribute characters (character codes less than 0x20) are represented in three ways: 1) As they are with no translation, or 2) They have 0x80 added to translate them to characters with codes 128-159, or 3) they are replaced by escape (character 0x1b) then the character with 0x40 added.
+
+`header` is optional. When present, it's a string of 32 characters, which have the same encoding as the Output Lines but without the initial `OL,rowNum,` . This is used as the header row and is used instead of Output Line 0 in the provided `lines`. When not provided, the row 0 in the `lines` is used if there is one. 
 
 ## clearScreen(withUpdate)
 
@@ -340,7 +359,7 @@ Using the font will result in a smaller SVG.  If you export the SVG from the DOM
 
 ## enhance()
 
-Returns an `enhancement` instance.  This is used to overwrite characters on top of the base page. It can be used to write diactitics on G0 characters, and also gives access to characters from the G2 and G3 character sets.  Enhancements aren't displayed at Level 0 or Level 1; you need to call `setLevel()` with `Level[1.5]` or `Level[2.5]`.  The enhancement instance provides the methods below to write the enhancements. The enhancements are cleared with a call to `setPageRows()`, `loadPageFromEncodedString()`, `clearScreen()` or `showTestPage()`.
+Returns an `enhancement` instance.  This is used to overwrite characters on top of the base page. It can be used to write diactitics on G0 characters, and also gives access to characters from the G2 and G3 character sets.  Enhancements aren't displayed at Level 0 or Level 1; you need to call `setLevel()` with `Level[1.5]` or `Level[2.5]`.  The enhancement instance provides the methods below to write the enhancements. The enhancements are cleared with a call to `setPageRows()`, `setPageFromOutputLines()`, `loadPageFromEncodedString()`, `clearScreen()` or `showTestPage()`.
 
 The *position* is a bit like a cursor and analogous to the Active Position in the teletext spec. Call `pos()` to update it, and subsequent calls apply to that position.  Characters are not displayed until `end()` is called on the enhancement instance.  The methods can be chained together, for example `enhance().pos(2, 5).putG0('e', 2).end()` .
 
@@ -536,3 +555,4 @@ If you encounter any issues, contact techandsoftwareltd@outlook.com
 * The internal API used for drawing SVG is a subset of svg.js v3 - https://svgjs.com/docs/3.0/
 * Teletext test pages from https://archive.teletextarchaeologist.org/
 * The data format for stored test pages and for the `loadPageFromEncodedString` API is from Simon Rawles' teletext editor - https://edit.tf/
+* The Output Line format is taken from MRG's .tti file spec - https://zxnet.co.uk/teletext/documents/ttiformat.pdf
