@@ -18,7 +18,6 @@ export default {
       file: 'dist/teletext.min.js',
       format: 'es',
       sourcemap: true,
-      sourcemapExcludeSources: true,
       compact: true,
       preferConst: true,
     },{
@@ -27,14 +26,12 @@ export default {
       name: 'ttx',
       preferConst: true,
       sourcemap: true,
-      sourcemapExcludeSources: true,
       compact: true,
     },{
       file: 'dist/teletext.min.cjs',
       format: 'cjs',
       preferConst: true,
       sourcemap: true,
-      sourcemapExcludeSources: true,
       compact: true,
     }
   ],
