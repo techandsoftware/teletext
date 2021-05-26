@@ -169,7 +169,7 @@ At level 1, there are two character sets on a page: G0 and G1.  From level 1.5, 
 - At level 1.5, primary and secondary G0 set can be selected and used simultaneously
 - At level 1.5, can be placed using enhancements
 - At level 1.5, diacritics can be placed atop G0 characters as enhancements, from 15 available diacritical marks
-- Use: `loadPageFromEncodedString()`, `setRows()`, `setRow()`, `setPageFromOutputLines()`, `setRowFromOutputLine()` write G0 characters to the base page, with attribute characters to switch between G0 and G1.  `enhance().putG0()` writes enhancements with or without diacritics.   `setDefaultG0Encoding()` and `setSecondG0Encoding()` select the G0 sets in use.  `Attributes.ESC` switches between the primary and secondary sets, if `setSecondG0Encoding()` was called.
+- Use: `loadPageFromEncodedString()`, `setRows()`, `setRow()`, `setPageFromOutputLines()`, `setRowFromOutputLine()` write G0 characters to the base page, with attribute characters to switch between G0 and G1.  `enhance().putG0()` writes enhancements with or without diacritics.   `setDefaultG0Charset()` and `setSecondG0Charset()` select the G0 sets in use.  `Attributes.ESC` switches between the primary and secondary sets, if `setSecondG0Charset()` was called.
 
 ## G1 "Block Mosaic set"
 
@@ -182,7 +182,7 @@ At level 1, there are two character sets on a page: G0 and G1.  From level 1.5, 
 
 - At level 1.5, placed using enhancements. Not available for use on the base page.
 - 4 sets available. See the API docs for the list.
-- Use: `enhance().putG2()` writes enhancements.  `setDefaultG0Encoding()` sets the G2 set corresponding with the selected G0 set. `setG2Encoding()` sets the G2 set independently of the G0 set. 
+- Use: `enhance().putG2()` writes enhancements.  `setDefaultG0Charset()` sets the G2 set corresponding with the selected G0 set. `setG2Charset()` sets the G2 set independently of the G0 set.
 
 ## G3 "Smooth Mosaics and Line Drawing Set"
 
