@@ -73,7 +73,7 @@ Quickstart:
 <div id="teletextscreen"></div>
 
 <script type="module">
-  import { Teletext } from 'https://unpkg.com/@techandsoftware/teletext@latest/dist/teletext.min.js';
+  import { Teletext } from 'https://cdn.jsdelivr.net/npm/@techandsoftware/teletext@latest/dist/teletext.min.js';
 
   const teletext = Teletext();
   teletext.addTo('#teletextscreen');
@@ -81,7 +81,7 @@ Quickstart:
 </script>
 ```
 
-If you want to use npm to install instead of unpkg:
+If you want to use npm to install instead of jsdelivr:
 
 1. Install dependency:
 
