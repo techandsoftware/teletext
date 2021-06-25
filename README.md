@@ -5,13 +5,15 @@ SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 
 [![REUSE status](https://api.reuse.software/badge/bitbucket.org/rahardy/teletext)](https://api.reuse.software/info/bitbucket.org/rahardy/teletext)
 
-![Splash: Prerendered teletext page](https://techandsoftware.robdev.org.uk/assets/teletext_prerendered_splash.svg)
+![Splash: Prerendered teletext page](https://tech-and-software.ltd.uk/assets/teletext_prerendered_splash.svg)
 
 This package renders teletext pages using vector graphics (SVG). Note this is just the display part of teletext, and operates as a screen or a dumb terminal.  The application using this package will need to supply the page content, implement page numbers, navigation, etc.  The package provides an API to set page content and change the display characteristics such as the screen height and aspect ratio.
 
 This supports all of level 1 and level 1.5, and a little of level 2.5.  A full list follows.  Display rendering features include changing the text font (including proportional fonts), aspect ratio and screen height. Mosaic graphics can be rendered with a font or using SVG graphics. 
 
 Extensions are supported via plugins.
+
+See also: [@techandsoftware/teletext-service](https://www.npmjs.com/package/@techandsoftware/teletext-service), a higher level module with page numbers, subpage and colour button navigation.
 
 ## Teletext features supported
 
@@ -57,13 +59,13 @@ Additional features:
 
 # Demos
 
-For a live demo, see https://teletextmoduledemo.robdev.org.uk/
+For a live demo, see https://teletextmoduledemo.tech-and-software.ltd.uk/
 
 See the `demo` directory in the repo for examples of using with an ES6 module import or a UMD import.
 
 # Licensing
 
-The project is licensed under GNU Affero General Public License 3 ([AGPL-3.0-only](https://www.gnu.org/licenses/agpl-3.0.en.html)), or under a commercial software license ([LicenseRef-uk.ltd.TechAndSoftware-1.0](https://bitbucket.org/rahardy/teletext/src/HEAD/LICENSES/LicenseRef-uk.ltd.TechAndSoftware-1.0.txt)) if you have paid a licensing fee to Tech and Software Ltd. If you combine your own software with this package and distribute publically (whether via network access or not), the AGPL requires that your software is covered by AGPL; the commercial license does not have that requirement. In order to pay the fee for the commercial license, contact <techandsoftwareltd@outlook.com> for enquiries. The text of the licenses is in the `LICENSES` directory.
+The project is licensed under GNU Affero General Public License 3 ([AGPL-3.0-only](https://www.gnu.org/licenses/agpl-3.0.en.html)), or under a commercial software license ([LicenseRef-uk.ltd.TechAndSoftware-1.0](https://tech-and-software.ltd.uk/LICENSES/LicenseRef-uk.ltd.TechAndSoftware-1.0.txt)) if you have paid a licensing fee to Tech and Software Ltd. If you combine your own software with this package and distribute publically (whether via network access or not), the AGPL requires that your software is covered by AGPL; the commercial license does not have that requirement. In order to pay the fee for the commercial license, contact <techandsoftwareltd@outlook.com> for enquiries. The text of the licenses is in the `LICENSES` directory.
 
 The fonts supplied in the `demo/fonts` directory have their own licenses. See the `*.license` files in that directory.
 
@@ -163,12 +165,12 @@ At level 1, there are two character sets on a page: G0 and G1.  From level 1.5, 
 ## G0
 
 - Used on base page for the text
-- 20 character sets available. See the API docs for the list.  None of these are ASCII, but `g0_latin` is close.
+- 20 character sets available. See the API docs below for the list.  None of these are ASCII, but `g0_latin` is close.
 - At level 1, a primary set is selectable from the available sets
 - At level 1.5, primary and secondary G0 set can be selected and used simultaneously
 - At level 1.5, can be placed using enhancements
 - At level 1.5, diacritics can be placed atop G0 characters as enhancements, from 15 available diacritical marks
-- Use: `loadPageFromEncodedString()`, `setRows()`, `setRow()`, `setPageFromOutputLines()`, `setRowFromOutputLine()` write G0 characters to the base page, with attribute characters to switch between G0 and G1.  `enhance().putG0()` writes enhancements with or without diacritics.   `setDefaultG0Charset()` and `setSecondG0Charset()` select the G0 sets in use.  `Attributes.ESC` switches between the primary and secondary sets, if `setSecondG0Charset()` was called.
+- Use: `loadPageFromEncodedString()`, `setRows()`, `setRow()`, `setPageFromOutputLines()`, `setRowFromOutputLine()` to write G0 characters to the base page, with attribute characters to switch between G0 and G1.  `enhance().putG0()` writes enhancements with or without diacritics.  `setDefaultG0Charset()` and `setSecondG0Charset()` select the G0 sets in use.  `Attributes.ESC` switches between the primary and secondary sets, if `setSecondG0Charset()` was called.
 
 ## G1 "Block Mosaic set"
 
@@ -180,7 +182,7 @@ At level 1, there are two character sets on a page: G0 and G1.  From level 1.5, 
 ## G2 "Supplementary Sets"
 
 - At level 1.5, placed using enhancements. Not available for use on the base page.
-- 4 sets available. See the API docs for the list.
+- 4 sets available. See the API docs below for the list.
 - Use: `enhance().putG2()` writes enhancements.  `setDefaultG0Charset()` sets the G2 set corresponding with the selected G0 set. `setG2Charset()` sets the G2 set independently of the G0 set.
 
 ## G3 "Smooth Mosaics and Line Drawing Set"
