@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: (c) 2021 Tech and Software Ltd.
 // SPDX-FileCopyrightText: (c) 2017 dosaygo
 // SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
-// LicenseRef-uk.ltd.TechAndSoftware-1.0 refers to https://techandsoftware.robdev.org.uk/LICENSES/LicenseRef-uk.ltd.TechAndSoftware-1.0.txt
+// LicenseRef-uk.ltd.TechAndSoftware-1.0 refers to https://tech-and-software.ltd.uk/LICENSES/LicenseRef-uk.ltd.TechAndSoftware-1.0.txt
 const TYPED_ARRAYS = new Set([
     "Uint1Array",
     "Int8Array",
