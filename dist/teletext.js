@@ -787,6 +787,29 @@ class Group extends Element {
         this._c.push(image);
         return image;
     }
+
+    svg_(width, height) {
+        const svg = new SVGNested(width, height);
+        this._e.append(svg._node());
+        this._c.push(svg);
+        return svg;
+    }
+}
+
+class SVGNested extends Element {
+    constructor() {
+        super();
+        this._e = _doc.createElementNS(NS, 'svg');
+        return this;
+    }
+
+    attr(...params) {
+        return this.attr_(...params);
+    }
+
+    get node() {
+        return this._node();
+    }
 }
 
 class Image extends Element {
@@ -1591,7 +1614,8 @@ class VectorViewBase {
             isDoubleWidth: isDoubleWidthFn,
             isDoubleSize: isDoubleSizeFn,
             isSeparatedMosaic: isSeparatedMosaicFn,
-            createImageOverlay: this._createImageOverlay.bind(this)
+            createImageOverlay: this._createImageOverlay.bind(this),
+            createSVGOverlay: this._createSVGOverlay.bind(this)
         };
     }
 
@@ -1599,6 +1623,12 @@ class VectorViewBase {
         const image = this.d.image_(WIDTH_PX, HEIGHT_PX);
         image.attr_('preserveAspectRatio', 'none');
         return image;
+    }
+
+    _createSVGOverlay() {
+        const svg = this.d.svg_();
+        svg.attr_('preserveAspectRatio', 'none');
+        return svg;
     }
 }
 
