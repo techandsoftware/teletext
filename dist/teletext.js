@@ -1197,7 +1197,7 @@ const WIDTH_PX = 400;
 const HEIGHT_PX = 250;
 const COLS = 40;
 const ROWS$1 = 25;
-const SCREEN_SCALE = 2;
+const SCREEN_SCALE = 1.5;
 const ASPECT_RATIO_VERTICAL_SCALE = {
     1.33: WIDTH_PX/(1.33 * HEIGHT_PX),
     1.2:  WIDTH_PX/(1.2  * HEIGHT_PX),
@@ -1230,7 +1230,7 @@ Object.freeze(MOSAIC_METRIC);
 class VectorViewBase {
     constructor(model, dom) {
         this._svg = new SVG(dom)
-            .viewbox_(`0 0 ${WIDTH_PX - 1} ${HEIGHT_PX - 1}`)
+            .viewbox_(`0 0 ${WIDTH_PX} ${HEIGHT_PX}`)
             .size_(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO])
             .attr_({
                 'preserveAspectRatio': 'none',
