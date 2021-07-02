@@ -425,7 +425,8 @@ export class VectorViewBase {
             isDoubleWidth: isDoubleWidthFn,
             isDoubleSize: isDoubleSizeFn,
             isSeparatedMosaic: isSeparatedMosaicFn,
-            createImageOverlay: this._createImageOverlay.bind(this)
+            createImageOverlay: this._createImageOverlay.bind(this),
+            createSVGOverlay: this._createSVGOverlay.bind(this)
         };
     }
 
@@ -433,6 +434,12 @@ export class VectorViewBase {
         const image = this.d.image_(WIDTH_PX, HEIGHT_PX);
         image.attr_('preserveAspectRatio', 'none');
         return image;
+    }
+
+    _createSVGOverlay() {
+        const svg = this.d.svg_();
+        svg.attr_('preserveAspectRatio', 'none');
+        return svg;
     }
 }
 
