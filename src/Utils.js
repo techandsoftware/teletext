@@ -40,9 +40,14 @@ export class Utils {
             const code = c.charCodeAt(0);
             if (code == 27) { // ESC
                 decodeNextChar = true;
-            } else if (code >= 0x80) {
+            } else if (code >= 0x80 && code <= 0x9f) {
                 const char = String.fromCharCode(code - 0x80);
                 decoded.push(char);
+                decodeNextChar = false;
+            } else if (code >= 0xa0) {
+                console.warn('W47 decodeOutputLine: bad character:', c);
+                decoded.push('\x7f');
+                decodeNextChar = false;
             } else if (decodeNextChar) {
                 const char = String.fromCharCode(code - 0x40);
                 decoded.push(char);
@@ -57,7 +62,7 @@ export class Utils {
 
     static getRowsFromOutputLines_(lines) {
         const rows = [];
-        const regEx = /^OL,(\d{1,2}),(.+)/
+        const regEx = /^OL,(\d{1,2}),(.*)/
         for (const line of [...lines]) {
             const matches = line.match(regEx);
             if (matches != null) {
