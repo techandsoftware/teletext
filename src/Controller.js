@@ -34,6 +34,7 @@ export class TeletextController {
         this._height = null;
         this._posX = 0;
         this._posY = 0;
+        this._font = null;
         console.debug('TeletextController constructed');
     }
 
@@ -118,6 +119,7 @@ export class TeletextController {
     }
 
     setFont(font) {
+        this._font = font;
         this._view.setFont_(font);
     }
 
@@ -183,6 +185,7 @@ export class TeletextController {
                 throw new Error("setView E126: bad view name:" + view);
         }
         if (this._height) this._view.setHeight_(this._height);
+        if (this._font) this._view.setFont_(this._font);
         if (this._selector) this._view.addTo_(this._selector);
         this._model.notify_();
     }
