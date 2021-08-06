@@ -199,6 +199,10 @@ export class TeletextController {
         return new Enhancement(this._model);
     }
 
+    writeBytes(colNum, rowNum, byteRows) {
+        this._model.writeBytes_(colNum, rowNum, byteRows);
+    }
+
 
     // dumpToConsole() {
     //     this._model.dumpToConsole();

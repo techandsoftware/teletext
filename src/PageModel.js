@@ -56,6 +56,16 @@ export class PageModel {
         this.onSet_.notify_();
     }
 
+    writeBytes_(colNum, rowNum, byteRows) {
+        for (let r = rowNum, i = 0; r < ROWS && i < byteRows.length; r++, i++) {
+            const row = [...byteRows[i]].slice(0, CELLS_PER_ROW - colNum);
+            for (let c = colNum, j = 0; c < CELLS_PER_ROW; c++, j++) {
+                this._screen[r][c].byte_ = row[j];
+            }
+        }
+        this.onSet_.notify_();
+    }
+
     _setRowFromChars(rowNum, text) {
         let textArray = [...text];
         textArray = textArray.slice(0, CELLS_PER_ROW);
