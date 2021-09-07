@@ -353,4 +353,14 @@ export class PageModel {
         this._enhancement = [];
     }
 
+    getBytes_() {
+        const bytes = new Uint8Array(ROWS * CELLS_PER_ROW);
+        this._screen.forEach((row, rowNum) => {
+            row.forEach((cell, colNum) => {
+                bytes[rowNum * CELLS_PER_ROW + colNum] = cell.byte_.charCodeAt(0);
+            });
+        });
+        return bytes;
+    }
+
 }

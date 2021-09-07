@@ -203,6 +203,9 @@ export class TeletextController {
         this._model.writeBytes_(colNum, rowNum, byteRows);
     }
 
+    getBytes() {
+        return this._model.getBytes_();
+    }
 
     // dumpToConsole() {
     //     this._model.dumpToConsole();

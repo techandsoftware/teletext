@@ -452,6 +452,10 @@ Toggle mixed display mode on or off.  See also the `ttx.mix` event.
 
 Toggles boxed display mode on or off. See also the `ttx.subtitlemode` event.
 
+## getBytes()
+
+Gets the raw bytes used in the page model. The response is a `Uint8Array` with 1000 elements. As each teletext byte is 7-bit, the element values will be between 0 and 127 inclusive.
+
 ## Event API
 
 Your application can dispatch these events as an alternative to using the teletext instance API.

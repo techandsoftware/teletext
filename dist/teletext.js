@@ -3453,6 +3453,13 @@ class TeletextController {
         return new Enhancement(this._model);
     }
 
+    writeBytes(colNum, rowNum, byteRows) {
+        this._model.writeBytes_(colNum, rowNum, byteRows);
+    }
+
+    getBytes() {
+        return this._model.getBytes_();
+    }
 
     // dumpToConsole() {
     //     this._model.dumpToConsole();
@@ -3557,6 +3564,16 @@ class PageModel {
         rows.forEach((row, index) => {
             this._setRowFromChars(index, row);
         });
+        this.onSet_.notify_();
+    }
+
+    writeBytes_(colNum, rowNum, byteRows) {
+        for (let r = rowNum, i = 0; r < ROWS && i < byteRows.length; r++, i++) {
+            const row = [...byteRows[i]].slice(0, CELLS_PER_ROW - colNum);
+            for (let c = colNum, j = 0; c < CELLS_PER_ROW; c++, j++) {
+                this._screen[r][c].byte_ = row[j];
+            }
+        }
         this.onSet_.notify_();
     }
 
@@ -3845,6 +3862,16 @@ class PageModel {
 
     clearEnhancements_() {
         this._enhancement = [];
+    }
+
+    getBytes_() {
+        const bytes = new Uint8Array(ROWS * CELLS_PER_ROW);
+        this._screen.forEach((row, rowNum) => {
+            row.forEach((cell, colNum) => {
+                bytes[rowNum * CELLS_PER_ROW + colNum] = cell.byte_.charCodeAt(0);
+            });
+        });
+        return bytes;
     }
 
 }
