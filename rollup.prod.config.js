@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 
 import resolve from '@rollup/plugin-node-resolve';
-import { terser } from "rollup-plugin-terser";
+import terser from "@rollup/plugin-terser";
 import json from '@rollup/plugin-json';
 
 // preamble in the minified source
@@ -19,18 +19,24 @@ export default {
       format: 'es',
       sourcemap: true,
       compact: true,
-      preferConst: true,
+      generatedCode: {
+        constBindings: true
+      }
     },{
       file: 'dist/teletext.umd.min.js',
       format: 'umd',
       name: 'ttx',
-      preferConst: true,
+      generatedCode: {
+        constBindings: true
+      },
       sourcemap: true,
       compact: true,
     },{
       file: 'dist/teletext.min.cjs',
       format: 'cjs',
-      preferConst: true,
+      generatedCode: {
+        constBindings: true
+      },
       sourcemap: true,
       compact: true,
     }
