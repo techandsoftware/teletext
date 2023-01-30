@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
+// SPDX-FileCopyrightText: © 2023 Tech and Software Ltd.
 // SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 
 import { Level, Attributes, Colour, CellType, CellSize, attribFromChar } from './Attributes.js';
@@ -28,7 +28,8 @@ export class PageModel {
         this._primaryG0CharacterEncoding = DEFAULT_PRIMARY_G0_CHARACTER_SET;
         this._secondaryG0CharacterEncoding = null;
         this._g2CharacterEncoding = DEFAULT_G2_CHARACTER_SET;
-        this._startBoxChar = Attributes.charFromAttribute(Attributes.START_BOX)
+        this._startBoxChar = Attributes.charFromAttribute(Attributes.START_BOX);
+        this._endBoxChar = Attributes.charFromAttribute(Attributes.END_BOX);
         this._level = Level[1];
         this._enhancement = [];
         
@@ -279,8 +280,12 @@ export class PageModel {
                     }
                     cell.setSpace_(heldMosaic);
                     break;
-                case Attributes.END_BOX: // set after
-                    nextBoxed = false;
+                case Attributes.END_BOX: // set between two end box chars
+                    if (cellIndex + 1 < CELLS_PER_ROW) {
+                        if (this._screen[rowNum][cellIndex+1].byte_ == this._endBoxChar) {
+                            nextBoxed = false;
+                        }
+                    }
                     cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.UNKNOWN_:
