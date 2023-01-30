@@ -1,421 +1,8 @@
-// SPDX-FileCopyrightText: (c) 2021 Tech and Software Ltd.
-// SPDX-FileCopyrightText: (c) 2017 dosaygo
+// SPDX-FileCopyrightText: (c) 2023 Tech and Software Ltd.
 // SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 // LicenseRef-uk.ltd.TechAndSoftware-1.0 refers to https://tech-and-software.ltd.uk/LICENSES/LicenseRef-uk.ltd.TechAndSoftware-1.0.txt
-const TYPED_ARRAYS = new Set([
-    "Uint1Array",
-    "Int8Array",
-    "Uint8Array",
-    "Uint8ClampedArray",
-    "Int16Array",
-    "Uint16Array",
-    "Int32Array",
-    "UInt32Array",
-    "Float32Array",
-    "Float64Array"
-  ]);
-  const INTERNAL_FORMAT = Uint8Array;
-  const $ = Symbol("[[Uint1ArrayInternal]]");
-
-  // Uint1Array internals : toArray, getBit, setBit
-
-    class Uint1ArrayPrivates {
-      constructor( publics, { length : length = null,
-                  buffer : buffer = null,
-                  byteOffset : byteOffset = 0,
-                  byteLength : byteLength = null} = {} ) {
-
-        let internal;
-
-        if ( !! buffer ) {
-          length = (byteLength || buffer.byteLength) * 8;
-        } else if ( ! length ) {
-          length = 0;
-        }
-
-        const wordBytes = INTERNAL_FORMAT.BYTES_PER_ELEMENT;
-        const wordSize = wordBytes * 8;
-        const wordSizeMask = wordSize - 1;
-        const wordSizeShift = msb_index( wordSize );
-        const wordCount = Math.max(
-          1, ( length + wordSizeMask ) >> wordSizeShift);
-        if ( !! buffer ) {
-          internal = new INTERNAL_FORMAT( buffer, byteOffset, wordCount );
-        } else  {
-          buffer = new ArrayBuffer( wordBytes * wordCount );
-          internal = new INTERNAL_FORMAT( buffer );
-        }
-
-        Object.assign( this, {
-          buffer,
-          byteOffset,
-          length,
-          wordSize,
-          wordCount,
-          wordSizeMask,
-          wordSizeShift,
-          internal
-        });
-      }
-      toArray() {
-        const array = new Uint8Array( this.length );
-        for( let j = 0; j < this.wordCount; j++ ) {
-          const word = this.internal[j];
-          for( let i = j*this.wordSize; i < (j+1)*this.wordSize; i++ ) {
-            array[i] = this.getBit( i, word );
-          }
-        }
-        return array;
-      }
-      getBit( i, word ) {
-        if ( i >= this.length ) {
-          return;
-        }
-        const word_offset = i & this.wordSizeMask;
-        if ( word == undefined ) {
-          const word_number = i >> this.wordSizeShift;
-          word = this.internal[word_number];
-        }
-        const bit = (word >> word_offset)&1;
-        return bit;
-      }
-      setBit( i, bit ) {
-        if ( i >= this.length ) {
-          return;
-        }
-        const word_number = i >> this.wordSizeShift;
-        const word_offset = i & this.wordSizeMask;
-        const word = this.internal[word_number];
-        let new_word = word;
-        new_word |= ( bit << word_offset ); // make it 1 if 1, no change if 0
-        new_word &= ~((~bit&1) << word_offset ); // make it 0 if 0, no change if 1
-        if ( word !== new_word ) {
-          this.internal[word_number] = new_word;
-        }
-        return bit;
-      }
-    }
-
-    class Uint1Array {
-      // Uint1Array constructor
-
-        constructor( arg , byteOffset = 0, byteLength = null ) {
-          const argType = resolveTypeName(arg);
-
-          let length, privates, temp;
-
-          switch( argType ) {
-            case "Number":
-              arg = ~~arg; // integer part only
-              length = arg;
-              privates = new Uint1ArrayPrivates( this, { length } );
-              break;
-            case "ArrayBuffer":
-              const buffer = arg;
-              privates = new Uint1ArrayPrivates( this, {
-                buffer, byteOffset, byteLength } );
-              break;
-            case "Undefined":
-            case "Null":
-            case "RegExp":
-            case "Infinity":
-              length = 0;
-              privates = new Uint1ArrayPrivates( this, { length } );
-              break;
-            case "Array":
-            case "Int8Array":
-            case "Uint8Array":
-            case "Uint8ClampedArray":
-            case "Int16Array":
-            case "Uint16Array":
-            case "Int32Array":
-            case "UInt32Array":
-            case "Float32Array":
-            case "Float64Array":
-            case "Uint1Array":
-            case "Object":
-            default:
-              temp = create_from_iterable( arg );
-              privates = new Uint1ArrayPrivates( this, { length : temp.length } );
-              temp.forEach( (val, i) => privates.setBit( i, toBit( val ) ) );
-              break;
-          }
-
-          // for private access to internal properties
-
-          this[$] = privates;
-
-          // proxy for array-like bracket-accessor via index
-
-          const accessorProxy = new BracketAccessorProxy( this );
-
-          return accessorProxy;
-        }
-
-      // Static property slots on the constructor
-
-        static get BYTES_PER_ELEMENT() {
-          return 0.125;
-        }
-        static get name() {
-          return "Uint1Array";
-        }
-        static get length() {
-          return 0;
-        }
-        static get [Symbol.species]() {
-          return this;
-        }
-
-        static [Symbol.hasInstance](instance) {
-          return instance.__proto__ = this;
-        }
-
-      // Static method slots on the constructor
-
-        static from( iterable ) {
-          const temp = create_from_iterable( iterable );
-          return new Uint1Array( temp );
-        }
-
-        static of( ...items ) {
-          return Uint1Array.from( items );
-        }
-
-      // Property slots on the instances
-
-        get buffer() {
-          return this[$].buffer;
-        }
-
-        get byteLength() {
-          return ( this.length + 7 ) >> 3;
-        }
-
-        get byteOffset() {
-          return this[$].byteOffset;
-        }
-
-        get length() {
-          return this[$].length;
-        }
-
-        get [Symbol.toStringTag]() {
-          return "Uint1Array";
-        }
-
-      // Method slots on the instance ( STANDARD as per the TypedArray Spec )
-
-        copyWithin( targetStart, sourceStart = 0, sourceEnd = this.length ) {
-          if ( ! Number.isInteger( targetStart ) ) {
-            return this;
-          }
-          const temp = new Uint8Array( sourceEnd - sourceStart );
-          for( let i = sourceStart; i < sourceEnd; i++ ) {
-            temp[i-sourceStart] = this[i];
-          }
-          this.set( temp, targetStart );
-          return this;
-        }
-
-        entries() {
-          return this[$].toArray().entries();
-        }
-
-        every( ...args ) {
-          return this[$].toArray().every( ...args );
-        }
-
-        fill( value, start = 0, end = this.length ) {
-          for( let i = start; i < end; i++ ) {
-            this[i] = value;
-          }
-          return this;
-        }
-
-        filter( ...args ) {
-          return new Uint1Array( this[$].toArray().filter( ...args ) );
-        }
-
-        find( ...args ) {
-          return this[$].toArray().find( ...args );
-        }
-
-        findIndex( ...args ) {
-          return this[$].toArray().findIndex( ...args );
-        }
-
-        forEach( ...args ) {
-          this[$].toArray().forEach( ...args );
-        }
-
-        includes( ...args ) {
-          return this[$].toArray().includes( ...args );
-        }
-
-        indexOf( ...args ) {
-          return this[$].toArray().indexOf( ...args );
-        }
-
-        join( ...args ) {
-          return this[$].toArray().join( ...args );
-        }
-
-        keys( ...args ) {
-          return this[$].toArray().keys( ...args );
-        }
-
-        lastIndexOf( ...args ) {
-          return this[$].toArray().lastIndexOf( ...args );
-        }
-
-        map( ...args ) {
-          return new Uint1Array( this[$].toArray().map( ...args ) );
-        }
-
-        reduce( ...args ) {
-          return this[$].toArray().reduce( ...args );
-        }
-
-        reduceRight( ...args ) {
-          return this[$].toArray().reduceRight( ...args );
-        }
-
-        reverse() {
-          const temp = this[$].toArray().reverse();
-          this.set( temp );
-          return this;
-        }
-
-        set( arr, offset = 0 ) {
-          if ( ! Number.isInteger( offset ) ) {
-            return;
-          }
-
-          const typeName = resolveTypeName(arr);
-
-          // returning without doing nothing if the argument is
-          // neither an array nor a typedarray seems to be the
-          // implemented behaviour in the browser for <TypedArray>.set
-          // and we do not differ here
-          if ( typeName !== "Array" && ! TYPED_ARRAYS.has( typeName ) ) {
-            return;
-          }
-          const last = Math.min( arr.length + offset, this.length );
-          arr = arr.map( v => toBit( v ) );
-          for( let i = offset; i < last; i++ ) {
-            this[i] = arr[i-offset];
-          }
-        }
-
-        slice( ...args ) {
-          return new Uint1Array( this[$].toArray().slice( ...args ) );
-        }
-
-        sort( ...args ) {
-          const sorting = this[$].toArray().sort( ...args );
-          this.set( sorting );
-          return this;
-        }
-
-        subarray( ...args ) {
-          return new Uint1Array( this[$].toArray().subarray( ...args ) );
-        }
-
-        values( ...args ) {
-          return this[$].toArray().values( ...args );
-        }
-
-        toLocaleString( ...args ) {
-          return Array.from(this).toLocaleString();
-        }
-
-        toString() {
-          return Array.from(this).toString();
-        }
-
-        [Symbol.iterator]() {
-          return this[$].toArray()[Symbol.iterator]();
-        }
-
-        valueOf() {
-          return this;
-        }
-
-      // Method slots on the instances ( NON STANDARD )
-
-        // This behaviour is chosen ( to return an Array for JSON stringification )
-        // because I decided that the behaviour of TypedArrays to return an object
-        // with numeric properties such as {0: 0, 1:0, 2:1} didn't work and was crap.
-
-        toJSON() {
-          return Array.from(this);
-        }
-    }
-
-  // array bracket-accessor proxy
-
-    function BracketAccessorProxy( typed_array_api ) {
-      const privates = typed_array_api[$];
-      const array_accessor_handler = {
-        get( _, slot, surface ) {
-          const i = typeof slot == "string" ? parseInt(slot) : slot;
-          if ( Number.isInteger( i ) ) {
-            return privates.getBit( i );
-          } else {
-            return Reflect.get( typed_array_api, slot );
-          }
-        },
-        set( _, slot, value, surface ) {
-          const i = typeof slot == "string" ? parseInt(slot) : slot;
-          if ( Number.isInteger( i ) ) {
-            privates.setBit( i, toBit( value ) );
-            return true;
-          } else {
-            return Reflect.set( typed_array_api, slot, value );
-          }
-        }
-      };
-      return new Proxy( typed_array_api, array_accessor_handler );
-    }
-
-  // helpers
-
-    const typeNameMatcher = /\[object (\w+)]/;
-
-    function create_from_iterable( iterable ) {
-      const temp = [];
-      for( let item of iterable ) {
-        const bit = toBit( item );
-        temp.push( bit );
-      }
-      return temp;
-    }
-
-    function msb_index( number ) {
-      let i = 0;
-      while( number >>= 1 ) {
-        i++;
-      }
-      return i;
-    }
-
-    function toBit( thing ) {
-      if ( typeof thing == "number" && ! Number.isNaN(thing) ) {
-        return thing % 2;
-      } else {
-        return new Boolean(thing).valueOf();
-      }
-    }
-
-    function resolveTypeName( thing ) {
-      const cname = thing && thing.constructor ? thing.constructor.name : null;
-      const tname = typeNameMatcher.exec( Object.prototype.toString.call( thing ) )[1];
-      if ( tname !== cname && !! cname ) return cname;
-      return tname;
-    }
-
-// SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
+// SPDX-FileCopyrightText: © 2023 Tech and Software Ltd.
+// SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 
 // Arabic chars in initial, medial or final form are cursive
 const CURSIVE_CHARS = "ﻰﺋﺊﭼﭽﭘﭙﮔﻎﻼﻬﻪﻊﺔﺒﺘﺎﺑﺗﺛﺟﺣﺧﺳﺷﺻﺿﻃﻇﻋﻏﺜﺠﺤﺨـﻓﻗﻛﻟﻣﻧﻫﻰﻳﻴﻌﻐﻔﻘﻠﻤﻨ";
@@ -424,26 +11,30 @@ class Utils {
 
     // "base64url" encoding defined here https://tools.ietf.org/html/rfc4648
     // the packed data format is from https://github.com/rawles/edit.tf
-    // returns a Uint1Array
     static decodeBase64URLEncoded_(input, atob) {
-        // adjust the input before passing to atob
+        // convert URL-encoded to real base 64
         input = input.replace(/-/g, '+').replace(/_/g, '/');
         const pad = input.length % 4;
         if (pad) {
             if (pad === 1) throw new Error('Utils.decodeBase64URLEncoded E16: Input base64url string is the wrong length to determine padding');
-            input += new Array(5-pad).join('=');
+            input += new Array(5 - pad).join('=');
         }
-        const packed = atob(input);
+        const data = atob(input); // MSB first
 
-        // FUDGE as Unit8Array.set stores LSB first but we want MSB first in the bit array, getMsbCode reverses the bits
-        const msbCodes = [...packed].map(c => getMsbCode(c));
-        
-        const buffer = new ArrayBuffer(msbCodes.length);
-        const bytes = new Uint8Array(buffer);
-        bytes.set(msbCodes);
-        const bits = new Uint1Array(buffer);
+        // convert octets to rows of 7 bit chars
+        const rows = [];
+        let row = [];
+        for (const val of dataTo7Bits(data)) {
+            row.push(String.fromCharCode(val));
+            if (row.length == 40) {
+                rows.push(row.join(''));
+                row = [];
+            }
+        }
+        if (row.length < 40)
+            rows.push(row.join(''));
 
-        return getUnpackedData(bits);
+        return rows;
     }
 
     // Output Line format from .tti file format https://zxnet.co.uk/teletext/documents/ttiformat.pdf
@@ -473,7 +64,6 @@ class Utils {
         return decoded;
     }
 
-
     static getRowsFromOutputLines_(lines) {
         const rows = [];
         const regEx = /^OL,(\d{1,2}),(.*)/;
@@ -493,54 +83,34 @@ class Utils {
     }
 }
 
-const msbCodes = {};
-
-// get charCode for a char with the bit significance reversed
-function getMsbCode(char) {
-    if (char in msbCodes) return msbCodes[char];
-    
-    const msbBits = [...char.charCodeAt(0).toString(2).padStart(8, '0')].reverse();
-    msbCodes[char] = Number.parseInt(msbBits.join(''), 2); 
-    return msbCodes[char];
+function intToBits(n) {
+    let bits = [];
+    for (let b = 7; b >= 0; b--) {
+        bits.push(n & (1 << b) ? 1 : 0);
+    }
+    return bits;
 }
 
-// or is this better?
-// function getMsbCode(char) {
-//     if (char in msbCodes) return msbCodes[char];
-
-//     const code = char.charCodeAt(0);
-//     msbCodes[char] =
-//               ((code & 0b10000000) >> 7)
-//             + ((code & 0b01000000) >> 5)
-//             + ((code & 0b00100000) >> 3)
-//             + ((code & 0b00010000) >> 1)
-//             + ((code & 0b00001000) << 1)
-//             + ((code & 0b00000100) << 3)
-//             + ((code & 0b00000010) << 5)
-//             + ((code & 0b00000001) << 7);
-//     return msbCodes[char];
-// }
-
-
-function getUnpackedData(bitArray) {
-    // const firstBitIndex = (280 * row) + (7 * col);
-    const page = [];
-
-    for (let r = 0; r < 25; r++) {
-        const rowChars = [];
-        for (let c = 0; c < 40; c++) {
-            let bitSignificance = 6;
-            let charCode = 0;
-            const firstBitIndex = (280 * r) + (7 * c);
-            for (let bit = firstBitIndex; bit < firstBitIndex + 7; bit++) {
-                charCode += bitArray[bit] * Math.pow(2, bitSignificance);
-                bitSignificance--;
+// unpacks MSB-first 8-bit bytes to 7-bit bytes
+//   01000000 10000001 00000001 ...
+// = 0100000 0100000 0100000 01...
+function* dataTo7Bits(data) {
+    let bShift = 6;
+    let val = 0;
+    for (const d of data) {
+        const bits = intToBits(d.charCodeAt(0));
+        for (const b of bits) {
+            val |= b << bShift;
+            bShift--;
+            if (bShift < 0) {
+                yield val;
+                bShift = 6;
+                val = 0;
             }
-            rowChars.push(String.fromCharCode(charCode));
         }
-        page.push(rowChars.join(''));
     }
-    return page;
+
+    if (bShift < 6) yield val;
 }
 
 var ENGINEERING = "QIECBAgQIIcWLGg2EDdy3QIKnXKgYtUE7f2QA2TB0wYr2DECAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAYMS54fzJmix4-YCDToOLOjyZ0WLSkzo6AkcGHuZUcRHlB4dgyAAQAEABAAQAEABAAQAEABAAQAEABAAQAEABAAQAEABAAWDP9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9_YNCho9zImSoAqBGoAp0FUy8-iChhz5UCA4MPEuZYgTAFyAFg1_f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f2DYCAAoACACeQHkBdYTJlixIkSKlSJEoUKIEBQABAAQAEABYN_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_39g4AgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgGDn9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9_YsAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgAIBix_f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f2LICAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAYs_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_39i0AgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgGLX9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9_Ytq-jT0yg7OXZs39w0Pzh3Ao_LLl3BZuHPl3dMIGllyBIWzrlLmkKJGTSJUycsoUqlZJYtXLzLBiyZlWjVs3IuHLp2UePXz9AgQokaBIlTJ0ChSqVoFi1cvQMGLJmgaNWzdA4cunaB49fP0ECDChoIkWNHQSJMqWgmTZ09BQo0qaCpVrV0FizatoLl29fQYMOLGgyZc2dBo06taDZt3b0HDjy5oOnXt3QePPr2g-ff38pgw4sZHJlzZyujTq1ktm3dvNcOPLmW6de3cn48-vZf59_fwZiHv3Y8uHYIjbMPPQDVCxcLf4E0-mXDk8mI-_dlFCn5a9_DKr6q-qvqr6q-qvqr6AFS390DJoGQKr6q-qvqr6q-qvqr6o";
@@ -2820,7 +2390,7 @@ var encodings = {
 	g3: g3
 };
 
-// SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
+// SPDX-FileCopyrightText: © 2023 Tech and Software Ltd.
 
 const sextants = {};
 
@@ -2975,10 +2545,13 @@ class Cell {
         if (code > 0x7f) return null;
         if (code in sextants) return sextants[code];
 
-        let sextant = code - 0x20;
-        if (sextant >= 0x40) sextant -= 0x20;
-        sextants[code] = [...sextant.toString(2).padStart(6, '0')].reverse();
-        return sextants[code];
+        const sextant = code >= 0x60 ? code - 0x40 : code - 0x20;
+        const bits = [];
+        for (let b = 0; b < 6; b++) {
+            bits.push(sextant & (1 << b) ? '1' : '0');
+        }
+        sextants[code] = bits;
+        return bits;
     }
 }
 
@@ -3516,7 +3089,7 @@ class RowModel {
     }
 }
 
-// SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
+// SPDX-FileCopyrightText: © 2023 Tech and Software Ltd.
 
 const ROWS = 25;
 const CELLS_PER_ROW = 40;
@@ -3540,6 +3113,7 @@ class PageModel {
         this._secondaryG0CharacterEncoding = null;
         this._g2CharacterEncoding = DEFAULT_G2_CHARACTER_SET;
         this._startBoxChar = Attributes.charFromAttribute(Attributes.START_BOX);
+        this._endBoxChar = Attributes.charFromAttribute(Attributes.END_BOX);
         this._level = Level[1];
         this._enhancement = [];
         
@@ -3790,8 +3364,12 @@ class PageModel {
                     }
                     cell.setSpace_(heldMosaic);
                     break;
-                case Attributes.END_BOX: // set after
-                    nextBoxed = false;
+                case Attributes.END_BOX: // set between two end box chars
+                    if (cellIndex + 1 < CELLS_PER_ROW) {
+                        if (this._screen[rowNum][cellIndex+1].byte_ == this._endBoxChar) {
+                            nextBoxed = false;
+                        }
+                    }
                     cell.setSpace_(heldMosaic);
                     break;
                 case Attributes.UNKNOWN_:
