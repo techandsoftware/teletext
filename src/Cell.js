@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
+// SPDX-FileCopyrightText: © 2023 Tech and Software Ltd.
 // SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 
 import { Colour, CellType, CellSize } from './Attributes.js';
@@ -158,10 +158,13 @@ export class Cell {
         if (code > 0x7f) return null;
         if (code in sextants) return sextants[code];
 
-        let sextant = code - 0x20;
-        if (sextant >= 0x40) sextant -= 0x20;
-        sextants[code] = [...sextant.toString(2).padStart(6, '0')].reverse();
-        return sextants[code];
+        const sextant = code >= 0x60 ? code - 0x40 : code - 0x20;
+        const bits = [];
+        for (let b = 0; b < 6; b++) {
+            bits.push(sextant & (1 << b) ? '1' : '0');
+        }
+        sextants[code] = bits;
+        return bits;
     }
 }
 
