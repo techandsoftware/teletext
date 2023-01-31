@@ -207,6 +207,10 @@ export class TeletextController {
         return this._model.getBytes_();
     }
 
+    getScreenImage() {
+        return this._view.getStaticScreen_();
+    }
+
     // dumpToConsole() {
     //     this._model.dumpToConsole();
     // }

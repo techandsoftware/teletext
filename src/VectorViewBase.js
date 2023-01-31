@@ -258,6 +258,10 @@ export class VectorViewBase {
         this._refreshMixMode();
     }
 
+    getStaticScreen_() {
+        return this._svg._node().outerHTML;
+    }
+
     _drawGrid() {
         this._gridLayer = this.d.group_();
         for (let row = 0; row < ROWS; row++) {
