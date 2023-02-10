@@ -19,7 +19,7 @@ See also: [@techandsoftware/teletext-service](https://www.npmjs.com/package/@tec
 
 * Level 1
     * Screen size of 40 x 25 characters
-    * 6 colour foreground text or mosaic characters (also called semigraphics or sextets)
+    * 6 colour foreground text or mosaic characters (also called [semigraphics](https://en.wikipedia.org/wiki/Semigraphics) or [sextants](https://en.wikipedia.org/wiki/Symbols_for_Legacy_Computing))
     * 7 colour background
     * Text displayed using the G0 character sets
     * 20 G0 character sets are available, with up to 96 characters per set. Supports Latin, Greek, Cyrillic, Hebrew and Arabic scripts
@@ -27,7 +27,7 @@ See also: [@techandsoftware/teletext-service](https://www.npmjs.com/package/@tec
     * Mosaics are contiguous or separated
     * Double height, flashing, concealed, boxed characters
     * Held mosaic characters, to replace the display of a spacing attributes with the last held graphic
-    * Newsflash page display mode
+    * Newsflash / subtitles page display mode
     * Mix display mode, which isn't part of the teletext spec but is normal on TVs
 * Level 1.5
     * Black foreground text or mosaic (this is level 2.5 in the teletext spec but included here at 1.5 as with some TVs)
@@ -170,14 +170,14 @@ At level 1, there are two character sets on a page: G0 and G1.  From level 1.5, 
 - At level 1.5, primary and secondary G0 set can be selected and used simultaneously
 - At level 1.5, can be placed using enhancements
 - At level 1.5, diacritics can be placed atop G0 characters as enhancements, from 15 available diacritical marks
-- Use: `loadPageFromEncodedString()`, `setRows()`, `setRow()`, `setPageFromOutputLines()`, `setRowFromOutputLine()` to write G0 characters to the base page, with attribute characters to switch between G0 and G1.  `enhance().putG0()` writes enhancements with or without diacritics.  `setDefaultG0Charset()` and `setSecondG0Charset()` select the G0 sets in use.  `Attributes.ESC` switches between the primary and secondary sets, if `setSecondG0Charset()` was called.
+- Use: `loadPageFromEncodedString()`, `setPageRows()`, `setRow()`, `setPageFromOutputLines()`, `setRowFromOutputLine()` to write G0 characters to the base page, with attribute characters to switch between G0 and G1.  `enhance().putG0()` writes enhancements with or without diacritics.  `setDefaultG0Charset()` and `setSecondG0Charset()` select the G0 sets in use.  `Attributes.ESC` switches between the primary and secondary sets, if `setSecondG0Charset()` was called.
 
 ## G1 "Block Mosaic set"
 
-- Used on base page for block mosaic graphics. (Unicode refers to these as sextets; Wikipedia as semigraphics)
+- Used on base page for block mosaic graphics. (Unicode refers to these as sextants; Wikipedia as semigraphics)
 - Mosaic characters are at codes 0x20 to 0x3f and 0x60 to 0x7f. Characters 0x40 to 0x5f in G1 instead show the corresponding characters in the G0 set that's currently selected
 - At level 2.5, can be placed using enhancements
-- Use: `loadPageFromEncodedString()`, `setRows()`, `setRow()`, `setPageFromOutputLines()`, `setRowFromOutputLine()` write G1 characters to the base page, with attribute characters to switch between G0 and G1.  `enhance().putG1()` writes enhancements.
+- Use: `loadPageFromEncodedString()`, `setPageRows()`, `setRow()`, `setPageFromOutputLines()`, `setRowFromOutputLine()` write G1 characters to the base page, with attribute characters to switch between G0 and G1.  `enhance().putG1()` writes enhancements.
 
 ## G2 "Supplementary Sets"
 
@@ -207,7 +207,7 @@ Returns the teletext instance with the API functions below.
 The `options` parameter object is optional, with properties:
 * `webkitCompat`: boolean (optional)
    * `true` (default) - the generated SVG is compatible with Safari/Webkit browsers (all browsers on iOS), but it's bigger
-   * `false` - uses SVG2 features which work in most browsers but not Safari or any browser on iOS, as they fail to render the graphics properly unless you use `setView` to switch the view to `classic__font-for-mosaic` (documented below)
+   * `false` - uses SVG2 features which work in most browsers but not Safari or any browser on iOS, as they fail to render the graphics properly ([see this bug](https://bugs.webkit.org/show_bug.cgi?id=182172)), unless you use `setView` to switch the view to `classic__font-for-mosaic` (documented below)
 * `dom`: object (optional)
    * if running in nodejs you need to pass in a window dom object. See the example above
 
@@ -368,7 +368,7 @@ The methods are:
 
 ### pos(col, row)
 
-Updates the *position* to the `col` and `row`.  The *position* is only updated when this function is called.  The initial position is 0, 0.
+Updates the *position* to the `col` and `row`.  The *position* is only updated when this function is called.  The initial position is 0, 0, which is the top left.
 
 ### putG0(char, diacriticCode)
 
@@ -456,6 +456,10 @@ Toggles boxed display mode on or off. See also the `ttx.subtitlemode` event.
 
 Gets the raw bytes used in the page model. The response is a `Uint8Array` with 1000 elements. As each teletext byte is 7-bit, the element values will be between 0 and 127 inclusive.
 
+## getScreen()
+
+Gets a static image of the screen. This returns SVG markup.
+
 ## Event API
 
 Your application can dispatch these events as an alternative to using the teletext instance API.
@@ -518,7 +522,7 @@ Gets the code for an attribute. `attribute` is one of these:
 | Attributes.HOLD_MOSAICS       | stores the last mosaic character seen on a row (going left to right) so that on the next spacing attribute the held mosaic is used instead of a space. A practical use is in a row of graphics, so that the colour could be changed without a space, with the space being filled in with the mosaic before the colour change. The held mosaic is reset to a space with a change of size or text/graphics mode |
 | Attributes.RELEASE_MOSAICS    | cancels held mosaic mode, so that attributes will show a space and not the held mosaic. The held mosaic isn't reset to a space |
 | Attributes.START_BOX          | starts boxed characters (used for subtitles, newsflash). Two adjacent start box characters need to be used, with the box starting between the two. For use with `toggleBoxMode()` |
-| Attributes.END_BOX            | ends boxed characters |
+| Attributes.END_BOX            | ends boxed characters. Two adjacent end box characters need to be used, with the box ending between the two. |
 | Attributes.ESC                | switch between the default G0 character set and the second G0 character set.  This requires the second G0 character set to have been set with `setSecondG0Charset`.  If this hasn't been set, the attribute has no effect |
 
 As an example, to set red text on a yellow background, you will need:
