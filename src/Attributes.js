@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
+// SPDX-FileCopyrightText: © 2023 Tech and Software Ltd.
 // SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 
 // Exported in public interface
@@ -29,6 +29,16 @@ export const CellSize = {
     DOUBLE_SIZE_:   Symbol('DOUBLE_SIZE'),
 };
 Object.freeze(CellSize);
+
+// 'level 0' is fake but derived from Ceefax 1975 pages at https://archive.teletextarchaeologist.org/Pages/Details/21000
+// which has different control codes
+export const Level = {
+    0:   Symbol('0'),   // 7 colour text and contiguous graphics, flashing
+    1:   Symbol('1'),   // + background colours, separated graphics, conceal, box, double height
+    1.5: Symbol('1.5'), // + black text/graphics
+    2.5: Symbol('2.5'), // + double width, double size
+};
+Object.freeze(Level);
 
 // Exported in public interface
 export class Attributes {
@@ -68,8 +78,6 @@ Attributes.START_BOX           = Symbol('START_BOX');
 Attributes.END_BOX             = Symbol('END_BOX');
 Attributes.UNKNOWN_            = Symbol('UNKNOWN'); // pseudo-attribute
 
-// private functions/data below
-
 export function attribFromChar(level, char) {
     let attribute = null;
     let colour = null;
@@ -94,6 +102,10 @@ export function fillColourFromColourAttrib(colour) {
     return colourAttribToFillColour[colour];
 }
 
+
+///////////////////////////////
+// private functions/data below
+
 const colourAttribToFillColour = {
     [Colour.BLACK]   : '#000',
     [Colour.RED]     : '#f00',
@@ -106,77 +118,53 @@ const colourAttribToFillColour = {
 };
 Object.freeze(colourAttribToFillColour);
 
-// TODO - tidy up strings
 const charToTextColour = {
-    [String.fromCharCode(0x0)] : Colour.BLACK,
-    [String.fromCharCode(0x1)] : Colour.RED,
-    [String.fromCharCode(0x2)] : Colour.GREEN,
-    [String.fromCharCode(0x3)] : Colour.YELLOW,
-    [String.fromCharCode(0x4)] : Colour.BLUE,
-    [String.fromCharCode(0x5)] : Colour.MAGENTA,
-    [String.fromCharCode(0x6)] : Colour.CYAN,
-    [String.fromCharCode(0x7)] : Colour.WHITE,
+    '\x00': Colour.BLACK,
+    '\x01': Colour.RED,
+    '\x02': Colour.GREEN,
+    '\x03': Colour.YELLOW,
+    '\x04': Colour.BLUE,
+    '\x05': Colour.MAGENTA,
+    '\x06': Colour.CYAN,
+    '\x07': Colour.WHITE,
 };
 Object.freeze(charToTextColour);
 const charToGraphicColour = {
-    [String.fromCharCode(0x10)] : Colour.BLACK,
-    [String.fromCharCode(0x11)] : Colour.RED,
-    [String.fromCharCode(0x12)] : Colour.GREEN,
-    [String.fromCharCode(0x13)] : Colour.YELLOW,
-    [String.fromCharCode(0x14)] : Colour.BLUE,
-    [String.fromCharCode(0x15)] : Colour.MAGENTA,
-    [String.fromCharCode(0x16)] : Colour.CYAN,
-    [String.fromCharCode(0x17)] : Colour.WHITE,
+    '\x10': Colour.BLACK,
+    '\x11': Colour.RED,
+    '\x12': Colour.GREEN,
+    '\x13': Colour.YELLOW,
+    '\x14': Colour.BLUE,
+    '\x15': Colour.MAGENTA,
+    '\x16': Colour.CYAN,
+    '\x17': Colour.WHITE,
 };
 Object.freeze(charToGraphicColour);
 const attributeChars = {
-    [String.fromCharCode(0x08)] : Attributes.FLASH,
-    [String.fromCharCode(0x09)] : Attributes.STEADY,
-    [String.fromCharCode(0x0a)] : Attributes.END_BOX,
-    [String.fromCharCode(0x0b)] : Attributes.START_BOX,
-    [String.fromCharCode(0x0c)] : Attributes.NORMAL_SIZE,
-    [String.fromCharCode(0x0d)] : Attributes.DOUBLE_HEIGHT,
-    [String.fromCharCode(0x0e)] : Attributes.DOUBLE_WIDTH,
-    [String.fromCharCode(0x0f)] : Attributes.DOUBLE_SIZE,
-    [String.fromCharCode(0x18)] : Attributes.CONCEAL,
-    [String.fromCharCode(0x19)] : Attributes.CONTIGUOUS_GRAPHICS,
-    [String.fromCharCode(0x1a)] : Attributes.SEPARATED_GRAPHICS,
-    [String.fromCharCode(0x1b)] : Attributes.ESC,
-    [String.fromCharCode(0x1c)] : Attributes.BLACK_BACKGROUND,
-    [String.fromCharCode(0x1d)] : Attributes.NEW_BACKGROUND,
-    [String.fromCharCode(0x1e)] : Attributes.HOLD_MOSAICS,
-    [String.fromCharCode(0x1f)] : Attributes.RELEASE_MOSAICS,
+    '\x08': Attributes.FLASH,
+    '\x09': Attributes.STEADY,
+    '\x0a': Attributes.END_BOX,
+    '\x0b': Attributes.START_BOX,
+    '\x0c': Attributes.NORMAL_SIZE,
+    '\x0d': Attributes.DOUBLE_HEIGHT,
+    '\x0e': Attributes.DOUBLE_WIDTH,
+    '\x0f': Attributes.DOUBLE_SIZE,
+    '\x18': Attributes.CONCEAL,
+    '\x19': Attributes.CONTIGUOUS_GRAPHICS,
+    '\x1a': Attributes.SEPARATED_GRAPHICS,
+    '\x1b': Attributes.ESC,
+    '\x1c': Attributes.BLACK_BACKGROUND,
+    '\x1d': Attributes.NEW_BACKGROUND,
+    '\x1e': Attributes.HOLD_MOSAICS,
+    '\x1f': Attributes.RELEASE_MOSAICS,
 };
 
-const textColourToChar = {};
-for (const char in charToTextColour) {
-    textColourToChar[charToTextColour[char]] = char;
-    attributeChars[char] = charToTextColour[char];
-}
-Object.freeze(textColourToChar);
-const graphicColourToChar = {};
-for (const char in charToGraphicColour) {
-    graphicColourToChar[charToGraphicColour[char]] = char;
-    attributeChars[char] = charToGraphicColour[char];
-}
-Object.freeze(graphicColourToChar);
+const textColourToChar = createReverseLookup(charToTextColour);
+const graphicColourToChar = createReverseLookup(charToGraphicColour);
+Object.assign(attributeChars, charToTextColour);
+Object.assign(attributeChars, charToGraphicColour);
 Object.freeze(attributeChars);
-
-const spacingAttributesToChar = {};
-for (const char in attributeChars) {
-    spacingAttributesToChar[attributeChars[char]] = char;
-}
-Object.freeze(spacingAttributesToChar);
-
-// 'level 0' is fake but derived from Ceefax 1975 pages at https://archive.teletextarchaeologist.org/Pages/Details/21000
-// which has different control codes
-export const Level = {
-    0:   Symbol('0'),   // 7 colour text and contiguous graphics, flashing
-    1:   Symbol('1'),   // + background colours, separated graphics, conceal, box, double height
-    1.5: Symbol('1.5'), // + black text/graphics
-    2.5: Symbol('2.5'), // + double width, double size
-};
-Object.freeze(Level);
+const spacingAttributesToChar = createReverseLookup(attributeChars);
 
 const charCodesByLevel = {};
 charCodesByLevel[Level[0]] = [     // fictional level 0
@@ -184,9 +172,16 @@ charCodesByLevel[Level[0]] = [     // fictional level 0
     0x08, 0x09,
     0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
 ];
-charCodesByLevel[Level[1]] = [...charCodesByLevel[Level[0]]].concat([
-    0x0a, 0x0b, 0x0c, 0x0d, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
-]);
-charCodesByLevel[Level[1.5]] = [...charCodesByLevel[Level[1]]].concat([0x0, 0x10]);
-charCodesByLevel[Level[2.5]] = [...charCodesByLevel[Level[1.5]]].concat([0xe, 0xf]);
+charCodesByLevel[Level[1]] = [...charCodesByLevel[Level[0]], 0x0a, 0x0b, 0x0c, 0x0d, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f];
+charCodesByLevel[Level[1.5]] = [...charCodesByLevel[Level[1]], 0x0, 0x10];
+charCodesByLevel[Level[2.5]] = [...charCodesByLevel[Level[1.5]], 0xe, 0xf];
 Object.freeze(charCodesByLevel); 
+
+
+function createReverseLookup(input) {
+    const reverseLookup = {};
+    for (const key in input) {
+        reverseLookup[input[key]] = key;
+    }
+    return Object.freeze(reverseLookup);
+}
