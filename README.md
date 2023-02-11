@@ -205,9 +205,11 @@ The teletext spec also mentions that G2 is not defined at level 1.5, and it's up
 Returns the teletext instance with the API functions below.
 
 The `options` parameter object is optional, with properties:
+
 * `webkitCompat`: boolean (optional)
    * `true` (default) - the generated SVG is compatible with Safari/Webkit browsers (all browsers on iOS), but it's bigger
    * `false` - uses SVG2 features which work in most browsers but not Safari or any browser on iOS, as they fail to render the graphics properly ([see this bug](https://bugs.webkit.org/show_bug.cgi?id=182172)), unless you use `setView` to switch the view to `classic__font-for-mosaic` (documented below)
+
 * `dom`: object (optional)
    * if running in nodejs you need to pass in a window dom object. See the example above
 
@@ -330,7 +332,7 @@ Set the aspect ratio of the display.  The page height is kept and the width adju
 
 ## setHeight(heightInPixels)
 
-Sets the screen height to the number of pixels you passed in. The aspect ratio is maintained. You could set the screen to fill the available window height using `document.documentElement.clientHeight` as the value.
+Sets the screen height to the number of pixels you passed in. The aspect ratio is maintained. You could set the screen to fill the available window height using `document.documentElement.clientHeight` as the value. If you use CSS for layout you probably don't need to use this.
 
 ## setFont(font)
 
@@ -456,7 +458,7 @@ Toggles boxed display mode on or off. See also the `ttx.subtitlemode` event.
 
 Gets the raw bytes used in the page model. The response is a `Uint8Array` with 1000 elements. As each teletext byte is 7-bit, the element values will be between 0 and 127 inclusive.
 
-## getScreen()
+## getScreenImage()
 
 Gets a static image of the screen. This returns SVG markup.
 
