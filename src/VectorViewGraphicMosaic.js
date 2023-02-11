@@ -49,8 +49,7 @@ export class View extends Base {
 
         const sextants = cell.getSextants_();
         if (!sextants.includes('1')) return;
-        let id = cell.type_ == CellType.MOSAIC_CONTIGUOUS_ ? 'c' : 's';
-        id += sextants.join('');
+        const id = (cell.type_ == CellType.MOSAIC_CONTIGUOUS_ ? 'c' : 's') + sextants.join('');
 
         let width = Base._CELL_WIDTH;
         let height = Base._CELL_HEIGHT;
