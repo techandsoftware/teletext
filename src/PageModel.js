@@ -13,7 +13,7 @@ const DEFAULT_PRIMARY_G0_CHARACTER_SET = 'g0_latin';
 const DEFAULT_G2_CHARACTER_SET = 'g2_latin';
 
 const ENHANCEMENT_LEVELS = [Level[1.5], Level[2.5]];
-const G3_CHARS_IN_LEVEL_1_5 = "\u0051\u005b\u005c\u005d";
+const G3_CHARS_IN_LEVEL_1_5 = "\x51\x5b\x5c\x5d"; // only 4 G3 characters allowed in Level 1.5
 
 export class PageModel {
     constructor() {
@@ -330,8 +330,7 @@ export class PageModel {
                     cell.type_ = CellType.ALPHA_;
                     cell.setMappedChar_(this._g2CharacterEncoding);
                 } else if (e.type_ == 'g3') {
-                    const toKeep = this._level == Level[1.5] && G3_CHARS_IN_LEVEL_1_5.indexOf(e.char_) == -1 ? false : true;
-                    if (toKeep) {
+                    if (this._isAllowedG3Char(e.char_)) {
                         cell.byte_ = e.char_;
                         cell.type_ = CellType.G3_;
                         cell.setMappedChar_();
@@ -366,6 +365,11 @@ export class PageModel {
             });
         });
         return bytes;
+    }
+
+    _isAllowedG3Char(char) {
+        // any allowed in Level 2.5, only G3_CHARS_IN_LEVEL_1_5 allowed in Level 1.5
+        return this._level == Level[1.5] && G3_CHARS_IN_LEVEL_1_5.indexOf(char) == -1 ? false : true;
     }
 
 }
