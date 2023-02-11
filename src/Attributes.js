@@ -58,25 +58,27 @@ export class Attributes {
     }
 }
 
-Attributes.TEXT_COLOUR         = CellType.ALPHA_;
-Attributes.MOSAIC_COLOUR       = Symbol('MOSAIC_COLOUR');
-Attributes.NEW_BACKGROUND      = Symbol('NEW_BACKGROUND');
-Attributes.BLACK_BACKGROUND    = Symbol('BLACK_BACKGROUND');
-Attributes.CONTIGUOUS_GRAPHICS = CellType.MOSAIC_CONTIGUOUS_;
-Attributes.SEPARATED_GRAPHICS  = CellType.MOSAIC_SEPARATED_;
-Attributes.ESC                 = Symbol('ESC');
-Attributes.FLASH               = Symbol('FLASH');
-Attributes.STEADY              = Symbol('STEADY');
-Attributes.NORMAL_SIZE         = CellSize.NORMAL_SIZE_;
-Attributes.DOUBLE_HEIGHT       = CellSize.DOUBLE_HEIGHT_;
-Attributes.DOUBLE_WIDTH        = CellSize.DOUBLE_WIDTH_;
-Attributes.DOUBLE_SIZE         = CellSize.DOUBLE_SIZE_;
-Attributes.CONCEAL             = Symbol('CONCEAL');
-Attributes.HOLD_MOSAICS        = Symbol('HOLD_MOSAICS');
-Attributes.RELEASE_MOSAICS     = Symbol('RELEASE_MOSAICS');
-Attributes.START_BOX           = Symbol('START_BOX');
-Attributes.END_BOX             = Symbol('END_BOX');
-Attributes.UNKNOWN_            = Symbol('UNKNOWN'); // pseudo-attribute
+Object.assign(Attributes, {
+    TEXT_COLOUR:         CellType.ALPHA,
+    MOSAIC_COLOUR:       Symbol('MOSAIC_COLOUR'),
+    NEW_BACKGROUND:      Symbol('NEW_BACKGROUND'),
+    BLACK_BACKGROUND:    Symbol('BLACK_BACKGROUND'),
+    CONTIGUOUS_GRAPHICS: CellType.MOSAIC_CONTIGUOUS_,
+    SEPARATED_GRAPHICS:  CellType.MOSAIC_SEPARATED_,
+    ESC:                 Symbol('ESC'),
+    FLASH:               Symbol('FLASH'),
+    STEADY:              Symbol('STEADY'),
+    NORMAL_SIZE:         CellSize.NORMAL_SIZE_,
+    DOUBLE_HEIGHT:       CellSize.DOUBLE_HEIGHT_,
+    DOUBLE_WIDTH:        CellSize.DOUBLE_WIDTH_,
+    DOUBLE_SIZE:         CellSize.DOUBLE_SIZE_,
+    CONCEAL:             Symbol('CONCEAL'),
+    HOLD_MOSAICS:        Symbol('HOLD_MOSAICS'),
+    RELEASE_MOSAICS:     Symbol('RELEASE_MOSAICS'),
+    START_BOX:           Symbol('START_BOX'),
+    END_BOX:             Symbol('END_BOX'),
+    UNKNOWN_:            Symbol('UNKNOWN'), // pseudo-attribute
+});
 
 export function attribFromChar(level, char) {
     let attribute = null;
@@ -92,6 +94,7 @@ export function attribFromChar(level, char) {
             attribute = attributeChars[char];
     } else if (char.charCodeAt(0) <= 0x1f)
         attribute = Attributes.UNKNOWN_;
+
     return {
         attribute_: attribute,
         colour_: colour
@@ -129,6 +132,8 @@ const charToTextColour = {
     '\x07': Colour.WHITE,
 };
 Object.freeze(charToTextColour);
+const textColourToChar = createReverseLookup(charToTextColour);
+
 const charToGraphicColour = {
     '\x10': Colour.BLACK,
     '\x11': Colour.RED,
@@ -140,6 +145,8 @@ const charToGraphicColour = {
     '\x17': Colour.WHITE,
 };
 Object.freeze(charToGraphicColour);
+const graphicColourToChar = createReverseLookup(charToGraphicColour);
+
 const attributeChars = {
     '\x08': Attributes.FLASH,
     '\x09': Attributes.STEADY,
@@ -158,25 +165,31 @@ const attributeChars = {
     '\x1e': Attributes.HOLD_MOSAICS,
     '\x1f': Attributes.RELEASE_MOSAICS,
 };
-
-const textColourToChar = createReverseLookup(charToTextColour);
-const graphicColourToChar = createReverseLookup(charToGraphicColour);
 Object.assign(attributeChars, charToTextColour);
 Object.assign(attributeChars, charToGraphicColour);
 Object.freeze(attributeChars);
 const spacingAttributesToChar = createReverseLookup(attributeChars);
 
-const charCodesByLevel = {};
-charCodesByLevel[Level[0]] = [     // fictional level 0
-    0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,
-    0x08, 0x09,
-    0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+const charCodesByLevel = {
+    [Level[0]]: [                                 // pre-release level
+        0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,        // text colours
+        0x8, 0x9,                                 // flash/steady
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17  // graphic colours
+    ]
+};
+charCodesByLevel[Level[1]] = [
+    ...charCodesByLevel[Level[0]],
+    0xa, 0xb,   // start/end boxed
+    0xc, 0xd,   // normal or double height
+    0x18,       // conceal
+    0x19, 0x1a, // contiguous/separated graphics
+    0x1b,       // esc (g0 set switching)
+    0x1c, 0x1d, // black background, new background
+    0x1e, 0x1f  // hold/release mosaics
 ];
-charCodesByLevel[Level[1]] = [...charCodesByLevel[Level[0]], 0x0a, 0x0b, 0x0c, 0x0d, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f];
-charCodesByLevel[Level[1.5]] = [...charCodesByLevel[Level[1]], 0x0, 0x10];
-charCodesByLevel[Level[2.5]] = [...charCodesByLevel[Level[1.5]], 0xe, 0xf];
+charCodesByLevel[Level[1.5]] = [...charCodesByLevel[Level[1]], 0x0, 0x10]; // black text/graphics
+charCodesByLevel[Level[2.5]] = [...charCodesByLevel[Level[1.5]], 0xe, 0xf]; // double width/double size
 Object.freeze(charCodesByLevel); 
-
 
 function createReverseLookup(input) {
     const reverseLookup = {};
