@@ -304,6 +304,16 @@ In this:
 
 `header` is optional. When present, it's a string of 32 characters, which have the same encoding as the Output Lines but without the initial `OL,rowNum,` . This is used as the header row and is used instead of Output Line 0 in the provided `lines`. When not provided, the row 0 in the `lines` is used if there is one. 
 
+## writeBytes(colNum, rowNum, [lines])
+
+Writes each line in the array to the screen starting from `colNum`, `rowNum`.  This allows you to place a block of text on the screen without affecting existing characters.
+
+## writeByte(colNum, rowNum, byte, withUpdate)
+
+Writes the byte to the `colNum`, `rowNum`.
+
+`withUpdate` is an optional boolean, default is `false`. When true, the page display is updated.
+
 ## clearScreen(withUpdate)
 
 Clears the screen.  `withUpdate` is an optional boolean, default is `true`. When `true`, the page is cleared immediately.  When `false` the page model is cleared but the display is not updated.  In that case, the screen is cleared the next time you call a function which updates the display, such as `setPageRows`.
@@ -314,7 +324,7 @@ Removes the teletext display from the DOM.
 
 ## showTestPage()
 
-3 test pages are built-in. This displays a test page, rotating between the 3 every time this is called. The test pages were kindly supplied by https://archive.teletextarchaeologist.org/
+4 test pages are built-in. This displays a test page, rotating through these every time this is called. The test pages were kindly supplied by https://archive.teletextarchaeologist.org/
 
 ## toggleGrid()
 

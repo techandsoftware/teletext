@@ -60,11 +60,50 @@ export class PageModel {
     writeBytes_(colNum, rowNum, byteRows) {
         for (let r = rowNum, i = 0; r < ROWS && i < byteRows.length; r++, i++) {
             const row = [...byteRows[i]].slice(0, CELLS_PER_ROW - colNum);
-            for (let c = colNum, j = 0; c < CELLS_PER_ROW; c++, j++) {
+            for (let c = colNum, j = 0; c < CELLS_PER_ROW && j < row.length; c++, j++) {
                 this._screen[r][c].byte_ = row[j];
             }
         }
         this.onSet_.notify_();
+    }
+
+    writeByte_(colNum, rowNum, byte, withUpdate) {
+        if (colNum >= 0 && colNum < CELLS_PER_ROW && rowNum >= 0 && rowNum < ROWS) {
+            this._screen[rowNum][colNum].byte_ = byte;
+        }
+
+        if (typeof withUpdate != 'undefined' && withUpdate)
+            this.onSet_.notify_();
+    }
+
+    // Plots a pixel in a g1 mosaic at the co-ordinates
+    // Control codes aren't overriden
+    // Existing mosaics are modified
+    // Non mosaics are replaced with a new mosaic
+    plot_(graphicColNum, graphicRowNum) {
+        const rowNum = Math.floor(graphicRowNum / 3);
+        const colNum = Math.floor(graphicColNum / 2);
+        const byte = this._screen[rowNum][colNum]._byte;
+        const code = byte.charCodeAt(0);
+        if (code < 0x20) return;
+
+        const baseX = graphicColNum - colNum * 2;
+        const baseY = graphicRowNum - rowNum * 3;
+        const bitShift = baseX + baseY * 2;
+
+        // sextant values 0 to 0x3f
+        let sextant = 0;
+        if (code < 0x40) sextant = code - 0x20;
+        else if (code >= 0x60) sextant = code - 0x40;
+
+        sextant |= 1 << bitShift;
+
+        // g1 mosaics 0x20 to 0x3f and 0x60 to 0x7f
+        const newCode = sextant >= 0x20 ? sextant + 0x40 : sextant + 0x20;
+
+        this._screen[rowNum][colNum]._byte = String.fromCharCode(newCode);
+
+        // TODO - update held mosaic?
     }
 
     _setRowFromChars(rowNum, text) {

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
+// SPDX-FileCopyrightText: © 2023 Tech and Software Ltd.
 // SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 
 import { Utils } from './Utils.js';
@@ -203,12 +203,25 @@ export class TeletextController {
         this._model.writeBytes_(colNum, rowNum, byteRows);
     }
 
+    writeByte(colNum, rowNum, byte, withUpdate) {
+        this._model.writeByte_(colNum, rowNum, byte, withUpdate);
+    }
+
+    plot(graphicColNum, graphicRowNum) {
+        this._model.plot_(graphicColNum, graphicRowNum);
+        this._model.notify_();
+    }
+
     getBytes() {
         return this._model.getBytes_();
     }
 
     getScreenImage() {
         return this._view.getStaticScreen_();
+    }
+
+    getScreenBitmap() {
+        // TODO - convert the vector to a bitmap
     }
 
     // dumpToConsole() {
