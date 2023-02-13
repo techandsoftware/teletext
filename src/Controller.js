@@ -209,7 +209,6 @@ export class TeletextController {
 
     plot(graphicColNum, graphicRowNum) {
         this._model.plot_(graphicColNum, graphicRowNum);
-        this._model.notify_();
     }
 
     getBytes() {
@@ -220,8 +219,12 @@ export class TeletextController {
         return this._view.getStaticScreen_();
     }
 
-    getScreenBitmap() {
-        // TODO - convert the vector to a bitmap
+    // getScreenBitmap() {
+    //     // TODO - convert the vector to a bitmap
+    // }
+
+    updateDisplay() {
+        this._model.notify_();
     }
 
     // dumpToConsole() {

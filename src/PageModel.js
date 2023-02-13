@@ -102,8 +102,6 @@ export class PageModel {
         const newCode = sextant >= 0x20 ? sextant + 0x40 : sextant + 0x20;
 
         this._screen[rowNum][colNum]._byte = String.fromCharCode(newCode);
-
-        // TODO - update held mosaic?
     }
 
     _setRowFromChars(rowNum, text) {
