@@ -104,6 +104,24 @@ export class PageModel {
         this._screen[rowNum][colNum]._byte = String.fromCharCode(newCode);
     }
 
+    plotPoints_(graphicColNum, graphicRowNum, numPointsPerRow, points) {
+        let r = 0, c = 0;
+        for (let i = 0; i < points.length; i++) {
+            if (graphicRowNum + r < ROWS * 3) {
+                if (graphicColNum + c < (CELLS_PER_ROW * 2) && points[r*numPointsPerRow + c] == 255) {
+                    this.plot_(graphicColNum + c, graphicRowNum + r);
+                }
+                c++;
+                if (c == numPointsPerRow) {
+                    r++;
+                    c = 0;
+                }
+            } else {
+                break;
+            }
+        }
+    }
+
     _setRowFromChars(rowNum, text) {
         let textArray = [...text];
         textArray = textArray.slice(0, CELLS_PER_ROW);

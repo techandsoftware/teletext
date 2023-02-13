@@ -211,6 +211,10 @@ export class TeletextController {
         this._model.plot_(graphicColNum, graphicRowNum);
     }
 
+    plotPoints(graphicColNum, graphicRowNum, numPointsPerRow, points) {
+        this._model.plotPoints_(graphicColNum, graphicRowNum, numPointsPerRow, points);
+    }
+
     getBytes() {
         return this._model.getBytes_();
     }
