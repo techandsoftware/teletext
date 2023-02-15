@@ -80,12 +80,13 @@ export class PageModel {
     // Control codes aren't overriden
     // Existing mosaics are modified
     // Non mosaics are replaced with a new mosaic
-    plot_(graphicColNum, graphicRowNum) {
+    plot_(graphicColNum, graphicRowNum, unplot) {
         const rowNum = Math.floor(graphicRowNum / 3);
         const colNum = Math.floor(graphicColNum / 2);
         const byte = this._screen[rowNum][colNum]._byte;
         const code = byte.charCodeAt(0);
         if (code < 0x20) return;
+        if (unplot ? code == 0x20 : code == 0xff) return; // sextant 000000 or 111111
 
         const baseX = graphicColNum - colNum * 2;
         const baseY = graphicRowNum - rowNum * 3;
@@ -96,7 +97,11 @@ export class PageModel {
         if (code < 0x40) sextant = code - 0x20;
         else if (code >= 0x60) sextant = code - 0x40;
 
-        sextant |= 1 << bitShift;
+        if (unplot) {
+            sextant &= ~(1 << bitShift); // sets the bitShift'th bit to 0
+        } else {
+            sextant |= 1 << bitShift;
+        }
 
         // g1 mosaics 0x20 to 0x3f and 0x60 to 0x7f
         const newCode = sextant >= 0x20 ? sextant + 0x40 : sextant + 0x20;
@@ -108,8 +113,12 @@ export class PageModel {
         let r = 0, c = 0;
         for (let i = 0; i < points.length; i++) {
             if (graphicRowNum + r < ROWS * 3) {
-                if (graphicColNum + c < (CELLS_PER_ROW * 2) && points[r*numPointsPerRow + c] == 255) {
-                    this.plot_(graphicColNum + c, graphicRowNum + r);
+                if (graphicColNum + c < (CELLS_PER_ROW * 2)) {
+                    if (points[r*numPointsPerRow + c] == 255) {
+                        this.plot_(graphicColNum + c, graphicRowNum + r);
+                    } else {
+                        this.plot_(graphicColNum + c, graphicRowNum + r, true);
+                    }
                 }
                 c++;
                 if (c == numPointsPerRow) {
