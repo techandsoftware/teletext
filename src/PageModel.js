@@ -81,7 +81,7 @@ export class PageModel {
     // Existing mosaics are modified
     // Non mosaics are replaced with a new mosaic
     plot_(graphicColNum, graphicRowNum, unplot) {
-        const rowNum = Math.floor(graphicRowNum / 3);
+        const rowNum = Math.floor(graphicRowNum / 3); // TODO - consider quicker alternatives?
         const colNum = Math.floor(graphicColNum / 2);
         const byte = this._screen[rowNum][colNum]._byte;
         const code = byte.charCodeAt(0);

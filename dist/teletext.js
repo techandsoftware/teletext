@@ -1,6 +1,3 @@
-// SPDX-FileCopyrightText: (c) 2023 Tech and Software Ltd.
-// SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
-// LicenseRef-uk.ltd.TechAndSoftware-1.0 refers to https://tech-and-software.ltd.uk/LICENSES/LicenseRef-uk.ltd.TechAndSoftware-1.0.txt
 // SPDX-FileCopyrightText: © 2023 Tech and Software Ltd.
 // SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 
@@ -573,7 +570,7 @@ function wrapSVGElement(el) {
     return wrappedEl;
 }
 
-// SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
+// SPDX-FileCopyrightText: © 2023 Tech and Software Ltd.
 // SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 
 // Exported in public interface
@@ -605,6 +602,16 @@ const CellSize = {
 };
 Object.freeze(CellSize);
 
+// 'level 0' is fake but derived from Ceefax 1975 pages at https://archive.teletextarchaeologist.org/Pages/Details/21000
+// which has different control codes
+const Level = {
+    0:   Symbol('0'),   // 7 colour text and contiguous graphics, flashing
+    1:   Symbol('1'),   // + background colours, separated graphics, conceal, box, double height
+    1.5: Symbol('1.5'), // + black text/graphics
+    2.5: Symbol('2.5'), // + double width, double size
+};
+Object.freeze(Level);
+
 // Exported in public interface
 class Attributes {
     static charFromTextColour(colour) {
@@ -623,27 +630,27 @@ class Attributes {
     }
 }
 
-Attributes.TEXT_COLOUR         = CellType.ALPHA_;
-Attributes.MOSAIC_COLOUR       = Symbol('MOSAIC_COLOUR');
-Attributes.NEW_BACKGROUND      = Symbol('NEW_BACKGROUND');
-Attributes.BLACK_BACKGROUND    = Symbol('BLACK_BACKGROUND');
-Attributes.CONTIGUOUS_GRAPHICS = CellType.MOSAIC_CONTIGUOUS_;
-Attributes.SEPARATED_GRAPHICS  = CellType.MOSAIC_SEPARATED_;
-Attributes.ESC                 = Symbol('ESC');
-Attributes.FLASH               = Symbol('FLASH');
-Attributes.STEADY              = Symbol('STEADY');
-Attributes.NORMAL_SIZE         = CellSize.NORMAL_SIZE_;
-Attributes.DOUBLE_HEIGHT       = CellSize.DOUBLE_HEIGHT_;
-Attributes.DOUBLE_WIDTH        = CellSize.DOUBLE_WIDTH_;
-Attributes.DOUBLE_SIZE         = CellSize.DOUBLE_SIZE_;
-Attributes.CONCEAL             = Symbol('CONCEAL');
-Attributes.HOLD_MOSAICS        = Symbol('HOLD_MOSAICS');
-Attributes.RELEASE_MOSAICS     = Symbol('RELEASE_MOSAICS');
-Attributes.START_BOX           = Symbol('START_BOX');
-Attributes.END_BOX             = Symbol('END_BOX');
-Attributes.UNKNOWN_            = Symbol('UNKNOWN'); // pseudo-attribute
-
-// private functions/data below
+Object.assign(Attributes, {
+    TEXT_COLOUR:         CellType.ALPHA,
+    MOSAIC_COLOUR:       Symbol('MOSAIC_COLOUR'),
+    NEW_BACKGROUND:      Symbol('NEW_BACKGROUND'),
+    BLACK_BACKGROUND:    Symbol('BLACK_BACKGROUND'),
+    CONTIGUOUS_GRAPHICS: CellType.MOSAIC_CONTIGUOUS_,
+    SEPARATED_GRAPHICS:  CellType.MOSAIC_SEPARATED_,
+    ESC:                 Symbol('ESC'),
+    FLASH:               Symbol('FLASH'),
+    STEADY:              Symbol('STEADY'),
+    NORMAL_SIZE:         CellSize.NORMAL_SIZE_,
+    DOUBLE_HEIGHT:       CellSize.DOUBLE_HEIGHT_,
+    DOUBLE_WIDTH:        CellSize.DOUBLE_WIDTH_,
+    DOUBLE_SIZE:         CellSize.DOUBLE_SIZE_,
+    CONCEAL:             Symbol('CONCEAL'),
+    HOLD_MOSAICS:        Symbol('HOLD_MOSAICS'),
+    RELEASE_MOSAICS:     Symbol('RELEASE_MOSAICS'),
+    START_BOX:           Symbol('START_BOX'),
+    END_BOX:             Symbol('END_BOX'),
+    UNKNOWN_:            Symbol('UNKNOWN'), // pseudo-attribute
+});
 
 function attribFromChar(level, char) {
     let attribute = null;
@@ -659,6 +666,7 @@ function attribFromChar(level, char) {
             attribute = attributeChars[char];
     } else if (char.charCodeAt(0) <= 0x1f)
         attribute = Attributes.UNKNOWN_;
+
     return {
         attribute_: attribute,
         colour_: colour
@@ -668,6 +676,10 @@ function attribFromChar(level, char) {
 function fillColourFromColourAttrib(colour) {
     return colourAttribToFillColour[colour];
 }
+
+
+///////////////////////////////
+// private functions/data below
 
 const colourAttribToFillColour = {
     [Colour.BLACK]   : '#000',
@@ -681,90 +693,83 @@ const colourAttribToFillColour = {
 };
 Object.freeze(colourAttribToFillColour);
 
-// TODO - tidy up strings
 const charToTextColour = {
-    [String.fromCharCode(0x0)] : Colour.BLACK,
-    [String.fromCharCode(0x1)] : Colour.RED,
-    [String.fromCharCode(0x2)] : Colour.GREEN,
-    [String.fromCharCode(0x3)] : Colour.YELLOW,
-    [String.fromCharCode(0x4)] : Colour.BLUE,
-    [String.fromCharCode(0x5)] : Colour.MAGENTA,
-    [String.fromCharCode(0x6)] : Colour.CYAN,
-    [String.fromCharCode(0x7)] : Colour.WHITE,
+    '\x00': Colour.BLACK,
+    '\x01': Colour.RED,
+    '\x02': Colour.GREEN,
+    '\x03': Colour.YELLOW,
+    '\x04': Colour.BLUE,
+    '\x05': Colour.MAGENTA,
+    '\x06': Colour.CYAN,
+    '\x07': Colour.WHITE,
 };
 Object.freeze(charToTextColour);
+const textColourToChar = createReverseLookup(charToTextColour);
+
 const charToGraphicColour = {
-    [String.fromCharCode(0x10)] : Colour.BLACK,
-    [String.fromCharCode(0x11)] : Colour.RED,
-    [String.fromCharCode(0x12)] : Colour.GREEN,
-    [String.fromCharCode(0x13)] : Colour.YELLOW,
-    [String.fromCharCode(0x14)] : Colour.BLUE,
-    [String.fromCharCode(0x15)] : Colour.MAGENTA,
-    [String.fromCharCode(0x16)] : Colour.CYAN,
-    [String.fromCharCode(0x17)] : Colour.WHITE,
+    '\x10': Colour.BLACK,
+    '\x11': Colour.RED,
+    '\x12': Colour.GREEN,
+    '\x13': Colour.YELLOW,
+    '\x14': Colour.BLUE,
+    '\x15': Colour.MAGENTA,
+    '\x16': Colour.CYAN,
+    '\x17': Colour.WHITE,
 };
 Object.freeze(charToGraphicColour);
+const graphicColourToChar = createReverseLookup(charToGraphicColour);
+
 const attributeChars = {
-    [String.fromCharCode(0x08)] : Attributes.FLASH,
-    [String.fromCharCode(0x09)] : Attributes.STEADY,
-    [String.fromCharCode(0x0a)] : Attributes.END_BOX,
-    [String.fromCharCode(0x0b)] : Attributes.START_BOX,
-    [String.fromCharCode(0x0c)] : Attributes.NORMAL_SIZE,
-    [String.fromCharCode(0x0d)] : Attributes.DOUBLE_HEIGHT,
-    [String.fromCharCode(0x0e)] : Attributes.DOUBLE_WIDTH,
-    [String.fromCharCode(0x0f)] : Attributes.DOUBLE_SIZE,
-    [String.fromCharCode(0x18)] : Attributes.CONCEAL,
-    [String.fromCharCode(0x19)] : Attributes.CONTIGUOUS_GRAPHICS,
-    [String.fromCharCode(0x1a)] : Attributes.SEPARATED_GRAPHICS,
-    [String.fromCharCode(0x1b)] : Attributes.ESC,
-    [String.fromCharCode(0x1c)] : Attributes.BLACK_BACKGROUND,
-    [String.fromCharCode(0x1d)] : Attributes.NEW_BACKGROUND,
-    [String.fromCharCode(0x1e)] : Attributes.HOLD_MOSAICS,
-    [String.fromCharCode(0x1f)] : Attributes.RELEASE_MOSAICS,
+    '\x08': Attributes.FLASH,
+    '\x09': Attributes.STEADY,
+    '\x0a': Attributes.END_BOX,
+    '\x0b': Attributes.START_BOX,
+    '\x0c': Attributes.NORMAL_SIZE,
+    '\x0d': Attributes.DOUBLE_HEIGHT,
+    '\x0e': Attributes.DOUBLE_WIDTH,
+    '\x0f': Attributes.DOUBLE_SIZE,
+    '\x18': Attributes.CONCEAL,
+    '\x19': Attributes.CONTIGUOUS_GRAPHICS,
+    '\x1a': Attributes.SEPARATED_GRAPHICS,
+    '\x1b': Attributes.ESC,
+    '\x1c': Attributes.BLACK_BACKGROUND,
+    '\x1d': Attributes.NEW_BACKGROUND,
+    '\x1e': Attributes.HOLD_MOSAICS,
+    '\x1f': Attributes.RELEASE_MOSAICS,
 };
-
-const textColourToChar = {};
-for (const char in charToTextColour) {
-    textColourToChar[charToTextColour[char]] = char;
-    attributeChars[char] = charToTextColour[char];
-}
-Object.freeze(textColourToChar);
-const graphicColourToChar = {};
-for (const char in charToGraphicColour) {
-    graphicColourToChar[charToGraphicColour[char]] = char;
-    attributeChars[char] = charToGraphicColour[char];
-}
-Object.freeze(graphicColourToChar);
+Object.assign(attributeChars, charToTextColour);
+Object.assign(attributeChars, charToGraphicColour);
 Object.freeze(attributeChars);
+const spacingAttributesToChar = createReverseLookup(attributeChars);
 
-const spacingAttributesToChar = {};
-for (const char in attributeChars) {
-    spacingAttributesToChar[attributeChars[char]] = char;
-}
-Object.freeze(spacingAttributesToChar);
-
-// 'level 0' is fake but derived from Ceefax 1975 pages at https://archive.teletextarchaeologist.org/Pages/Details/21000
-// which has different control codes
-const Level = {
-    0:   Symbol('0'),   // 7 colour text and contiguous graphics, flashing
-    1:   Symbol('1'),   // + background colours, separated graphics, conceal, box, double height
-    1.5: Symbol('1.5'), // + black text/graphics
-    2.5: Symbol('2.5'), // + double width, double size
+const charCodesByLevel = {
+    [Level[0]]: [                                 // pre-release level
+        0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,        // text colours
+        0x8, 0x9,                                 // flash/steady
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17  // graphic colours
+    ]
 };
-Object.freeze(Level);
-
-const charCodesByLevel = {};
-charCodesByLevel[Level[0]] = [     // fictional level 0
-    0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,
-    0x08, 0x09,
-    0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+charCodesByLevel[Level[1]] = [
+    ...charCodesByLevel[Level[0]],
+    0xa, 0xb,   // start/end boxed
+    0xc, 0xd,   // normal or double height
+    0x18,       // conceal
+    0x19, 0x1a, // contiguous/separated graphics
+    0x1b,       // esc (g0 set switching)
+    0x1c, 0x1d, // black background, new background
+    0x1e, 0x1f  // hold/release mosaics
 ];
-charCodesByLevel[Level[1]] = [...charCodesByLevel[Level[0]]].concat([
-    0x0a, 0x0b, 0x0c, 0x0d, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
-]);
-charCodesByLevel[Level[1.5]] = [...charCodesByLevel[Level[1]]].concat([0x0, 0x10]);
-charCodesByLevel[Level[2.5]] = [...charCodesByLevel[Level[1.5]]].concat([0xe, 0xf]);
-Object.freeze(charCodesByLevel);
+charCodesByLevel[Level[1.5]] = [...charCodesByLevel[Level[1]], 0x0, 0x10]; // black text/graphics
+charCodesByLevel[Level[2.5]] = [...charCodesByLevel[Level[1.5]], 0xe, 0xf]; // double width/double size
+Object.freeze(charCodesByLevel); 
+
+function createReverseLookup(input) {
+    const reverseLookup = {};
+    for (const key in input) {
+        reverseLookup[input[key]] = key;
+    }
+    return Object.freeze(reverseLookup);
+}
 
 // SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
 
@@ -1020,6 +1025,10 @@ class VectorViewBase {
             console.log('box deactivated');
         }
         this._refreshMixMode();
+    }
+
+    getStaticScreen_() {
+        return this._svg._node().outerHTML;
     }
 
     _drawGrid() {
@@ -2595,7 +2604,7 @@ function getCharWithEncoding(byte, encoding) {
     return byte;
 }
 
-// SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
+// SPDX-FileCopyrightText: © 2023 Tech and Software Ltd.
 
 class View extends VectorViewBase {
     constructor(model, webkitCompat, dom) {
@@ -2641,8 +2650,7 @@ class View extends VectorViewBase {
 
         const sextants = cell.getSextants_();
         if (!sextants.includes('1')) return;
-        let id = cell.type_ == CellType.MOSAIC_CONTIGUOUS_ ? 'c' : 's';
-        id += sextants.join('');
+        const id = (cell.type_ == CellType.MOSAIC_CONTIGUOUS_ ? 'c' : 's') + sextants.join('');
 
         let width = VectorViewBase._CELL_WIDTH;
         let height = VectorViewBase._CELL_HEIGHT;
@@ -2833,7 +2841,7 @@ class Enhancement {
     }
 }
 
-// SPDX-FileCopyrightText: © 2021 Tech and Software Ltd.
+// SPDX-FileCopyrightText: © 2023 Tech and Software Ltd.
 class ViewClassic extends VectorViewBase {}
 
 const TEST_PAGE_NAMES = ['SPLASH', 'ENGINEERING', 'ADVERT', 'UK'];
@@ -3030,8 +3038,32 @@ class TeletextController {
         this._model.writeBytes_(colNum, rowNum, byteRows);
     }
 
+    writeByte(colNum, rowNum, byte, withUpdate) {
+        this._model.writeByte_(colNum, rowNum, byte, withUpdate);
+    }
+
+    plot(graphicColNum, graphicRowNum) {
+        this._model.plot_(graphicColNum, graphicRowNum);
+    }
+
+    plotPoints(graphicColNum, graphicRowNum, numPointsPerRow, points) {
+        this._model.plotPoints_(graphicColNum, graphicRowNum, numPointsPerRow, points);
+    }
+
     getBytes() {
         return this._model.getBytes_();
+    }
+
+    getScreenImage() {
+        return this._view.getStaticScreen_();
+    }
+
+    // getScreenBitmap() {
+    //     // TODO - convert the vector to a bitmap
+    // }
+
+    updateDisplay() {
+        this._model.notify_();
     }
 
     // dumpToConsole() {
@@ -3097,7 +3129,7 @@ const DEFAULT_PRIMARY_G0_CHARACTER_SET = 'g0_latin';
 const DEFAULT_G2_CHARACTER_SET = 'g2_latin';
 
 const ENHANCEMENT_LEVELS = [Level[1.5], Level[2.5]];
-const G3_CHARS_IN_LEVEL_1_5 = "\u0051\u005b\u005c\u005d";
+const G3_CHARS_IN_LEVEL_1_5 = "\x51\x5b\x5c\x5d"; // only 4 G3 characters allowed in Level 1.5
 
 class PageModel {
     constructor() {
@@ -3144,11 +3176,75 @@ class PageModel {
     writeBytes_(colNum, rowNum, byteRows) {
         for (let r = rowNum, i = 0; r < ROWS && i < byteRows.length; r++, i++) {
             const row = [...byteRows[i]].slice(0, CELLS_PER_ROW - colNum);
-            for (let c = colNum, j = 0; c < CELLS_PER_ROW; c++, j++) {
+            for (let c = colNum, j = 0; c < CELLS_PER_ROW && j < row.length; c++, j++) {
                 this._screen[r][c].byte_ = row[j];
             }
         }
         this.onSet_.notify_();
+    }
+
+    writeByte_(colNum, rowNum, byte, withUpdate) {
+        if (colNum >= 0 && colNum < CELLS_PER_ROW && rowNum >= 0 && rowNum < ROWS) {
+            this._screen[rowNum][colNum].byte_ = byte;
+        }
+
+        if (typeof withUpdate != 'undefined' && withUpdate)
+            this.onSet_.notify_();
+    }
+
+    // Plots a pixel in a g1 mosaic at the co-ordinates
+    // Control codes aren't overriden
+    // Existing mosaics are modified
+    // Non mosaics are replaced with a new mosaic
+    plot_(graphicColNum, graphicRowNum, unplot) {
+        const rowNum = Math.floor(graphicRowNum / 3); // TODO - consider quicker alternatives?
+        const colNum = Math.floor(graphicColNum / 2);
+        const byte = this._screen[rowNum][colNum]._byte;
+        const code = byte.charCodeAt(0);
+        if (code < 0x20) return;
+        if (unplot ? code == 0x20 : code == 0xff) return; // sextant 000000 or 111111
+
+        const baseX = graphicColNum - colNum * 2;
+        const baseY = graphicRowNum - rowNum * 3;
+        const bitShift = baseX + baseY * 2;
+
+        // sextant values 0 to 0x3f
+        let sextant = 0;
+        if (code < 0x40) sextant = code - 0x20;
+        else if (code >= 0x60) sextant = code - 0x40;
+
+        if (unplot) {
+            sextant &= ~(1 << bitShift); // sets the bitShift'th bit to 0
+        } else {
+            sextant |= 1 << bitShift;
+        }
+
+        // g1 mosaics 0x20 to 0x3f and 0x60 to 0x7f
+        const newCode = sextant >= 0x20 ? sextant + 0x40 : sextant + 0x20;
+
+        this._screen[rowNum][colNum]._byte = String.fromCharCode(newCode);
+    }
+
+    plotPoints_(graphicColNum, graphicRowNum, numPointsPerRow, points) {
+        let r = 0, c = 0;
+        for (let i = 0; i < points.length; i++) {
+            if (graphicRowNum + r < ROWS * 3) {
+                if (graphicColNum + c < (CELLS_PER_ROW * 2)) {
+                    if (points[r*numPointsPerRow + c] == 255) {
+                        this.plot_(graphicColNum + c, graphicRowNum + r);
+                    } else {
+                        this.plot_(graphicColNum + c, graphicRowNum + r, true);
+                    }
+                }
+                c++;
+                if (c == numPointsPerRow) {
+                    r++;
+                    c = 0;
+                }
+            } else {
+                break;
+            }
+        }
     }
 
     _setRowFromChars(rowNum, text) {
@@ -3414,8 +3510,7 @@ class PageModel {
                     cell.type_ = CellType.ALPHA_;
                     cell.setMappedChar_(this._g2CharacterEncoding);
                 } else if (e.type_ == 'g3') {
-                    const toKeep = this._level == Level[1.5] && G3_CHARS_IN_LEVEL_1_5.indexOf(e.char_) == -1 ? false : true;
-                    if (toKeep) {
+                    if (this._isAllowedG3Char(e.char_)) {
                         cell.byte_ = e.char_;
                         cell.type_ = CellType.G3_;
                         cell.setMappedChar_();
@@ -3450,6 +3545,11 @@ class PageModel {
             });
         });
         return bytes;
+    }
+
+    _isAllowedG3Char(char) {
+        // any allowed in Level 2.5, only G3_CHARS_IN_LEVEL_1_5 allowed in Level 1.5
+        return this._level == Level[1.5] && G3_CHARS_IN_LEVEL_1_5.indexOf(char) == -1 ? false : true;
     }
 
 }

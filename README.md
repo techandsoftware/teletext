@@ -215,6 +215,7 @@ The `options` parameter object is optional, with properties:
 
 Call the following methods on the teletext instance to draw on the screen and control the rendering.
 
+
 ## addTo(selector)
 
 `selector` is a DOM selector string, e.g. `#teletextscreen` to match a `<div id="teletextscreen"></div>` element.
@@ -306,13 +307,31 @@ In this:
 
 ## writeBytes(colNum, rowNum, [lines])
 
-Writes each line in the array to the screen starting from `colNum`, `rowNum`.  This allows you to place a block of text on the screen without affecting existing characters.
+Writes each line in the array to the screen starting from `colNum`, `rowNum`.  This allows you to place a block of text on the screen without affecting existing characters. `colNum` is from 0 to 39, `rowNum` from 0 to 24.
 
 ## writeByte(colNum, rowNum, byte, withUpdate)
 
-Writes the byte to the `colNum`, `rowNum`.
+Writes the byte to the `colNum`, `rowNum`.  `colNum` is from 0 to 39, `rowNum` from 0 to 24. The `byte` should have a character code of 0x0 to 0x127. The byte won't display literally, as the display uses the active G0 character set and spacing attributes to work out what to show.
 
 `withUpdate` is an optional boolean, default is `false`. When true, the page display is updated.
+
+## plot(graphcolNun, graphicRowNum)
+
+Plots a pixel. The coordinates are from (0, 0) to (79, 74). The origin is the top-left. Note this uses a different coordinate scheme than methods like `writeBytes()`, which refer to the character cell rows and columns. For performance, there is no range checking, so the display will crash if you try to set outside of the range. The page display is not updated. You can force an update with `updateDisplay()`.
+
+This generates a 2x3 mosaic (sextant) charater corresponding to the character cell in the page model that you're plotting to. Existing mosaics in the cell are modified to plot the pixel. If characters with codes 0x0 to 0x1f are in the target cell, these are unchanged so that spacing atributes are preserved, and the plot has no effect. If characters with codes 0x40 to 0x5f are at the character position you're plotting to, this is cleared first.
+
+To use this, you will first need to set graphics mode for the text row by writing a graphic spacing attribute, for example by using `writeByte()` and `Attributes.charfromGraphicColour(colour)`.
+
+## plotPoints(graphicColNum, graphicRowNum, numPixelsPerRow, pixelsArray)
+
+Plots multiple pixels, with the top left origin of (`graphicColNum`, `graphicRowNum`) and `numPixelsPerRow`. This internally calls `plot()`. The top-left coordinates are (0, 0) to (79, 74). As with `plot()`, existing spacing attributes are not overridden.  Unlike `plot()`, this does range checking to ensure the plotted pixels fit on the display, and the page display is updated when called.
+
+`numPixelsPerRow` is the number of pixels for each row in the `pixelsArray`.
+
+`pixelsArray` is an array of bytes. Each byte represents a pixel. If its value is 255 then a point is plotted. If it's not 255, the point is unplotted. (This is intended to be easy to generate from some other bitmap pixel source).
+
+To use this, you will first need to set graphics mode for each text row by writing a graphic spacing attribute, for example by using `writeByte()` and  `Attributes.charfromGraphicColour(colour)`.
 
 ## clearScreen(withUpdate)
 
@@ -369,6 +388,10 @@ If `g0_arabic` was set as the character set, the characters are rendered differe
 When using `classic__font-for-mosaic`, the contiguous mosaic characters use codepoints defined in Unicode [Symbols for Legacy Computing](https://en.wikipedia.org/wiki/Symbols_for_Legacy_Computing). The separated mosaic characters use private use codepoints because the separated mosaics are missing from Unicode's legacy computing block.  The mosaic characters use the Unscii font. For this to work, you need to supply Unscii in a `fonts` subdirectory relative to the page containing the teletext display div.  Unscii is available with `npm install @techandsoftware/teletext-fonts` or downloadable from http://viznut.fi/unscii/ .
 
 Using the font will result in a smaller SVG.  If you export the SVG from the DOM then you will need to ensure the Unscii font is available so that the SVG can be viewed properly in isolation. Because of issues with getting the edges of the mosaics to join up without gaps, the font size is slightly bigger than it should be. Using SVG graphics for the mosaics is more portable, and the mosaics are more precisely positioned.
+
+## updateDisplay()
+
+Force an update of the display. This is useful in certain cases where the page model has been updated and the display is not automatically updated, for example with `plot()`.
 
 ## enhance()
 
