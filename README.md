@@ -315,11 +315,11 @@ Writes the byte to the `colNum`, `rowNum`.  `colNum` is from 0 to 39, `rowNum` f
 
 `withUpdate` is an optional boolean, default is `false`. When true, the page display is updated.
 
-## plot(graphcolNun, graphicRowNum)
+## plot(graphicColNum, graphicRowNum)
 
-Plots a pixel. The coordinates are from (0, 0) to (79, 74). The origin is the top-left. Note this uses a different coordinate scheme than methods like `writeBytes()`, which refer to the character cell rows and columns. For performance, there is no range checking, so the display will crash if you try to set outside of the range. The page display is not updated. You can force an update with `updateDisplay()`.
+Plots a pixel. The coordinates are from (0, 0) to (79, 74). The origin is the top-left. Note this uses a different coordinate scheme than methods like `writeBytes()`, which refer to the character cell rows and columns. For performance, there is no range checking, so the display will crash if you try to plot outside of the range. The page display is not updated. You can force an update with `updateDisplay()`.
 
-This generates a 2x3 mosaic (sextant) charater corresponding to the character cell in the page model that you're plotting to. Existing mosaics in the cell are modified to plot the pixel. If characters with codes 0x0 to 0x1f are in the target cell, these are unchanged so that spacing atributes are preserved, and the plot has no effect. If characters with codes 0x40 to 0x5f are at the character position you're plotting to, this is cleared first.
+This generates a 2x3 mosaic (sextant) character corresponding to the character cell in the page model that you're plotting to. Existing mosaics in the cell are modified to plot the pixel. If characters with codes 0x0 to 0x1f are in the target cell, these are unchanged so that spacing atributes are preserved, and the plot has no effect. If characters with codes 0x40 to 0x5f are at the character position you're plotting to, this is cleared first.
 
 To use this, you will first need to set graphics mode for the text row by writing a graphic spacing attribute, for example by using `writeByte()` and `Attributes.charfromGraphicColour(colour)`.
 
