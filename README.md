@@ -325,7 +325,7 @@ To use this, you will first need to set graphics mode for the text row by writin
 
 ## plotPoints(graphicColNum, graphicRowNum, numPixelsPerRow, pixelsArray)
 
-Plots multiple pixels, with the top left origin of (`graphicColNum`, `graphicRowNum`) and `numPixelsPerRow`. This internally calls `plot()`. The top-left coordinates are (0, 0) to (79, 74). As with `plot()`, existing spacing attributes are not overridden.  Unlike `plot()`, this does range checking to ensure the plotted pixels fit on the display, and the page display is updated when called.
+Plots multiple pixels, with the top left origin of (`graphicColNum`, `graphicRowNum`) and `numPixelsPerRow`. This internally calls `plot()`. The top-left coordinates are (0, 0) to (79, 74). As with `plot()`, existing spacing attributes are not overridden, and the display is not updated. You can force an update ewith `updateDisplay()`.  Unlike `plot()`, `plotPoints()` does range checking to ensure the plotted pixels fit on the display.
 
 `numPixelsPerRow` is the number of pixels for each row in the `pixelsArray`.
 
