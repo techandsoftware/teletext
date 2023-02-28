@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            background-color: #444444;
+        }
+        div {
+            display: inline-block;
+            background-color: black;
+            border: 5px solid;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="teletextscreen"></div>
+
+
+    <!-- for importmap -->
+    <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.150.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.150.0/examples/jsm/",
+                "teletext": "../dist/teletext.js"
+            }
+        }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { Line2 } from 'three/addons/lines/Line2.js';
+        import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+        import { LineSegmentsGeometry } from 'three/addons/lines/LineSegmentsGeometry.js';
+
+        import { Teletext } from 'teletext';
+
+        const BINARY_IMG_THRESHOLD = 0.1842; // 50% lightness (L*) gives linear luminance of 18.42% = 'middle gray'
+        const MAX_NUM_SPINNY_OBJECTS = 3;
+        const MIN_TIME_BETWEEN_OBJECT_SPAWNING = 3;
+
+        class SpinnyObject {
+            constructor(world, time) {
+                const randomObjIndex = Math.floor(Math.random() * world.geometries.length);
+                const obj = new THREE.Mesh(world.geometries[randomObjIndex], world.material);
+                const lines = new Line2(world.lineGeometries[randomObjIndex], world.lineMaterial);
+
+                const x0 = Math.random() * 2;
+                obj.position.x = x0 > 1 ? x0 : x0 - 2; // start either side of the camera
+                obj.position.y = Math.random() * 4 - 2;
+                obj.add(lines);
+
+                obj.position.z = 1.5;
+                obj.userData = {
+                    startTime: time,
+                    rotX: Math.random() * 1.5,
+                    rotY: Math.random() * 0.4
+                };
+
+                SpinnyObject.#objects[obj.uuid] = this;
+                this.obj3d = obj;
+                this.scene = world.scene;
+                this.camera = world.camera;
+                world.scene.add(obj);
+            }
+
+            animate(time) {
+                const data = this.obj3d.userData;
+                this.obj3d.rotation.x = (time - data.startTime) * data.rotX;
+                this.obj3d.rotation.y = (time - data.startTime) * data.rotY;
+
+                const distance = this.camera.position.distanceTo(this.obj3d.position);
+                this.obj3d.position.z = 2 - (time - data.startTime) * 0.15 * distance;
+            }
+
+            isFar() {
+                return this.obj3d.position.z < -42;
+            }
+
+            dispose() {
+                this.scene.remove(this.obj3d);
+                delete SpinnyObject.#objects[this.obj3d.uuid];
+                delete this.obj3d;
+            }
+
+            static #objects = {};
+
+            static allObjects() {
+                return Object.values(SpinnyObject.#objects);
+            }
+
+            static numObjects() {
+                return Object.keys(SpinnyObject.#objects).length;
+            }
+        }
+
+        class Animator {
+            constructor(width, height, teletext, world) {
+                this.width = width;
+                this.height = height;
+                this.teletext = teletext;
+                this.world = world;
+
+                this.renderer = new THREE.WebGLRenderer();
+                this.renderer.setSize(width, height, false);
+                const renderTarget = new THREE.WebGLRenderTarget(width, height);
+                this.renderer.setRenderTarget(renderTarget);
+                // document.body.appendChild(this.renderer.domElement);
+                this.glContext = this.renderer.getContext();
+
+                this.lastObjCreatedTime = 0;
+                this.pixels = new Uint8Array(width * height * 4);
+                new SpinnyObject(world, 0);
+                this.animate(0);
+            }
+
+            animate(time) {
+                time *= 0.001;
+
+                setTimeout(() => {
+                    requestAnimationFrame(this.animate.bind(this));
+                }, 1000 / 25); // 25fps
+                for (const obj of SpinnyObject.allObjects()) {
+                    obj.animate(time);
+                    if (obj.isFar()) {
+                        obj.dispose();
+                    }
+                };
+
+                this.renderer.render(this.world.scene, this.world.camera);
+                this.glContext.readPixels(0, 0, this.width, this.height, this.glContext.RGBA, this.glContext.UNSIGNED_BYTE, this.pixels);
+                const binaryImage = convertRGBAtoBinaryImage(this.pixels, this.width, this.height);
+
+                this.teletext.plotPoints(0, 0, this.width, binaryImage);
+                this.teletext.updateDisplay();
+
+                if (SpinnyObject.numObjects() <= MAX_NUM_SPINNY_OBJECTS && (time - this.lastObjCreatedTime) > MIN_TIME_BETWEEN_OBJECT_SPAWNING) {
+                    new SpinnyObject(this.world, time);
+                    this.lastObjCreatedTime = time;
+                }
+            }
+        }
+
+        // creates Uint8Array one-channel pixel data where the pixels are fully 0 (off) or 255 (on)
+        // rgba uses linear RGB as renderer.outputEncoding defaults to THREE.LinearEncoding
+        function convertRGBAtoBinaryImage(rgba, width, height) {
+            const binaryImage = new Uint8Array(width * height);
+            for (let i = 0; i < height; i++) {
+                for (let j = 0; j < width; j++) {
+                    const offset = (i * width + j) * 4;
+                    const r = rgba[offset] / 255;
+                    const g = rgba[offset + 1] / 255;
+                    const b = rgba[offset + 2] / 255;
+                    // already linear colour space so no conversion
+                    // RGB coefficients from https://www.w3.org/Graphics/Color/sRGB end of section 2
+                    const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                    // the canvas origin is bottom left but the teletext origin is top left
+                    // so populate the binary image in reverse order
+                    binaryImage[(height - 1 - i) * width + j] = luminance > BINARY_IMG_THRESHOLD ? 255 : 0;
+                }
+            }
+            return binaryImage;
+        }
+
+        function initTeletext() {
+            const t = Teletext();
+
+            t.addTo('#teletextscreen');
+            t.setDefaultG0Charset('g0_latin__english');
+            for (let r = 0; r < 6; r++) {
+                t.writeBytes(0, r, ['\x04\x1d\x17']); // white on blue
+                t.writeBytes(0, 24 - r, ['\x04\x1d\x17']);
+            }
+            for (let r = 6; r < 19; r++) {
+                t.writeBytes(0, r, ['\x17\x17\x16']); // cyan
+            }
+            // for (let r = 0; r < 25; r++) {
+            //     t.writeBytes(0, r, ['\x04\x1d\x11']); // red on blue
+            // }
+
+            return t;
+        }
+
+        function initWorld() {
+            THREE.ColorManagement.enabled = true;
+            const world = {
+                scene: new THREE.Scene(),
+                camera: new THREE.PerspectiveCamera(
+                    40,
+                    1.2,  // aspect ratio
+                    0.1,
+                    1000
+                ),
+                geometries: [
+                    new THREE.BoxGeometry(1, 1, 1),
+                    new THREE.OctahedronGeometry(0.5),
+                    new THREE.DodecahedronGeometry(1, 0),
+                ],
+                material: new THREE.MeshBasicMaterial({
+                    color: 0x990076
+                }),
+                lineMaterial: new LineMaterial({
+                    color: 0xffffff,
+                    linewidth: 0.025,
+                })
+            };
+            world.lineGeometries = world.geometries.map(g => {
+                const edges = new THREE.EdgesGeometry(g);
+                const geometry = new LineSegmentsGeometry();
+                geometry.fromEdgesGeometry(edges);
+                edges.dispose();
+                return geometry;
+            });
+            world.camera.position.z = 4;
+
+            return world;
+        }
+
+        function go() {
+            const width = 80;
+            const height = 75;
+            const rwidth = width;
+            const rheight = height;
+
+            const world = initWorld();
+            const teletext = initTeletext();
+
+            new Animator(rwidth, rheight, teletext, world);
+        }
+
+        go();
+
+    </script>
+</body>
+// TODO
+document README with new methods and publish
+
+
+</html>
+
+

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<!-- SPDX-FileCopyrightText: © 2023 Tech and Software Ltd. -->
+<!-- SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0 -->
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Importing teletext as ES6 module</title>
+    <style>
+        body {
+            background-color: darkblue;
+            font-size: 30px;
+            color: white;
+        }
+
+        input {
+            font-size: 30px;
+        }
+
+        td {
+            padding: 5px;
+        }
+    </style>
+
+    <script type="module">
+        // minimum code to load and show a built-in test page
+        import { Teletext } from '../dist/teletext.js';
+
+        const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+        const t = Teletext();
+        t.addTo('#teletextscreen');
+        t.setDefaultG0Charset('g0_latin__english');
+        // t.showTestPage();
+        for (let r = 0; r < 25; r++) {
+            t.writeByte(0, r, r % 2 ? '\x13' : '\x12'); // yellow graphics
+        }
+        for (let radius = 5; radius <= 30; radius += 4) {
+            midpointCircle(40, 37, radius);
+        }
+        t.updateDisplay();
+
+
+        // midpoint circle algorithm
+        function midpointCircle(x0, y0, radius) {
+            let x = radius;
+            let y = 0;
+            let decisionOver2 = 1 - x;
+
+            while (y <= x) {
+                t.plot(x + x0, y + y0);
+                t.plot(y + x0, x + y0);
+                t.plot(-x + x0, y + y0);
+                t.plot(-y + x0, x + y0);
+                t.plot(-x + x0, -y + y0);
+                t.plot(-y + x0, -x + y0);
+                t.plot(x + x0, -y + y0);
+                t.plot(y + x0, -x + y0);
+
+                y++;
+                if (decisionOver2 <= 0) {
+                    decisionOver2 += 2 * y + 1;
+                } else {
+                    x--;
+                    decisionOver2 += 2 * (y - x) + 1;
+                }
+            }
+        }
+
+    </script>
+
+    <script type="module">
+        // this code is to handle key events and the reveal button below. This demonstrates using events
+        const KEY_EVENTS = {
+            '?': 'ttx.reveal',
+            'm': 'ttx.mix',
+            's': 'ttx.subtitlemode',
+        };
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('revealButton').addEventListener('click', () => {
+                window.dispatchEvent(new Event(KEY_EVENTS['?']));
+            });
+        });
+        window.addEventListener('keypress', e => {
+            if (e.key in KEY_EVENTS)
+                window.dispatchEvent(new Event(KEY_EVENTS[e.key]));
+        });
+    </script>
+
+    <script nomodule>
+        document.write("<p>Sorry, your browser needs to support ES6 module imports for this to work.</p>");
+        console.debug("=========> If you need to support old browsers, you'll need to use the provided UMD module and transpile the code for your targetted browsers");
+    </script>
+</head>
+
+<body>
+
+    <div id="teletextscreen"></div>
+
+    <input type="button" value="REVEAL" id="revealButton">
+
+    <p>Key controls</p>
+    <table>
+        <tr>
+            <td>?</td>
+            <td>Toggle reveal</td>
+        </tr>
+        <tr>
+            <td>m</td>
+            <td>Toggle mix</td>
+        </tr>
+        <tr>
+            <td>s</td>
+            <td>Toggle subtitle (boxed) mode</td>
+        </tr>
+    </table>
+
+</body>
+
+</html>
