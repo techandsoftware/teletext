@@ -6,6 +6,7 @@
         body {
             background-color: #444444;
         }
+
         div {
             display: inline-block;
             background-color: black;
@@ -39,7 +40,9 @@
 
         import { Teletext } from 'teletext';
 
-        const BINARY_IMG_THRESHOLD = 0.1842; // 50% lightness (L*) gives linear luminance of 18.42% = 'middle gray'
+        const BINARY_IMG_THRESHOLD = 0.1842 * 255; // 50% lightness (L*) gives linear luminance of 18.42% = 'middle gray'
+        // const BINARY_IMG_THRESHOLD = 0.5 * 255; // 50% lightness (L*) gives linear luminance of 18.42% = 'middle gray'
+
         const MAX_NUM_SPINNY_OBJECTS = 3;
         const MIN_TIME_BETWEEN_OBJECT_SPAWNING = 3;
 
@@ -47,12 +50,10 @@
             constructor(world, time) {
                 const randomObjIndex = Math.floor(Math.random() * world.geometries.length);
                 const obj = new THREE.Mesh(world.geometries[randomObjIndex], world.material);
-                const lines = new Line2(world.lineGeometries[randomObjIndex], world.lineMaterial);
 
                 const x0 = Math.random() * 2;
                 obj.position.x = x0 > 1 ? x0 : x0 - 2; // start either side of the camera
                 obj.position.y = Math.random() * 4 - 2;
-                obj.add(lines);
 
                 obj.position.z = 1.5;
                 obj.userData = {
@@ -107,9 +108,9 @@
 
                 this.renderer = new THREE.WebGLRenderer();
                 this.renderer.setSize(width, height, false);
-                const renderTarget = new THREE.WebGLRenderTarget(width, height);
-                this.renderer.setRenderTarget(renderTarget);
-                // document.body.appendChild(this.renderer.domElement);
+                // const renderTarget = new THREE.WebGLRenderTarget(width, height); // comment this to render to visible canvas
+                // this.renderer.setRenderTarget(renderTarget);                     // and this
+                document.body.appendChild(this.renderer.domElement);
                 this.glContext = this.renderer.getContext();
 
                 this.lastObjCreatedTime = 0;
@@ -123,7 +124,7 @@
 
                 setTimeout(() => {
                     requestAnimationFrame(this.animate.bind(this));
-                }); // 25fps
+                }, 1000 / 12.5); // 25fps
                 for (const obj of SpinnyObject.allObjects()) {
                     obj.animate(time);
                     if (obj.isFar()) {
@@ -148,39 +149,108 @@
         // creates Uint8Array one-channel pixel data where the pixels are fully 0 (off) or 255 (on)
         // rgba uses linear RGB as renderer.outputEncoding defaults to THREE.LinearEncoding
         function convertRGBAtoBinaryImage(rgba, width, height) {
+            const applyErrorToPixel = (startPixel, error, luminance) => {
+                // const oldLuminance = 0.2126 * rgba[startPixel]
+                //    + 0.7152 * rgba[startPixel + 1]
+                //    + 0.0722 * rgba[startPixel + 2];
+                // const targetLuminance = oldLuminance + error;
+
+                // let logging = '';
+                // console.log(error);
+                // for (let k = 0; k < 3; k++) {
+                //     logging += rgba[startPixel + k] + ' ';
+                // }
+                // logging += '\n';
+
+                for (let k = 0; k < 3; k++) {
+                    let newVal = rgba[startPixel + k] + error;
+                    newVal = Math.min(Math.max(newVal, 0), 255);
+                    rgba[startPixel + k] = newVal;
+                }
+                // for (let k = 0; k < 3; k++) {
+                //     logging += rgba[startPixel + k] + ' ';
+                // }
+                // const newLuminance = 0.2126 * rgba[startPixel]
+                //    + 0.7152 * rgba[startPixel + 1]
+                //    + 0.0722 * rgba[startPixel + 2];
+                // console.log(logging);
+                // console.log(newLuminance);
+
+                // debugger;
+            };
+
             const binaryImage = new Uint8Array(width * height);
             for (let i = 0; i < height; i++) {
                 for (let j = 0; j < width; j++) {
                     const offset = (i * width + j) * 4;
-                    const r = rgba[offset] / 255;
-                    const g = rgba[offset + 1] / 255;
-                    const b = rgba[offset + 2] / 255;
+                    const r = rgba[offset];
+                    const g = rgba[offset + 1];
+                    const b = rgba[offset + 2];
                     // already linear colour space so no conversion
                     // RGB coefficients from https://www.w3.org/Graphics/Color/sRGB end of section 2
+                    // TODO: https://discourse.threejs.org/t/updates-to-color-management-in-three-js-r152/50791
+                    // use getHSL instead?
                     const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+
+                    const pixel = luminance > BINARY_IMG_THRESHOLD ? 255 : 0;
+                    const error = luminance - pixel;
+
+                    // if (error != 0)
+                    //     debugger;
+
                     // the canvas origin is bottom left but the teletext origin is top left
                     // so populate the binary image in reverse order
-                    binaryImage[(height - 1 - i) * width + j] = luminance > BINARY_IMG_THRESHOLD ? 255 : 0;
+                    binaryImage[(height - 1 - i) * width + j] = pixel;
+
+                    if (error == 0) continue;
+                    // console.log(`(${j}, ${i})  ${r} ${g} ${b}   ${luminance} ${pixel} ${error}`);
+
+                    // Atkinson dithering - distribute error to neighboring pixels
+                    if (j < width - 1) {
+                        // console.log('right');
+                        applyErrorToPixel(offset, error * 1 / 8, luminance); // right
+                    }
+
+                    if (i < height - 1) { // not last row
+                        if (j > 0) {
+                            // console.log('bottom-left');
+                            applyErrorToPixel(offset + (width * 4) - 4, error * 1 / 16, luminance); // bottom-left
+
+                        }
+
+                        // console.log('bottom');
+                        applyErrorToPixel(offset + (width * 4), error * 1 / 8, luminance); // bottom
+
+                        if (j < width - 1) {
+                            // console.log('bottom-right');
+                            applyErrorToPixel(offset + (width * 4) + 4, error * 1 / 16, luminance); // bottom-right
+                        }
+                    }
+                    // debugger;
+
+
                 }
             }
             return binaryImage;
         }
+
 
         function initTeletext() {
             const t = Teletext();
 
             t.addTo('#teletextscreen');
             t.setDefaultG0Charset('g0_latin__english');
-            for (let r = 0; r < 6; r++) {
-                t.writeBytes(0, r, ['\x04\x1d\x17']); // white on blue
-                t.writeBytes(0, 24 - r, ['\x04\x1d\x17']);
-            }
-            for (let r = 6; r < 19; r++) {
-                t.writeBytes(0, r, ['\x17\x17\x16']); // cyan
-            }
-            // for (let r = 0; r < 25; r++) {
-            //     t.writeBytes(0, r, ['\x04\x1d\x11']); // red on blue
+            // for (let r = 0; r < 6; r++) {
+            //     t.writeBytes(0, r, ['\x04\x1d\x17']); // white on blue
+            //     t.writeBytes(0, 24 - r, ['\x04\x1d\x17']);
             // }
+            // for (let r = 6; r < 19; r++) {
+            //     t.writeBytes(0, r, ['\x17\x17\x16']); // cyan
+            // }
+            for (let r = 0; r < 25; r++) {
+                t.writeBytes(0, r, ['\x17']); // white graphics
+            }
 
             return t;
         }
@@ -190,31 +260,27 @@
             const world = {
                 scene: new THREE.Scene(),
                 camera: new THREE.PerspectiveCamera(
-                    40,
+                    40,   // field of view
                     1.2,  // aspect ratio
-                    0.1,
-                    1000
+                    0.1,  // near
+                    1000  // far
                 ),
                 geometries: [
                     new THREE.BoxGeometry(1, 1, 1),
                     new THREE.OctahedronGeometry(0.5),
                     new THREE.DodecahedronGeometry(1, 0),
                 ],
-                material: new THREE.MeshBasicMaterial({
-                    color: 0x990076
+                material: new THREE.MeshPhongMaterial({
+                    color: 0xff4444
                 }),
-                lineMaterial: new LineMaterial({
-                    color: 0xffffff,
-                    linewidth: 0.025,
-                })
             };
-            world.lineGeometries = world.geometries.map(g => {
-                const edges = new THREE.EdgesGeometry(g);
-                const geometry = new LineSegmentsGeometry();
-                geometry.fromEdgesGeometry(edges);
-                edges.dispose();
-                return geometry;
-            });
+
+            const color = 0xFFFFFF;
+            const intensity = 1;
+            const light = new THREE.DirectionalLight(color, intensity);
+            light.position.set(-0.5, 0.5, 4);
+            world.scene.add(light);
+
             world.camera.position.z = 4;
 
             return world;
@@ -223,8 +289,8 @@
         function go() {
             const width = 80;
             const height = 75;
-            const rwidth = width;
-            const rheight = height;
+            const rwidth = width * 1;
+            const rheight = height * 1;
 
             const world = initWorld();
             const teletext = initTeletext();
@@ -236,10 +302,6 @@
 
     </script>
 </body>
-// TODO
-document README with new methods and publish
 
 
 </html>
-
-
