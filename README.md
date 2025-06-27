@@ -1,11 +1,11 @@
 <!--
-SPDX-FileCopyrightText: © 2023 Tech and Software Ltd.
+SPDX-FileCopyrightText: © 2025 Rob Hardy
 SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
 -->
 
 [![REUSE status](https://api.reuse.software/badge/bitbucket.org/rahardy/teletext)](https://api.reuse.software/info/bitbucket.org/rahardy/teletext)
 
-![Splash: Prerendered teletext page](https://tech-and-software.ltd.uk/assets/teletext_prerendered_splash.svg)
+![Splash: Prerendered teletext page](https://www.robdev.org.uk/assets/teletext_prerendered_splash.svg)
 
 This package renders teletext pages using vector graphics (SVG). Note this is just the display part of teletext, and operates as a screen or a dumb terminal.  The application using this package will need to supply the page content, implement page numbers, navigation, etc.  The package provides an API to set page content and change the display characteristics such as the screen height and aspect ratio.
 
@@ -65,7 +65,7 @@ See the `demo` directory in the repo for examples of using with an ES6 module im
 
 # Licensing
 
-The project is licensed under GNU Affero General Public License 3 ([AGPL-3.0-only](https://www.gnu.org/licenses/agpl-3.0.en.html)), or under a commercial software license ([LicenseRef-uk.ltd.TechAndSoftware-1.0](https://tech-and-software.ltd.uk/LICENSES/LicenseRef-uk.ltd.TechAndSoftware-1.0.txt)) if you have paid a licensing fee to Tech and Software Ltd. If you combine your own software with this package and distribute publically (whether via network access or not), the AGPL requires that your software is covered by AGPL; the commercial license does not have that requirement. In order to pay the fee for the commercial license, contact <techandsoftwareltd@outlook.com> for enquiries. The text of the licenses is in the `LICENSES` directory.
+The project is licensed under GNU Affero General Public License 3 ([AGPL-3.0-only](https://www.gnu.org/licenses/agpl-3.0.en.html)), or under a commercial software license. For commercial enquiries, contact <techandsoftwareltd@outlook.com>. The text of the licenses is in the `LICENSES` directory.
 
 The fonts supplied in the `demo/fonts` directory have their own licenses. See the `*.license` files in that directory.
 
