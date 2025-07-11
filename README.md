@@ -59,7 +59,7 @@ Additional features:
 
 # Demos
 
-For a live demo, see https://teletextmoduledemo.tech-and-software.ltd.uk/
+For a live demo, see https://teletextmoduledemo.robdev.org.uk/
 
 See the `demo` directory in the repo for examples of using with an ES6 module import or a UMD import.
 
