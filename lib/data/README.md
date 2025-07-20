@@ -1,5 +1,5 @@
-<!-- SPDX-FileCopyrightText: © 2021 Tech and Software Ltd. -->
-<!-- SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0 -->
+<!-- SPDX-FileCopyrightText: © 2025 Rob Hardy -->
+<!-- SPDX-License-Identifier: AGPL-3.0-only -->
 
 These pages in testpages.json are from https://archive.teletextarchaeologist.org/ via Simon Rawles' editor at https://edit.tf :
 

@@ -17,6 +17,7 @@ export default defineConfig({
   build: {
     sourcemap: true,
     copyPublicDir: false,
+    emptyOutDir: false,
     lib: {
       entry: resolve(__dirname, 'lib/app.js'),
       name: '@techandsoftware/teletext',

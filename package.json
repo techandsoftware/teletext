@@ -16,6 +16,7 @@
     "@eslint/js": "^9.31.0",
     "eslint": "^9.31.0",
     "globals": "^16.3.0",
+    "jsdom": "^26.1.0",
     "terser": "^5.43.1",
     "vite": "^7.0.4"
   },
@@ -38,7 +39,7 @@
     "WST"
   ],
   "author": "Rob Hardy <techandsoftwareltd@outlook.com>",
-  "license": "(AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0)",
+  "license": "AGPL-3.0-only",
   "repository": {
     "type": "git",
     "url": "git+https://bitbucket.org/rahardy/teletext.git"
@@ -48,7 +49,6 @@
   },
   "files": [
     "LICENSES/AGPL-3.0-only.txt",
-    "LICENSES/LicenseRef-uk.ltd.TechAndSoftware-1.0.txt",
     "dist",
     "package.json.license"
   ],

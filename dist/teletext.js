@@ -1044,7 +1044,6 @@ class ht extends C {
   _resetGraphicRow(t) {
     this._graphicrows[t] && this._graphicrows[t].remove_(), this._graphicrows[t] = this._graphicLayer.group_();
   }
-  // eslint-disable-next-line no-unused-vars
   _getCellAttr(t, e, _) {
     return t == n.G3_ ? {
       dx: C._MOSAIC_METRIC._contiguous._DX,

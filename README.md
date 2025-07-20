@@ -1,6 +1,6 @@
 <!--
 SPDX-FileCopyrightText: © 2025 Rob Hardy
-SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0
+SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 [![REUSE status](https://api.reuse.software/badge/bitbucket.org/rahardy/teletext)](https://api.reuse.software/info/bitbucket.org/rahardy/teletext)
@@ -65,7 +65,7 @@ See the `demo` directory in the repo for examples of using with an ES6 module im
 
 # Licensing
 
-The project is licensed under GNU Affero General Public License 3 ([AGPL-3.0-only](https://www.gnu.org/licenses/agpl-3.0.en.html)), or under a commercial software license. For commercial enquiries, contact <techandsoftwareltd@outlook.com>. The text of the licenses is in the `LICENSES` directory.
+The project is licensed under GNU Affero General Public License 3 ([AGPL-3.0-only](https://www.gnu.org/licenses/agpl-3.0.en.html). For commercial support and integration enquiries, contact <techandsoftwareltd@outlook.com>.
 
 The fonts supplied in the `demo/fonts` directory have their own licenses. See the `*.license` files in that directory.
 
