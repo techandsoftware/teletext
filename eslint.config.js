@@ -1,0 +1,18 @@
+// SPDX-FileCopyrightText: © 2025 Rob Hardy
+// SPDX-License-Identifier: AGPL-3.0-only
+
+import js from "@eslint/js";
+import globals from "globals";
+import { defineConfig } from "eslint/config";
+
+export default defineConfig([
+  { ignores: ["dist/**"] },
+  {
+    files: ["lib/*.js"],
+    plugins: { js },
+    extends: ["js/recommended"],
+    languageOptions: {
+      globals: globals.browser
+      }
+    },
+]);
