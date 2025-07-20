@@ -114,18 +114,6 @@ If you want to use npm to install instead of jsdelivr:
 
 This creates an SVG object in the #teletextscreen div which contains the teletext display.
 
-Alternatively, for browsers that don't support ES6 module imports, you can use the UMD module. The exports are exported to the `ttx` global, so you need to prefix Teletext and the other exports with that. The syntax in the Javascript is likely to be too new so you will also need to arrange transpiling to your target browser.
-
-```html
-<div id="teletextscreen"></div>
-
-<script src="./node_modules/@techandsoftware/teletext/dist/teletext.umd.min.js"></script>
-<script>
-  const teletext = ttx.Teletext();
-  teletext.addTo('#teletextscreen');
-</script>
-```
-
 ## For nodejs
 
 Your code needs to pass in a document object model window to the `Teletext()` function.
@@ -149,13 +137,6 @@ teletext.addTo('#teletextscreen');
 teletext.setRow(0, 'Hello from node');
 
 const svg = dom.window.document.querySelector('#teletextscreen').innerHTML;
-```
-
-If using CommonJS, use require statements:
-
-```javascript
-const { Teletext } = require('@techandsoftware/teletext');
-const { JSDOM } = require('jsdom');
 ```
 
 # Overview of character sets
