@@ -18,13 +18,15 @@
     "globals": "^16.3.0",
     "jsdom": "^26.1.0",
     "terser": "^5.43.1",
-    "vite": "^7.0.4"
+    "vite": "^7.0.4",
+    "vitest": "^3.2.4"
   },
   "scripts": {
     "dev": "vite",
     "build": "vite build && npm run minify",
     "lint": "eslint",
     "minify": "terser dist/teletext.js --output dist/teletext.min.js --config-file terser.config.json",
+    "test": "vitest",
     "reuselint": "reuse lint"
   },
   "keywords": [
