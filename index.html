@@ -1,0 +1,97 @@
+<!doctype html>
+<!-- SPDX-FileCopyrightText: © 2025 Rob Hardy -->
+<!-- SPDX-License-Identifier: AGPL-3.0-only -->
+<!-- This page is for development mode with Vite's live reload;
+     launch with `npm run dev` -->
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>@techandsoftare/teletext - dev page</title>
+  <style>
+    body {
+      background-color: darkblue;
+      font-size: 30px;
+      color: white;
+    }
+
+    input {
+      font-size: 30px;
+    }
+
+    td {
+      padding: 5px;
+    }
+  </style>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script type="module">
+    // minimum code to load and show a built-in test page
+    import { Teletext, Level } from '/lib/app.js';
+    const t = Teletext();
+    t.addTo('#teletextscreen');
+    t.setDefaultG0Charset('g0_latin__english');
+    t.showTestPage();
+
+    // following is for testing enhancements at level 1.5
+    // t.setLevel(Level[1.5]);
+    // let enhance = t.enhance()
+    //     .pos(0, 10).putG0('e')
+    //     .pos(1, 10).putG0('e', 2)
+    //     .pos(2, 10).putAt()
+    //     .pos(3, 10).putG2('\u0055')
+    //     .pos(4, 10).putG3('\u0025')
+    //     .pos(5, 10).putG1('\u0039')
+    //     .end();
+  </script>
+
+
+  <script type="module">
+    // this code is to handle key events and the reveal button below. This demonstrates using events
+    const KEY_EVENTS = {
+      '?': 'ttx.reveal',
+      'm': 'ttx.mix',
+      's': 'ttx.subtitlemode',
+    };
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('revealButton').addEventListener('click', () => {
+        window.dispatchEvent(new Event(KEY_EVENTS['?']));
+      });
+    });
+    window.addEventListener('keypress', e => {
+      if (e.key in KEY_EVENTS)
+        window.dispatchEvent(new Event(KEY_EVENTS[e.key]));
+    });
+  </script>
+
+  <script nomodule>
+    document.write("<p>Sorry, your browser needs to support ES6 module imports for this to work.</p>");
+    console.debug("=========> If you need to support old browsers, you'll need to use the provided UMD module and transpile the code for your targetted browsers");
+  </script>
+</head>
+
+<body>
+
+  <div id="teletextscreen"></div>
+
+  <input type="button" value="REVEAL" id="revealButton">
+
+  <p>Key controls</p>
+  <table>
+    <tr>
+      <td>?</td>
+      <td>Toggle reveal</td>
+    </tr>
+    <tr>
+      <td>m</td>
+      <td>Toggle mix</td>
+    </tr>
+    <tr>
+      <td>s</td>
+      <td>Toggle subtitle (boxed) mode</td>
+    </tr>
+  </table>
+
+</body>
+
+</html>
