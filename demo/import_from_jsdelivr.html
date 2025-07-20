@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- SPDX-FileCopyrightText: © 2021 Tech and Software Ltd. -->
+<!-- SPDX-FileCopyrightText: © 2025 Rob Hardy -->
 <!-- SPDX-License-Identifier: AGPL-3.0-only OR LicenseRef-uk.ltd.TechAndSoftware-1.0 -->
 <html>
-<!-- this is the same as es6_import.html but imports teletext.js instead of teletext.min.js -->
+
 <head>
     <meta charset="UTF-8">
-    <title>Importing teletext as ES6 module</title>
+    <title>Importing teletext as ES6 module from jsdelivr</title>
     <style>
         body {
             background-color: darkblue;
@@ -22,22 +22,12 @@
 
     <script type="module">
         // minimum code to load and show a built-in test page
-        import { Teletext, Level } from '../dist/teletext.js';
+        import { Teletext } from 'https://cdn.jsdelivr.net/npm/@techandsoftware/teletext@latest/dist/teletext.min.js';
         const t = Teletext();
         t.addTo('#teletextscreen');
         t.setDefaultG0Charset('g0_latin__english');
         t.showTestPage();
-
-        // following is for testing enhancements at level 1.5
-        // t.setLevel(Level[1.5]);
-        // let enhance = t.enhance()
-        //     .pos(0, 10).putG0('e')
-        //     .pos(1, 10).putG0('e', 2)
-        //     .pos(2, 10).putAt()
-        //     .pos(3, 10).putG2('\u0055')
-        //     .pos(4, 10).putG3('\u0025')
-        //     .pos(5, 10).putG1('\u0039')
-        //     .end();
+        t.showTestPage();
     </script>
 
     <script type="module">
