@@ -11,8 +11,11 @@ export default defineConfig([
     files: ["lib/*.js"],
     plugins: { js },
     extends: ["js/recommended"],
+    rules: {
+      "complexity": ["warn", 10]
+    },
     languageOptions: {
       globals: globals.browser
-      }
-    },
+    }
+  },
 ]);
