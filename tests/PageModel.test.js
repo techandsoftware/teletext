@@ -4,6 +4,7 @@
 import { expect, test } from 'vitest'
 import { PageModel } from "../lib/PageModel.js";
 import { Attributes as Att, CellType, Colour, CellSize, Level } from "../lib/Attributes.js";
+import { Enhancement } from "../lib/Enhancement.js";
 
 test('page model constructs', () => {
     const model = new PageModel();
@@ -14,7 +15,7 @@ test('page model constructs', () => {
 test('getRow_ returns RowModel with correct cells for plain text', () => {
     const model = new PageModel();
     const rowNum = 2;
-    const text = "Hello, Teletext!".padEnd(40, ' ');
+    const text = "Hello, Teletext!".padEnd(40, '.');
     model._setRowFromChars(rowNum, text);
     const row = model.getRow_(rowNum);
 
@@ -24,7 +25,7 @@ test('getRow_ returns RowModel with correct cells for plain text', () => {
     }
 });
 
-test('getRow_ returns correct cells for set-at attributes', () => {
+test('getRow_ handles set-at attributes', () => {
     const model = new PageModel();
     const rowNum = 1;
 
@@ -61,7 +62,7 @@ test('getRow_ returns correct cells for set-at attributes', () => {
 });
 
 
-test('getRow_ returns correct cells for set-after attributes', () => {
+test('getRow_ handles set-after attributes', () => {
     const model = new PageModel();
     const rowNum = 1;
 
@@ -95,7 +96,7 @@ test('getRow_ returns correct cells for set-after attributes', () => {
     checkExpectedCells(row, expected);
 });
 
-test('getRow_ returns cells with correct g0 characters mapped', () => {
+test('getRow_ handles primary and secondary g0 character mapping', () => {
     const model = new PageModel();
     const rowNum = 1;
 
@@ -124,7 +125,7 @@ test('getRow_ returns cells with correct g0 characters mapped', () => {
     expect(row.getCell_(5).char_).toBe('£');
 });
 
-test('getRow_ returns correct cells for boxing and unboxing attributes', () => {
+test('getRow_ handles boxing and unboxing attributes', () => {
     const model = new PageModel();
     const rowNum = 1;
 
@@ -153,7 +154,7 @@ test('getRow_ returns correct cells for boxing and unboxing attributes', () => {
     checkExpectedCells(row, expected);
 });
 
-test('getRow_ returns correct cells for set-after attributes overriden by set-at attributes', () => {
+test('getRow_ handles set-after attributes overriden by set-at attributes', () => {
     const model = new PageModel();
     const rowNum = 1;
 
@@ -195,7 +196,7 @@ test('getRow_ returns correct cells for set-after attributes overriden by set-at
     checkExpectedCells(row, expected);
 });
 
-test('getRow_ returns correct cells when concealed is cancelled by certain attributes', () => {
+test('getRow_ handles concealed cancelled by certain attributes', () => {
     const model = new PageModel();
     const rowNum = 1;
 
@@ -239,23 +240,43 @@ test('getRow_ throws error for out-of-bounds rowNum', () => {
     expect(() => model.getRow_(-1)).toThrow();
 });
 
-// TODO
-// g0 enhancement
-// g1 enhancement
-// g2 enhancement
-// g3 enhancement
-
-
-test.skip('getRow_ applies enhancements if present', () => {
+test('getRow_ applies level 1.5 enhancements', () => {
     const model = new PageModel();
-    const rowNum = 6;
+    const rowNum = 1;
     const text = "A".repeat(40);
     model.setRowFromChars_(rowNum, text);
-    model.setLevel_(1.5); // Enable enhancements
-    model.enhance_([{x_: 2, y_: rowNum, type_: 'g0', char_: 'Z'}]);
+
+    const enhancement = new Enhancement(model);
+    enhancement.
+        pos(1,1).putG0('e').
+        pos(2,1).putG0('e', 1).
+        pos(3,1).putG1('!').
+        pos(4,1).putG2('!').
+        pos(5,1).putG3('\x5b').
+        pos(6,1).putG3('!').
+        pos(7,1).putAt().
+        end();
+    model.setLevel_(Level[1.5]);
+
     const row = model.getRow_(rowNum);
-    expect(row.cells_[2].byte_).toBe('Z');
+    const expected = {
+        1: { char_: 'e' },
+        2: { char_: 'e\u0300' }, // e with grave accent
+        3: { char_: 'A' }, // G1 enhancement (mosaic) ignored at level 1.5
+        4: { char_: '¡' }, // G2
+        5: { char_: '→' }, // G3 (4 characters supported at level 1.5)
+        6: { char_: 'A' }, // most G3 characters ignored at level 1.5
+        7: { char_: '@' },
+    };
+
+    checkExpectedCells(row, expected);
 });
+
+// TODO
+// level 1.5 enhancement with secondary g0 and g2 set
+// level 2.5 enhancements
+
+
 
 function checkExpectedCells(row, expected) {
     for (const [idx, props] of Object.entries(expected)) {
