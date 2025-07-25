@@ -9,7 +9,7 @@ import { Enhancement } from "../lib/Enhancement.js";
 test('page model constructs', () => {
     const model = new PageModel();
     const bytes = model.getBytes_();
-    expect(bytes.length).toBe(40*25);
+    expect(bytes.length).toBe(40 * 25);
 });
 
 test('getRow_ returns RowModel with correct cells for plain text', () => {
@@ -57,7 +57,7 @@ test('getRow_ handles set-at attributes', () => {
         13: { concealed_: true },
         15: { char_: '\ud83e\udf00' } // a unicode sextant
     };
-    
+
     checkExpectedCells(row, expected);
 });
 
@@ -72,9 +72,9 @@ test('getRow_ handles set-after attributes', () => {
         Att.charFromAttribute(Att.FLASH) + 'x' +
         Att.charFromAttribute(Att.DOUBLE_HEIGHT) + 'x' +
         // set up for release mosaic
-        Att.charFromGraphicColour(Colour.MAGENTA) + 
+        Att.charFromGraphicColour(Colour.MAGENTA) +
         Att.charFromAttribute(Att.HOLD_MOSAICS) + '\x21' +
-        Att.charFromAttribute(Att.RELEASE_MOSAICS) + 
+        Att.charFromAttribute(Att.RELEASE_MOSAICS) +
         Att.charFromGraphicColour(Colour.BLUE);
 
     model.setRowFromChars_(rowNum, text);
@@ -162,15 +162,15 @@ test('getRow_ handles set-after attributes overriden by set-at attributes', () =
         Att.charFromAttribute(Att.FLASH) + // set-after
         Att.charFromAttribute(Att.STEADY) + // set-at
 
-        Att.charFromAttribute(Att.DOUBLE_SIZE) + 
+        Att.charFromAttribute(Att.DOUBLE_SIZE) +
         Att.charFromAttribute(Att.DOUBLE_HEIGHT) + // set-after
         Att.charFromAttribute(Att.NORMAL_SIZE) + // set-at
 
-        Att.charFromAttribute(Att.DOUBLE_SIZE) + 
+        Att.charFromAttribute(Att.DOUBLE_SIZE) +
         Att.charFromAttribute(Att.DOUBLE_WIDTH) + // set-after
         Att.charFromAttribute(Att.NORMAL_SIZE) + // set-at
 
-        Att.charFromAttribute(Att.DOUBLE_HEIGHT) + 
+        Att.charFromAttribute(Att.DOUBLE_HEIGHT) +
         Att.charFromAttribute(Att.DOUBLE_SIZE) + // set-after
         Att.charFromAttribute(Att.NORMAL_SIZE) + // set-at
 
@@ -200,9 +200,9 @@ test('getRow_ handles concealed cancelled by certain attributes', () => {
     const model = new PageModel();
     const rowNum = 1;
 
-    const text = Att.charFromAttribute(Att.CONCEAL) + 
+    const text = Att.charFromAttribute(Att.CONCEAL) +
         Att.charFromGraphicColour(Colour.RED) + 'x' +
-        Att.charFromAttribute(Att.CONCEAL) + 
+        Att.charFromAttribute(Att.CONCEAL) +
         Att.charFromTextColour(Colour.GREEN) + 'x';
 
     model.setRowFromChars_(rowNum, text);
@@ -248,13 +248,13 @@ test('getRow_ applies level 1.5 enhancements', () => {
 
     const enhancement = new Enhancement(model);
     enhancement.
-        pos(1,1).putG0('e').
-        pos(2,1).putG0('e', 1).
-        pos(3,1).putG1('!').
-        pos(4,1).putG2('!').
-        pos(5,1).putG3('\x5b').
-        pos(6,1).putG3('!').
-        pos(7,1).putAt().
+        pos(1, 1).putG0('e').
+        pos(2, 1).putG0('e', 1).
+        pos(3, 1).putG1('!').
+        pos(4, 1).putG2('!').
+        pos(5, 1).putG3('\x5b').
+        pos(6, 1).putG3('!').
+        pos(7, 1).putAt().
         end();
     model.setLevel_(Level[1.5]);
 
@@ -272,8 +272,68 @@ test('getRow_ applies level 1.5 enhancements', () => {
     checkExpectedCells(row, expected);
 });
 
+test('getRow_ applies the correct cell type on a held mosaic', () => {
+    const model = new PageModel();
+    const rowNum = 1;
+
+    const text = '\x17\x66\x1e\x39\x1a\x1f\x66'; // from G.3.3 in ETSI 300 706
+
+    model.setRowFromChars_(rowNum, text);
+    const row = model.getRow_(rowNum);
+
+    const expected = {
+        2: { char_: '\ud83e\udf24' },
+        2: { type_: CellType.MOSAIC_CONTIGUOUS_ },
+        4: { char_: '\ud83e\udf17' },
+        4: { type_: CellType.MOSAIC_CONTIGUOUS_ }, // separated is active but the held mosaic is contiguous
+        5: { char_: '\ud83e\udf17' },
+        5: { type_: CellType.MOSAIC_CONTIGUOUS_ }, // held
+        6: { char_: '\ud83e\udf24' },
+        6: { type_: CellType.MOSAIC_SEPARATED_ } // non-held - separated takes effect
+    };
+
+    checkExpectedCells(row, expected);
+});
+
+test('getRow_ resets the held mosaic on a change of alphanumeric mode or size', () => {
+    const model = new PageModel();
+    const rowNum = 1;
+
+    const text1 = Att.charFromGraphicColour(Colour.RED) +
+        '\x21' +
+        Att.charFromAttribute(Att.HOLD_MOSAICS) +
+        Att.charFromTextColour(Colour.GREEN) +
+        Att.charFromGraphicColour(Colour.RED);
+
+    const text2 = Att.charFromGraphicColour(Colour.RED) +
+        '\x21' +
+        Att.charFromAttribute(Att.HOLD_MOSAICS) +
+        Att.charFromAttribute(Att.DOUBLE_SIZE);
+
+    model.setRowFromChars_(rowNum, text1);
+    model.setRowFromChars_(rowNum, text2);
+
+    expect(model.getRow_(1).getCell_(4).char_).toBe(' ');
+    expect(model.getRow_(2).getCell_(3).char_).toBe(' ');
+});
+
+test('getRow_ keeps the held mosaic on certain attributes', () => {
+    const model = new PageModel();
+    const rowNum = 1;
+
+    const text = Att.charFromGraphicColour(Colour.RED) +
+        '\x21' +
+        Att.charFromAttribute(Att.HOLD_MOSAICS) +
+        Att.charFromGraphicColour(Colour.GREEN) + // still graphic mode
+        Att.charFromAttribute(Att.NORMAL_SIZE); // still normal size
+
+    model.setRowFromChars_(rowNum, text);
+
+    expect(model.getRow_(1).getCell_(4).char_).toBe('\ud83e\udf00');
+});
+
+
 // TODO
-// held characters
 // level 1.5 enhancement with secondary g0 and g2 set
 // level 2.5 enhancements
 
