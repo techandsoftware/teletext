@@ -41,7 +41,7 @@ const attribCodes = {
     separated: '\x1a',
 };
 
-test.prop([attributesArb])('PageModel aggregates level 1.5 attributes', (attributes) => {
+test.prop([attributesArb])('getRow_ aggregates level 1.5 attributes', (attributes) => {
     const text = attributes
         .map(attr => attribCodes[attr] ?? '')
         .join('');
@@ -67,7 +67,7 @@ test.prop([attributesArb])('PageModel aggregates level 1.5 attributes', (attribu
     }).toEqual(expected);
 });
 
-test.prop([cellColoursArb])('Pagemodel handles colours', (cellColours) => {
+test.prop([cellColoursArb])('getRow_ handles colours', (cellColours) => {
     const model = new PageModel();
     const rowNum = 1;
 
@@ -126,7 +126,7 @@ test.prop([colourArb, mosaicAttributesArb, charArb])('getRow_ handles mosaic att
     text = text.padEnd(38, ' ');
     // set the last two characters
     text += isHeld ? byte + Attributes.charFromGraphicColour(fgColour) // byte is used as the G1 mosaic character to hold and we will test on the following attribute
-                   : ' ' + byte; // byte is used as the actual G1 charact)er
+                   : ' ' + byte; // byte is used as the actual G1 character
 
     const model = new PageModel();
     model._setRowFromChars(1, text);
@@ -134,14 +134,14 @@ test.prop([colourArb, mosaicAttributesArb, charArb])('getRow_ handles mosaic att
     const cell = model.getRow_(1).getCell_(39);
 
     if (isG0 && isHeld) {
-        // held is ignored
+        // non-mosaic char not used as the held char
         expect(cell.char_).toBe(unheldMosaicDefaultChar);
         expect(cell.isMosaicByte_()).toBe(true);
     }
     if (isG0 && !isHeld) {
         // G0 character is used instead of a mosaic
         const code = cell.char_.charCodeAt(0);
-        expect(code >= 0x40 && code <= 0x5f).toBe(true); // default primary G0 set in this range
+        expect(code >= 0x40 && code <= 0x5f).toBe(true); // default primary G0 set in this range since it's almost ASCII
         expect(cell.isMosaicByte_()).toBe(false);
     }
     if (!isG0) {
