@@ -273,6 +273,7 @@ test('getRow_ applies level 1.5 enhancements', () => {
 });
 
 // TODO
+// held characters
 // level 1.5 enhancement with secondary g0 and g2 set
 // level 2.5 enhancements
 
