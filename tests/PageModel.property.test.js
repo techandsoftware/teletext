@@ -105,13 +105,13 @@ test.prop([cellColoursArb])('getRow_ handles colours', (cellColours) => {
 });
 
 function isBurnThroughG0Character(byte) {
-  const code = byte.charCodeAt(0);
-  return code >= 0x40 && code <= 0x5f;
+    const code = byte.charCodeAt(0);
+    return code >= 0x40 && code <= 0x5f;
 }
 
 function isUnicodeSextantCharacter(char) {
     return Object.values(encoding['g1_block_mosaic_to_unicode__legacy_computing']).includes(char)
-      || Object.values(encoding['g1_block_mosaic_to_unicode__unscii_separated']).includes(char);
+        || Object.values(encoding['g1_block_mosaic_to_unicode__unscii_separated']).includes(char);
 }
 
 
