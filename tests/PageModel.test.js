@@ -272,6 +272,44 @@ test('getRow_ applies level 1.5 enhancements', () => {
     checkExpectedCells(row, expected);
 });
 
+test('getRow_ applies correct G0 sets for enhancements', () => {
+    const model = new PageModel();
+    const rowNum = 1;
+    const text = "A".repeat(40);
+    model.setRowFromChars_(rowNum, text);
+
+    const enhancement = new Enhancement(model);
+    enhancement.
+        pos(1, 1).putG0('#').
+        pos(2, 1).putG0('$').
+        pos(3, 1).putG0('[').
+        end();
+    model.setLevel_(Level[1.5]);
+    model.setPrimaryG0CharacterEncoding_('g0_latin__english');
+
+    const row = model.getRow_(rowNum);
+    // national option characters ignored with fallback to G0 Latin
+    const expected = {
+        1: { char_: '#' },
+        2: { char_: '¤' },
+        3: { char_: '[' },
+    };
+
+    checkExpectedCells(row, expected);
+
+    // test 2, check non-Latin set
+    model.setPrimaryG0CharacterEncoding_('g0_hebrew');
+    const row2 = model.getRow_(rowNum);
+
+    const expected2 = {
+        1: { char_: '£' },
+        2: { char_: '$' },
+        3: { char_: '←' },
+    };
+
+    checkExpectedCells(row2, expected2);
+});
+
 test('getRow_ applies the correct cell type on a held mosaic', () => {
     const model = new PageModel();
     const rowNum = 1;
@@ -373,7 +411,9 @@ test('getRow_ applies level 2.5 enhancements', () => {
     enhancement.
         pos(0, 1).putG1('!').
         pos(2, 1).putG1('!').
-        pos(3, 1).putG3('!').
+        pos(3, 1).putG1('@').
+        pos(4, 1).putG1('D').
+        pos(5, 1).putG3('!').
         end();
     model.setLevel_(Level[2.5]);
 
@@ -384,11 +424,21 @@ test('getRow_ applies level 2.5 enhancements', () => {
              type_: CellType.MOSAIC_CONTIGUOUS_ },
         2: { char_: '\ue0c1', // unscii
              type_: CellType.MOSAIC_SEPARATED_ },
-        3: { char_: '🬽',
+        3: { char_: '@' }, // G0 Latin set
+        4: { char_: 'D' }, // G0 Latin set
+        5: { char_: '🬽',
              type_: CellType.G3_ }
     };
 
     checkExpectedCells(row, expected);
+    expect(row.getCell_(3).isMosaic_()).toBe(false);
+    expect(row.getCell_(4).isMosaic_()).toBe(false);
+
+    // test correct G0 set used for certain G1 characters
+    model.setPrimaryG0CharacterEncoding_('g0_greek');
+    const row2 = model.getRow_(rowNum);
+    expect(row2.getCell_(3).char_).toBe('ΐ');
+    expect(row2.getCell_(4).char_).toBe('Δ');
 });
 
 
