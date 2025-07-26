@@ -37,7 +37,7 @@ test('getRow_ handles set-at attributes', () => {
         Att.charFromAttribute(Att.CONTIGUOUS_GRAPHICS) +
         Att.charFromAttribute(Att.FLASH) + 'x' +
         Att.charFromAttribute(Att.STEADY) +
-        Att.charFromAttribute(Att.DOUBLE_HEIGHT) + 'x' +
+        Att.charFromAttribute(Att.DOUBLE_HEIGHT) + 'x' + //  set-up for NORMAL_SIZE
         Att.charFromAttribute(Att.NORMAL_SIZE) +
         Att.charFromAttribute(Att.CONCEAL) +
         "\x21" + // a mosaic character
@@ -196,7 +196,7 @@ test('getRow_ handles set-after attributes overriden by set-at attributes', () =
     checkExpectedCells(row, expected);
 });
 
-test('getRow_ handles concealed cancelled by certain attributes', () => {
+test('getRow_ cancels concealed on certain attributes', () => {
     const model = new PageModel();
     const rowNum = 1;
 
@@ -224,10 +224,10 @@ test('getRow_ ignores unknown attributes', () => {
     const row = model.getRow_(rowNum);
 
     const expected = {
-        0: { char_: ' ' },
-        1: { size_: CellSize.NORMAL_SIZE_ },
-        1: { char_: ' ' },
-        2: { size_: CellSize.NORMAL_SIZE_ },
+        0: { char_: ' ',
+             size_: CellSize.NORMAL_SIZE_ },
+        1: { char_: ' ',
+             size_: CellSize.NORMAL_SIZE_ },
     };
 
     checkExpectedCells(row, expected);
@@ -282,14 +282,14 @@ test('getRow_ applies the correct cell type on a held mosaic', () => {
     const row = model.getRow_(rowNum);
 
     const expected = {
-        2: { char_: '\ud83e\udf24' },
-        2: { type_: CellType.MOSAIC_CONTIGUOUS_ },
-        4: { char_: '\ud83e\udf17' },
-        4: { type_: CellType.MOSAIC_CONTIGUOUS_ }, // separated is active but the held mosaic is contiguous
-        5: { char_: '\ud83e\udf17' },
-        5: { type_: CellType.MOSAIC_CONTIGUOUS_ }, // held
-        6: { char_: '\ud83e\udf24' },
-        6: { type_: CellType.MOSAIC_SEPARATED_ } // non-held - separated takes effect
+        2: { char_: '\ud83e\udf24',
+             type_: CellType.MOSAIC_CONTIGUOUS_ },
+        4: { char_: '\ud83e\udf17',
+             type_: CellType.MOSAIC_CONTIGUOUS_ }, // separated is active but the held mosaic is contiguous
+        5: { char_: '\ud83e\udf17',
+             type_: CellType.MOSAIC_CONTIGUOUS_ }, // held
+        6: { char_: '\ue0ea', // Unscii
+             type_: CellType.MOSAIC_SEPARATED_ } // non-held - separated takes effect
     };
 
     checkExpectedCells(row, expected);
@@ -308,7 +308,7 @@ test('getRow_ resets the held mosaic on a change of alphanumeric mode or size', 
     const text2 = Att.charFromGraphicColour(Colour.RED) +
         '\x21' +
         Att.charFromAttribute(Att.HOLD_MOSAICS) +
-        Att.charFromAttribute(Att.DOUBLE_SIZE);
+        Att.charFromAttribute(Att.DOUBLE_HEIGHT);
 
     model.setRowFromChars_(rowNum, text1);
     model.setRowFromChars_(rowNum, text2);
@@ -332,11 +332,64 @@ test('getRow_ keeps the held mosaic on certain attributes', () => {
     expect(model.getRow_(1).getCell_(4).char_).toBe('\ud83e\udf00');
 });
 
+test('getRow_ ensures G0 enhancements are not effected by secondary G0 set', () => {
+    const model = new PageModel();
+    const rowNum = 1;
+    const text = Att.charFromAttribute(Att.ESC) + "A".repeat(40);
+    model.setRowFromChars_(rowNum, text);
 
-// TODO
-// level 1.5 enhancement with secondary g0 and g2 set
-// level 2.5 enhancements
+    const enhancement = new Enhancement(model);
+    enhancement.
+        pos(1, 1).putG0('a').
+        end();
+    model.setLevel_(Level[1.5]);
+    model.setSecondaryG0CharacterEncoding_('g0_hebrew');
 
+    expect(model.getRow_(1).getCell_(1).char_).toBe('a');
+});
+
+test('getRow_ handles level 2.5 set-after attributes', () => {
+    const model = new PageModel();
+    const rowNum = 1;
+
+    const text = Att.charFromAttribute(Att.DOUBLE_WIDTH) + 'x ' +
+        Att.charFromAttribute(Att.DOUBLE_SIZE) + 'x ';
+
+    model.setRowFromChars_(rowNum, text);
+    model.setLevel_(Level[2.5]);
+    const row = model.getRow_(rowNum);
+
+    expect(row.getCell_(1).size_).toBe(CellSize.DOUBLE_WIDTH_);
+    expect(row.getCell_(4).size_).toBe(CellSize.DOUBLE_SIZE_);
+});
+
+test('getRow_ applies level 2.5 enhancements', () => {
+    const model = new PageModel();
+    const rowNum = 1;
+    const text = 'A' + Att.charFromAttribute(Att.SEPARATED_GRAPHICS) + "A".repeat(40);
+    model.setRowFromChars_(rowNum, text);
+
+    const enhancement = new Enhancement(model);
+    enhancement.
+        pos(0, 1).putG1('!').
+        pos(2, 1).putG1('!').
+        pos(3, 1).putG3('!').
+        end();
+    model.setLevel_(Level[2.5]);
+
+    const row = model.getRow_(rowNum);
+    // spec question - assuming that the separated form from the base page is applied to G1 enhancements
+    const expected = {
+        0: { char_: '\ud83e\udf00', // unicode mosaic/sextant
+             type_: CellType.MOSAIC_CONTIGUOUS_ },
+        2: { char_: '\ue0c1', // unscii
+             type_: CellType.MOSAIC_SEPARATED_ },
+        3: { char_: '🬽',
+             type_: CellType.G3_ }
+    };
+
+    checkExpectedCells(row, expected);
+});
 
 
 function checkExpectedCells(row, expected) {
