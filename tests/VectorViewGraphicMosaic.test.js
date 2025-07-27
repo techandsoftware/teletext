@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: © 2025 Rob Hardy
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { expect, test } from 'vitest'
 import { JSDOM } from 'jsdom';
 

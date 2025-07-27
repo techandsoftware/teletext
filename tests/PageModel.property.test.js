@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: © 2025 Rob Hardy
+// SPDX-License-Identifier: AGPL-3.0-only
+
 import { test, fc } from '@fast-check/vitest';
 import { expect } from 'vitest';
 
