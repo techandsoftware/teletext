@@ -322,9 +322,13 @@ Clears the screen.  `withUpdate` is an optional boolean, default is `true`. When
 
 Removes the teletext display from the DOM.
 
-## showTestPage()
+## showTestPage(pageName)
 
-4 test pages are built-in. This displays a test page, rotating through these every time this is called. The test pages were kindly supplied by https://archive.teletextarchaeologist.org/
+4 test pages are built-in. This displays a test page. Without the pageName, this rotates through the pages every time this is called.
+
+If supplied, the given pageName is displayed. Available pages are: SPLASH, ENGINEERING, ADVERT, UK.
+
+The test pages were kindly supplied by https://archive.teletextarchaeologist.org/
 
 ## toggleGrid()
 

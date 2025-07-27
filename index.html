@@ -11,16 +11,14 @@
   <style>
     body {
       background-color: darkblue;
-      font-size: 30px;
       color: white;
-    }
-
-    input {
-      font-size: 30px;
     }
 
     td {
       padding: 5px;
+    }
+    a {
+      color: cyan;
     }
   </style>
 
@@ -31,18 +29,7 @@
     const t = Teletext();
     t.addTo('#teletextscreen');
     t.setDefaultG0Charset('g0_latin__english');
-    t.showTestPage();
-
-    // following is for testing enhancements at level 1.5
-    // t.setLevel(Level[1.5]);
-    // let enhance = t.enhance()
-    //     .pos(0, 10).putG0('e')
-    //     .pos(1, 10).putG0('e', 2)
-    //     .pos(2, 10).putAt()
-    //     .pos(3, 10).putG2('\u0055')
-    //     .pos(4, 10).putG3('\u0025')
-    //     .pos(5, 10).putG1('\u0039')
-    //     .end();
+    t.showTestPage('ENGINEERING');
   </script>
 
 
@@ -92,6 +79,7 @@
     </tr>
   </table>
 
+  <p>See also: <a href="import_from_jsdelivr.html">Importing from jsdeliver</a> and <a href="import_lib_from_dist.html">Importing from local dist</a></p>
 </body>
 
 </html>
