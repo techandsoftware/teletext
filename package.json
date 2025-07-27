@@ -1,6 +1,6 @@
 {
   "name": "@techandsoftware/teletext",
-  "version": "0.16.0",
+  "version": "1.0.0",
   "description": "API to render teletext pages using vector graphics in the browser DOM",
   "browser": "dist/teletext.min.js",
   "module": "dist/teletext.min.js",
