@@ -71,7 +71,7 @@ const ut = "QIECBAgQIIcWLGg2EDdy3QIKnXKgYtUE7f2QA2TB0wYr2DECAAgAIACAAgAIACAAgAIA
   UK: It,
   SPLASH: Bt
 }, S = "http://www.w3.org/2000/svg";
-let et = 0, K, p;
+let et = 0, q, p;
 class x {
   constructor() {
   }
@@ -126,7 +126,7 @@ class x {
 }
 class St extends x {
   constructor(t) {
-    return super(), K = t, p = K.document, this._e = p.createElementNS(S, "svg"), this._e.setAttribute("xmlns", S), this;
+    return super(), q = t, p = q.document, this._e = p.createElementNS(S, "svg"), this._e.setAttribute("xmlns", S), this;
   }
   addTo_(t) {
     const e = p.querySelector(t);
@@ -174,7 +174,7 @@ class V extends x {
     return this._e.append(e._node()), this._c.push(e), e;
   }
   defs_() {
-    const t = new Lt();
+    const t = new wt();
     return this._e.append(t._node()), t;
   }
   rect_(t, e) {
@@ -263,12 +263,12 @@ class mt extends x {
     return this._e.setAttribute("fill", t), this;
   }
 }
-class Lt extends x {
+class wt extends x {
   constructor() {
     return super(), this._e = p.createElementNS(S, "defs"), this;
   }
   clip_() {
-    const t = new wt();
+    const t = new Lt();
     return this._e.append(t._node()), t;
   }
   find_(t) {
@@ -279,7 +279,7 @@ class Lt extends x {
     return this._e.append(_._node()), _;
   }
 }
-class wt extends x {
+class Lt extends x {
   constructor() {
     return super(), this._e = p.createElementNS(S, "clipPath"), this._e.setAttribute("id", `clipPath-${et}`), et++, this;
   }
@@ -292,7 +292,7 @@ class wt extends x {
 }
 class W extends x {
   constructor(t, e) {
-    if (super(), t instanceof K.SVGElement)
+    if (super(), t instanceof q.SVGElement)
       return this._e = t, this;
     const _ = t;
     return this._e = p.createElementNS(S, "rect"), this._e.setAttribute("width", parseInt(_)), this._e.setAttribute("height", parseInt(e)), this;
@@ -320,12 +320,12 @@ class Ot extends x {
 }
 function At(r) {
   let t;
-  switch (r.constructor.name) {
-    case "SVGRectElement":
+  switch (r.tagName) {
+    case "rect":
       t = new W(r);
       break;
     default:
-      throw new Error("SVG:wrapSVGElement Unable to wrap SVG element of type " + r.constructor.name);
+      throw new Error("SVG:wrapSVGElement Unable to wrap SVG element " + r.tagName);
   }
   return t;
 }
@@ -520,11 +520,11 @@ function J(r) {
     t[r[e]] = e;
   return Object.freeze(t);
 }
-const L = 400, w = 250, P = 40, k = 25, rt = 1.5, Tt = {
-  1.33: L / (1.33 * w),
-  1.2: L / (1.2 * w),
-  1.22: L / (1.22 * w)
-}, ot = 1.2, y = w / k, f = L / P, Y = y * 2, Dt = f * 2, Z = f / 2, Ut = y * (4 / 5), M = {
+const w = 400, L = 250, P = 40, k = 25, rt = 1.5, Tt = {
+  1.33: w / (1.33 * L),
+  1.2: w / (1.2 * L),
+  1.22: w / (1.22 * L)
+}, ot = 1.2, y = L / k, f = w / P, Y = y * 2, Dt = f * 2, Z = f / 2, Ut = y * (4 / 5), M = {
   _contiguous: {
     _textLength: f + 0.4,
     _DX: 0 - Z - 0.2
@@ -537,7 +537,7 @@ const L = 400, w = 250, P = 40, k = 25, rt = 1.5, Tt = {
 Object.freeze(M);
 class C {
   constructor(t, e) {
-    this._svg = new St(e).viewbox_(`0 0 ${L} ${w}`).size_(L * rt, w * rt * Tt[ot]).attr_({
+    this._svg = new St(e).viewbox_(`0 0 ${w} ${L}`).size_(w * rt, L * rt * Tt[ot]).attr_({
       preserveAspectRatio: "none",
       style: "font-family: sans-serif"
     }).style_(Pt()), this.d = this._svg.group_().attr_("class", "conceal_concealed flash_flashing"), this._aspectRatio = ot, this._createDisplay(), this._createBoxModeClip(), this._gridLayer = null, this._model = t, this._listenerId = this._model.onSet_.attach_(
@@ -566,8 +566,8 @@ class C {
           i = !1, this._clearCell(I), this._extendBackgroundForRow(s), E && this._extendBox();
           return;
         }
-        const c = a.getCell_(u), O = X(c.bgColour_), v = c.isMosaicByte_(), G = X(c.fgColour_), l = this._getCellAttr(c.type_, v, c.isCursive_);
-        this._renderCell(I, c, l, G, u, s, v), c.boxed_ && (E ? this._extendBox() : this._setBoxForRow(s, u), this._pageContainsBox = !0), A == O ? this._extendBackgroundForRow(s) : this._setBackgroundForRow(s, u, O), (c.size_ == d.DOUBLE_WIDTH_ || c.size_ == d.DOUBLE_SIZE_) && (i = !0), A = O, E = c.boxed_, c.flashing_ && (e = !0);
+        const c = a.getCell_(u), O = X(c.bgColour_), G = c.isMosaicByte_(), v = X(c.fgColour_), l = this._getCellAttr(c.type_, G, c.isCursive_);
+        this._renderCell(I, c, l, v, u, s, G), c.boxed_ && (E ? this._extendBox() : this._setBoxForRow(s, u), this._pageContainsBox = !0), A == O ? this._extendBackgroundForRow(s) : this._setBackgroundForRow(s, u, O), (c.size_ == d.DOUBLE_WIDTH_ || c.size_ == d.DOUBLE_SIZE_) && (i = !0), A = O, E = c.boxed_, c.flashing_ && (e = !0);
       }), a.doubleHeight_ ? (this._setRowDoubleHeight(s), this._setBoxDoubleHeight(), t = !0) : t = !1, this._makeClipFromBoxesForRow(s);
     }), "_endOfUpdate" in this._plugins && this._plugins._endOfUpdate(this._svg.width_(), this._svg.height_()), this.d.addClass_("conceal_concealed"), e && setTimeout(() => this.d.addClass_("flash_flashing"), 100), this._refreshMixMode();
   }
@@ -611,7 +611,7 @@ class C {
     this._aspectRatio = t, this.setHeight_(this._svg.height_());
   }
   setHeight_(t) {
-    const e = this._aspectRatio == "natural" ? t * (L / w) : t * this._aspectRatio;
+    const e = this._aspectRatio == "natural" ? t * (w / L) : t * this._aspectRatio;
     this._svg.size_(e, t);
   }
   _setMixMode() {
@@ -629,12 +629,12 @@ class C {
   _drawGrid() {
     this._gridLayer = this.d.group_();
     for (let t = 0; t < k; t++)
-      this._gridLayer.line_(0, t * y, L - 1, t * y).attr_({
+      this._gridLayer.line_(0, t * y, w - 1, t * y).attr_({
         stroke: "#555",
         "stroke-width": 0.5
       });
     for (let t = 0; t < P; t++)
-      this._gridLayer.line_(t * f, 0, t * f, w - 1).attr_({
+      this._gridLayer.line_(t * f, 0, t * f, L - 1).attr_({
         stroke: "#555",
         "stroke-width": 0.5
       });
@@ -735,8 +735,8 @@ class C {
   registerPlugin(t, e) {
     return "renderBackground" in e && (this._plugins._background = e.renderBackground), "renderMosaic" in e && (this._plugins._mosaic = e.renderMosaic), "endOfPageUpdate" in e && (this._plugins._endOfUpdate = e.endOfPageUpdate), "clearCellsForRow" in e && (this._plugins._clearCellsForRow = e.clearCellsForRow), {
       lookupColour: Ht,
-      isDoubleHeight: vt,
-      isDoubleWidth: Gt,
+      isDoubleHeight: Gt,
+      isDoubleWidth: vt,
       isDoubleSize: Mt,
       isSeparatedMosaic: Nt,
       createImageOverlay: this._createImageOverlay.bind(this),
@@ -744,7 +744,7 @@ class C {
     };
   }
   _createImageOverlay() {
-    const t = this.d.image_(L, w);
+    const t = this.d.image_(w, L);
     return t.attr_("preserveAspectRatio", "none"), t;
   }
   _createSVGOverlay() {
@@ -756,12 +756,12 @@ C._CELL_WIDTH = f;
 C._CELL_HEIGHT = y;
 C._CELL_DOUBLE_WIDTH = Dt;
 C._CELL_DOUBLE_HEIGHT = Y;
-C._WIDTH_PX = L;
-C._HEIGHT_PX = w;
+C._WIDTH_PX = w;
+C._HEIGHT_PX = L;
 C._MOSAIC_METRIC = M;
 C.ROWS = k;
 C.COLS = P;
-const Ht = (r) => X(r), vt = (r) => r == d.DOUBLE_HEIGHT_, Gt = (r) => r == d.DOUBLE_WIDTH_, Mt = (r) => r == d.DOUBLE_SIZE_, Nt = (r) => r == n.MOSAIC_SEPARATED_, nt = (r) => 0 - r * y, at = (r) => 0 - r * f;
+const Ht = (r) => X(r), Gt = (r) => r == d.DOUBLE_HEIGHT_, vt = (r) => r == d.DOUBLE_WIDTH_, Mt = (r) => r == d.DOUBLE_SIZE_, Nt = (r) => r == n.MOSAIC_SEPARATED_, nt = (r) => 0 - r * y, at = (r) => 0 - r * f;
 function Ft() {
   return String.fromCharCode(32 + Math.random() * 95);
 }
@@ -838,13 +838,13 @@ shape-rendering: crispEdges;
 rect { color: orange; }
 `;
 }
-const kt = { $: "¤", "": "■" }, Wt = { "#": "#", $: "ů", "@": "č", "[": "ť", "\\": "ž", "]": "ý", "^": "í", _: "ř", "`": "é", "{": "á", "|": "|", "}": "ú", "~": "š" }, zt = { "#": "£", $: "$", "@": "@", "[": "←", "\\": "½", "]": "→", "^": "↑", _: "#", "`": "—", "{": "¼", "|": "‖", "}": "¾", "~": "÷" }, jt = { "#": "#", $: "õ", "@": "Š", "[": "Ä", "\\": "Ö", "]": "Ž", "^": "Ü", _: "Õ", "`": "š", "{": "ä", "|": "ö", "}": "ž", "~": "ü" }, qt = { "#": "é", $: "ï", "@": "à", "[": "ë", "\\": "ê", "]": "ù", "^": "î", _: "#", "`": "è", "{": "â", "|": "ô", "}": "û", "~": "ç" }, Kt = { "#": "#", $: "$", "@": "§", "[": "Ä", "\\": "Ö", "]": "Ü", "^": "^", _: "_", "`": "°", "{": "ä", "|": "ö", "}": "ü", "~": "ß" }, Xt = { "#": "£", $: "$", "@": "é", "[": "°", "\\": "ç", "]": "→", "^": "↑", _: "#", "`": "ù", "{": "à", "|": "ò", "}": "è", "~": "ì" }, Yt = { "#": "#", $: "$", "@": "Š", "[": "ė", "\\": "ę", "]": "Ž", "^": "č", _: "ū", "`": "š", "{": "ą", "|": "ų", "}": "ž", "~": "į" }, Zt = { "#": "#", $: "ń", "@": "ą", "[": "Ƶ", "\\": "Ś", "]": "Ł", "^": "ć", _: "ó", "`": "ę", "{": "ż", "|": "ś", "}": "ł", "~": "ź" }, Vt = { "#": "ç", $: "$", "@": "¡", "[": "á", "\\": "é", "]": "í", "^": "ó", _: "ú", "`": "¿", "{": "ü", "|": "ñ", "}": "è", "~": "à" }, Jt = { "#": "#", $: "¤", "@": "Ț", "[": "Â", "\\": "Ș", "]": "Ă", "^": "Î", _: "ı", "`": "ț", "{": "â", "|": "ș", "}": "ă", "~": "î" }, $t = { "#": "#", $: "Ë", "@": "Č", "[": "Ć", "\\": "Ž", "]": "Đ", "^": "Š", _: "ë", "`": "č", "{": "ć", "|": "ž", "}": "đ", "~": "š" }, te = { "#": "#", $: "¤", "@": "É", "[": "Ä", "\\": "Ö", "]": "Å", "^": "Ü", _: "_", "`": "é", "{": "ä", "|": "ö", "}": "å", "~": "ü" }, ee = { "#": "₺", $: "ğ", "@": "İ", "[": "Ş", "\\": "Ö", "]": "Ç", "^": "Ü", _: "Ğ", "`": "ı", "{": "ş", "|": "ö", "}": "ç", "~": "ü" }, _e = { 0: "°", 1: "±", 2: "²", 3: "³", 4: "×", 5: "µ", 6: "¶", 7: "·", 8: "÷", 9: "’", "!": "¡", '"': "¢", "#": "£", "%": "¥", "&": "#", "'": "§", "(": "¤", ")": "‘", "*": "“", "+": "«", ",": "←", "-": "↑", ".": "→", "/": "↓", ":": "”", ";": "»", "<": "¼", "=": "½", ">": "¾", "?": "¿", "@": " ", A: "̀", B: "́", C: "̂", D: "̃", E: "̄", F: "̆", G: "̇", H: "̈", I: "̣", J: "̊", K: "̧", L: "̲", M: "̋", N: "̨", O: "̌", P: "—", Q: "¹", R: "®", S: "©", T: "™", U: "♪", V: "₠", W: "‰", X: "α", Y: null, Z: null, "[": null, "\\": "⅛", "]": "⅜", "^": "⅝", _: "⅞", "`": "Ω", a: "Æ", b: "Ð", c: "ª", d: "Ħ", e: null, f: "Ĳ", g: "Ŀ", h: "Ł", i: "Ø", j: "Œ", k: "º", l: "Þ", m: "Ŧ", n: "Ŋ", o: "ŉ", p: "ĸ", q: "æ", r: "đ", s: "ð", t: "ħ", u: "ı", v: "ĳ", w: "ŀ", x: "ł", y: "ø", z: "œ", "{": "ß", "|": "þ", "}": "ŧ", "~": "ŋ", "": "■" }, se = { "<": "«", ">": "»", "@": "ΐ", A: "Α", B: "Β", C: "Γ", D: "Δ", E: "Ε", F: "Ζ", G: "Η", H: "Θ", I: "Ι", J: "Κ", K: "Λ", L: "Μ", M: "Ν", N: "Ξ", O: "Ο", P: "Π", Q: "Ρ", R: "ʹ", S: "Σ", T: "Τ", U: "Υ", V: "Φ", W: "Χ", X: "Ψ", Y: "Ω", Z: "Ϊ", "[": "Ϋ", "\\": "ά", "]": "έ", "^": "ή", _: "ί", "`": "ΰ", a: "α", b: "β", c: "γ", d: "δ", e: "ε", f: "ζ", g: "η", h: "θ", i: "ι", j: "κ", k: "λ", l: "μ", m: "ν", n: "ξ", o: "ο", p: "π", q: "ρ", r: "ς", s: "σ", t: "τ", u: "υ", v: "φ", w: "χ", x: "ψ", y: "ω", z: "ϊ", "{": "ϋ", "|": "ό", "}": "ύ", "~": "ώ", "": "■" }, ie = { 0: "°", 1: "±", 2: "²", 3: "³", 4: "×", 5: "m", 6: "n", 7: "p", 8: "÷", 9: "’", "!": "a", '"': "b", "#": "£", $: "e", "%": "h", "&": "i", "'": "§", "(": ":", ")": "‘", "*": "“", "+": "k", ",": "←", "-": "↑", ".": "→", "/": "↓", ":": "”", ";": "t", "<": "¼", "=": "½", ">": "¾", "?": "x", "@": " ", A: "̀", B: "́", C: "̂", D: "̃", E: "̄", F: "̆", G: "̇", H: "̈", I: "̣", J: "̊", K: "̧", L: "̲", M: "̋", N: "̨", O: "̌", P: "?", Q: "¹", R: "®", S: "©", T: "™", U: "♪", V: "₠", W: "‰", X: "ɑ", Y: "Ί", Z: "Ύ", "[": "Ώ", "\\": "⅛", "]": "⅜", "^": "⅝", _: "⅞", "`": "C", a: "D", b: "F", c: "G", d: "J", e: "L", f: "Q", g: "R", h: "S", i: "U", j: "V", k: "W", l: "Y", m: "Z", n: "Ά", o: "Ή", p: "c", q: "d", r: "f", s: "g", t: "j", u: "l", v: "q", w: "r", x: "s", y: "u", z: "v", "{": "w", "|": "y", "}": "z", "~": "Έ", "": "■" }, re = { "@": "Ю", A: "А", B: "Б", C: "Ц", D: "Д", E: "Е", F: "Ф", G: "Г", H: "Х", I: "И", J: "Ѝ", K: "К", L: "Л", M: "М", N: "Н", O: "О", P: "П", Q: "Я", R: "Р", S: "С", T: "Т", U: "У", V: "Ж", W: "В", X: "Ь", Z: "З", "[": "Ш", "]": "Щ", "^": "Ч", "`": "ю", a: "а", b: "б", c: "ц", d: "д", e: "е", f: "ф", g: "г", h: "х", i: "и", j: "ѝ", k: "к", l: "л", m: "м", n: "н", o: "о", p: "п", q: "я", r: "р", s: "с", t: "т", u: "у", v: "ж", w: "в", x: "ь", z: "з", "{": "ш", "}": "щ", "~": "ч", "": "■" }, oe = { "&": "ы", Y: "Ъ", "\\": "Э", _: "Ы", y: "ъ", "|": "э" }, ne = { "@": "Ч", J: "Ј", Q: "Ќ", V: "В", W: "Ѓ", X: "Љ", Y: "Њ", "[": "Ћ", "\\": "Ж", "]": "Ђ", "^": "Ш", _: "Џ", "`": "ч", j: "ј", q: "ќ", v: "в", w: "ѓ", x: "љ", y: "њ", "{": "ћ", "|": "ж", "}": "ђ", "~": "ш" }, ae = { "&": "ї", Y: "І", "\\": "Є", _: "Ї", y: "і", "|": "є" }, he = { 0: "m", 1: "n", 2: "p", 3: "t", 4: "x", 5: "x", 6: "°", 7: "±", 8: "²", 9: "³", "!": "a", '"': "b", "#": "£", $: "e", "%": "h", "&": "i", "'": "§", "(": ":", ")": "‘", "*": "“", "+": "k", ",": "←", "-": "↑", ".": "→", "/": "↓", ":": "¼", ";": "½", "<": "¾", "=": "÷", ">": "’", "?": "”", "@": " ", A: "̀", B: "́", C: "̂", D: "̃", E: "̄", F: "̆", G: "̇", H: "̈", I: "̣", J: "̊", K: "̧", L: "̲", M: "̋", N: "̨", O: "̌", P: "?", Q: "©", R: "®", S: "¹", T: "ɑ", U: "Ί", V: "Ύ", W: "Ώ", X: "‰", Y: "₠", Z: "™", "[": "⅛", "\\": "⅜", "]": "⅝", "^": "⅞", _: "♪", "`": "C", a: "D", b: "F", c: "G", d: "J", e: "L", f: "Q", g: "R", h: "S", i: "U", j: "V", k: "W", l: "Y", m: "Z", n: "Ά", o: "Ή", p: "c", q: "d", r: "f", s: "g", t: "j", u: "l", v: "q", w: "r", x: "s", y: "u", z: "v", "{": "w", "|": "y", "}": "z", "~": "Έ", "": "■" }, ce = { "#": "£", "&": "ﻰ", "'": "ﻱ", "(": ")", ")": "(", ";": "؛", "<": ">", ">": "<", "?": "؟", "@": "ﺔ", A: "ﺀ", B: "ﺒ", C: "ﺏ", D: "ﺘ", E: "ﺕ", F: "ﺎ", G: "ﺍ", H: "ﺑ", I: "ﺓ", J: "ﺗ", K: "ﺛ", L: "ﺟ", M: "ﺣ", N: "ﺧ", O: "ﺩ", P: "ﺫ", Q: "ﺭ", R: "ﺯ", S: "ﺳ", T: "ﺷ", U: "ﺻ", V: "ﺿ", W: "ﻃ", X: "ﻇ", Y: "ﻋ", Z: "ﻏ", "[": "ﺜ", "\\": "ﺠ", "]": "ﺤ", "^": "ﺨ", _: "#", "`": "ـ", a: "ﻓ", b: "ﻗ", c: "ﻛ", d: "ﻟ", e: "ﻣ", f: "ﻧ", g: "ﻫ", h: "ﻭ", i: "ﻰ", j: "ﻳ", k: "ﺙ", l: "ﺝ", m: "ﺡ", n: "ﺥ", o: "ﻴ", p: "ﻯ", q: "ﻌ", r: "ﻐ", s: "ﻔ", t: "ﻑ", u: "ﻘ", v: "ﻕ", w: "ﻙ", x: "ﻠ", y: "ﻝ", z: "ﻤ", "{": "ﻡ", "|": "ﻨ", "}": "ﻥ", "~": "ﻻ", "": "■" }, Ae = { 0: "٠", 1: "١", 2: "٢", 3: "٣", 4: "٤", 5: "٥", 6: "٦", 7: "٧", 8: "٨", 9: "٩", "!": "ﻉ", '"': "ﺁ", "#": "ﺃ", $: "ﺅ", "%": "ﺇ", "&": "ﺋ", "'": "ﺊ", "(": "ﭼ", ")": "ﭽ", "*": "ﭺ", "+": "ﭘ", ",": "ﭙ", "-": "ﭖ", ".": "ﮊ", "/": "ﮔ", ":": "ﻎ", ";": "ﻍ", "<": "ﻼ", "=": "ﻬ", ">": "ﻪ", "?": "ﻩ", "@": "à", "[": "ë", "\\": "ê", "]": "ù", "^": "î", _: "ﻊ", "`": "é", "{": "â", "|": "ô", "}": "û", "~": "ç", "": "■" }, ge = { "#": "£", "[": "←", "\\": "½", "]": "→", "^": "↑", _: "#", "`": "א", a: "ב", b: "ג", c: "ד", d: "ה", e: "ו", f: "ז", g: "ח", h: "ט", i: "י", j: "ך", k: "כ", l: "ל", m: "ם", n: "מ", o: "ן", p: "נ", q: "ס", r: "ע", s: "ף", t: "פ", u: "ץ", v: "צ", w: "ק", x: "ר", y: "ש", z: "ת", "{": "₪", "|": "‖", "}": "¾", "~": "÷", "": "■" }, le = { 0: "🬏", 1: "🬐", 2: "🬑", 3: "🬒", 4: "🬓", 5: "▌", 6: "🬔", 7: "🬕", 8: "🬖", 9: "🬗", " ": " ", "!": "🬀", '"': "🬁", "#": "🬂", $: "🬃", "%": "🬄", "&": "🬅", "'": "🬆", "(": "🬇", ")": "🬈", "*": "🬉", "+": "🬊", ",": "🬋", "-": "🬌", ".": "🬍", "/": "🬎", ":": "🬘", ";": "🬙", "<": "🬚", "=": "🬛", ">": "🬜", "?": "🬝", "`": "🬞", a: "🬟", b: "🬠", c: "🬡", d: "🬢", e: "🬣", f: "🬤", g: "🬥", h: "🬦", i: "🬧", j: "▐", k: "🬨", l: "🬩", m: "🬪", n: "🬫", o: "🬬", p: "🬭", q: "🬮", r: "🬯", s: "🬰", t: "🬱", u: "🬲", v: "🬳", w: "🬴", x: "🬵", y: "🬶", z: "🬷", "{": "🬸", "|": "🬹", "}": "🬺", "~": "🬻", "": "█" }, Ce = { 0: "", 1: "", 2: "", 3: "", 4: "", 5: "", 6: "", 7: "", 8: "", 9: "", " ": " ", "!": "", '"': "", "#": "", $: "", "%": "", "&": "", "'": "", "(": "", ")": "", "*": "", "+": "", ",": "", "-": "", ".": "", "/": "", ":": "", ";": "", "<": "", "=": "", ">": "", "?": "", "`": "", a: "", b: "", c: "", d: "", e: "", f: "", g: "", h: "", i: "", j: "", k: "", l: "", m: "", n: "", o: "", p: "", q: "", r: "", s: "", t: "", u: "", v: "", w: "", x: "", y: "", z: "", "{": "", "|": "", "}": "", "~": "", "": "" }, de = { 0: "🭇", 1: "🭈", 2: "🭉", 3: "🭊", 4: "🭋", 5: "◢", 6: "🭌", 7: "🭍", 8: "🭎", 9: "🭏", " ": "🬼", "!": "🬽", '"': "🬾", "#": "🬿", $: "🭀", "%": "◣", "&": "🭁", "'": "🭂", "(": "🭃", ")": "🭄", "*": "🭅", "+": "🭆", ",": "🭨", "-": "🭩", ".": "🭰", "/": "▒", ":": "🭐", ";": "🭑", "<": "🭪", "=": "🭫", ">": "🭵", "?": "█", "@": "┷", A: "┯", B: "┝", C: "┥", D: "🮤", E: "🮥", F: "🮦", G: "🮧", H: "🮠", I: "🮡", J: "🮢", K: "🮣", L: "┿", M: "•", N: "●", O: "○", P: "│", Q: "─", R: "┌", S: "┐", T: "└", U: "┘", V: "├", W: "┤", X: "┬", Y: "┴", Z: "┼", "[": "→", "\\": "←", "]": "↑", "^": "↓", _: " ", "`": "🭒", a: "🭓", b: "🭔", c: "🭕", d: "🭖", e: "◥", f: "🭗", g: "🭘", h: "🭙", i: "🭚", j: "🭛", k: "🭜", l: "🭬", m: "🭭", n: null, o: null, p: "🭝", q: "🭞", r: "🭟", s: "🭠", t: "🭡", u: "◤", v: "🭢", w: "🭣", x: "🭤", y: "🭥", z: "🭦", "{": "🭧", "|": "🭮", "}": "🭯", "~": null, "": null }, R = {
+const kt = { $: "¤", "": "■" }, Wt = { "#": "#", $: "ů", "@": "č", "[": "ť", "\\": "ž", "]": "ý", "^": "í", _: "ř", "`": "é", "{": "á", "|": "|", "}": "ú", "~": "š" }, zt = { "#": "£", $: "$", "@": "@", "[": "←", "\\": "½", "]": "→", "^": "↑", _: "#", "`": "—", "{": "¼", "|": "‖", "}": "¾", "~": "÷" }, jt = { "#": "#", $: "õ", "@": "Š", "[": "Ä", "\\": "Ö", "]": "Ž", "^": "Ü", _: "Õ", "`": "š", "{": "ä", "|": "ö", "}": "ž", "~": "ü" }, Kt = { "#": "é", $: "ï", "@": "à", "[": "ë", "\\": "ê", "]": "ù", "^": "î", _: "#", "`": "è", "{": "â", "|": "ô", "}": "û", "~": "ç" }, qt = { "#": "#", $: "$", "@": "§", "[": "Ä", "\\": "Ö", "]": "Ü", "^": "^", _: "_", "`": "°", "{": "ä", "|": "ö", "}": "ü", "~": "ß" }, Xt = { "#": "£", $: "$", "@": "é", "[": "°", "\\": "ç", "]": "→", "^": "↑", _: "#", "`": "ù", "{": "à", "|": "ò", "}": "è", "~": "ì" }, Yt = { "#": "#", $: "$", "@": "Š", "[": "ė", "\\": "ę", "]": "Ž", "^": "č", _: "ū", "`": "š", "{": "ą", "|": "ų", "}": "ž", "~": "į" }, Zt = { "#": "#", $: "ń", "@": "ą", "[": "Ƶ", "\\": "Ś", "]": "Ł", "^": "ć", _: "ó", "`": "ę", "{": "ż", "|": "ś", "}": "ł", "~": "ź" }, Vt = { "#": "ç", $: "$", "@": "¡", "[": "á", "\\": "é", "]": "í", "^": "ó", _: "ú", "`": "¿", "{": "ü", "|": "ñ", "}": "è", "~": "à" }, Jt = { "#": "#", $: "¤", "@": "Ț", "[": "Â", "\\": "Ș", "]": "Ă", "^": "Î", _: "ı", "`": "ț", "{": "â", "|": "ș", "}": "ă", "~": "î" }, $t = { "#": "#", $: "Ë", "@": "Č", "[": "Ć", "\\": "Ž", "]": "Đ", "^": "Š", _: "ë", "`": "č", "{": "ć", "|": "ž", "}": "đ", "~": "š" }, te = { "#": "#", $: "¤", "@": "É", "[": "Ä", "\\": "Ö", "]": "Å", "^": "Ü", _: "_", "`": "é", "{": "ä", "|": "ö", "}": "å", "~": "ü" }, ee = { "#": "₺", $: "ğ", "@": "İ", "[": "Ş", "\\": "Ö", "]": "Ç", "^": "Ü", _: "Ğ", "`": "ı", "{": "ş", "|": "ö", "}": "ç", "~": "ü" }, _e = { 0: "°", 1: "±", 2: "²", 3: "³", 4: "×", 5: "µ", 6: "¶", 7: "·", 8: "÷", 9: "’", "!": "¡", '"': "¢", "#": "£", "%": "¥", "&": "#", "'": "§", "(": "¤", ")": "‘", "*": "“", "+": "«", ",": "←", "-": "↑", ".": "→", "/": "↓", ":": "”", ";": "»", "<": "¼", "=": "½", ">": "¾", "?": "¿", "@": " ", A: "̀", B: "́", C: "̂", D: "̃", E: "̄", F: "̆", G: "̇", H: "̈", I: "̣", J: "̊", K: "̧", L: "̲", M: "̋", N: "̨", O: "̌", P: "—", Q: "¹", R: "®", S: "©", T: "™", U: "♪", V: "₠", W: "‰", X: "α", Y: null, Z: null, "[": null, "\\": "⅛", "]": "⅜", "^": "⅝", _: "⅞", "`": "Ω", a: "Æ", b: "Ð", c: "ª", d: "Ħ", e: null, f: "Ĳ", g: "Ŀ", h: "Ł", i: "Ø", j: "Œ", k: "º", l: "Þ", m: "Ŧ", n: "Ŋ", o: "ŉ", p: "ĸ", q: "æ", r: "đ", s: "ð", t: "ħ", u: "ı", v: "ĳ", w: "ŀ", x: "ł", y: "ø", z: "œ", "{": "ß", "|": "þ", "}": "ŧ", "~": "ŋ", "": "■" }, se = { "<": "«", ">": "»", "@": "ΐ", A: "Α", B: "Β", C: "Γ", D: "Δ", E: "Ε", F: "Ζ", G: "Η", H: "Θ", I: "Ι", J: "Κ", K: "Λ", L: "Μ", M: "Ν", N: "Ξ", O: "Ο", P: "Π", Q: "Ρ", R: "ʹ", S: "Σ", T: "Τ", U: "Υ", V: "Φ", W: "Χ", X: "Ψ", Y: "Ω", Z: "Ϊ", "[": "Ϋ", "\\": "ά", "]": "έ", "^": "ή", _: "ί", "`": "ΰ", a: "α", b: "β", c: "γ", d: "δ", e: "ε", f: "ζ", g: "η", h: "θ", i: "ι", j: "κ", k: "λ", l: "μ", m: "ν", n: "ξ", o: "ο", p: "π", q: "ρ", r: "ς", s: "σ", t: "τ", u: "υ", v: "φ", w: "χ", x: "ψ", y: "ω", z: "ϊ", "{": "ϋ", "|": "ό", "}": "ύ", "~": "ώ", "": "■" }, ie = { 0: "°", 1: "±", 2: "²", 3: "³", 4: "×", 5: "m", 6: "n", 7: "p", 8: "÷", 9: "’", "!": "a", '"': "b", "#": "£", $: "e", "%": "h", "&": "i", "'": "§", "(": ":", ")": "‘", "*": "“", "+": "k", ",": "←", "-": "↑", ".": "→", "/": "↓", ":": "”", ";": "t", "<": "¼", "=": "½", ">": "¾", "?": "x", "@": " ", A: "̀", B: "́", C: "̂", D: "̃", E: "̄", F: "̆", G: "̇", H: "̈", I: "̣", J: "̊", K: "̧", L: "̲", M: "̋", N: "̨", O: "̌", P: "?", Q: "¹", R: "®", S: "©", T: "™", U: "♪", V: "₠", W: "‰", X: "ɑ", Y: "Ί", Z: "Ύ", "[": "Ώ", "\\": "⅛", "]": "⅜", "^": "⅝", _: "⅞", "`": "C", a: "D", b: "F", c: "G", d: "J", e: "L", f: "Q", g: "R", h: "S", i: "U", j: "V", k: "W", l: "Y", m: "Z", n: "Ά", o: "Ή", p: "c", q: "d", r: "f", s: "g", t: "j", u: "l", v: "q", w: "r", x: "s", y: "u", z: "v", "{": "w", "|": "y", "}": "z", "~": "Έ", "": "■" }, re = { "@": "Ю", A: "А", B: "Б", C: "Ц", D: "Д", E: "Е", F: "Ф", G: "Г", H: "Х", I: "И", J: "Ѝ", K: "К", L: "Л", M: "М", N: "Н", O: "О", P: "П", Q: "Я", R: "Р", S: "С", T: "Т", U: "У", V: "Ж", W: "В", X: "Ь", Z: "З", "[": "Ш", "]": "Щ", "^": "Ч", "`": "ю", a: "а", b: "б", c: "ц", d: "д", e: "е", f: "ф", g: "г", h: "х", i: "и", j: "ѝ", k: "к", l: "л", m: "м", n: "н", o: "о", p: "п", q: "я", r: "р", s: "с", t: "т", u: "у", v: "ж", w: "в", x: "ь", z: "з", "{": "ш", "}": "щ", "~": "ч", "": "■" }, oe = { "&": "ы", Y: "Ъ", "\\": "Э", _: "Ы", y: "ъ", "|": "э" }, ne = { "@": "Ч", J: "Ј", Q: "Ќ", V: "В", W: "Ѓ", X: "Љ", Y: "Њ", "[": "Ћ", "\\": "Ж", "]": "Ђ", "^": "Ш", _: "Џ", "`": "ч", j: "ј", q: "ќ", v: "в", w: "ѓ", x: "љ", y: "њ", "{": "ћ", "|": "ж", "}": "ђ", "~": "ш" }, ae = { "&": "ї", Y: "І", "\\": "Є", _: "Ї", y: "і", "|": "є" }, he = { 0: "m", 1: "n", 2: "p", 3: "t", 4: "x", 5: "x", 6: "°", 7: "±", 8: "²", 9: "³", "!": "a", '"': "b", "#": "£", $: "e", "%": "h", "&": "i", "'": "§", "(": ":", ")": "‘", "*": "“", "+": "k", ",": "←", "-": "↑", ".": "→", "/": "↓", ":": "¼", ";": "½", "<": "¾", "=": "÷", ">": "’", "?": "”", "@": " ", A: "̀", B: "́", C: "̂", D: "̃", E: "̄", F: "̆", G: "̇", H: "̈", I: "̣", J: "̊", K: "̧", L: "̲", M: "̋", N: "̨", O: "̌", P: "?", Q: "©", R: "®", S: "¹", T: "ɑ", U: "Ί", V: "Ύ", W: "Ώ", X: "‰", Y: "₠", Z: "™", "[": "⅛", "\\": "⅜", "]": "⅝", "^": "⅞", _: "♪", "`": "C", a: "D", b: "F", c: "G", d: "J", e: "L", f: "Q", g: "R", h: "S", i: "U", j: "V", k: "W", l: "Y", m: "Z", n: "Ά", o: "Ή", p: "c", q: "d", r: "f", s: "g", t: "j", u: "l", v: "q", w: "r", x: "s", y: "u", z: "v", "{": "w", "|": "y", "}": "z", "~": "Έ", "": "■" }, ce = { "#": "£", "&": "ﻰ", "'": "ﻱ", "(": ")", ")": "(", ";": "؛", "<": ">", ">": "<", "?": "؟", "@": "ﺔ", A: "ﺀ", B: "ﺒ", C: "ﺏ", D: "ﺘ", E: "ﺕ", F: "ﺎ", G: "ﺍ", H: "ﺑ", I: "ﺓ", J: "ﺗ", K: "ﺛ", L: "ﺟ", M: "ﺣ", N: "ﺧ", O: "ﺩ", P: "ﺫ", Q: "ﺭ", R: "ﺯ", S: "ﺳ", T: "ﺷ", U: "ﺻ", V: "ﺿ", W: "ﻃ", X: "ﻇ", Y: "ﻋ", Z: "ﻏ", "[": "ﺜ", "\\": "ﺠ", "]": "ﺤ", "^": "ﺨ", _: "#", "`": "ـ", a: "ﻓ", b: "ﻗ", c: "ﻛ", d: "ﻟ", e: "ﻣ", f: "ﻧ", g: "ﻫ", h: "ﻭ", i: "ﻰ", j: "ﻳ", k: "ﺙ", l: "ﺝ", m: "ﺡ", n: "ﺥ", o: "ﻴ", p: "ﻯ", q: "ﻌ", r: "ﻐ", s: "ﻔ", t: "ﻑ", u: "ﻘ", v: "ﻕ", w: "ﻙ", x: "ﻠ", y: "ﻝ", z: "ﻤ", "{": "ﻡ", "|": "ﻨ", "}": "ﻥ", "~": "ﻻ", "": "■" }, Ae = { 0: "٠", 1: "١", 2: "٢", 3: "٣", 4: "٤", 5: "٥", 6: "٦", 7: "٧", 8: "٨", 9: "٩", "!": "ﻉ", '"': "ﺁ", "#": "ﺃ", $: "ﺅ", "%": "ﺇ", "&": "ﺋ", "'": "ﺊ", "(": "ﭼ", ")": "ﭽ", "*": "ﭺ", "+": "ﭘ", ",": "ﭙ", "-": "ﭖ", ".": "ﮊ", "/": "ﮔ", ":": "ﻎ", ";": "ﻍ", "<": "ﻼ", "=": "ﻬ", ">": "ﻪ", "?": "ﻩ", "@": "à", "[": "ë", "\\": "ê", "]": "ù", "^": "î", _: "ﻊ", "`": "é", "{": "â", "|": "ô", "}": "û", "~": "ç", "": "■" }, ge = { "#": "£", "[": "←", "\\": "½", "]": "→", "^": "↑", _: "#", "`": "א", a: "ב", b: "ג", c: "ד", d: "ה", e: "ו", f: "ז", g: "ח", h: "ט", i: "י", j: "ך", k: "כ", l: "ל", m: "ם", n: "מ", o: "ן", p: "נ", q: "ס", r: "ע", s: "ף", t: "פ", u: "ץ", v: "צ", w: "ק", x: "ר", y: "ש", z: "ת", "{": "₪", "|": "‖", "}": "¾", "~": "÷", "": "■" }, le = { 0: "🬏", 1: "🬐", 2: "🬑", 3: "🬒", 4: "🬓", 5: "▌", 6: "🬔", 7: "🬕", 8: "🬖", 9: "🬗", " ": " ", "!": "🬀", '"': "🬁", "#": "🬂", $: "🬃", "%": "🬄", "&": "🬅", "'": "🬆", "(": "🬇", ")": "🬈", "*": "🬉", "+": "🬊", ",": "🬋", "-": "🬌", ".": "🬍", "/": "🬎", ":": "🬘", ";": "🬙", "<": "🬚", "=": "🬛", ">": "🬜", "?": "🬝", "`": "🬞", a: "🬟", b: "🬠", c: "🬡", d: "🬢", e: "🬣", f: "🬤", g: "🬥", h: "🬦", i: "🬧", j: "▐", k: "🬨", l: "🬩", m: "🬪", n: "🬫", o: "🬬", p: "🬭", q: "🬮", r: "🬯", s: "🬰", t: "🬱", u: "🬲", v: "🬳", w: "🬴", x: "🬵", y: "🬶", z: "🬷", "{": "🬸", "|": "🬹", "}": "🬺", "~": "🬻", "": "█" }, Ce = { 0: "", 1: "", 2: "", 3: "", 4: "", 5: "", 6: "", 7: "", 8: "", 9: "", " ": " ", "!": "", '"': "", "#": "", $: "", "%": "", "&": "", "'": "", "(": "", ")": "", "*": "", "+": "", ",": "", "-": "", ".": "", "/": "", ":": "", ";": "", "<": "", "=": "", ">": "", "?": "", "`": "", a: "", b: "", c: "", d: "", e: "", f: "", g: "", h: "", i: "", j: "", k: "", l: "", m: "", n: "", o: "", p: "", q: "", r: "", s: "", t: "", u: "", v: "", w: "", x: "", y: "", z: "", "{": "", "|": "", "}": "", "~": "", "": "" }, de = { 0: "🭇", 1: "🭈", 2: "🭉", 3: "🭊", 4: "🭋", 5: "◢", 6: "🭌", 7: "🭍", 8: "🭎", 9: "🭏", " ": "🬼", "!": "🬽", '"': "🬾", "#": "🬿", $: "🭀", "%": "◣", "&": "🭁", "'": "🭂", "(": "🭃", ")": "🭄", "*": "🭅", "+": "🭆", ",": "🭨", "-": "🭩", ".": "🭰", "/": "▒", ":": "🭐", ";": "🭑", "<": "🭪", "=": "🭫", ">": "🭵", "?": "█", "@": "┷", A: "┯", B: "┝", C: "┥", D: "🮤", E: "🮥", F: "🮦", G: "🮧", H: "🮠", I: "🮡", J: "🮢", K: "🮣", L: "┿", M: "•", N: "●", O: "○", P: "│", Q: "─", R: "┌", S: "┐", T: "└", U: "┘", V: "├", W: "┤", X: "┬", Y: "┴", Z: "┼", "[": "→", "\\": "←", "]": "↑", "^": "↓", _: " ", "`": "🭒", a: "🭓", b: "🭔", c: "🭕", d: "🭖", e: "◥", f: "🭗", g: "🭘", h: "🭙", i: "🭚", j: "🭛", k: "🭜", l: "🭬", m: "🭭", n: null, o: null, p: "🭝", q: "🭞", r: "🭟", s: "🭠", t: "🭡", u: "◤", v: "🭢", w: "🭣", x: "🭤", y: "🭥", z: "🭦", "{": "🭧", "|": "🭮", "}": "🭯", "~": null, "": null }, R = {
   g0_latin: kt,
   g0_latin__czech_slovak: Wt,
   g0_latin__english: zt,
   g0_latin__estonian: jt,
-  g0_latin__french: qt,
-  g0_latin__german: Kt,
+  g0_latin__french: Kt,
+  g0_latin__german: qt,
   g0_latin__italian: Xt,
   g0_latin__latvian_lithuanian: Yt,
   g0_latin__polish: Zt,
@@ -867,7 +867,7 @@ const kt = { $: "¤", "": "■" }, Wt = { "#": "#", $: "ů", "@": "č", "[": "�
   g1_block_mosaic_to_unicode__legacy_computing: le,
   g1_block_mosaic_to_unicode__unscii_separated: Ce,
   g3: de
-}, q = {};
+}, K = {};
 class Ee {
   constructor(t) {
     this.type = t.type_, this.flashing = t.flashing_, this.concealed = t.concealed_, this.size = t.size_, this.sextants = t.getSextants_();
@@ -899,8 +899,16 @@ class lt {
     return this._isCursive;
   }
   setMappedChar_(t) {
-    const e = this._type == n.MOSAIC_CONTIGUOUS_ || this._type == n.MOSAIC_SEPARATED_;
-    this._type == n.ALPHA_ || (this._byte.charCodeAt(0) & 32) == 0 && e ? (this._char = F(this._byte, t), this._diacriticCode > 0 && (this._char += R.g2_latin[String.fromCharCode(this._diacriticCode + 64)]), this._isCursive = !1, (t == "g0_arabic" || t == "g2_arabic") && (this._isCursive = H.isCursive_(this._char))) : this._type == n.MOSAIC_CONTIGUOUS_ ? this._char = F(this._byte, "g1_block_mosaic_to_unicode__legacy_computing") : this._type == n.MOSAIC_SEPARATED_ ? this._char = F(this._byte, "g1_block_mosaic_to_unicode__unscii_separated") : this._type == n.G3_ && (this._char = F(this._byte, "g3")), this._byteHeld = null;
+    const e = this._type, _ = this._byte;
+    if (fe(e, _)) {
+      if (this._char = F(_, t), this._diacriticCode > 0) {
+        const s = String.fromCharCode(this._diacriticCode + 64);
+        this._char += R.g2_latin[s];
+      }
+      t.includes("arabic") && (this._isCursive = H.isCursive_(this._char));
+    } else
+      this._char = Ie(e, _);
+    this._byteHeld = null;
   }
   setSpace_(t) {
     if ((this._type == n.MOSAIC_CONTIGUOUS_ || this._type == n.MOSAIC_SEPARATED_) && t.active_) {
@@ -944,6 +952,7 @@ class lt {
     return this._boxed;
   }
   // used in rendering to distinguish burn-through characters in G1 set
+  // (should get type_ handle this instead?)
   isMosaicByte_() {
     const t = this._byteHeld != null ? this._byteHeld.charCodeAt(0) : this._byte.charCodeAt(0);
     return t <= 127 && (t & 32) == 32;
@@ -956,11 +965,11 @@ class lt {
   getSextants_() {
     const t = this._byteHeld != null ? this._byteHeld.charCodeAt(0) : this._byte.charCodeAt(0);
     if (t > 127) return null;
-    if (t in q) return q[t];
+    if (t in K) return K[t];
     const e = t >= 96 ? t - 64 : t - 32, _ = [];
     for (let s = 0; s < 6; s++)
       _.push(e & 1 << s ? "1" : "0");
-    return q[t] = _, _;
+    return K[t] = _, _;
   }
 }
 class ue extends lt {
@@ -990,6 +999,22 @@ function F(r, t) {
       return R[t][r] = R[_][r], R[_][r];
   }
   return r;
+}
+function fe(r, t) {
+  const e = r === n.ALPHA_, _ = r === n.MOSAIC_CONTIGUOUS_ || r === n.MOSAIC_SEPARATED_, s = (t.charCodeAt(0) & 32) == 0;
+  return e || _ && s;
+}
+function Ie(r, t) {
+  switch (r) {
+    case n.MOSAIC_CONTIGUOUS_:
+      return F(t, "g1_block_mosaic_to_unicode__legacy_computing");
+    case n.MOSAIC_SEPARATED_:
+      return F(t, "g1_block_mosaic_to_unicode__unscii_separated");
+    case n.G3_:
+      return F(t, "g3");
+    default:
+      return null;
+  }
 }
 class ht extends C {
   constructor(t, e, _) {
@@ -1064,7 +1089,7 @@ class ht extends C {
     };
   }
 }
-class fe {
+class Be {
   constructor(t) {
     this._model = t, this._x = 0, this._y = 0, this._data = [];
   }
@@ -1092,7 +1117,7 @@ class fe {
   }
   putG1(t) {
     const e = t.charCodeAt(0);
-    return e < 32 || e > 127 || e >= 64 && e <= 95 ? this : (this._data.push({
+    return e < 32 || e > 127 ? this : (this._data.push({
       x_: this._x,
       y_: this._y,
       type_: "g1",
@@ -1129,10 +1154,10 @@ class fe {
     return this._model.enhance_(this._data), this._model.notify_(), this;
   }
 }
-class Ie extends C {
+class pe extends C {
 }
 const ct = ["SPLASH", "ENGINEERING", "ADVERT", "UK"];
-class Be {
+class Se {
   constructor(t, e) {
     if (this._windowDom = null, typeof window == "object" && (this._windowDom = window), this._opt = {
       webkitCompat_: !0
@@ -1230,7 +1255,7 @@ class Be {
   }
   remove() {
     if (this._view.detach_(), this._selector) {
-      const t = document.querySelector(this._selector);
+      const t = this._windowDom.document.querySelector(this._selector);
       t && t.removeChild(t.firstChild);
     }
     this._view = null;
@@ -1238,7 +1263,7 @@ class Be {
   setView(t) {
     switch (this.remove(), t) {
       case "classic__font-for-mosaic":
-        this._view = new Ie(this._model, this._windowDom);
+        this._view = new pe(this._model, this._windowDom);
         break;
       case "classic__graphic-for-mosaic":
         this._view = new ht(this._model, this._opt.webkitCompat_, this._windowDom);
@@ -1252,7 +1277,7 @@ class Be {
     t.registerWithView(this._view), this._model.notify_();
   }
   enhance() {
-    return new fe(this._model);
+    return new Be(this._model);
   }
   writeBytes(t, e, _) {
     this._model.writeBytes_(t, e, _);
@@ -1282,7 +1307,7 @@ class Be {
   //     this._model.dumpToConsole();
   // }
 }
-class pe {
+class Qe {
   constructor(t) {
     this._sender = t, this._listeners = [];
   }
@@ -1296,7 +1321,7 @@ class pe {
     this._listeners[t] = null;
   }
 }
-class Se {
+class be {
   constructor() {
     this._doubleHeight = !1, this._cells = [];
   }
@@ -1314,8 +1339,8 @@ class Se {
     return this._cells[t];
   }
 }
-const m = 25, b = 40, Qe = "g0_latin", be = "g2_latin", ye = [Q[1.5], Q[2.5]], xe = "Q[\\]";
-class me {
+const m = 25, b = 40, ye = "g0_latin", xe = "g2_latin", me = [Q[1.5], Q[2.5]], we = "Q[\\]";
+class Le {
   constructor() {
     this._screen = [];
     for (let t = 0; t < m; t++) {
@@ -1324,7 +1349,7 @@ class me {
         e.push(new lt());
       this._screen.push(e);
     }
-    this._primaryG0CharacterEncoding = Qe, this._secondaryG0CharacterEncoding = null, this._g2CharacterEncoding = be, this._startBoxChar = h.charFromAttribute(h.START_BOX), this._endBoxChar = h.charFromAttribute(h.END_BOX), this._level = Q[1], this._enhancement = [], this.onSet_ = new pe(this), console.debug("PageModel constructed");
+    this._primaryG0CharacterEncoding = ye, this._secondaryG0CharacterEncoding = null, this._g2CharacterEncoding = xe, this._startBoxChar = h.charFromAttribute(h.START_BOX), this._endBoxChar = h.charFromAttribute(h.END_BOX), this._level = Q[1], this._enhancement = [], this.onSet_ = new Qe(this), console.debug("PageModel constructed");
   }
   notify_() {
     this.onSet_.notify_();
@@ -1419,32 +1444,32 @@ class me {
   getRow_(t) {
     if (t >= m)
       throw new Error("PageModel.getRow E42 bad rowNum");
-    const e = new Se();
-    let _, s, i = n.ALPHA_, a = g.WHITE, A = !1, E = d.NORMAL_SIZE_, I = !1, u = !1, c = !1, O = !1, v = g.BLACK, G = n.MOSAIC_CONTIGUOUS_, l = {
+    const e = new be();
+    let _, s, i = n.ALPHA_, a = g.WHITE, A = !1, E = d.NORMAL_SIZE_, I = !1, u = !1, c = !1, O = !1, G = g.BLACK, v = n.MOSAIC_CONTIGUOUS_, l = {
       active_: !1,
       char_: " ",
       type_: n.MOSAIC_CONTIGUOUS_
     }, $ = [];
-    return ye.includes(this._level) && ($ = this._enhancement.filter((o) => o.y_ == t)), this._screen[t].forEach((o, N) => {
+    return me.includes(this._level) && ($ = this._enhancement.filter((o) => o.y_ == t)), this._screen[t].forEach((o, N) => {
       const tt = o.byte_, U = Rt(this._level, tt);
       switch (_ = a, o.type_ = i, o.boxed_ = O, s = I, U.attribute_ != h.STEADY && (o.flashing_ = A), U.attribute_ != h.NORMAL_SIZE && (o.size_ = E), U.attribute_ != h.CONCEAL && (o.concealed_ = u), c && (U.attribute_ != h.HOLD_MOSAICS && (l.active_ = !1, l.char_ = " "), c = !1), U.attribute_) {
         case h.TEXT_COLOUR:
           i = n.ALPHA_, a = U.colour_, u = !1, o.setSpace_(l);
           break;
         case h.MOSAIC_COLOUR:
-          i = G, a = U.colour_, u = !1, o.setSpace_(l);
+          i = v, a = U.colour_, u = !1, o.setSpace_(l);
           break;
         case h.NEW_BACKGROUND:
-          v = _, o.setSpace_(l);
+          G = _, o.setSpace_(l);
           break;
         case h.BLACK_BACKGROUND:
-          v = g.BLACK, o.setSpace_(l);
+          G = g.BLACK, o.setSpace_(l);
           break;
         case h.CONTIGUOUS_GRAPHICS:
-          G = n.MOSAIC_CONTIGUOUS_, o.type_ == n.MOSAIC_SEPARATED_ && (o.type_ = n.MOSAIC_CONTIGUOUS_), i == n.MOSAIC_SEPARATED_ && (i = n.MOSAIC_CONTIGUOUS_), o.setSpace_(l);
+          v = n.MOSAIC_CONTIGUOUS_, o.type_ == n.MOSAIC_SEPARATED_ && (o.type_ = n.MOSAIC_CONTIGUOUS_), i == n.MOSAIC_SEPARATED_ && (i = n.MOSAIC_CONTIGUOUS_), o.setSpace_(l);
           break;
         case h.SEPARATED_GRAPHICS:
-          G = n.MOSAIC_SEPARATED_, o.type_ == n.MOSAIC_CONTIGUOUS_ && (o.type_ = n.MOSAIC_SEPARATED_), i == n.MOSAIC_CONTIGUOUS_ && (i = n.MOSAIC_SEPARATED_), o.setSpace_(l);
+          v = n.MOSAIC_SEPARATED_, o.type_ == n.MOSAIC_CONTIGUOUS_ && (o.type_ = n.MOSAIC_SEPARATED_), i == n.MOSAIC_CONTIGUOUS_ && (i = n.MOSAIC_SEPARATED_), o.setSpace_(l);
           break;
         case h.ESC:
           this._secondaryG0CharacterEncoding && (I = !s), o.setSpace_(l);
@@ -1488,8 +1513,8 @@ class me {
         default:
           s ? o.setMappedChar_(this._secondaryG0CharacterEncoding) : o.setMappedChar_(this._primaryG0CharacterEncoding), o.isMosaic_() && (l.char_ = tt, l.type_ = o.type_);
       }
-      o.fgColour_ = _, o.bgColour_ = v, $.filter((B) => B.x_ == N).forEach((B) => {
-        o = new ue(o), B.type_ == "g0" ? (o.byte_ = B.char_, o.diacritic_ = B.diacritic_, o.type_ = n.ALPHA_, s ? o.setMappedChar_(this._secondaryG0CharacterEncoding) : o.setMappedChar_(this._primaryG0CharacterEncoding)) : B.type_ == "g1" ? this._level == Q[2.5] && (o.byte_ = B.char_, o.type_ = G, o.setMappedChar_()) : B.type_ == "g2" ? (o.byte_ = B.char_, o.type_ = n.ALPHA_, o.setMappedChar_(this._g2CharacterEncoding)) : B.type_ == "g3" ? this._isAllowedG3Char(B.char_) && (o.byte_ = B.char_, o.type_ = n.G3_, o.setMappedChar_()) : B.type_ == "char" && (o.enhancedChar_ = B.char_, o.type_ = n.ALPHA_);
+      o.fgColour_ = _, o.bgColour_ = G, $.filter((B) => B.x_ == N).forEach((B) => {
+        o = new ue(o), B.type_ == "g0" ? (o.byte_ = B.char_, o.diacritic_ = B.diacritic_, o.type_ = n.ALPHA_, this._primaryG0CharacterEncoding.includes("latin") ? o.setMappedChar_("g0_latin") : o.setMappedChar_(this._primaryG0CharacterEncoding)) : B.type_ == "g1" ? this._level == Q[2.5] && (o.byte_ = B.char_, o.type_ = v, this._primaryG0CharacterEncoding.includes("latin") ? o.setMappedChar_("g0_latin") : o.setMappedChar_(this._primaryG0CharacterEncoding)) : B.type_ == "g2" ? (o.byte_ = B.char_, o.type_ = n.ALPHA_, o.setMappedChar_(this._g2CharacterEncoding)) : B.type_ == "g3" ? this._isAllowedG3Char(B.char_) && (o.byte_ = B.char_, o.type_ = n.G3_, o.setMappedChar_()) : B.type_ == "char" && (o.enhancedChar_ = B.char_, o.type_ = n.ALPHA_);
       }), e.addCell_(o);
     }), e;
   }
@@ -1508,17 +1533,17 @@ class me {
     }), t;
   }
   _isAllowedG3Char(t) {
-    return !(this._level == Q[1.5] && xe.indexOf(t) == -1);
+    return !(this._level == Q[1.5] && we.indexOf(t) == -1);
   }
 }
-const Le = new me();
-function Re(r) {
-  return new Be(Le, r);
+const Oe = /* @__PURE__ */ new Le();
+function De(r) {
+  return new Se(Oe, r);
 }
 export {
   h as Attributes,
   g as Colour,
   Q as Level,
-  Re as Teletext
+  De as Teletext
 };
 //# sourceMappingURL=teletext.js.map
