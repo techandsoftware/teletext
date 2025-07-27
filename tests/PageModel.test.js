@@ -391,8 +391,13 @@ test('getRow_ handles level 2.5 set-after attributes', () => {
     const rowNum = 1;
 
     const text = Att.charFromAttribute(Att.DOUBLE_WIDTH) + 'x ' +
-        Att.charFromAttribute(Att.DOUBLE_SIZE) + 'x ';
-    // TODO - normal size overrides
+        Att.charFromAttribute(Att.DOUBLE_SIZE) + 'x ' +
+        // test set-after overriden by set-at
+        Att.charFromAttribute(Att.DOUBLE_WIDTH) +
+        Att.charFromAttribute(Att.NORMAL_SIZE) +
+        Att.charFromAttribute(Att.DOUBLE_HEIGHT) +
+        Att.charFromAttribute(Att.DOUBLE_SIZE) +
+        Att.charFromAttribute(Att.NORMAL_SIZE);
 
     model.setRowFromChars_(rowNum, text);
     model.setLevel_(Level[2.5]);
@@ -400,6 +405,8 @@ test('getRow_ handles level 2.5 set-after attributes', () => {
 
     expect(row.getCell_(1).size_).toBe(CellSize.DOUBLE_WIDTH_);
     expect(row.getCell_(4).size_).toBe(CellSize.DOUBLE_SIZE_);
+    expect(row.getCell_(7).size_).toBe(CellSize.NORMAL_SIZE_);
+    expect(row.getCell_(10).size_).toBe(CellSize.NORMAL_SIZE_);
 });
 
 test('getRow_ applies level 2.5 enhancements', () => {
