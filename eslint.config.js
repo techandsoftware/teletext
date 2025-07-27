@@ -6,7 +6,7 @@ import globals from "globals";
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
-  { ignores: ["dist/**"] },
+  { ignores: ["dist/**", "coverage/**"] },
   {
     files: ["lib/*.js"],
     plugins: { js },
