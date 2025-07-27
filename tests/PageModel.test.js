@@ -392,6 +392,7 @@ test('getRow_ handles level 2.5 set-after attributes', () => {
 
     const text = Att.charFromAttribute(Att.DOUBLE_WIDTH) + 'x ' +
         Att.charFromAttribute(Att.DOUBLE_SIZE) + 'x ';
+    // TODO - normal size overrides
 
     model.setRowFromChars_(rowNum, text);
     model.setLevel_(Level[2.5]);
