@@ -1,6 +1,6 @@
 /*! SPDX-FileCopyrightText: (c) 2025 Rob Hardy
     SPDX-License-Identifier: AGPL-3.0-only */
-const Ct = "ﻰﺋﺊﭼﭽﭘﭙﮔﻎﻼﻬﻪﻊﺔﺒﺘﺎﺑﺗﺛﺟﺣﺧﺳﺷﺻﺿﻃﻇﻋﻏﺜﺠﺤﺨـﻓﻗﻛﻟﻣﻧﻫﻰﻳﻴﻌﻐﻔﻘﻠﻤﻨ";
+const dt = "ﻰﺋﺊﭼﭽﭘﭙﮔﻎﻼﻬﻪﻊﺔﺒﺘﺎﺑﺗﺛﺟﺣﺧﺳﺷﺻﺿﻃﻇﻋﻏﺜﺠﺤﺨـﻓﻗﻛﻟﻣﻧﻫﻰﻳﻴﻌﻐﻔﻘﻠﻤﻨ";
 class H {
   // "base64url" encoding defined here https://tools.ietf.org/html/rfc4648
   // the packed data format is from https://github.com/rawles/edit.tf
@@ -13,7 +13,7 @@ class H {
     }
     const s = e(t), i = [];
     let a = [];
-    for (const A of Et(s))
+    for (const A of ut(s))
       a.push(String.fromCharCode(A)), a.length == 40 && (i.push(a.join("")), a = []);
     return a.length < 40 && i.push(a.join("")), i;
   }
@@ -47,31 +47,31 @@ class H {
     return e;
   }
   static isCursive_(t) {
-    return Ct.indexOf(t) != -1;
+    return dt.indexOf(t) != -1;
   }
 }
-function dt(r) {
+function Et(r) {
   let t = [];
   for (let e = 7; e >= 0; e--)
     t.push(r & 1 << e ? 1 : 0);
   return t;
 }
-function* Et(r) {
+function* ut(r) {
   let t = 6, e = 0;
   for (const _ of r) {
-    const s = dt(_.charCodeAt(0));
+    const s = Et(_.charCodeAt(0));
     for (const i of s)
       e |= i << t, t--, t < 0 && (yield e, t = 6, e = 0);
   }
   t < 6 && (yield e);
 }
-const ut = "QIECBAgQIIcWLGg2EDdy3QIKnXKgYtUE7f2QA2TB0wYr2DECAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAYMS54fzJmix4-YCDToOLOjyZ0WLSkzo6AkcGHuZUcRHlB4dgyAAQAEABAAQAEABAAQAEABAAQAEABAAQAEABAAQAEABAAWDP9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9_YNCho9zImSoAqBGoAp0FUy8-iChhz5UCA4MPEuZYgTAFyAFg1_f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f2DYCAAoACACeQHkBdYTJlixIkSKlSJEoUKIEBQABAAQAEABYN_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_39g4AgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgGDn9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9_YsAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgAIBix_f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f2LICAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAYs_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_39i0AgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgGLX9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9_Ytq-jT0yg7OXZs39w0Pzh3Ao_LLl3BZuHPl3dMIGllyBIWzrlLmkKJGTSJUycsoUqlZJYtXLzLBiyZlWjVs3IuHLp2UePXz9AgQokaBIlTJ0ChSqVoFi1cvQMGLJmgaNWzdA4cunaB49fP0ECDChoIkWNHQSJMqWgmTZ09BQo0qaCpVrV0FizatoLl29fQYMOLGgyZc2dBo06taDZt3b0HDjy5oOnXt3QePPr2g-ff38pgw4sZHJlzZyujTq1ktm3dvNcOPLmW6de3cn48-vZf59_fwZiHv3Y8uHYIjbMPPQDVCxcLf4E0-mXDk8mI-_dlFCn5a9_DKr6q-qvqr6q-qvqr6AFS390DJoGQKr6q-qvqr6q-qvqr6o", ft = "QIECBAgQIJ9KDDmRUDZi3QU8PRk1QQeHIHDaIEDJiwYumDACdDwcnbLy6aeeXbl3dECBAgQIECBAgQIECBAgQIHwZkvcoCx0og8LNGjYwQPEjzpoWaNjBA82YHnTQwabEjTpowPEiBAgLHSiBbs1atjFA9SPe2pZqQNUHX1qQatSlrqQNW-5UsaIECAsdKIFidUqQJUCVAlVKlipchQJUCJanVIEqpAlSqlC5CgQIEB0ogQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQHSKBAgQYEH7ogQaGCApw_fEm54R3PCm5JuSKHoFUEVIECAudIoECBB6-___TB-_v0JTU_WqkZHFyQKHmjYgYBECpAqQIC50igQIEH___3_-iD__6FFSAig-IP6JCg26lzRr3avEgFUgLnSKBAg1f1X9lv_9NSBAgI6G-HX1V_EqBUqQJUqXBzagVSAudIoECD9_Qa2qL__6IMDzoq682qdAgQIEARAgQIECBAgVIC50igQIP_9AiaoFX__0VfV_1kjQIECBAgQBECBAgAoECpAgLnSKBBq__0CBCgQa___oreokCBAgQIECBAgQBECBAgVIECAudIoEHr__QIECBAg3_36FAgQIECBAgQIECAIgQIFSBAgQIAZ0igQf_7dAgKIECAinKf9bTR9QIv-N6i_ofzNagQIECBAgJnSKDR__tUBRAoe6NiBB_XYf_rqg_q2iD-gRb-iBAgQIECAmdIoNX_-1QFECDrq9IMH9h664P_D-w34P7DZ4ToECBAgQICZ0ig___5TQ8SfEHzQ82MPCzpoedEHzA82MPjDQ0-LNDSk0JnSOD___lNXVh_Qf9T3cx_oP-prqa_1S3Y0_q_zX-s1NdTUmdI6v_9-U1NUH9B_1NdTX-g_6mvpL_wMNTX-g1Nf6DAz1tSZ0j-_v0JREjQokaFEhRIUSNCiRoUCNAjRoEaBEhRo0CNGgBnSP9OgQFECCNPpIIVKfDkVaUWmggzoiCFPny5M6PTQIECAGdIjUAGlJnR0DBu5coGrFm0YMEE-kgpxYqChBjxUDNuwQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAy92np007s6AFSy9tOXvzQA7O_ryQTd-7L5DQVtpBJ3ZMvg", It = "QIECBAgQIIcWLGg2EDFy2QIJu_cgZNUETLjQA2TN0xYr2DAodJIECBAgQIEGDB4_PUCBAgQIECBAgQIECBAgQIEANkvaMih0kgQIECDA1Qfv__OgQYGCBAgQIECBAgQIECBAgQIECBAgKHSSBAgQIH6FR-__-v7___oECBAgQIEAORPmxUE6LXpoECAodJIECBAoQKum7______9-gQIECBAgQA82_Zs39-aB8-QIAh0kgQIECBAgSev_____v06BAgQIECBAgQIECBAgQIECBAgKHSSBAgQIECBR00____-_w9GCBAgQIECBAgQIECBAgQIECAodJIECBAgQIECD8rx________ECBAgQIECBAgQIECBAgQICh0kgQIECBAgQLETRlv_______6oECBAgQIECBAgQIECBAgKHSyBAgQIHGQlwYIEH_-_x_____9-dECBAgQIECBAgQIECAIdLIECDAmJbfz_-0RJ0qBV________7sECBAgQIECBAgQIAh0sgQIMzAl-__fX5Sg0JECvX______586IECBAgQIECBAgCHSyBAgwJiW9OjX_0qBAgQIEX________-l8fPjBAgQIECAIdLIEHBYhQIECBQxQICWDhg5fv____________tUCBAgQIAh0sgzIECBAgQIEGlAgQEtP_______________-lQIECBAgCHSyBUwQIECBAgQakCBASQqv_____________-6FAgQIECAIdLIECJygQIECBAgaoEBJBg______________5-OiBAgQIAh0sgQKGKBAgQIEHBKgJIMH7____8v__________QoECBAgCHSyBRmQIECBA4RoECAkgVoVaNel________r16FAgQIECAIdLINCFAgwOEyBAgQICSBAgQePn7___r06RAgQIECBAgQIAh0sgQLeKxCgQIECBAgJIECDR__v0aNGhQIECBAgQIECBAgCHSSBAgQIECBAgQIECBAgQYP3_-1QIECBAgQIECBAgQIECAIdJIECBAgQIECBAgQIECBB6boUSBAgQIECBAgQIECBAgQIAh0kgQIECBAgQIECBAgQIFStAgQIECBAgQIECBAgQIECBAgAzsvjognZe_MFIy4cmzTuy8wdTfwQU-G_l0DVKy-lhyad6A", Bt = "QIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECAsaMIEGDx8YIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQICxowg0N2bdmgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgLGjCBFvz9_6BAZQIECBAgQIECAig0NECBAgQIECBAgQIECAsaMcOD5tjyoGCBAgQIECBAgQICLhCgQIECBAgQIECBAgQICxowoTod79ArSEcHBAgQIECBAg0ITKBAgQcGCBAgQIECBAgLGjCBBgXIUCAyRXmlLBAgQIECBuZ4fPn___aoECBAgQIECBAaQIECBAgQIEBFAgQaTPDh8-f___-vXo9f9qgQIECBAgQIECBAgQIEBFAgQcOHz5____69ejRoECBAg__0CBAgQIECBAgQIECBAgQEUCL___r16NGXQIOHDh8-NCOD-3QIECBAgQIECBAgQIECBARQINf0ug-fPi9evRo0aBAgI6v6VAgQIECBAgQIECBAgQIEBFAgRf2hfBw4cOHD58-fPiAj-_oECBAgQIECBAgQIECBAgQEUCBBr-l0SNGjRo0CBAgQEcH9qgQIECBAgQIECBAgQIECBARQIECL-0Lr169ev-fPnxAR1f0KBAgQIECBAgQIAiBAgQIEBFAgQINf3hw4cOCBAgQIEBH-_QIECBAgQIECBAgCIECBAgQIEB1ARRL1-_____________7VAgOIECBAgQIECAIgQIECBAgQHUBNAgQf26BAgQIN_8ijRoECA4gQIECBAgQIAiBAgQIECA6gQE0CDV_QoECBAgRf2iBAgQIEBxAgQIECBAgCIECBAgQIDqBAgQE0aFAgQIECBAgQIECBAgQHECBAgQIECAIgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIBp0Kg3cNqDSggdMuPRh3ZOe_N074eWVf0y7MvTL46IECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQKMalAyYMmqClvxIJGHlk8oECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECA-f___-vXo9f9qgQIECBAgQIECBAgQIEBFAgQcOHz5____69ejRoECBAg__0CBAgQIECBAgQIECBAgQEUCL___r16NGXQIOHDh8-NCOD-3QIECBAgQIECBAgQIECBARQINf0ug-fPi9evRo0aBAgI6v6VAgQIECBAgQIECBAgQIEBFAgRf2hfBw4cOHD58-fPiAj-_oECBAgQIECBAgQIECBAgQEUCBBr-l0SNGjRo0CBAgQEcH9qgQIECBAgQIECBAgQIECBARQIECL-0Lr169ev-fPnxAR1f0KBAgQIECBAgQIAiBAgQIEBFAgQINf3hw4cOCBAgQIEBH-_QIECBAgQIECBAgCIECBAgQIEB1ARRL1-_____________7VAgOIECBAgQIECAIgQIECBAgQHUBNAgQf26BAgQIN_8ijRoECA4gQIECBAgQIAiBAgQIECA6gQE0CDV_QoECBAgRf2iBAgQIEBxAgQIECBAgCIECBAgQIDqBAgQE0aFAgQIECBAgQIECBAgQHECBAgQIECAIgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIBp0Kg3cNqDSggdMuPRh3ZOe_N074eWVf0y7MvTL46IECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQKMalAyYMmaCplx6ECZBT35unfDyyoJnTIuQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECA", pt = {
-  ENGINEERING: ut,
-  ADVERT: ft,
-  UK: It,
-  SPLASH: Bt
+const ft = "QIECBAgQIIcWLGg2EDdy3QIKnXKgYtUE7f2QA2TB0wYr2DECAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAYMS54fzJmix4-YCDToOLOjyZ0WLSkzo6AkcGHuZUcRHlB4dgyAAQAEABAAQAEABAAQAEABAAQAEABAAQAEABAAQAEABAAWDP9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9_YNCho9zImSoAqBGoAp0FUy8-iChhz5UCA4MPEuZYgTAFyAFg1_f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f2DYCAAoACACeQHkBdYTJlixIkSKlSJEoUKIEBQABAAQAEABYN_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_39g4AgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgGDn9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9_YsAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgAIBix_f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f2LICAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAYs_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_39i0AgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgAIACAAgGLX9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9__f_3_9_Ytq-jT0yg7OXZs39w0Pzh3Ao_LLl3BZuHPl3dMIGllyBIWzrlLmkKJGTSJUycsoUqlZJYtXLzLBiyZlWjVs3IuHLp2UePXz9AgQokaBIlTJ0ChSqVoFi1cvQMGLJmgaNWzdA4cunaB49fP0ECDChoIkWNHQSJMqWgmTZ09BQo0qaCpVrV0FizatoLl29fQYMOLGgyZc2dBo06taDZt3b0HDjy5oOnXt3QePPr2g-ff38pgw4sZHJlzZyujTq1ktm3dvNcOPLmW6de3cn48-vZf59_fwZiHv3Y8uHYIjbMPPQDVCxcLf4E0-mXDk8mI-_dlFCn5a9_DKr6q-qvqr6q-qvqr6AFS390DJoGQKr6q-qvqr6q-qvqr6o", It = "QIECBAgQIJ9KDDmRUDZi3QU8PRk1QQeHIHDaIEDJiwYumDACdDwcnbLy6aeeXbl3dECBAgQIECBAgQIECBAgQIHwZkvcoCx0og8LNGjYwQPEjzpoWaNjBA82YHnTQwabEjTpowPEiBAgLHSiBbs1atjFA9SPe2pZqQNUHX1qQatSlrqQNW-5UsaIECAsdKIFidUqQJUCVAlVKlipchQJUCJanVIEqpAlSqlC5CgQIEB0ogQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQHSKBAgQYEH7ogQaGCApw_fEm54R3PCm5JuSKHoFUEVIECAudIoECBB6-___TB-_v0JTU_WqkZHFyQKHmjYgYBECpAqQIC50igQIEH___3_-iD__6FFSAig-IP6JCg26lzRr3avEgFUgLnSKBAg1f1X9lv_9NSBAgI6G-HX1V_EqBUqQJUqXBzagVSAudIoECD9_Qa2qL__6IMDzoq682qdAgQIEARAgQIECBAgVIC50igQIP_9AiaoFX__0VfV_1kjQIECBAgQBECBAgAoECpAgLnSKBBq__0CBCgQa___oreokCBAgQIECBAgQBECBAgVIECAudIoEHr__QIECBAg3_36FAgQIECBAgQIECAIgQIFSBAgQIAZ0igQf_7dAgKIECAinKf9bTR9QIv-N6i_ofzNagQIECBAgJnSKDR__tUBRAoe6NiBB_XYf_rqg_q2iD-gRb-iBAgQIECAmdIoNX_-1QFECDrq9IMH9h664P_D-w34P7DZ4ToECBAgQICZ0ig___5TQ8SfEHzQ82MPCzpoedEHzA82MPjDQ0-LNDSk0JnSOD___lNXVh_Qf9T3cx_oP-prqa_1S3Y0_q_zX-s1NdTUmdI6v_9-U1NUH9B_1NdTX-g_6mvpL_wMNTX-g1Nf6DAz1tSZ0j-_v0JREjQokaFEhRIUSNCiRoUCNAjRoEaBEhRo0CNGgBnSP9OgQFECCNPpIIVKfDkVaUWmggzoiCFPny5M6PTQIECAGdIjUAGlJnR0DBu5coGrFm0YMEE-kgpxYqChBjxUDNuwQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAy92np007s6AFSy9tOXvzQA7O_ryQTd-7L5DQVtpBJ3ZMvg", Bt = "QIECBAgQIIcWLGg2EDFy2QIJu_cgZNUETLjQA2TN0xYr2DAodJIECBAgQIEGDB4_PUCBAgQIECBAgQIECBAgQIEANkvaMih0kgQIECDA1Qfv__OgQYGCBAgQIECBAgQIECBAgQIECBAgKHSSBAgQIH6FR-__-v7___oECBAgQIEAORPmxUE6LXpoECAodJIECBAoQKum7______9-gQIECBAgQA82_Zs39-aB8-QIAh0kgQIECBAgSev_____v06BAgQIECBAgQIECBAgQIECBAgKHSSBAgQIECBR00____-_w9GCBAgQIECBAgQIECBAgQIECAodJIECBAgQIECD8rx________ECBAgQIECBAgQIECBAgQICh0kgQIECBAgQLETRlv_______6oECBAgQIECBAgQIECBAgKHSyBAgQIHGQlwYIEH_-_x_____9-dECBAgQIECBAgQIECAIdLIECDAmJbfz_-0RJ0qBV________7sECBAgQIECBAgQIAh0sgQIMzAl-__fX5Sg0JECvX______586IECBAgQIECBAgCHSyBAgwJiW9OjX_0qBAgQIEX________-l8fPjBAgQIECAIdLIEHBYhQIECBQxQICWDhg5fv____________tUCBAgQIAh0sgzIECBAgQIEGlAgQEtP_______________-lQIECBAgCHSyBUwQIECBAgQakCBASQqv_____________-6FAgQIECAIdLIECJygQIECBAgaoEBJBg______________5-OiBAgQIAh0sgQKGKBAgQIEHBKgJIMH7____8v__________QoECBAgCHSyBRmQIECBA4RoECAkgVoVaNel________r16FAgQIECAIdLINCFAgwOEyBAgQICSBAgQePn7___r06RAgQIECBAgQIAh0sgQLeKxCgQIECBAgJIECDR__v0aNGhQIECBAgQIECBAgCHSSBAgQIECBAgQIECBAgQYP3_-1QIECBAgQIECBAgQIECAIdJIECBAgQIECBAgQIECBB6boUSBAgQIECBAgQIECBAgQIAh0kgQIECBAgQIECBAgQIFStAgQIECBAgQIECBAgQIECBAgAzsvjognZe_MFIy4cmzTuy8wdTfwQU-G_l0DVKy-lhyad6A", pt = "QIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECAsaMIEGDx8YIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQICxowg0N2bdmgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgLGjCBFvz9_6BAZQIECBAgQIECAig0NECBAgQIECBAgQIECAsaMcOD5tjyoGCBAgQIECBAgQICLhCgQIECBAgQIECBAgQICxowoTod79ArSEcHBAgQIECBAg0ITKBAgQcGCBAgQIECBAgLGjCBBgXIUCAyRXmlLBAgQIECBuZ4fPn___aoECBAgQIECBAaQIECBAgQIEBFAgQaTPDh8-f___-vXo9f9qgQIECBAgQIECBAgQIEBFAgQcOHz5____69ejRoECBAg__0CBAgQIECBAgQIECBAgQEUCL___r16NGXQIOHDh8-NCOD-3QIECBAgQIECBAgQIECBARQINf0ug-fPi9evRo0aBAgI6v6VAgQIECBAgQIECBAgQIEBFAgRf2hfBw4cOHD58-fPiAj-_oECBAgQIECBAgQIECBAgQEUCBBr-l0SNGjRo0CBAgQEcH9qgQIECBAgQIECBAgQIECBARQIECL-0Lr169ev-fPnxAR1f0KBAgQIECBAgQIAiBAgQIEBFAgQINf3hw4cOCBAgQIEBH-_QIECBAgQIECBAgCIECBAgQIEB1ARRL1-_____________7VAgOIECBAgQIECAIgQIECBAgQHUBNAgQf26BAgQIN_8ijRoECA4gQIECBAgQIAiBAgQIECA6gQE0CDV_QoECBAgRf2iBAgQIEBxAgQIECBAgCIECBAgQIDqBAgQE0aFAgQIECBAgQIECBAgQHECBAgQIECAIgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIBp0Kg3cNqDSggdMuPRh3ZOe_N074eWVf0y7MvTL46IECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQKMalAyYMmqClvxIJGHlk8oECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECA-f___-vXo9f9qgQIECBAgQIECBAgQIEBFAgQcOHz5____69ejRoECBAg__0CBAgQIECBAgQIECBAgQEUCL___r16NGXQIOHDh8-NCOD-3QIECBAgQIECBAgQIECBARQINf0ug-fPi9evRo0aBAgI6v6VAgQIECBAgQIECBAgQIEBFAgRf2hfBw4cOHD58-fPiAj-_oECBAgQIECBAgQIECBAgQEUCBBr-l0SNGjRo0CBAgQEcH9qgQIECBAgQIECBAgQIECBARQIECL-0Lr169ev-fPnxAR1f0KBAgQIECBAgQIAiBAgQIEBFAgQINf3hw4cOCBAgQIEBH-_QIECBAgQIECBAgCIECBAgQIEB1ARRL1-_____________7VAgOIECBAgQIECAIgQIECBAgQHUBNAgQf26BAgQIN_8ijRoECA4gQIECBAgQIAiBAgQIECA6gQE0CDV_QoECBAgRf2iBAgQIEBxAgQIECBAgCIECBAgQIDqBAgQE0aFAgQIECBAgQIECBAgQHECBAgQIECAIgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIBp0Kg3cNqDSggdMuPRh3ZOe_N074eWVf0y7MvTL46IECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQKMalAyYMmaCplx6ECZBT35unfDyyoJnTIuQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECA", K = {
+  ENGINEERING: ft,
+  ADVERT: It,
+  UK: Bt,
+  SPLASH: pt
 }, S = "http://www.w3.org/2000/svg";
-let et = 0, q, p;
+let _t = 0, X, p;
 class x {
   constructor() {
   }
@@ -126,7 +126,7 @@ class x {
 }
 class St extends x {
   constructor(t) {
-    return super(), q = t, p = q.document, this._e = p.createElementNS(S, "svg"), this._e.setAttribute("xmlns", S), this;
+    return super(), X = t, p = X.document, this._e = p.createElementNS(S, "svg"), this._e.setAttribute("xmlns", S), this;
   }
   addTo_(t) {
     const e = p.querySelector(t);
@@ -147,7 +147,7 @@ class St extends x {
     return e.append(t), this._e.append(e), this;
   }
   group_() {
-    const t = new V();
+    const t = new J();
     return this._e.append(t._node()), t;
   }
   width_() {
@@ -161,12 +161,12 @@ class St extends x {
     return this._e.append(e._node()), e;
   }
 }
-class V extends x {
+class J extends x {
   constructor() {
     return super(), this._e = p.createElementNS(S, "g"), this._c = [], this;
   }
   group_() {
-    const t = new V();
+    const t = new J();
     return this._e.append(t._node()), this._c.push(t), t;
   }
   plain_(t) {
@@ -272,7 +272,7 @@ class wt extends x {
     return this._e.append(t._node()), t;
   }
   find_(t) {
-    return [...this._e.querySelectorAll(t)].map(At);
+    return [...this._e.querySelectorAll(t)].map(lt);
   }
   rect_(t, e) {
     const _ = new W(t, e);
@@ -281,10 +281,10 @@ class wt extends x {
 }
 class Lt extends x {
   constructor() {
-    return super(), this._e = p.createElementNS(S, "clipPath"), this._e.setAttribute("id", `clipPath-${et}`), et++, this;
+    return super(), this._e = p.createElementNS(S, "clipPath"), this._e.setAttribute("id", `clipPath-${_t}`), _t++, this;
   }
   children_() {
-    return [...this._e.children].map(At);
+    return [...this._e.children].map(lt);
   }
   add_(t) {
     this._e.appendChild(t._node());
@@ -292,7 +292,7 @@ class Lt extends x {
 }
 class W extends x {
   constructor(t, e) {
-    if (super(), t instanceof q.SVGElement)
+    if (super(), t instanceof X.SVGElement)
       return this._e = t, this;
     const _ = t;
     return this._e = p.createElementNS(S, "rect"), this._e.setAttribute("width", parseInt(_)), this._e.setAttribute("height", parseInt(e)), this;
@@ -318,7 +318,7 @@ class Ot extends x {
     return super(), this._e = p.createElementNS(S, "line"), this._e.setAttribute("x1", t), this._e.setAttribute("y1", e), this._e.setAttribute("x2", _), this._e.setAttribute("y2", s), this;
   }
 }
-function At(r) {
+function lt(r) {
   let t;
   switch (r.tagName) {
     case "rect":
@@ -329,7 +329,7 @@ function At(r) {
   }
   return t;
 }
-const g = {
+const l = {
   BLACK: Symbol("BLACK"),
   RED: Symbol("RED"),
   GREEN: Symbol("GREEN"),
@@ -339,7 +339,7 @@ const g = {
   CYAN: Symbol("CYAN"),
   WHITE: Symbol("WHITE")
 };
-Object.freeze(g);
+Object.freeze(l);
 const n = {
   ALPHA_: Symbol("ALPHA"),
   MOSAIC_CONTIGUOUS_: Symbol("MOSAIC_CONTIGUOUS"),
@@ -367,15 +367,15 @@ const Q = {
 Object.freeze(Q);
 class h {
   static charFromTextColour(t) {
-    if (t in _t) return _t[t];
+    if (t in st) return st[t];
     throw new Error("Attributes.charFromTextColour: bad colour: " + t);
   }
   static charFromGraphicColour(t) {
-    if (t in st) return st[t];
+    if (t in it) return it[t];
     throw new Error("Attributes.charFromGraphicColour: bad colour");
   }
   static charFromAttribute(t) {
-    if (t in it) return it[t];
+    if (t in rt) return rt[t];
     throw new Error("Attributes.charFromAttribute: bad attribute");
   }
 }
@@ -403,48 +403,48 @@ Object.assign(h, {
 });
 function Rt(r, t) {
   let e = null, _ = null;
-  return t in T && D[r].includes(t.charCodeAt(0)) ? t in z ? (e = h.TEXT_COLOUR, _ = T[t]) : t in j ? (e = h.MOSAIC_COLOUR, _ = T[t]) : e = T[t] : t.charCodeAt(0) <= 31 && (e = h.UNKNOWN_), {
+  return t in D && T[r].includes(t.charCodeAt(0)) ? t in z ? (e = h.TEXT_COLOUR, _ = D[t]) : t in j ? (e = h.MOSAIC_COLOUR, _ = D[t]) : e = D[t] : t.charCodeAt(0) <= 31 && (e = h.UNKNOWN_), {
     attribute_: e,
     colour_: _
   };
 }
-function X(r) {
+function Y(r) {
   return gt[r];
 }
 const gt = {
-  [g.BLACK]: "#000",
-  [g.RED]: "#f00",
-  [g.GREEN]: "#0f0",
-  [g.YELLOW]: "#ff0",
-  [g.BLUE]: "#00f",
-  [g.MAGENTA]: "#f0f",
-  [g.CYAN]: "#0ff",
-  [g.WHITE]: "#fff"
+  [l.BLACK]: "#000",
+  [l.RED]: "#f00",
+  [l.GREEN]: "#0f0",
+  [l.YELLOW]: "#ff0",
+  [l.BLUE]: "#00f",
+  [l.MAGENTA]: "#f0f",
+  [l.CYAN]: "#0ff",
+  [l.WHITE]: "#fff"
 };
 Object.freeze(gt);
 const z = {
-  "\0": g.BLACK,
-  "": g.RED,
-  "": g.GREEN,
-  "": g.YELLOW,
-  "": g.BLUE,
-  "": g.MAGENTA,
-  "": g.CYAN,
-  "\x07": g.WHITE
+  "\0": l.BLACK,
+  "": l.RED,
+  "": l.GREEN,
+  "": l.YELLOW,
+  "": l.BLUE,
+  "": l.MAGENTA,
+  "": l.CYAN,
+  "\x07": l.WHITE
 };
 Object.freeze(z);
-const _t = J(z), j = {
-  "": g.BLACK,
-  "": g.RED,
-  "": g.GREEN,
-  "": g.YELLOW,
-  "": g.BLUE,
-  "": g.MAGENTA,
-  "": g.CYAN,
-  "": g.WHITE
+const st = $(z), j = {
+  "": l.BLACK,
+  "": l.RED,
+  "": l.GREEN,
+  "": l.YELLOW,
+  "": l.BLUE,
+  "": l.MAGENTA,
+  "": l.CYAN,
+  "": l.WHITE
 };
 Object.freeze(j);
-const st = J(j), T = {
+const it = $(j), D = {
   "\b": h.FLASH,
   "	": h.STEADY,
   "\n": h.END_BOX,
@@ -462,10 +462,10 @@ const st = J(j), T = {
   "": h.HOLD_MOSAICS,
   "": h.RELEASE_MOSAICS
 };
-Object.assign(T, z);
-Object.assign(T, j);
-Object.freeze(T);
-const it = J(T), D = {
+Object.assign(D, z);
+Object.assign(D, j);
+Object.freeze(D);
+const rt = $(D), T = {
   [Q[0]]: [
     // pre-release level
     1,
@@ -489,8 +489,8 @@ const it = J(T), D = {
     // graphic colours
   ]
 };
-D[Q[1]] = [
-  ...D[Q[0]],
+T[Q[1]] = [
+  ...T[Q[0]],
   10,
   11,
   // start/end boxed
@@ -511,36 +511,36 @@ D[Q[1]] = [
   31
   // hold/release mosaics
 ];
-D[Q[1.5]] = [...D[Q[1]], 0, 16];
-D[Q[2.5]] = [...D[Q[1.5]], 14, 15];
-Object.freeze(D);
-function J(r) {
+T[Q[1.5]] = [...T[Q[1]], 0, 16];
+T[Q[2.5]] = [...T[Q[1.5]], 14, 15];
+Object.freeze(T);
+function $(r) {
   const t = {};
   for (const e in r)
     t[r[e]] = e;
   return Object.freeze(t);
 }
-const w = 400, L = 250, P = 40, k = 25, rt = 1.5, Tt = {
+const w = 400, L = 250, P = 40, k = 25, ot = 1.5, Dt = {
   1.33: w / (1.33 * L),
   1.2: w / (1.2 * L),
   1.22: w / (1.22 * L)
-}, ot = 1.2, y = L / k, f = w / P, Y = y * 2, Dt = f * 2, Z = f / 2, Ut = y * (4 / 5), M = {
+}, nt = 1.2, y = L / k, f = w / P, Z = y * 2, Tt = f * 2, V = f / 2, Ut = y * (4 / 5), M = {
   _contiguous: {
     _textLength: f + 0.4,
-    _DX: 0 - Z - 0.2
+    _DX: 0 - V - 0.2
   },
   _separated: {
     _textLength: f,
-    _DX: 0 - Z + 0.5
+    _DX: 0 - V + 0.5
   }
 };
 Object.freeze(M);
 class C {
   constructor(t, e) {
-    this._svg = new St(e).viewbox_(`0 0 ${w} ${L}`).size_(w * rt, L * rt * Tt[ot]).attr_({
+    this._svg = new St(e).viewbox_(`0 0 ${w} ${L}`).size_(w * ot, L * ot * Dt[nt]).attr_({
       preserveAspectRatio: "none",
       style: "font-family: sans-serif"
-    }).style_(Pt()), this.d = this._svg.group_().attr_("class", "conceal_concealed flash_flashing"), this._aspectRatio = ot, this._createDisplay(), this._createBoxModeClip(), this._gridLayer = null, this._model = t, this._listenerId = this._model.onSet_.attach_(
+    }).style_(Pt()), this.d = this._svg.group_().attr_("class", "conceal_concealed flash_flashing"), this._aspectRatio = nt, this._createDisplay(), this._createBoxModeClip(), this._gridLayer = null, this._model = t, this._listenerId = this._model.onSet_.attach_(
       () => this._update()
     ), this._boxMode = !1, this._mixMode = !1, this._pageContainsBox = !1, this._plugins = {}, console.debug("VectorViewBase constructed");
   }
@@ -566,8 +566,8 @@ class C {
           i = !1, this._clearCell(I), this._extendBackgroundForRow(s), E && this._extendBox();
           return;
         }
-        const c = a.getCell_(u), O = X(c.bgColour_), G = c.isMosaicByte_(), v = X(c.fgColour_), l = this._getCellAttr(c.type_, G, c.isCursive_);
-        this._renderCell(I, c, l, v, u, s, G), c.boxed_ && (E ? this._extendBox() : this._setBoxForRow(s, u), this._pageContainsBox = !0), A == O ? this._extendBackgroundForRow(s) : this._setBackgroundForRow(s, u, O), (c.size_ == d.DOUBLE_WIDTH_ || c.size_ == d.DOUBLE_SIZE_) && (i = !0), A = O, E = c.boxed_, c.flashing_ && (e = !0);
+        const c = a.getCell_(u), O = Y(c.bgColour_), v = c.isMosaicCell_(), G = Y(c.fgColour_), g = this._getCellAttr(c.type_, v, c.isCursive_);
+        this._renderCell(I, c, g, G, u, s, v), c.boxed_ && (E ? this._extendBox() : this._setBoxForRow(s, u), this._pageContainsBox = !0), A == O ? this._extendBackgroundForRow(s) : this._setBackgroundForRow(s, u, O), (c.size_ == d.DOUBLE_WIDTH_ || c.size_ == d.DOUBLE_SIZE_) && (i = !0), A = O, E = c.boxed_, c.flashing_ && (e = !0);
       }), a.doubleHeight_ ? (this._setRowDoubleHeight(s), this._setBoxDoubleHeight(), t = !0) : t = !1, this._makeClipFromBoxesForRow(s);
     }), "_endOfUpdate" in this._plugins && this._plugins._endOfUpdate(this._svg.width_(), this._svg.height_()), this.d.addClass_("conceal_concealed"), e && setTimeout(() => this.d.addClass_("flash_flashing"), 100), this._refreshMixMode();
   }
@@ -592,7 +592,7 @@ class C {
     this._renderText(t, e, _, s, i, a), e.type_ == n.MOSAIC_CONTIGUOUS_ && A || e.type_ == n.G3_ ? t.addClass_("mosaic") : e.type_ == n.MOSAIC_SEPARATED_ && A && t.addClass_("mosaic_separated");
   }
   _renderText(t, e, _, s, i, a) {
-    t.plain_(e.char_).attr_(_).fill_(s), e.size_ == d.DOUBLE_HEIGHT_ ? t.attr_("transform", `translate(0 ${nt(a)}) scale(1 2)`) : e.size_ == d.DOUBLE_WIDTH_ ? t.attr_("transform", `translate(${at(i)} 0) scale(2 1)`) : e.size_ == d.DOUBLE_SIZE_ && t.attr_("transform", `translate(${at(i)} ${nt(a)}) scale(2 2)`), e.flashing_ && t.addClass_("flash"), e.concealed_ && t.addClass_("conceal");
+    t.plain_(e.char_).attr_(_).fill_(s), e.size_ == d.DOUBLE_HEIGHT_ ? t.attr_("transform", `translate(0 ${at(a)}) scale(1 2)`) : e.size_ == d.DOUBLE_WIDTH_ ? t.attr_("transform", `translate(${ht(i)} 0) scale(2 1)`) : e.size_ == d.DOUBLE_SIZE_ && t.attr_("transform", `translate(${ht(i)} ${at(a)}) scale(2 2)`), e.flashing_ && t.addClass_("flash"), e.concealed_ && t.addClass_("conceal");
   }
   reveal_() {
     this.d.toggleClass_("conceal_concealed");
@@ -661,7 +661,7 @@ class C {
       const s = [];
       for (let i = 0; i < P; i++)
         s.push(e.plain_(Ft()).attr_({
-          x: i * f + Z,
+          x: i * f + V,
           y: _ * y + Ut
         }));
       t.push(s);
@@ -687,10 +687,10 @@ class C {
     this._lastBoxBuffer.width_(t + f);
   }
   _setRowDoubleHeight(t) {
-    this._bgrows[t].children_().forEach((e) => e.attr_("height", Y));
+    this._bgrows[t].children_().forEach((e) => e.attr_("height", Z));
   }
   _setBoxDoubleHeight() {
-    this._defs.find_("[data-boxbuffer]").forEach((t) => t.height_(Y));
+    this._defs.find_("[data-boxbuffer]").forEach((t) => t.height_(Z));
   }
   _setBoxForRow(t, e) {
     const _ = e * f, s = t * y;
@@ -735,8 +735,8 @@ class C {
   registerPlugin(t, e) {
     return "renderBackground" in e && (this._plugins._background = e.renderBackground), "renderMosaic" in e && (this._plugins._mosaic = e.renderMosaic), "endOfPageUpdate" in e && (this._plugins._endOfUpdate = e.endOfPageUpdate), "clearCellsForRow" in e && (this._plugins._clearCellsForRow = e.clearCellsForRow), {
       lookupColour: Ht,
-      isDoubleHeight: Gt,
-      isDoubleWidth: vt,
+      isDoubleHeight: vt,
+      isDoubleWidth: Gt,
       isDoubleSize: Mt,
       isSeparatedMosaic: Nt,
       createImageOverlay: this._createImageOverlay.bind(this),
@@ -754,14 +754,14 @@ class C {
 }
 C._CELL_WIDTH = f;
 C._CELL_HEIGHT = y;
-C._CELL_DOUBLE_WIDTH = Dt;
-C._CELL_DOUBLE_HEIGHT = Y;
+C._CELL_DOUBLE_WIDTH = Tt;
+C._CELL_DOUBLE_HEIGHT = Z;
 C._WIDTH_PX = w;
 C._HEIGHT_PX = L;
 C._MOSAIC_METRIC = M;
 C.ROWS = k;
 C.COLS = P;
-const Ht = (r) => X(r), Gt = (r) => r == d.DOUBLE_HEIGHT_, vt = (r) => r == d.DOUBLE_WIDTH_, Mt = (r) => r == d.DOUBLE_SIZE_, Nt = (r) => r == n.MOSAIC_SEPARATED_, nt = (r) => 0 - r * y, at = (r) => 0 - r * f;
+const Ht = (r) => Y(r), vt = (r) => r == d.DOUBLE_HEIGHT_, Gt = (r) => r == d.DOUBLE_WIDTH_, Mt = (r) => r == d.DOUBLE_SIZE_, Nt = (r) => r == n.MOSAIC_SEPARATED_, at = (r) => 0 - r * y, ht = (r) => 0 - r * f;
 function Ft() {
   return String.fromCharCode(32 + Math.random() * 95);
 }
@@ -838,7 +838,7 @@ shape-rendering: crispEdges;
 rect { color: orange; }
 `;
 }
-const kt = { $: "¤", "": "■" }, Wt = { "#": "#", $: "ů", "@": "č", "[": "ť", "\\": "ž", "]": "ý", "^": "í", _: "ř", "`": "é", "{": "á", "|": "|", "}": "ú", "~": "š" }, zt = { "#": "£", $: "$", "@": "@", "[": "←", "\\": "½", "]": "→", "^": "↑", _: "#", "`": "—", "{": "¼", "|": "‖", "}": "¾", "~": "÷" }, jt = { "#": "#", $: "õ", "@": "Š", "[": "Ä", "\\": "Ö", "]": "Ž", "^": "Ü", _: "Õ", "`": "š", "{": "ä", "|": "ö", "}": "ž", "~": "ü" }, Kt = { "#": "é", $: "ï", "@": "à", "[": "ë", "\\": "ê", "]": "ù", "^": "î", _: "#", "`": "è", "{": "â", "|": "ô", "}": "û", "~": "ç" }, qt = { "#": "#", $: "$", "@": "§", "[": "Ä", "\\": "Ö", "]": "Ü", "^": "^", _: "_", "`": "°", "{": "ä", "|": "ö", "}": "ü", "~": "ß" }, Xt = { "#": "£", $: "$", "@": "é", "[": "°", "\\": "ç", "]": "→", "^": "↑", _: "#", "`": "ù", "{": "à", "|": "ò", "}": "è", "~": "ì" }, Yt = { "#": "#", $: "$", "@": "Š", "[": "ė", "\\": "ę", "]": "Ž", "^": "č", _: "ū", "`": "š", "{": "ą", "|": "ų", "}": "ž", "~": "į" }, Zt = { "#": "#", $: "ń", "@": "ą", "[": "Ƶ", "\\": "Ś", "]": "Ł", "^": "ć", _: "ó", "`": "ę", "{": "ż", "|": "ś", "}": "ł", "~": "ź" }, Vt = { "#": "ç", $: "$", "@": "¡", "[": "á", "\\": "é", "]": "í", "^": "ó", _: "ú", "`": "¿", "{": "ü", "|": "ñ", "}": "è", "~": "à" }, Jt = { "#": "#", $: "¤", "@": "Ț", "[": "Â", "\\": "Ș", "]": "Ă", "^": "Î", _: "ı", "`": "ț", "{": "â", "|": "ș", "}": "ă", "~": "î" }, $t = { "#": "#", $: "Ë", "@": "Č", "[": "Ć", "\\": "Ž", "]": "Đ", "^": "Š", _: "ë", "`": "č", "{": "ć", "|": "ž", "}": "đ", "~": "š" }, te = { "#": "#", $: "¤", "@": "É", "[": "Ä", "\\": "Ö", "]": "Å", "^": "Ü", _: "_", "`": "é", "{": "ä", "|": "ö", "}": "å", "~": "ü" }, ee = { "#": "₺", $: "ğ", "@": "İ", "[": "Ş", "\\": "Ö", "]": "Ç", "^": "Ü", _: "Ğ", "`": "ı", "{": "ş", "|": "ö", "}": "ç", "~": "ü" }, _e = { 0: "°", 1: "±", 2: "²", 3: "³", 4: "×", 5: "µ", 6: "¶", 7: "·", 8: "÷", 9: "’", "!": "¡", '"': "¢", "#": "£", "%": "¥", "&": "#", "'": "§", "(": "¤", ")": "‘", "*": "“", "+": "«", ",": "←", "-": "↑", ".": "→", "/": "↓", ":": "”", ";": "»", "<": "¼", "=": "½", ">": "¾", "?": "¿", "@": " ", A: "̀", B: "́", C: "̂", D: "̃", E: "̄", F: "̆", G: "̇", H: "̈", I: "̣", J: "̊", K: "̧", L: "̲", M: "̋", N: "̨", O: "̌", P: "—", Q: "¹", R: "®", S: "©", T: "™", U: "♪", V: "₠", W: "‰", X: "α", Y: null, Z: null, "[": null, "\\": "⅛", "]": "⅜", "^": "⅝", _: "⅞", "`": "Ω", a: "Æ", b: "Ð", c: "ª", d: "Ħ", e: null, f: "Ĳ", g: "Ŀ", h: "Ł", i: "Ø", j: "Œ", k: "º", l: "Þ", m: "Ŧ", n: "Ŋ", o: "ŉ", p: "ĸ", q: "æ", r: "đ", s: "ð", t: "ħ", u: "ı", v: "ĳ", w: "ŀ", x: "ł", y: "ø", z: "œ", "{": "ß", "|": "þ", "}": "ŧ", "~": "ŋ", "": "■" }, se = { "<": "«", ">": "»", "@": "ΐ", A: "Α", B: "Β", C: "Γ", D: "Δ", E: "Ε", F: "Ζ", G: "Η", H: "Θ", I: "Ι", J: "Κ", K: "Λ", L: "Μ", M: "Ν", N: "Ξ", O: "Ο", P: "Π", Q: "Ρ", R: "ʹ", S: "Σ", T: "Τ", U: "Υ", V: "Φ", W: "Χ", X: "Ψ", Y: "Ω", Z: "Ϊ", "[": "Ϋ", "\\": "ά", "]": "έ", "^": "ή", _: "ί", "`": "ΰ", a: "α", b: "β", c: "γ", d: "δ", e: "ε", f: "ζ", g: "η", h: "θ", i: "ι", j: "κ", k: "λ", l: "μ", m: "ν", n: "ξ", o: "ο", p: "π", q: "ρ", r: "ς", s: "σ", t: "τ", u: "υ", v: "φ", w: "χ", x: "ψ", y: "ω", z: "ϊ", "{": "ϋ", "|": "ό", "}": "ύ", "~": "ώ", "": "■" }, ie = { 0: "°", 1: "±", 2: "²", 3: "³", 4: "×", 5: "m", 6: "n", 7: "p", 8: "÷", 9: "’", "!": "a", '"': "b", "#": "£", $: "e", "%": "h", "&": "i", "'": "§", "(": ":", ")": "‘", "*": "“", "+": "k", ",": "←", "-": "↑", ".": "→", "/": "↓", ":": "”", ";": "t", "<": "¼", "=": "½", ">": "¾", "?": "x", "@": " ", A: "̀", B: "́", C: "̂", D: "̃", E: "̄", F: "̆", G: "̇", H: "̈", I: "̣", J: "̊", K: "̧", L: "̲", M: "̋", N: "̨", O: "̌", P: "?", Q: "¹", R: "®", S: "©", T: "™", U: "♪", V: "₠", W: "‰", X: "ɑ", Y: "Ί", Z: "Ύ", "[": "Ώ", "\\": "⅛", "]": "⅜", "^": "⅝", _: "⅞", "`": "C", a: "D", b: "F", c: "G", d: "J", e: "L", f: "Q", g: "R", h: "S", i: "U", j: "V", k: "W", l: "Y", m: "Z", n: "Ά", o: "Ή", p: "c", q: "d", r: "f", s: "g", t: "j", u: "l", v: "q", w: "r", x: "s", y: "u", z: "v", "{": "w", "|": "y", "}": "z", "~": "Έ", "": "■" }, re = { "@": "Ю", A: "А", B: "Б", C: "Ц", D: "Д", E: "Е", F: "Ф", G: "Г", H: "Х", I: "И", J: "Ѝ", K: "К", L: "Л", M: "М", N: "Н", O: "О", P: "П", Q: "Я", R: "Р", S: "С", T: "Т", U: "У", V: "Ж", W: "В", X: "Ь", Z: "З", "[": "Ш", "]": "Щ", "^": "Ч", "`": "ю", a: "а", b: "б", c: "ц", d: "д", e: "е", f: "ф", g: "г", h: "х", i: "и", j: "ѝ", k: "к", l: "л", m: "м", n: "н", o: "о", p: "п", q: "я", r: "р", s: "с", t: "т", u: "у", v: "ж", w: "в", x: "ь", z: "з", "{": "ш", "}": "щ", "~": "ч", "": "■" }, oe = { "&": "ы", Y: "Ъ", "\\": "Э", _: "Ы", y: "ъ", "|": "э" }, ne = { "@": "Ч", J: "Ј", Q: "Ќ", V: "В", W: "Ѓ", X: "Љ", Y: "Њ", "[": "Ћ", "\\": "Ж", "]": "Ђ", "^": "Ш", _: "Џ", "`": "ч", j: "ј", q: "ќ", v: "в", w: "ѓ", x: "љ", y: "њ", "{": "ћ", "|": "ж", "}": "ђ", "~": "ш" }, ae = { "&": "ї", Y: "І", "\\": "Є", _: "Ї", y: "і", "|": "є" }, he = { 0: "m", 1: "n", 2: "p", 3: "t", 4: "x", 5: "x", 6: "°", 7: "±", 8: "²", 9: "³", "!": "a", '"': "b", "#": "£", $: "e", "%": "h", "&": "i", "'": "§", "(": ":", ")": "‘", "*": "“", "+": "k", ",": "←", "-": "↑", ".": "→", "/": "↓", ":": "¼", ";": "½", "<": "¾", "=": "÷", ">": "’", "?": "”", "@": " ", A: "̀", B: "́", C: "̂", D: "̃", E: "̄", F: "̆", G: "̇", H: "̈", I: "̣", J: "̊", K: "̧", L: "̲", M: "̋", N: "̨", O: "̌", P: "?", Q: "©", R: "®", S: "¹", T: "ɑ", U: "Ί", V: "Ύ", W: "Ώ", X: "‰", Y: "₠", Z: "™", "[": "⅛", "\\": "⅜", "]": "⅝", "^": "⅞", _: "♪", "`": "C", a: "D", b: "F", c: "G", d: "J", e: "L", f: "Q", g: "R", h: "S", i: "U", j: "V", k: "W", l: "Y", m: "Z", n: "Ά", o: "Ή", p: "c", q: "d", r: "f", s: "g", t: "j", u: "l", v: "q", w: "r", x: "s", y: "u", z: "v", "{": "w", "|": "y", "}": "z", "~": "Έ", "": "■" }, ce = { "#": "£", "&": "ﻰ", "'": "ﻱ", "(": ")", ")": "(", ";": "؛", "<": ">", ">": "<", "?": "؟", "@": "ﺔ", A: "ﺀ", B: "ﺒ", C: "ﺏ", D: "ﺘ", E: "ﺕ", F: "ﺎ", G: "ﺍ", H: "ﺑ", I: "ﺓ", J: "ﺗ", K: "ﺛ", L: "ﺟ", M: "ﺣ", N: "ﺧ", O: "ﺩ", P: "ﺫ", Q: "ﺭ", R: "ﺯ", S: "ﺳ", T: "ﺷ", U: "ﺻ", V: "ﺿ", W: "ﻃ", X: "ﻇ", Y: "ﻋ", Z: "ﻏ", "[": "ﺜ", "\\": "ﺠ", "]": "ﺤ", "^": "ﺨ", _: "#", "`": "ـ", a: "ﻓ", b: "ﻗ", c: "ﻛ", d: "ﻟ", e: "ﻣ", f: "ﻧ", g: "ﻫ", h: "ﻭ", i: "ﻰ", j: "ﻳ", k: "ﺙ", l: "ﺝ", m: "ﺡ", n: "ﺥ", o: "ﻴ", p: "ﻯ", q: "ﻌ", r: "ﻐ", s: "ﻔ", t: "ﻑ", u: "ﻘ", v: "ﻕ", w: "ﻙ", x: "ﻠ", y: "ﻝ", z: "ﻤ", "{": "ﻡ", "|": "ﻨ", "}": "ﻥ", "~": "ﻻ", "": "■" }, Ae = { 0: "٠", 1: "١", 2: "٢", 3: "٣", 4: "٤", 5: "٥", 6: "٦", 7: "٧", 8: "٨", 9: "٩", "!": "ﻉ", '"': "ﺁ", "#": "ﺃ", $: "ﺅ", "%": "ﺇ", "&": "ﺋ", "'": "ﺊ", "(": "ﭼ", ")": "ﭽ", "*": "ﭺ", "+": "ﭘ", ",": "ﭙ", "-": "ﭖ", ".": "ﮊ", "/": "ﮔ", ":": "ﻎ", ";": "ﻍ", "<": "ﻼ", "=": "ﻬ", ">": "ﻪ", "?": "ﻩ", "@": "à", "[": "ë", "\\": "ê", "]": "ù", "^": "î", _: "ﻊ", "`": "é", "{": "â", "|": "ô", "}": "û", "~": "ç", "": "■" }, ge = { "#": "£", "[": "←", "\\": "½", "]": "→", "^": "↑", _: "#", "`": "א", a: "ב", b: "ג", c: "ד", d: "ה", e: "ו", f: "ז", g: "ח", h: "ט", i: "י", j: "ך", k: "כ", l: "ל", m: "ם", n: "מ", o: "ן", p: "נ", q: "ס", r: "ע", s: "ף", t: "פ", u: "ץ", v: "צ", w: "ק", x: "ר", y: "ש", z: "ת", "{": "₪", "|": "‖", "}": "¾", "~": "÷", "": "■" }, le = { 0: "🬏", 1: "🬐", 2: "🬑", 3: "🬒", 4: "🬓", 5: "▌", 6: "🬔", 7: "🬕", 8: "🬖", 9: "🬗", " ": " ", "!": "🬀", '"': "🬁", "#": "🬂", $: "🬃", "%": "🬄", "&": "🬅", "'": "🬆", "(": "🬇", ")": "🬈", "*": "🬉", "+": "🬊", ",": "🬋", "-": "🬌", ".": "🬍", "/": "🬎", ":": "🬘", ";": "🬙", "<": "🬚", "=": "🬛", ">": "🬜", "?": "🬝", "`": "🬞", a: "🬟", b: "🬠", c: "🬡", d: "🬢", e: "🬣", f: "🬤", g: "🬥", h: "🬦", i: "🬧", j: "▐", k: "🬨", l: "🬩", m: "🬪", n: "🬫", o: "🬬", p: "🬭", q: "🬮", r: "🬯", s: "🬰", t: "🬱", u: "🬲", v: "🬳", w: "🬴", x: "🬵", y: "🬶", z: "🬷", "{": "🬸", "|": "🬹", "}": "🬺", "~": "🬻", "": "█" }, Ce = { 0: "", 1: "", 2: "", 3: "", 4: "", 5: "", 6: "", 7: "", 8: "", 9: "", " ": " ", "!": "", '"': "", "#": "", $: "", "%": "", "&": "", "'": "", "(": "", ")": "", "*": "", "+": "", ",": "", "-": "", ".": "", "/": "", ":": "", ";": "", "<": "", "=": "", ">": "", "?": "", "`": "", a: "", b: "", c: "", d: "", e: "", f: "", g: "", h: "", i: "", j: "", k: "", l: "", m: "", n: "", o: "", p: "", q: "", r: "", s: "", t: "", u: "", v: "", w: "", x: "", y: "", z: "", "{": "", "|": "", "}": "", "~": "", "": "" }, de = { 0: "🭇", 1: "🭈", 2: "🭉", 3: "🭊", 4: "🭋", 5: "◢", 6: "🭌", 7: "🭍", 8: "🭎", 9: "🭏", " ": "🬼", "!": "🬽", '"': "🬾", "#": "🬿", $: "🭀", "%": "◣", "&": "🭁", "'": "🭂", "(": "🭃", ")": "🭄", "*": "🭅", "+": "🭆", ",": "🭨", "-": "🭩", ".": "🭰", "/": "▒", ":": "🭐", ";": "🭑", "<": "🭪", "=": "🭫", ">": "🭵", "?": "█", "@": "┷", A: "┯", B: "┝", C: "┥", D: "🮤", E: "🮥", F: "🮦", G: "🮧", H: "🮠", I: "🮡", J: "🮢", K: "🮣", L: "┿", M: "•", N: "●", O: "○", P: "│", Q: "─", R: "┌", S: "┐", T: "└", U: "┘", V: "├", W: "┤", X: "┬", Y: "┴", Z: "┼", "[": "→", "\\": "←", "]": "↑", "^": "↓", _: " ", "`": "🭒", a: "🭓", b: "🭔", c: "🭕", d: "🭖", e: "◥", f: "🭗", g: "🭘", h: "🭙", i: "🭚", j: "🭛", k: "🭜", l: "🭬", m: "🭭", n: null, o: null, p: "🭝", q: "🭞", r: "🭟", s: "🭠", t: "🭡", u: "◤", v: "🭢", w: "🭣", x: "🭤", y: "🭥", z: "🭦", "{": "🭧", "|": "🭮", "}": "🭯", "~": null, "": null }, R = {
+const kt = { $: "¤", "": "■" }, Wt = { "#": "#", $: "ů", "@": "č", "[": "ť", "\\": "ž", "]": "ý", "^": "í", _: "ř", "`": "é", "{": "á", "|": "|", "}": "ú", "~": "š" }, zt = { "#": "£", $: "$", "@": "@", "[": "←", "\\": "½", "]": "→", "^": "↑", _: "#", "`": "—", "{": "¼", "|": "‖", "}": "¾", "~": "÷" }, jt = { "#": "#", $: "õ", "@": "Š", "[": "Ä", "\\": "Ö", "]": "Ž", "^": "Ü", _: "Õ", "`": "š", "{": "ä", "|": "ö", "}": "ž", "~": "ü" }, Kt = { "#": "é", $: "ï", "@": "à", "[": "ë", "\\": "ê", "]": "ù", "^": "î", _: "#", "`": "è", "{": "â", "|": "ô", "}": "û", "~": "ç" }, qt = { "#": "#", $: "$", "@": "§", "[": "Ä", "\\": "Ö", "]": "Ü", "^": "^", _: "_", "`": "°", "{": "ä", "|": "ö", "}": "ü", "~": "ß" }, Xt = { "#": "£", $: "$", "@": "é", "[": "°", "\\": "ç", "]": "→", "^": "↑", _: "#", "`": "ù", "{": "à", "|": "ò", "}": "è", "~": "ì" }, Yt = { "#": "#", $: "$", "@": "Š", "[": "ė", "\\": "ę", "]": "Ž", "^": "č", _: "ū", "`": "š", "{": "ą", "|": "ų", "}": "ž", "~": "į" }, Zt = { "#": "#", $: "ń", "@": "ą", "[": "Ƶ", "\\": "Ś", "]": "Ł", "^": "ć", _: "ó", "`": "ę", "{": "ż", "|": "ś", "}": "ł", "~": "ź" }, Vt = { "#": "ç", $: "$", "@": "¡", "[": "á", "\\": "é", "]": "í", "^": "ó", _: "ú", "`": "¿", "{": "ü", "|": "ñ", "}": "è", "~": "à" }, Jt = { "#": "#", $: "¤", "@": "Ț", "[": "Â", "\\": "Ș", "]": "Ă", "^": "Î", _: "ı", "`": "ț", "{": "â", "|": "ș", "}": "ă", "~": "î" }, $t = { "#": "#", $: "Ë", "@": "Č", "[": "Ć", "\\": "Ž", "]": "Đ", "^": "Š", _: "ë", "`": "č", "{": "ć", "|": "ž", "}": "đ", "~": "š" }, te = { "#": "#", $: "¤", "@": "É", "[": "Ä", "\\": "Ö", "]": "Å", "^": "Ü", _: "_", "`": "é", "{": "ä", "|": "ö", "}": "å", "~": "ü" }, ee = { "#": "₺", $: "ğ", "@": "İ", "[": "Ş", "\\": "Ö", "]": "Ç", "^": "Ü", _: "Ğ", "`": "ı", "{": "ş", "|": "ö", "}": "ç", "~": "ü" }, _e = { 0: "°", 1: "±", 2: "²", 3: "³", 4: "×", 5: "µ", 6: "¶", 7: "·", 8: "÷", 9: "’", "!": "¡", '"': "¢", "#": "£", "%": "¥", "&": "#", "'": "§", "(": "¤", ")": "‘", "*": "“", "+": "«", ",": "←", "-": "↑", ".": "→", "/": "↓", ":": "”", ";": "»", "<": "¼", "=": "½", ">": "¾", "?": "¿", "@": " ", A: "̀", B: "́", C: "̂", D: "̃", E: "̄", F: "̆", G: "̇", H: "̈", I: "̣", J: "̊", K: "̧", L: "̲", M: "̋", N: "̨", O: "̌", P: "—", Q: "¹", R: "®", S: "©", T: "™", U: "♪", V: "₠", W: "‰", X: "α", Y: null, Z: null, "[": null, "\\": "⅛", "]": "⅜", "^": "⅝", _: "⅞", "`": "Ω", a: "Æ", b: "Ð", c: "ª", d: "Ħ", e: null, f: "Ĳ", g: "Ŀ", h: "Ł", i: "Ø", j: "Œ", k: "º", l: "Þ", m: "Ŧ", n: "Ŋ", o: "ŉ", p: "ĸ", q: "æ", r: "đ", s: "ð", t: "ħ", u: "ı", v: "ĳ", w: "ŀ", x: "ł", y: "ø", z: "œ", "{": "ß", "|": "þ", "}": "ŧ", "~": "ŋ", "": "■" }, se = { "<": "«", ">": "»", "@": "ΐ", A: "Α", B: "Β", C: "Γ", D: "Δ", E: "Ε", F: "Ζ", G: "Η", H: "Θ", I: "Ι", J: "Κ", K: "Λ", L: "Μ", M: "Ν", N: "Ξ", O: "Ο", P: "Π", Q: "Ρ", R: "ʹ", S: "Σ", T: "Τ", U: "Υ", V: "Φ", W: "Χ", X: "Ψ", Y: "Ω", Z: "Ϊ", "[": "Ϋ", "\\": "ά", "]": "έ", "^": "ή", _: "ί", "`": "ΰ", a: "α", b: "β", c: "γ", d: "δ", e: "ε", f: "ζ", g: "η", h: "θ", i: "ι", j: "κ", k: "λ", l: "μ", m: "ν", n: "ξ", o: "ο", p: "π", q: "ρ", r: "ς", s: "σ", t: "τ", u: "υ", v: "φ", w: "χ", x: "ψ", y: "ω", z: "ϊ", "{": "ϋ", "|": "ό", "}": "ύ", "~": "ώ", "": "■" }, ie = { 0: "°", 1: "±", 2: "²", 3: "³", 4: "×", 5: "m", 6: "n", 7: "p", 8: "÷", 9: "’", "!": "a", '"': "b", "#": "£", $: "e", "%": "h", "&": "i", "'": "§", "(": ":", ")": "‘", "*": "“", "+": "k", ",": "←", "-": "↑", ".": "→", "/": "↓", ":": "”", ";": "t", "<": "¼", "=": "½", ">": "¾", "?": "x", "@": " ", A: "̀", B: "́", C: "̂", D: "̃", E: "̄", F: "̆", G: "̇", H: "̈", I: "̣", J: "̊", K: "̧", L: "̲", M: "̋", N: "̨", O: "̌", P: "?", Q: "¹", R: "®", S: "©", T: "™", U: "♪", V: "₠", W: "‰", X: "ɑ", Y: "Ί", Z: "Ύ", "[": "Ώ", "\\": "⅛", "]": "⅜", "^": "⅝", _: "⅞", "`": "C", a: "D", b: "F", c: "G", d: "J", e: "L", f: "Q", g: "R", h: "S", i: "U", j: "V", k: "W", l: "Y", m: "Z", n: "Ά", o: "Ή", p: "c", q: "d", r: "f", s: "g", t: "j", u: "l", v: "q", w: "r", x: "s", y: "u", z: "v", "{": "w", "|": "y", "}": "z", "~": "Έ", "": "■" }, re = { "@": "Ю", A: "А", B: "Б", C: "Ц", D: "Д", E: "Е", F: "Ф", G: "Г", H: "Х", I: "И", J: "Ѝ", K: "К", L: "Л", M: "М", N: "Н", O: "О", P: "П", Q: "Я", R: "Р", S: "С", T: "Т", U: "У", V: "Ж", W: "В", X: "Ь", Z: "З", "[": "Ш", "]": "Щ", "^": "Ч", "`": "ю", a: "а", b: "б", c: "ц", d: "д", e: "е", f: "ф", g: "г", h: "х", i: "и", j: "ѝ", k: "к", l: "л", m: "м", n: "н", o: "о", p: "п", q: "я", r: "р", s: "с", t: "т", u: "у", v: "ж", w: "в", x: "ь", z: "з", "{": "ш", "}": "щ", "~": "ч", "": "■" }, oe = { "&": "ы", Y: "Ъ", "\\": "Э", _: "Ы", y: "ъ", "|": "э" }, ne = { "@": "Ч", J: "Ј", Q: "Ќ", V: "В", W: "Ѓ", X: "Љ", Y: "Њ", "[": "Ћ", "\\": "Ж", "]": "Ђ", "^": "Ш", _: "Џ", "`": "ч", j: "ј", q: "ќ", v: "в", w: "ѓ", x: "љ", y: "њ", "{": "ћ", "|": "ж", "}": "ђ", "~": "ш" }, ae = { "&": "ї", Y: "І", "\\": "Є", _: "Ї", y: "і", "|": "є" }, he = { 0: "m", 1: "n", 2: "p", 3: "t", 4: "x", 5: "x", 6: "°", 7: "±", 8: "²", 9: "³", "!": "a", '"': "b", "#": "£", $: "e", "%": "h", "&": "i", "'": "§", "(": ":", ")": "‘", "*": "“", "+": "k", ",": "←", "-": "↑", ".": "→", "/": "↓", ":": "¼", ";": "½", "<": "¾", "=": "÷", ">": "’", "?": "”", "@": " ", A: "̀", B: "́", C: "̂", D: "̃", E: "̄", F: "̆", G: "̇", H: "̈", I: "̣", J: "̊", K: "̧", L: "̲", M: "̋", N: "̨", O: "̌", P: "?", Q: "©", R: "®", S: "¹", T: "ɑ", U: "Ί", V: "Ύ", W: "Ώ", X: "‰", Y: "₠", Z: "™", "[": "⅛", "\\": "⅜", "]": "⅝", "^": "⅞", _: "♪", "`": "C", a: "D", b: "F", c: "G", d: "J", e: "L", f: "Q", g: "R", h: "S", i: "U", j: "V", k: "W", l: "Y", m: "Z", n: "Ά", o: "Ή", p: "c", q: "d", r: "f", s: "g", t: "j", u: "l", v: "q", w: "r", x: "s", y: "u", z: "v", "{": "w", "|": "y", "}": "z", "~": "Έ", "": "■" }, ce = { "#": "£", "&": "ﻰ", "'": "ﻱ", "(": ")", ")": "(", ";": "؛", "<": ">", ">": "<", "?": "؟", "@": "ﺔ", A: "ﺀ", B: "ﺒ", C: "ﺏ", D: "ﺘ", E: "ﺕ", F: "ﺎ", G: "ﺍ", H: "ﺑ", I: "ﺓ", J: "ﺗ", K: "ﺛ", L: "ﺟ", M: "ﺣ", N: "ﺧ", O: "ﺩ", P: "ﺫ", Q: "ﺭ", R: "ﺯ", S: "ﺳ", T: "ﺷ", U: "ﺻ", V: "ﺿ", W: "ﻃ", X: "ﻇ", Y: "ﻋ", Z: "ﻏ", "[": "ﺜ", "\\": "ﺠ", "]": "ﺤ", "^": "ﺨ", _: "#", "`": "ـ", a: "ﻓ", b: "ﻗ", c: "ﻛ", d: "ﻟ", e: "ﻣ", f: "ﻧ", g: "ﻫ", h: "ﻭ", i: "ﻰ", j: "ﻳ", k: "ﺙ", l: "ﺝ", m: "ﺡ", n: "ﺥ", o: "ﻴ", p: "ﻯ", q: "ﻌ", r: "ﻐ", s: "ﻔ", t: "ﻑ", u: "ﻘ", v: "ﻕ", w: "ﻙ", x: "ﻠ", y: "ﻝ", z: "ﻤ", "{": "ﻡ", "|": "ﻨ", "}": "ﻥ", "~": "ﻻ", "": "■" }, Ae = { 0: "٠", 1: "١", 2: "٢", 3: "٣", 4: "٤", 5: "٥", 6: "٦", 7: "٧", 8: "٨", 9: "٩", "!": "ﻉ", '"': "ﺁ", "#": "ﺃ", $: "ﺅ", "%": "ﺇ", "&": "ﺋ", "'": "ﺊ", "(": "ﭼ", ")": "ﭽ", "*": "ﭺ", "+": "ﭘ", ",": "ﭙ", "-": "ﭖ", ".": "ﮊ", "/": "ﮔ", ":": "ﻎ", ";": "ﻍ", "<": "ﻼ", "=": "ﻬ", ">": "ﻪ", "?": "ﻩ", "@": "à", "[": "ë", "\\": "ê", "]": "ù", "^": "î", _: "ﻊ", "`": "é", "{": "â", "|": "ô", "}": "û", "~": "ç", "": "■" }, le = { "#": "£", "[": "←", "\\": "½", "]": "→", "^": "↑", _: "#", "`": "א", a: "ב", b: "ג", c: "ד", d: "ה", e: "ו", f: "ז", g: "ח", h: "ט", i: "י", j: "ך", k: "כ", l: "ל", m: "ם", n: "מ", o: "ן", p: "נ", q: "ס", r: "ע", s: "ף", t: "פ", u: "ץ", v: "צ", w: "ק", x: "ר", y: "ש", z: "ת", "{": "₪", "|": "‖", "}": "¾", "~": "÷", "": "■" }, ge = { 0: "🬏", 1: "🬐", 2: "🬑", 3: "🬒", 4: "🬓", 5: "▌", 6: "🬔", 7: "🬕", 8: "🬖", 9: "🬗", " ": " ", "!": "🬀", '"': "🬁", "#": "🬂", $: "🬃", "%": "🬄", "&": "🬅", "'": "🬆", "(": "🬇", ")": "🬈", "*": "🬉", "+": "🬊", ",": "🬋", "-": "🬌", ".": "🬍", "/": "🬎", ":": "🬘", ";": "🬙", "<": "🬚", "=": "🬛", ">": "🬜", "?": "🬝", "`": "🬞", a: "🬟", b: "🬠", c: "🬡", d: "🬢", e: "🬣", f: "🬤", g: "🬥", h: "🬦", i: "🬧", j: "▐", k: "🬨", l: "🬩", m: "🬪", n: "🬫", o: "🬬", p: "🬭", q: "🬮", r: "🬯", s: "🬰", t: "🬱", u: "🬲", v: "🬳", w: "🬴", x: "🬵", y: "🬶", z: "🬷", "{": "🬸", "|": "🬹", "}": "🬺", "~": "🬻", "": "█" }, Ce = { 0: "", 1: "", 2: "", 3: "", 4: "", 5: "", 6: "", 7: "", 8: "", 9: "", " ": " ", "!": "", '"': "", "#": "", $: "", "%": "", "&": "", "'": "", "(": "", ")": "", "*": "", "+": "", ",": "", "-": "", ".": "", "/": "", ":": "", ";": "", "<": "", "=": "", ">": "", "?": "", "`": "", a: "", b: "", c: "", d: "", e: "", f: "", g: "", h: "", i: "", j: "", k: "", l: "", m: "", n: "", o: "", p: "", q: "", r: "", s: "", t: "", u: "", v: "", w: "", x: "", y: "", z: "", "{": "", "|": "", "}": "", "~": "", "": "" }, de = { 0: "🭇", 1: "🭈", 2: "🭉", 3: "🭊", 4: "🭋", 5: "◢", 6: "🭌", 7: "🭍", 8: "🭎", 9: "🭏", " ": "🬼", "!": "🬽", '"': "🬾", "#": "🬿", $: "🭀", "%": "◣", "&": "🭁", "'": "🭂", "(": "🭃", ")": "🭄", "*": "🭅", "+": "🭆", ",": "🭨", "-": "🭩", ".": "🭰", "/": "▒", ":": "🭐", ";": "🭑", "<": "🭪", "=": "🭫", ">": "🭵", "?": "█", "@": "┷", A: "┯", B: "┝", C: "┥", D: "🮤", E: "🮥", F: "🮦", G: "🮧", H: "🮠", I: "🮡", J: "🮢", K: "🮣", L: "┿", M: "•", N: "●", O: "○", P: "│", Q: "─", R: "┌", S: "┐", T: "└", U: "┘", V: "├", W: "┤", X: "┬", Y: "┴", Z: "┼", "[": "→", "\\": "←", "]": "↑", "^": "↓", _: " ", "`": "🭒", a: "🭓", b: "🭔", c: "🭕", d: "🭖", e: "◥", f: "🭗", g: "🭘", h: "🭙", i: "🭚", j: "🭛", k: "🭜", l: "🭬", m: "🭭", n: null, o: null, p: "🭝", q: "🭞", r: "🭟", s: "🭠", t: "🭡", u: "◤", v: "🭢", w: "🭣", x: "🭤", y: "🭥", z: "🭦", "{": "🭧", "|": "🭮", "}": "🭯", "~": null, "": null }, R = {
   g0_latin: kt,
   g0_latin__czech_slovak: Wt,
   g0_latin__english: zt,
@@ -863,19 +863,19 @@ const kt = { $: "¤", "": "■" }, Wt = { "#": "#", $: "ů", "@": "č", "[": "�
   g2_cyrillic: he,
   g0_arabic: ce,
   g2_arabic: Ae,
-  g0_hebrew: ge,
-  g1_block_mosaic_to_unicode__legacy_computing: le,
+  g0_hebrew: le,
+  g1_block_mosaic_to_unicode__legacy_computing: ge,
   g1_block_mosaic_to_unicode__unscii_separated: Ce,
   g3: de
-}, K = {};
+}, q = {};
 class Ee {
   constructor(t) {
     this.type = t.type_, this.flashing = t.flashing_, this.concealed = t.concealed_, this.size = t.size_, this.sextants = t.getSextants_();
   }
 }
-class lt {
+class Ct {
   constructor() {
-    this._byte = " ", this._char = " ", this._fgColour = g.WHITE, this._bgColour = g.BLACK, this._type = n.ALPHA_, this._flashing = !1, this._size = d.NORMAL_SIZE_, this._concealed = !1, this._boxed = !1, this._byteHeld = null, this._isCursive = !1, this._diacriticCode = null, this._enhancedChar = null;
+    this._byte = " ", this._char = " ", this._fgColour = l.WHITE, this._bgColour = l.BLACK, this._type = n.ALPHA_, this._flashing = !1, this._size = d.NORMAL_SIZE_, this._concealed = !1, this._boxed = !1, this._byteHeld = null, this._isCursive = !1, this._diacriticCode = null, this._enhancedChar = null;
   }
   set byte_(t) {
     this._byte = t;
@@ -953,11 +953,14 @@ class lt {
   }
   // used in rendering to distinguish burn-through characters in G1 set
   // (should get type_ handle this instead?)
-  isMosaicByte_() {
-    const t = this._byteHeld != null ? this._byteHeld.charCodeAt(0) : this._byte.charCodeAt(0);
+  // applies to the base byte or the held byte
+  isMosaicCell_() {
+    if (this._byteHeld) return !0;
+    const t = this._byte.charCodeAt(0);
     return t <= 127 && (t & 32) == 32;
   }
-  // used in page model to keep track of mosaic to hold 
+  // used in page model to keep track of mosaic to hold: G1, and MSB is 1
+  // applies to the base byte
   isMosaic_() {
     const t = this._byte.charCodeAt(0);
     return (this._type == n.MOSAIC_CONTIGUOUS_ || this._type == n.MOSAIC_SEPARATED_) && t <= 127 && (t & 32) == 32;
@@ -965,14 +968,14 @@ class lt {
   getSextants_() {
     const t = this._byteHeld != null ? this._byteHeld.charCodeAt(0) : this._byte.charCodeAt(0);
     if (t > 127) return null;
-    if (t in K) return K[t];
+    if (t in q) return q[t];
     const e = t >= 96 ? t - 64 : t - 32, _ = [];
     for (let s = 0; s < 6; s++)
       _.push(e & 1 << s ? "1" : "0");
-    return K[t] = _, _;
+    return q[t] = _, _;
   }
 }
-class ue extends lt {
+class ue extends Ct {
   constructor(t) {
     super(), Object.assign(this, t);
   }
@@ -1016,7 +1019,7 @@ function Ie(r, t) {
       return null;
   }
 }
-class ht extends C {
+class ct extends C {
   constructor(t, e, _) {
     super(t, _), this._webkitCompat = e, this._mosaicSymbols = /* @__PURE__ */ new Set(), console.debug("VectorViewGraphicMosaic constructed");
   }
@@ -1156,7 +1159,7 @@ class Be {
 }
 class pe extends C {
 }
-const ct = ["SPLASH", "ENGINEERING", "ADVERT", "UK"];
+const At = ["SPLASH", "ENGINEERING", "ADVERT", "UK"];
 class Se {
   constructor(t, e) {
     if (this._windowDom = null, typeof window == "object" && (this._windowDom = window), this._opt = {
@@ -1164,7 +1167,7 @@ class Se {
       // generate SVG that's compatible with webkit by default. The resulting SVG is larger
     }, typeof e == "object" && ("webkitCompat" in e && !e.webkitCompat && (this._opt.webkitCompat_ = !1), "dom" in e && (this._windowDom = e.dom)), this._windowDom == null)
       throw new Error("TeletextController E24: No window dom object available");
-    this._view = new ht(t, this._opt.webkitCompat_, this._windowDom), this._model = t, this._levelIndex = 1, this._testPageIndex = 0, this._initEventHandlers(), this._viewSelector = null, this._height = null, this._posX = 0, this._posY = 0, this._font = null, console.debug("TeletextController constructed");
+    this._view = new ct(t, this._opt.webkitCompat_, this._windowDom), this._model = t, this._levelIndex = 1, this._testPageIndex = 0, this._initEventHandlers(), this._viewSelector = null, this._height = null, this._posX = 0, this._posY = 0, this._font = null, console.debug("TeletextController constructed");
   }
   setRowFromOutputLine(t, e) {
     const _ = H.decodeOutputLine_(e);
@@ -1183,8 +1186,9 @@ class Se {
   _processHeader(t) {
     return t = H.decodeOutputLine_(t), t.join("").substring(0, 32).padStart(40, " ");
   }
-  showTestPage() {
-    this.loadPageFromEncodedString(pt[ct[this._testPageIndex]]), this._testPageIndex++, this._testPageIndex == ct.length && (this._testPageIndex = 0);
+  showTestPage(t) {
+    let e;
+    t in K ? e = K[t] : (e = K[At[this._testPageIndex]], this._testPageIndex++, this._testPageIndex == At.length && (this._testPageIndex = 0)), this.loadPageFromEncodedString(e);
   }
   showRandomisedPage() {
     const t = [];
@@ -1201,7 +1205,15 @@ class Se {
     typeof e < "u" && (_[0] = this._processHeader(e)), this.setPageRows(_);
   }
   _initEventHandlers() {
-    this._windowDom.addEventListener("ttx.reveal", () => this._view.reveal_()), this._windowDom.addEventListener("ttx.mix", () => this._view.mixMode_()), this._windowDom.addEventListener("ttx.subtitlemode", () => this._view.boxMode_());
+    this._handlers = {
+      _reveal: () => this._view.reveal_(),
+      _mix: () => this._view.mixMode_(),
+      _subtitlemode: () => this._view.boxMode_()
+    }, this._windowDom.addEventListener("ttx.reveal", this._handlers._reveal), this._windowDom.addEventListener("ttx.mix", this._handlers._mix), this._windowDom.addEventListener("ttx.subtitlemode", this._handlers._subtitlemode), console.log("handlers innit", this._handlers);
+  }
+  // Clean-up method for SPAs
+  destroy() {
+    this._windowDom.removeEventListener("ttx.reveal", this._handlers._reveal), this._windowDom.removeEventListener("ttx.mix", this._handlers._mix), this._windowDom.removeEventListener("ttx.subtitlemode", this._handlers._subtitlemode), this._handlers = null;
   }
   toggleReveal() {
     this._view.reveal_();
@@ -1266,7 +1278,7 @@ class Se {
         this._view = new pe(this._model, this._windowDom);
         break;
       case "classic__graphic-for-mosaic":
-        this._view = new ht(this._model, this._opt.webkitCompat_, this._windowDom);
+        this._view = new ct(this._model, this._opt.webkitCompat_, this._windowDom);
         break;
       default:
         throw new Error("setView E126: bad view name:" + t);
@@ -1346,7 +1358,7 @@ class Le {
     for (let t = 0; t < m; t++) {
       const e = [];
       for (let _ = 0; _ < b; _++)
-        e.push(new lt());
+        e.push(new Ct());
       this._screen.push(e);
     }
     this._primaryG0CharacterEncoding = ye, this._secondaryG0CharacterEncoding = null, this._g2CharacterEncoding = xe, this._startBoxChar = h.charFromAttribute(h.START_BOX), this._endBoxChar = h.charFromAttribute(h.END_BOX), this._level = Q[1], this._enhancement = [], this.onSet_ = new Qe(this), console.debug("PageModel constructed");
@@ -1445,76 +1457,76 @@ class Le {
     if (t >= m)
       throw new Error("PageModel.getRow E42 bad rowNum");
     const e = new be();
-    let _, s, i = n.ALPHA_, a = g.WHITE, A = !1, E = d.NORMAL_SIZE_, I = !1, u = !1, c = !1, O = !1, G = g.BLACK, v = n.MOSAIC_CONTIGUOUS_, l = {
+    let _, s, i = n.ALPHA_, a = l.WHITE, A = !1, E = d.NORMAL_SIZE_, I = !1, u = !1, c = !1, O = !1, v = l.BLACK, G = n.MOSAIC_CONTIGUOUS_, g = {
       active_: !1,
       char_: " ",
       type_: n.MOSAIC_CONTIGUOUS_
-    }, $ = [];
-    return me.includes(this._level) && ($ = this._enhancement.filter((o) => o.y_ == t)), this._screen[t].forEach((o, N) => {
-      const tt = o.byte_, U = Rt(this._level, tt);
-      switch (_ = a, o.type_ = i, o.boxed_ = O, s = I, U.attribute_ != h.STEADY && (o.flashing_ = A), U.attribute_ != h.NORMAL_SIZE && (o.size_ = E), U.attribute_ != h.CONCEAL && (o.concealed_ = u), c && (U.attribute_ != h.HOLD_MOSAICS && (l.active_ = !1, l.char_ = " "), c = !1), U.attribute_) {
+    }, tt = [];
+    return me.includes(this._level) && (tt = this._enhancement.filter((o) => o.y_ == t)), this._screen[t].forEach((o, N) => {
+      const et = o.byte_, U = Rt(this._level, et);
+      switch (_ = a, o.type_ = i, o.boxed_ = O, s = I, U.attribute_ != h.STEADY && (o.flashing_ = A), U.attribute_ != h.NORMAL_SIZE && (o.size_ = E), U.attribute_ != h.CONCEAL && (o.concealed_ = u), c && (U.attribute_ != h.HOLD_MOSAICS && (g.active_ = !1, g.char_ = " "), c = !1), U.attribute_) {
         case h.TEXT_COLOUR:
-          i = n.ALPHA_, a = U.colour_, u = !1, o.setSpace_(l);
+          i = n.ALPHA_, a = U.colour_, u = !1, o.setSpace_(g);
           break;
         case h.MOSAIC_COLOUR:
-          i = v, a = U.colour_, u = !1, o.setSpace_(l);
+          i = G, a = U.colour_, u = !1, o.setSpace_(g);
           break;
         case h.NEW_BACKGROUND:
-          G = _, o.setSpace_(l);
+          v = _, o.setSpace_(g);
           break;
         case h.BLACK_BACKGROUND:
-          G = g.BLACK, o.setSpace_(l);
+          v = l.BLACK, o.setSpace_(g);
           break;
         case h.CONTIGUOUS_GRAPHICS:
-          v = n.MOSAIC_CONTIGUOUS_, o.type_ == n.MOSAIC_SEPARATED_ && (o.type_ = n.MOSAIC_CONTIGUOUS_), i == n.MOSAIC_SEPARATED_ && (i = n.MOSAIC_CONTIGUOUS_), o.setSpace_(l);
+          G = n.MOSAIC_CONTIGUOUS_, o.type_ == n.MOSAIC_SEPARATED_ && (o.type_ = n.MOSAIC_CONTIGUOUS_), i == n.MOSAIC_SEPARATED_ && (i = n.MOSAIC_CONTIGUOUS_), o.setSpace_(g);
           break;
         case h.SEPARATED_GRAPHICS:
-          v = n.MOSAIC_SEPARATED_, o.type_ == n.MOSAIC_CONTIGUOUS_ && (o.type_ = n.MOSAIC_SEPARATED_), i == n.MOSAIC_CONTIGUOUS_ && (i = n.MOSAIC_SEPARATED_), o.setSpace_(l);
+          G = n.MOSAIC_SEPARATED_, o.type_ == n.MOSAIC_CONTIGUOUS_ && (o.type_ = n.MOSAIC_SEPARATED_), i == n.MOSAIC_CONTIGUOUS_ && (i = n.MOSAIC_SEPARATED_), o.setSpace_(g);
           break;
         case h.ESC:
-          this._secondaryG0CharacterEncoding && (I = !s), o.setSpace_(l);
+          this._secondaryG0CharacterEncoding && (I = !s), o.setSpace_(g);
           break;
         case h.FLASH:
-          A = !0, o.setSpace_(l);
+          A = !0, o.setSpace_(g);
           break;
         case h.STEADY:
-          o.flashing_ = !1, A = !1, o.setSpace_(l);
+          o.flashing_ = !1, A = !1, o.setSpace_(g);
           break;
         case h.NORMAL_SIZE:
-          o.size_ = d.NORMAL_SIZE_, E = d.NORMAL_SIZE_, o.setSpace_(l);
+          o.size_ = d.NORMAL_SIZE_, E = d.NORMAL_SIZE_, o.setSpace_(g);
           break;
         case h.DOUBLE_HEIGHT:
-          E = d.DOUBLE_HEIGHT_, e.doubleHeight_ = !0, o.setSpace_(l);
+          E = d.DOUBLE_HEIGHT_, e.doubleHeight_ = !0, o.setSpace_(g);
           break;
         case h.DOUBLE_WIDTH:
-          E = d.DOUBLE_WIDTH_, o.setSpace_(l);
+          E = d.DOUBLE_WIDTH_, o.setSpace_(g);
           break;
         case h.DOUBLE_SIZE:
-          E = d.DOUBLE_SIZE_, e.doubleHeight_ = !0, o.setSpace_(l);
+          E = d.DOUBLE_SIZE_, e.doubleHeight_ = !0, o.setSpace_(g);
           break;
         case h.CONCEAL:
-          o.concealed_ = !0, u = !0, o.setSpace_(l);
+          o.concealed_ = !0, u = !0, o.setSpace_(g);
           break;
         case h.HOLD_MOSAICS:
-          l.active_ = !0, o.setSpace_(l);
+          g.active_ = !0, o.setSpace_(g);
           break;
         case h.RELEASE_MOSAICS:
-          c = !0, o.setSpace_(l);
+          c = !0, o.setSpace_(g);
           break;
         case h.START_BOX:
-          N >= 1 && this._screen[t][N - 1].byte_ == this._startBoxChar && (o.boxed_ = !0, O = !0), o.setSpace_(l);
+          N >= 1 && this._screen[t][N - 1].byte_ == this._startBoxChar && (o.boxed_ = !0, O = !0), o.setSpace_(g);
           break;
         case h.END_BOX:
-          N + 1 < b && this._screen[t][N + 1].byte_ == this._endBoxChar && (O = !1), o.setSpace_(l);
+          N + 1 < b && this._screen[t][N + 1].byte_ == this._endBoxChar && (O = !1), o.setSpace_(g);
           break;
         case h.UNKNOWN_:
-          o.setSpace_(l);
+          o.setSpace_(g);
           break;
         default:
-          s ? o.setMappedChar_(this._secondaryG0CharacterEncoding) : o.setMappedChar_(this._primaryG0CharacterEncoding), o.isMosaic_() && (l.char_ = tt, l.type_ = o.type_);
+          s ? o.setMappedChar_(this._secondaryG0CharacterEncoding) : o.setMappedChar_(this._primaryG0CharacterEncoding), o.isMosaic_() && (g.char_ = et, g.type_ = o.type_);
       }
-      o.fgColour_ = _, o.bgColour_ = G, $.filter((B) => B.x_ == N).forEach((B) => {
-        o = new ue(o), B.type_ == "g0" ? (o.byte_ = B.char_, o.diacritic_ = B.diacritic_, o.type_ = n.ALPHA_, this._primaryG0CharacterEncoding.includes("latin") ? o.setMappedChar_("g0_latin") : o.setMappedChar_(this._primaryG0CharacterEncoding)) : B.type_ == "g1" ? this._level == Q[2.5] && (o.byte_ = B.char_, o.type_ = v, this._primaryG0CharacterEncoding.includes("latin") ? o.setMappedChar_("g0_latin") : o.setMappedChar_(this._primaryG0CharacterEncoding)) : B.type_ == "g2" ? (o.byte_ = B.char_, o.type_ = n.ALPHA_, o.setMappedChar_(this._g2CharacterEncoding)) : B.type_ == "g3" ? this._isAllowedG3Char(B.char_) && (o.byte_ = B.char_, o.type_ = n.G3_, o.setMappedChar_()) : B.type_ == "char" && (o.enhancedChar_ = B.char_, o.type_ = n.ALPHA_);
+      o.fgColour_ = _, o.bgColour_ = v, tt.filter((B) => B.x_ == N).forEach((B) => {
+        o = new ue(o), B.type_ == "g0" ? (o.byte_ = B.char_, o.diacritic_ = B.diacritic_, o.type_ = n.ALPHA_, this._primaryG0CharacterEncoding.includes("latin") ? o.setMappedChar_("g0_latin") : o.setMappedChar_(this._primaryG0CharacterEncoding)) : B.type_ == "g1" ? this._level == Q[2.5] && (o.byte_ = B.char_, o.type_ = G, this._primaryG0CharacterEncoding.includes("latin") ? o.setMappedChar_("g0_latin") : o.setMappedChar_(this._primaryG0CharacterEncoding)) : B.type_ == "g2" ? (o.byte_ = B.char_, o.type_ = n.ALPHA_, o.setMappedChar_(this._g2CharacterEncoding)) : B.type_ == "g3" ? this._isAllowedG3Char(B.char_) && (o.byte_ = B.char_, o.type_ = n.G3_, o.setMappedChar_()) : B.type_ == "char" && (o.enhancedChar_ = B.char_, o.type_ = n.ALPHA_);
       }), e.addCell_(o);
     }), e;
   }
@@ -1536,13 +1548,13 @@ class Le {
     return !(this._level == Q[1.5] && we.indexOf(t) == -1);
   }
 }
-const Oe = /* @__PURE__ */ new Le();
 function De(r) {
-  return new Se(Oe, r);
+  const t = new Le();
+  return new Se(t, r);
 }
 export {
   h as Attributes,
-  g as Colour,
+  l as Colour,
   Q as Level,
   De as Teletext
 };
