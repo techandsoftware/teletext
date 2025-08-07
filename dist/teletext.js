@@ -12,10 +12,10 @@ class H {
       t += new Array(5 - _).join("=");
     }
     const s = e(t), i = [];
-    let a = [];
+    let n = [];
     for (const A of ut(s))
-      a.push(String.fromCharCode(A)), a.length == 40 && (i.push(a.join("")), a = []);
-    return a.length < 40 && i.push(a.join("")), i;
+      n.push(String.fromCharCode(A)), n.length == 40 && (i.push(n.join("")), n = []);
+    return n.length < 40 && i.push(n.join("")), i;
   }
   // Output Line format from .tti file format https://zxnet.co.uk/teletext/documents/ttiformat.pdf
   static decodeOutputLine_(t) {
@@ -26,13 +26,13 @@ class H {
       if (i == 27)
         _ = !0;
       else if (i >= 128 && i <= 159) {
-        const a = String.fromCharCode(i - 128);
-        e.push(a), _ = !1;
+        const n = String.fromCharCode(i - 128);
+        e.push(n), _ = !1;
       } else if (i >= 160)
         console.warn("W47 decodeOutputLine: bad character:", s), e.push(""), _ = !1;
       else if (_) {
-        const a = String.fromCharCode(i - 64);
-        e.push(a), _ = !1;
+        const n = String.fromCharCode(i - 64);
+        e.push(n), _ = !1;
       } else
         e.push(s);
     }
@@ -340,13 +340,13 @@ const l = {
   WHITE: Symbol("WHITE")
 };
 Object.freeze(l);
-const n = {
+const a = {
   ALPHA_: Symbol("ALPHA"),
   MOSAIC_CONTIGUOUS_: Symbol("MOSAIC_CONTIGUOUS"),
   MOSAIC_SEPARATED_: Symbol("MOSAIC_SEPARATED"),
   G3_: Symbol("G3")
 };
-Object.freeze(n);
+Object.freeze(a);
 const d = {
   NORMAL_SIZE_: Symbol("NORMAL_SIZE"),
   DOUBLE_HEIGHT_: Symbol("DOUBLE_HEIGHT"),
@@ -380,12 +380,12 @@ class h {
   }
 }
 Object.assign(h, {
-  TEXT_COLOUR: n.ALPHA,
+  TEXT_COLOUR: a.ALPHA,
   MOSAIC_COLOUR: Symbol("MOSAIC_COLOUR"),
   NEW_BACKGROUND: Symbol("NEW_BACKGROUND"),
   BLACK_BACKGROUND: Symbol("BLACK_BACKGROUND"),
-  CONTIGUOUS_GRAPHICS: n.MOSAIC_CONTIGUOUS_,
-  SEPARATED_GRAPHICS: n.MOSAIC_SEPARATED_,
+  CONTIGUOUS_GRAPHICS: a.MOSAIC_CONTIGUOUS_,
+  SEPARATED_GRAPHICS: a.MOSAIC_SEPARATED_,
   ESC: Symbol("ESC"),
   FLASH: Symbol("FLASH"),
   STEADY: Symbol("STEADY"),
@@ -524,13 +524,13 @@ const w = 400, L = 250, P = 40, k = 25, ot = 1.5, Dt = {
   1.33: w / (1.33 * L),
   1.2: w / (1.2 * L),
   1.22: w / (1.22 * L)
-}, nt = 1.2, y = L / k, f = w / P, Z = y * 2, Tt = f * 2, V = f / 2, Ut = y * (4 / 5), M = {
+}, nt = 1.2, y = L / k, I = w / P, Z = y * 2, Tt = I * 2, V = I / 2, Ut = y * (4 / 5), M = {
   _contiguous: {
-    _textLength: f + 0.4,
+    _textLength: I + 0.4,
     _DX: 0 - V - 0.2
   },
   _separated: {
-    _textLength: f,
+    _textLength: I,
     _DX: 0 - V + 0.5
   }
 };
@@ -559,16 +559,16 @@ class C {
         t = !1, this._clearRowCells(_, s);
         return;
       }
-      const a = this._model.getRow_(s);
+      const n = this._model.getRow_(s);
       let A, E;
-      _.forEach((I, u) => {
+      _.forEach((u, f) => {
         if (i) {
-          i = !1, this._clearCell(I), this._extendBackgroundForRow(s), E && this._extendBox();
+          i = !1, this._clearCell(u), this._extendBackgroundForRow(s), E && this._extendBox();
           return;
         }
-        const c = a.getCell_(u), O = Y(c.bgColour_), v = c.isMosaicCell_(), G = Y(c.fgColour_), g = this._getCellAttr(c.type_, v, c.isCursive_);
-        this._renderCell(I, c, g, G, u, s, v), c.boxed_ && (E ? this._extendBox() : this._setBoxForRow(s, u), this._pageContainsBox = !0), A == O ? this._extendBackgroundForRow(s) : this._setBackgroundForRow(s, u, O), (c.size_ == d.DOUBLE_WIDTH_ || c.size_ == d.DOUBLE_SIZE_) && (i = !0), A = O, E = c.boxed_, c.flashing_ && (e = !0);
-      }), a.doubleHeight_ ? (this._setRowDoubleHeight(s), this._setBoxDoubleHeight(), t = !0) : t = !1, this._makeClipFromBoxesForRow(s);
+        const c = n.getCell_(f), O = Y(c.bgColour_), v = c.isMosaicCell_(), G = Y(c.fgColour_), g = this._getCellAttr(c.type_, v, c.isCursive_);
+        this._renderCell(u, c, g, G, f, s, v), c.boxed_ && (E ? this._extendBox() : this._setBoxForRow(s, f), this._pageContainsBox = !0), A == O ? this._extendBackgroundForRow(s) : this._setBackgroundForRow(s, f, O), (c.size_ == d.DOUBLE_WIDTH_ || c.size_ == d.DOUBLE_SIZE_) && (i = !0), A = O, E = c.boxed_, c.flashing_ && (e = !0);
+      }), n.doubleHeight_ ? (this._setRowDoubleHeight(s), this._setBoxDoubleHeight(), t = !0) : t = !1, this._makeClipFromBoxesForRow(s);
     }), "_endOfUpdate" in this._plugins && this._plugins._endOfUpdate(this._svg.width_(), this._svg.height_()), this.d.addClass_("conceal_concealed"), e && setTimeout(() => this.d.addClass_("flash_flashing"), 100), this._refreshMixMode();
   }
   _resetRow(t) {
@@ -588,11 +588,11 @@ class C {
       class: null
     });
   }
-  _renderCell(t, e, _, s, i, a, A) {
-    this._renderText(t, e, _, s, i, a), e.type_ == n.MOSAIC_CONTIGUOUS_ && A || e.type_ == n.G3_ ? t.addClass_("mosaic") : e.type_ == n.MOSAIC_SEPARATED_ && A && t.addClass_("mosaic_separated");
+  _renderCell(t, e, _, s, i, n, A) {
+    this._renderText(t, e, _, s, i, n), e.type_ == a.MOSAIC_CONTIGUOUS_ && A || e.type_ == a.G3_ ? t.addClass_("mosaic") : e.type_ == a.MOSAIC_SEPARATED_ && A && t.addClass_("mosaic_separated");
   }
-  _renderText(t, e, _, s, i, a) {
-    t.plain_(e.char_).attr_(_).fill_(s), e.size_ == d.DOUBLE_HEIGHT_ ? t.attr_("transform", `translate(0 ${at(a)}) scale(1 2)`) : e.size_ == d.DOUBLE_WIDTH_ ? t.attr_("transform", `translate(${ht(i)} 0) scale(2 1)`) : e.size_ == d.DOUBLE_SIZE_ && t.attr_("transform", `translate(${ht(i)} ${at(a)}) scale(2 2)`), e.flashing_ && t.addClass_("flash"), e.concealed_ && t.addClass_("conceal");
+  _renderText(t, e, _, s, i, n) {
+    t.plain_(e.char_).attr_(_).fill_(s), e.size_ == d.DOUBLE_HEIGHT_ ? t.attr_("transform", `translate(0 ${at(n)}) scale(1 2)`) : e.size_ == d.DOUBLE_WIDTH_ ? t.attr_("transform", `translate(${ht(i)} 0) scale(2 1)`) : e.size_ == d.DOUBLE_SIZE_ && t.attr_("transform", `translate(${ht(i)} ${at(n)}) scale(2 2)`), e.flashing_ && t.addClass_("flash"), e.concealed_ && t.addClass_("conceal");
   }
   reveal_() {
     this.d.toggleClass_("conceal_concealed");
@@ -634,7 +634,7 @@ class C {
         "stroke-width": 0.5
       });
     for (let t = 0; t < P; t++)
-      this._gridLayer.line_(t * f, 0, t * f, L - 1).attr_({
+      this._gridLayer.line_(t * I, 0, t * I, L - 1).attr_({
         stroke: "#555",
         "stroke-width": 0.5
       });
@@ -661,7 +661,7 @@ class C {
       const s = [];
       for (let i = 0; i < P; i++)
         s.push(e.plain_(Ft()).attr_({
-          x: i * f + V,
+          x: i * I + V,
           y: _ * y + Ut
         }));
       t.push(s);
@@ -672,19 +672,19 @@ class C {
     this._boxLayer.children_().filter((e) => e.data_("r") == t).forEach((e) => e.remove_());
   }
   _resetBackgroundForRow(t) {
-    this._bgrows[t] && this._bgrows[t].remove_(), this._bgrows[t] = this._bgLayer.group_();
+    this._bgrows[t] && (this._bgrows[t].remove_(), this._bgrows[t] = null), this._bgrows[t] = this._bgLayer.group_();
   }
   _extendBackgroundForRow(t) {
     const e = this._bgrows[t].last_(), _ = e.width_();
-    e.width_(_ + f);
+    e.width_(_ + I);
   }
   _setBackgroundForRow(t, e, _) {
-    const s = e * f, i = t * y;
-    this._bgrows[t].rect_(f, y).fill_(_).move_(s, i);
+    const s = e * I, i = t * y;
+    this._bgrows[t].rect_(I, y).fill_(_).move_(s, i);
   }
   _extendBox() {
     const t = this._lastBoxBuffer.width_();
-    this._lastBoxBuffer.width_(t + f);
+    this._lastBoxBuffer.width_(t + I);
   }
   _setRowDoubleHeight(t) {
     this._bgrows[t].children_().forEach((e) => e.attr_("height", Z));
@@ -693,8 +693,8 @@ class C {
     this._defs.find_("[data-boxbuffer]").forEach((t) => t.height_(Z));
   }
   _setBoxForRow(t, e) {
-    const _ = e * f, s = t * y;
-    this._lastBoxBuffer = this._defs.rect_(f, y).data_("boxbuffer", !0).move_(_, s);
+    const _ = e * I, s = t * y;
+    this._lastBoxBuffer = this._defs.rect_(I, y).data_("boxbuffer", !0).move_(_, s);
   }
   // FUDGE move boxes tagged with data-boxbuffer into the clip layer.
   _makeClipFromBoxesForRow(t) {
@@ -706,7 +706,7 @@ class C {
     });
   }
   _getCellAttr(t, e, _) {
-    return t == n.MOSAIC_CONTIGUOUS_ && e || t == n.G3_ ? {
+    return t == a.MOSAIC_CONTIGUOUS_ && e || t == a.G3_ ? {
       dx: M._contiguous._DX,
       dy: -0.15,
       textLength: M._contiguous._textLength,
@@ -714,7 +714,7 @@ class C {
       "text-anchor": "start",
       transform: null,
       class: null
-    } : t == n.MOSAIC_SEPARATED_ && e ? {
+    } : t == a.MOSAIC_SEPARATED_ && e ? {
       dx: M._separated._DX,
       dy: null,
       textLength: M._separated._textLength,
@@ -725,7 +725,7 @@ class C {
     } : {
       dx: null,
       dy: null,
-      textLength: _ ? f : null,
+      textLength: _ ? I : null,
       lengthAdjust: _ ? "spacingAndGlyphs" : null,
       "text-anchor": null,
       transform: null,
@@ -752,7 +752,7 @@ class C {
     return t.attr_("preserveAspectRatio", "none"), t;
   }
 }
-C._CELL_WIDTH = f;
+C._CELL_WIDTH = I;
 C._CELL_HEIGHT = y;
 C._CELL_DOUBLE_WIDTH = Tt;
 C._CELL_DOUBLE_HEIGHT = Z;
@@ -761,7 +761,7 @@ C._HEIGHT_PX = L;
 C._MOSAIC_METRIC = M;
 C.ROWS = k;
 C.COLS = P;
-const Ht = (r) => Y(r), vt = (r) => r == d.DOUBLE_HEIGHT_, Gt = (r) => r == d.DOUBLE_WIDTH_, Mt = (r) => r == d.DOUBLE_SIZE_, Nt = (r) => r == n.MOSAIC_SEPARATED_, at = (r) => 0 - r * y, ht = (r) => 0 - r * f;
+const Ht = (r) => Y(r), vt = (r) => r == d.DOUBLE_HEIGHT_, Gt = (r) => r == d.DOUBLE_WIDTH_, Mt = (r) => r == d.DOUBLE_SIZE_, Nt = (r) => r == a.MOSAIC_SEPARATED_, at = (r) => 0 - r * y, ht = (r) => 0 - r * I;
 function Ft() {
   return String.fromCharCode(32 + Math.random() * 95);
 }
@@ -875,7 +875,7 @@ class Ee {
 }
 class Ct {
   constructor() {
-    this._byte = " ", this._char = " ", this._fgColour = l.WHITE, this._bgColour = l.BLACK, this._type = n.ALPHA_, this._flashing = !1, this._size = d.NORMAL_SIZE_, this._concealed = !1, this._boxed = !1, this._byteHeld = null, this._isCursive = !1, this._diacriticCode = null, this._enhancedChar = null;
+    this._byte = " ", this._char = " ", this._fgColour = l.WHITE, this._bgColour = l.BLACK, this._type = a.ALPHA_, this._flashing = !1, this._size = d.NORMAL_SIZE_, this._concealed = !1, this._boxed = !1, this._byteHeld = null, this._isCursive = !1, this._diacriticCode = null, this._enhancedChar = null;
   }
   set byte_(t) {
     this._byte = t;
@@ -911,10 +911,10 @@ class Ct {
     this._byteHeld = null;
   }
   setSpace_(t) {
-    if ((this._type == n.MOSAIC_CONTIGUOUS_ || this._type == n.MOSAIC_SEPARATED_) && t.active_) {
+    if ((this._type == a.MOSAIC_CONTIGUOUS_ || this._type == a.MOSAIC_SEPARATED_) && t.active_) {
       this._byteHeld = t.char_, this._type = t.type_;
       let e = "g1_block_mosaic_to_unicode__legacy_computing";
-      this._type == n.MOSAIC_SEPARATED_ && (e = "g1_block_mosaic_to_unicode__unscii_separated"), this._char = F(t.char_, e);
+      this._type == a.MOSAIC_SEPARATED_ && (e = "g1_block_mosaic_to_unicode__unscii_separated"), this._char = F(t.char_, e);
     } else
       this._byteHeld = null, this._char = " ";
   }
@@ -963,7 +963,7 @@ class Ct {
   // applies to the base byte
   isMosaic_() {
     const t = this._byte.charCodeAt(0);
-    return (this._type == n.MOSAIC_CONTIGUOUS_ || this._type == n.MOSAIC_SEPARATED_) && t <= 127 && (t & 32) == 32;
+    return (this._type == a.MOSAIC_CONTIGUOUS_ || this._type == a.MOSAIC_SEPARATED_) && t <= 127 && (t & 32) == 32;
   }
   getSextants_() {
     const t = this._byteHeld != null ? this._byteHeld.charCodeAt(0) : this._byte.charCodeAt(0);
@@ -1004,16 +1004,16 @@ function F(r, t) {
   return r;
 }
 function fe(r, t) {
-  const e = r === n.ALPHA_, _ = r === n.MOSAIC_CONTIGUOUS_ || r === n.MOSAIC_SEPARATED_, s = (t.charCodeAt(0) & 32) == 0;
+  const e = r === a.ALPHA_, _ = r === a.MOSAIC_CONTIGUOUS_ || r === a.MOSAIC_SEPARATED_, s = (t.charCodeAt(0) & 32) == 0;
   return e || _ && s;
 }
 function Ie(r, t) {
   switch (r) {
-    case n.MOSAIC_CONTIGUOUS_:
+    case a.MOSAIC_CONTIGUOUS_:
       return F(t, "g1_block_mosaic_to_unicode__legacy_computing");
-    case n.MOSAIC_SEPARATED_:
+    case a.MOSAIC_SEPARATED_:
       return F(t, "g1_block_mosaic_to_unicode__unscii_separated");
-    case n.G3_:
+    case a.G3_:
       return F(t, "g3");
     default:
       return null;
@@ -1029,23 +1029,23 @@ class ct extends C {
   _resetRow(t) {
     super._resetRow(t), this._resetGraphicRow(t);
   }
-  _renderCell(t, e, _, s, i, a, A) {
-    "_background" in this._plugins && this._plugins._background(a, i, e.size_, e.bgColour_), e.type_ == n.ALPHA_ || e.type_ == n.G3_ || !A ? (this._renderText(t, e, _, s, i, a), e.type_ == n.G3_ && t.addClass_("mosaic")) : A && (t.plain_(" ").attr_(_), this._renderMosaic(a, i, e, s));
+  _renderCell(t, e, _, s, i, n, A) {
+    "_background" in this._plugins && this._plugins._background(n, i, e.size_, e.bgColour_), e.type_ == a.ALPHA_ || e.type_ == a.G3_ || !A ? (this._renderText(t, e, _, s, i, n), e.type_ == a.G3_ && t.addClass_("mosaic")) : A && (t.plain_(" ").attr_(_), this._renderMosaic(n, i, e, s));
   }
   _renderMosaic(t, e, _, s) {
     if ("_mosaic" in this._plugins) {
-      const u = new Ee(_);
-      if (this._plugins._mosaic(t, e, u, s)) return;
+      const f = new Ee(_);
+      if (this._plugins._mosaic(t, e, f, s)) return;
     }
     const i = _.getSextants_();
     if (!i.includes("1")) return;
-    const a = (_.type_ == n.MOSAIC_CONTIGUOUS_ ? "c" : "s") + i.join("");
+    const n = (_.type_ == a.MOSAIC_CONTIGUOUS_ ? "c" : "s") + i.join("");
     let A = C._CELL_WIDTH, E = C._CELL_HEIGHT;
-    if (_.type_ == n.MOSAIC_CONTIGUOUS_ && (A = C._CELL_WIDTH + 0.3, E = C._CELL_HEIGHT + 0.2), !this._mosaicSymbols.has(a)) {
-      this._mosaicSymbols.add(a);
-      const u = this._svg.symbol_(a);
-      if (_.type_ == n.MOSAIC_CONTIGUOUS_) {
-        u.attr_({
+    if (_.type_ == a.MOSAIC_CONTIGUOUS_ && (A = C._CELL_WIDTH + 0.3, E = C._CELL_HEIGHT + 0.2), !this._mosaicSymbols.has(n)) {
+      this._mosaicSymbols.add(n);
+      const f = this._svg.symbol_(n);
+      if (_.type_ == a.MOSAIC_CONTIGUOUS_) {
+        f.attr_({
           preserveAspectRatio: "none",
           width: A,
           // FUDGE cell is bigger than it should be
@@ -1054,26 +1054,26 @@ class ct extends C {
           viewBox: "0 0 12 18"
         });
         for (let c = 0; c < 6; c++)
-          i[c] == "1" && u.rect_(6, 6).move_(c % 2 * 6, Math.floor(c / 2) * 6);
+          i[c] == "1" && f.rect_(6, 6).move_(c % 2 * 6, Math.floor(c / 2) * 6);
       } else {
-        u.attr_({
+        f.attr_({
           preserveAspectRatio: "none",
           width: A,
           height: E,
           viewBox: "0 0 12 18"
         });
         for (let c = 0; c < 6; c++)
-          i[c] == "1" && u.rect_(4, 4).move_(c % 2 * 6 + 1, Math.floor(c / 2) * 6 + 2);
+          i[c] == "1" && f.rect_(4, 4).move_(c % 2 * 6 + 1, Math.floor(c / 2) * 6 + 2);
       }
     }
-    let I;
-    _.type_ == n.MOSAIC_CONTIGUOUS_ ? I = this._graphicrows[t].use_(a).move_(e * C._CELL_WIDTH - 0.15, t * C._CELL_HEIGHT - 0.1).fill_(s) : I = this._graphicrows[t].use_(a).move_(e * C._CELL_WIDTH, t * C._CELL_HEIGHT).fill_(s), this._webkitCompat && I.attr_({ width: A, height: E }), (_.size_ == d.DOUBLE_HEIGHT_ || _.size_ == d.DOUBLE_SIZE_) && I.attr_("height", C._CELL_DOUBLE_HEIGHT), (_.size_ == d.DOUBLE_WIDTH_ || _.size_ == d.DOUBLE_SIZE_) && I.attr_("width", C._CELL_DOUBLE_WIDTH), _.flashing_ && I.addClass_("flash"), _.concealed_ && I.addClass_("conceal");
+    let u;
+    _.type_ == a.MOSAIC_CONTIGUOUS_ ? u = this._graphicrows[t].use_(n).move_(e * C._CELL_WIDTH - 0.15, t * C._CELL_HEIGHT - 0.1).fill_(s) : u = this._graphicrows[t].use_(n).move_(e * C._CELL_WIDTH, t * C._CELL_HEIGHT).fill_(s), this._webkitCompat && u.attr_({ width: A, height: E }), (_.size_ == d.DOUBLE_HEIGHT_ || _.size_ == d.DOUBLE_SIZE_) && u.attr_("height", C._CELL_DOUBLE_HEIGHT), (_.size_ == d.DOUBLE_WIDTH_ || _.size_ == d.DOUBLE_SIZE_) && u.attr_("width", C._CELL_DOUBLE_WIDTH), _.flashing_ && u.addClass_("flash"), _.concealed_ && u.addClass_("conceal");
   }
   _resetGraphicRow(t) {
     this._graphicrows[t] && this._graphicrows[t].remove_(), this._graphicrows[t] = this._graphicLayer.group_();
   }
   _getCellAttr(t, e, _) {
-    return t == n.G3_ ? {
+    return t == a.G3_ ? {
       dx: C._MOSAIC_METRIC._contiguous._DX,
       dy: -0.15,
       textLength: C._MOSAIC_METRIC._contiguous._textLength,
@@ -1291,8 +1291,8 @@ class Se {
   enhance() {
     return new Be(this._model);
   }
-  writeBytes(t, e, _) {
-    this._model.writeBytes_(t, e, _);
+  writeBytes(t, e, _, s) {
+    this._model.writeBytes_(t, e, _, s);
   }
   writeByte(t, e, _, s) {
     this._model.writeByte_(t, e, _, s);
@@ -1376,13 +1376,13 @@ class Le {
       this._setRowFromChars(_, e);
     }), this.onSet_.notify_();
   }
-  writeBytes_(t, e, _) {
-    for (let s = e, i = 0; s < m && i < _.length; s++, i++) {
-      const a = [..._[i]].slice(0, b - t);
-      for (let A = t, E = 0; A < b && E < a.length; A++, E++)
-        this._screen[s][A].byte_ = a[E];
+  writeBytes_(t, e, _, s) {
+    for (let i = e, n = 0; i < m && n < _.length; i++, n++) {
+      const A = [..._[n]].slice(0, b - t);
+      for (let E = t, u = 0; E < b && u < A.length; E++, u++)
+        this._screen[i][E].byte_ = A[u];
     }
-    this.onSet_.notify_();
+    typeof s < "u" && s && this.onSet_.notify_();
   }
   writeByte_(t, e, _, s) {
     t >= 0 && t < b && e >= 0 && e < m && (this._screen[e][t].byte_ = _), typeof s < "u" && s && this.onSet_.notify_();
@@ -1394,23 +1394,23 @@ class Le {
   plot_(t, e, _) {
     const s = Math.floor(e / 3), i = Math.floor(t / 2), A = this._screen[s][i]._byte.charCodeAt(0);
     if (A < 32 || (_ ? A == 32 : A == 255)) return;
-    const E = t - i * 2, I = e - s * 3, u = E + I * 2;
+    const E = t - i * 2, u = e - s * 3, f = E + u * 2;
     let c = 0;
-    A < 64 ? c = A - 32 : A >= 96 && (c = A - 64), _ ? c &= ~(1 << u) : c |= 1 << u;
+    A < 64 ? c = A - 32 : A >= 96 && (c = A - 64), _ ? c &= ~(1 << f) : c |= 1 << f;
     const O = c >= 32 ? c + 64 : c + 32;
     this._screen[s][i]._byte = String.fromCharCode(O);
   }
   plotPoints_(t, e, _, s) {
-    let i = 0, a = 0;
+    let i = 0, n = 0;
     for (let A = 0; A < s.length && e + i < m * 3; A++)
-      t + a < b * 2 && (s[i * _ + a] == 255 ? this.plot_(t + a, e + i) : this.plot_(t + a, e + i, !0)), a++, a == _ && (i++, a = 0);
+      t + n < b * 2 && (s[i * _ + n] == 255 ? this.plot_(t + n, e + i) : this.plot_(t + n, e + i, !0)), n++, n == _ && (i++, n = 0);
   }
   _setRowFromChars(t, e) {
     let _ = [...e];
     if (_ = _.slice(0, b), _.forEach((s, i) => {
-      const a = s.charCodeAt(0);
-      if (Number.isNaN(a) || a > 127)
-        throw new Error(`PageModel E51 failed to write row: bad character code (${a}) at row ${t} col ${i}`);
+      const n = s.charCodeAt(0);
+      if (Number.isNaN(n) || n > 127)
+        throw new Error(`PageModel E51 failed to write row: bad character code (${n}) at row ${t} col ${i}`);
       this._screen[t][i].byte_ = s;
     }), _.length < b)
       for (let s = _.length; s < b; s++)
@@ -1457,19 +1457,19 @@ class Le {
     if (t >= m)
       throw new Error("PageModel.getRow E42 bad rowNum");
     const e = new be();
-    let _, s, i = n.ALPHA_, a = l.WHITE, A = !1, E = d.NORMAL_SIZE_, I = !1, u = !1, c = !1, O = !1, v = l.BLACK, G = n.MOSAIC_CONTIGUOUS_, g = {
+    let _, s, i = a.ALPHA_, n = l.WHITE, A = !1, E = d.NORMAL_SIZE_, u = !1, f = !1, c = !1, O = !1, v = l.BLACK, G = a.MOSAIC_CONTIGUOUS_, g = {
       active_: !1,
       char_: " ",
-      type_: n.MOSAIC_CONTIGUOUS_
+      type_: a.MOSAIC_CONTIGUOUS_
     }, tt = [];
     return me.includes(this._level) && (tt = this._enhancement.filter((o) => o.y_ == t)), this._screen[t].forEach((o, N) => {
       const et = o.byte_, U = Rt(this._level, et);
-      switch (_ = a, o.type_ = i, o.boxed_ = O, s = I, U.attribute_ != h.STEADY && (o.flashing_ = A), U.attribute_ != h.NORMAL_SIZE && (o.size_ = E), U.attribute_ != h.CONCEAL && (o.concealed_ = u), c && (U.attribute_ != h.HOLD_MOSAICS && (g.active_ = !1, g.char_ = " "), c = !1), U.attribute_) {
+      switch (_ = n, o.type_ = i, o.boxed_ = O, s = u, U.attribute_ != h.STEADY && (o.flashing_ = A), U.attribute_ != h.NORMAL_SIZE && (o.size_ = E), U.attribute_ != h.CONCEAL && (o.concealed_ = f), c && (U.attribute_ != h.HOLD_MOSAICS && (g.active_ = !1, g.char_ = " "), c = !1), U.attribute_) {
         case h.TEXT_COLOUR:
-          i = n.ALPHA_, a = U.colour_, u = !1, o.setSpace_(g);
+          i = a.ALPHA_, n = U.colour_, f = !1, o.setSpace_(g);
           break;
         case h.MOSAIC_COLOUR:
-          i = G, a = U.colour_, u = !1, o.setSpace_(g);
+          i = G, n = U.colour_, f = !1, o.setSpace_(g);
           break;
         case h.NEW_BACKGROUND:
           v = _, o.setSpace_(g);
@@ -1478,13 +1478,13 @@ class Le {
           v = l.BLACK, o.setSpace_(g);
           break;
         case h.CONTIGUOUS_GRAPHICS:
-          G = n.MOSAIC_CONTIGUOUS_, o.type_ == n.MOSAIC_SEPARATED_ && (o.type_ = n.MOSAIC_CONTIGUOUS_), i == n.MOSAIC_SEPARATED_ && (i = n.MOSAIC_CONTIGUOUS_), o.setSpace_(g);
+          G = a.MOSAIC_CONTIGUOUS_, o.type_ == a.MOSAIC_SEPARATED_ && (o.type_ = a.MOSAIC_CONTIGUOUS_), i == a.MOSAIC_SEPARATED_ && (i = a.MOSAIC_CONTIGUOUS_), o.setSpace_(g);
           break;
         case h.SEPARATED_GRAPHICS:
-          G = n.MOSAIC_SEPARATED_, o.type_ == n.MOSAIC_CONTIGUOUS_ && (o.type_ = n.MOSAIC_SEPARATED_), i == n.MOSAIC_CONTIGUOUS_ && (i = n.MOSAIC_SEPARATED_), o.setSpace_(g);
+          G = a.MOSAIC_SEPARATED_, o.type_ == a.MOSAIC_CONTIGUOUS_ && (o.type_ = a.MOSAIC_SEPARATED_), i == a.MOSAIC_CONTIGUOUS_ && (i = a.MOSAIC_SEPARATED_), o.setSpace_(g);
           break;
         case h.ESC:
-          this._secondaryG0CharacterEncoding && (I = !s), o.setSpace_(g);
+          this._secondaryG0CharacterEncoding && (u = !s), o.setSpace_(g);
           break;
         case h.FLASH:
           A = !0, o.setSpace_(g);
@@ -1505,7 +1505,7 @@ class Le {
           E = d.DOUBLE_SIZE_, e.doubleHeight_ = !0, o.setSpace_(g);
           break;
         case h.CONCEAL:
-          o.concealed_ = !0, u = !0, o.setSpace_(g);
+          o.concealed_ = !0, f = !0, o.setSpace_(g);
           break;
         case h.HOLD_MOSAICS:
           g.active_ = !0, o.setSpace_(g);
@@ -1526,7 +1526,7 @@ class Le {
           s ? o.setMappedChar_(this._secondaryG0CharacterEncoding) : o.setMappedChar_(this._primaryG0CharacterEncoding), o.isMosaic_() && (g.char_ = et, g.type_ = o.type_);
       }
       o.fgColour_ = _, o.bgColour_ = v, tt.filter((B) => B.x_ == N).forEach((B) => {
-        o = new ue(o), B.type_ == "g0" ? (o.byte_ = B.char_, o.diacritic_ = B.diacritic_, o.type_ = n.ALPHA_, this._primaryG0CharacterEncoding.includes("latin") ? o.setMappedChar_("g0_latin") : o.setMappedChar_(this._primaryG0CharacterEncoding)) : B.type_ == "g1" ? this._level == Q[2.5] && (o.byte_ = B.char_, o.type_ = G, this._primaryG0CharacterEncoding.includes("latin") ? o.setMappedChar_("g0_latin") : o.setMappedChar_(this._primaryG0CharacterEncoding)) : B.type_ == "g2" ? (o.byte_ = B.char_, o.type_ = n.ALPHA_, o.setMappedChar_(this._g2CharacterEncoding)) : B.type_ == "g3" ? this._isAllowedG3Char(B.char_) && (o.byte_ = B.char_, o.type_ = n.G3_, o.setMappedChar_()) : B.type_ == "char" && (o.enhancedChar_ = B.char_, o.type_ = n.ALPHA_);
+        o = new ue(o), B.type_ == "g0" ? (o.byte_ = B.char_, o.diacritic_ = B.diacritic_, o.type_ = a.ALPHA_, this._primaryG0CharacterEncoding.includes("latin") ? o.setMappedChar_("g0_latin") : o.setMappedChar_(this._primaryG0CharacterEncoding)) : B.type_ == "g1" ? this._level == Q[2.5] && (o.byte_ = B.char_, o.type_ = G, this._primaryG0CharacterEncoding.includes("latin") ? o.setMappedChar_("g0_latin") : o.setMappedChar_(this._primaryG0CharacterEncoding)) : B.type_ == "g2" ? (o.byte_ = B.char_, o.type_ = a.ALPHA_, o.setMappedChar_(this._g2CharacterEncoding)) : B.type_ == "g3" ? this._isAllowedG3Char(B.char_) && (o.byte_ = B.char_, o.type_ = a.G3_, o.setMappedChar_()) : B.type_ == "char" && (o.enhancedChar_ = B.char_, o.type_ = a.ALPHA_);
       }), e.addCell_(o);
     }), e;
   }
