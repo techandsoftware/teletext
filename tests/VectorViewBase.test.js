@@ -5,7 +5,7 @@ import { expect, test } from 'vitest'
 import { JSDOM } from 'jsdom';
 
 import { PageModel } from '../lib/PageModel.js';
-import { VectorViewBase } from '../lib//VectorViewBase.js';
+import { VectorViewBase } from '../lib/VectorViewBase.js';
 import { Utils } from '../lib/Utils.js';
 import testpages from '../lib/data/testpages.json';
 
