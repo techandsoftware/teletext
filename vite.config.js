@@ -18,6 +18,13 @@ export default defineConfig(({ mode }) => {
 
   const isMinified = mode === "minified";
 
+  // used for non-minified build
+  const rollupConfig = {
+    output: {
+      banner: `\`${BANNER}\`;` // bodge for https://github.com/vitejs/vite/issues/21076
+    }
+  };
+
   // used for minified buld
   const terserConfig = {
     ecma: 2016,
@@ -54,6 +61,7 @@ export default defineConfig(({ mode }) => {
         fileName: isMinified ? "teletext.min" : "teletext",
         formats: ["es"]
       },
+      rollupOptions: isMinified ? undefined : rollupConfig,
       minify: isMinified ? "terser" : false,
       terserOptions: isMinified ? terserConfig : undefined
     }
