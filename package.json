@@ -25,7 +25,6 @@
     "dev": "vite",
     "build": "vite build && vite build --mode minified",
     "lint": "eslint",
-    "minify": "terser dist/teletext.js --output dist/teletext.min.js --config-file terser.config.json",
     "test": "vitest",
     "reuselint": "reuse lint",
     "coverage": "vitest run --coverage"
