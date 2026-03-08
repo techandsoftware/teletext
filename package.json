@@ -13,7 +13,7 @@
   "private": false,
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@fast-check/vitest": "^0.2.4",
+    "@fast-check/vitest": "^0.3.0",
     "@vitest/coverage-v8": "^4.0.18",
     "eslint": "^10.0.3",
     "globals": "^17.4.0",
