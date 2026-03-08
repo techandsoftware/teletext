@@ -1,11 +1,9 @@
 <!--
-SPDX-FileCopyrightText: © 2025 Rob Hardy
+SPDX-FileCopyrightText: © 2026 Rob Hardy
 SPDX-License-Identifier: AGPL-3.0-only
 -->
 
-[![REUSE status](https://api.reuse.software/badge/bitbucket.org/rahardy/teletext)](https://api.reuse.software/info/bitbucket.org/rahardy/teletext)
-
-![Splash: Prerendered teletext page](https://www.robdev.org.uk/assets/teletext_prerendered_splash.svg)
+![Splash: Prerendered teletext page](https://teletext-for-javascript-docs.robdev.org.uk/assets/teletext_prerendered_splash.svg)
 
 This package renders teletext pages using vector graphics (SVG). 
 
