@@ -25,7 +25,7 @@
     "dev": "vite",
     "build": "vite build && vite build --mode minified",
     "lint": "eslint",
-    "test": "vitest",
+    "test": "vitest --silent --reporter verbose",
     "reuselint": "reuse lint",
     "coverage": "vitest run --coverage"
   },
