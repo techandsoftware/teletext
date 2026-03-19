@@ -24,12 +24,12 @@ function renderPageToSVG(webkitCompatible) {
   return dom.window.document.querySelector('#teletextscreen').innerHTML;
 }
 
-test('VectorViewGraphicMosaic renders page to SVG - webkit compatible', () => {
+test('VectorViewGraphicMosaic renders page to SVG with legacy webkit compatibility fix', () => {
   const svg = renderPageToSVG(true);
   expect(svg).toMatchSnapshot();
 });
 
-test('VectorViewGraphicMosaic renders page to SVG - not webkit compatible', () => {
+test('VectorViewGraphicMosaic renders page to SVG', () => {
   const svg = renderPageToSVG(false);
   expect(svg).toMatchSnapshot();
 });
