@@ -144,9 +144,11 @@ test('getRow_ handles boxing and unboxing attributes', () => {
     const expected = {
         0: { boxed_: false },
         1: { boxed_: false },
+        2: { boxed_: false },
         3: { boxed_: true },
         4: { boxed_: true },
         5: { boxed_: true },
+        6: { boxed_: true },
         7: { boxed_: true },
         8: { boxed_: false }
     };
