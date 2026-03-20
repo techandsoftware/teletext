@@ -51,7 +51,8 @@
   },
   "files": [
     "LICENSES/AGPL-3.0-only.txt",
-    "dist",
+    "dist/*.js",
+    "dist/teletext.js.license",
     "package.json.license"
   ],
   "sideEffects": false
