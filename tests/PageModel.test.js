@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: © 2025 Rob Hardy
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { expect, test } from 'vitest'
+import { describe, beforeEach, expect, test } from 'vitest'
 import { PageModel } from "../lib/PageModel.js";
 import { Attributes as Att, CellType, Colour, CellSize, Level } from "../lib/Attributes.js";
 import { Enhancement } from "../lib/Enhancement.js";
@@ -449,6 +449,55 @@ test('getRow_ applies level 2.5 enhancements', () => {
     const row2 = model.getRow_(rowNum);
     expect(row2.getCell_(3).char_).toBe('ΐ');
     expect(row2.getCell_(4).char_).toBe('Δ');
+});
+
+describe('getText_ returns text', () => {
+    let model;
+
+    beforeEach(() => {
+        model = new PageModel();
+        const rowNum = 1;
+
+        const text = 'a'
+            + Att.charFromGraphicColour(Colour.RED)
+            + 'b'
+            + Att.charFromTextColour(Colour.GREEN)
+            + 'c'
+            + Att.charFromAttribute(Att.DOUBLE_HEIGHT) + 'd'
+            + Att.charFromAttribute(Att.DOUBLE_SIZE) + 'ef'
+            + Att.charFromAttribute(Att.NORMAL_SIZE)
+            + Att.charFromAttribute(Att.HOLD_MOSAICS)
+            + Att.charFromGraphicColour(Colour.YELLOW)
+            + 'g'
+            + Att.charFromAttribute(Att.SEPARATED_GRAPHICS) // separated is active, held mosaic is contiguous
+            + 'h' // separated mosaic
+            + Att.charFromGraphicColour(Colour.BLUE); // held mosaic is separated
+
+        model.setRowFromChars_(0, text);
+        model.setRowFromChars_(1, 'hidden');
+        // model.setRowFromChars_(1, ''.padEnd(40, ' '));
+        model.setLevel_(Level[2.5]);
+    });
+
+    test('text only', () => {
+        const result = model.getText_(false);
+        const rows = result.split('\n');
+        expect(rows[0]).toEqual('a   c d e '.padEnd(40, ' '));
+        expect(rows[1]).toEqual('');
+
+    });
+
+    test('text and graphics', () => {
+        const result = model.getText_(true);
+        const rows = result.split('\n');
+
+        // \u{1FB20} = BLOCK SEXTANT-6
+        // \u{1FB25} = BLOCK SEXTANT-1236
+        // \u{E0F0} = SEPARATED BLOCK SEXTANT-46 in Unscii's PUA (Unicode 16 has since mapped this as \u{1CE78})
+        const expected = 'a \u{1FB20} c d e    \u{1FB25}\u{1FB25}\u{E0F0}\u{E0F0}' + ' '.repeat(23);
+        expect(rows[0]).toEqual(expected);
+        expect(rows[1]).toEqual('');
+    });
 });
 
 
