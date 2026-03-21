@@ -460,7 +460,7 @@ describe('getText_ returns text', () => {
 
         const text = 'a'
             + Att.charFromGraphicColour(Colour.RED)
-            + 'b'
+            + 'b' // block mosaic
             + Att.charFromTextColour(Colour.GREEN)
             + 'c'
             + Att.charFromAttribute(Att.DOUBLE_HEIGHT) + 'd'
@@ -468,7 +468,7 @@ describe('getText_ returns text', () => {
             + Att.charFromAttribute(Att.NORMAL_SIZE)
             + Att.charFromAttribute(Att.HOLD_MOSAICS)
             + Att.charFromGraphicColour(Colour.YELLOW)
-            + 'g'
+            + 'g' // block mosaic
             + Att.charFromAttribute(Att.SEPARATED_GRAPHICS) // separated is active, held mosaic is contiguous
             + 'h' // separated mosaic
             + Att.charFromGraphicColour(Colour.BLUE); // held mosaic is separated
