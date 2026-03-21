@@ -1,3 +1,8 @@
+`/*! @techandsoftware/teletext
+    https://www.npmjs.com/package/@techandsoftware/teletext
+    SPDX-FileCopyrightText: (c) 2026 Rob Hardy
+    SPDX-License-Identifier: AGPL-3.0-only
+ */`;
 const CURSIVE_CHARS = "ﻰﺋﺊﭼﭽﭘﭙﮔﻎﻼﻬﻪﻊﺔﺒﺘﺎﺑﺗﺛﺟﺣﺧﺳﺷﺻﺿﻃﻇﻋﻏﺜﺠﺤﺨـﻓﻗﻛﻟﻣﻧﻫﻰﻳﻴﻌﻐﻔﻘﻠﻤﻨ";
 class Utils {
   // "base64url" encoding defined here https://tools.ietf.org/html/rfc4648
@@ -677,23 +682,86 @@ function createReverseLookup(input) {
   }
   return Object.freeze(reverseLookup);
 }
-const WIDTH_PX = 400;
-const HEIGHT_PX = 250;
-const COLS = 40;
-const ROWS$1 = 25;
+const VECTOR_STYLE = `@font-face {
+font-family: 'Unscii';
+src: url('fonts/unscii-16.woff') format('woff'), 
+url('fonts/unscii-16.ttf') format('truetype'),
+url('fonts/unscii-16.otf') format('opentype');
+unicode-range: U+0000-00FF, U+2022, U+2500, U+2502, U+250C, U+2510, U+2514, U+2518, U+251C, U+251D, U+2524, U+2525, U+252C, U+252F, U+2534, U+2537, U+253C, U+253F, U+2588, U+258C, U+2590, U+2592, U+25CB, U+25CF, U+25E2-25E5, U+2B60-2B63, U+E0C0-E0FF, U+1FB00-1FB70, U+1FB75, U+1FBA0-1FBA7;
+-webkit-font-smoothing: none;
+font-smooth: never;
+}
+@font-face {
+font-family: 'Bedstead';
+src: url('fonts/bedstead.otf') format('opentype');
+unicode-range: U+0000-00FF;
+}
+@keyframes blink {
+to {
+visibility: hidden;
+}
+}
+@keyframes fancyblink {
+from {
+filter: none;
+opacity: 0.7;
+}
+33% {
+filter: none;
+opacity: 1;
+}
+66% {
+filter: blur(0px);
+opacity: 1;
+}
+95% {
+filter: blur(4px);
+opacity: 0;
+}
+to {
+filter: blur(0px);
+opacity: 0;
+}
+}
+#textlayer {
+font-size: 10px;
+}
+.mosaic {
+font-family: 'Unscii';
+font-size: 10.3px;
+}
+.mosaic_separated {
+font-family: 'Unscii';
+font-size: 10px;
+}
+.flash_flashing .flash {
+/* animation: blink 2s steps(3, start) infinite; */
+animation: fancyblink 2s linear infinite;
+}
+.conceal_concealed  .conceal {
+visibility: hidden;
+}
+svg #background {
+transition-property: opacity;
+transition-duration: 0.25s;
+}
+svg {
+background-color: transparent;
+}
+svg use {
+shape-rendering: crispEdges;
+}
+rect { color: orange; }
+`;
 const SCREEN_SCALE = 1.5;
-const ASPECT_RATIO_VERTICAL_SCALE = {
-  1.33: WIDTH_PX / (1.33 * HEIGHT_PX),
-  1.2: WIDTH_PX / (1.2 * HEIGHT_PX),
-  1.22: WIDTH_PX / (1.22 * HEIGHT_PX)
-};
 const DEFAULT_ASPECT_RATIO = 1.2;
-const CELL_HEIGHT = HEIGHT_PX / ROWS$1;
-const CELL_WIDTH = WIDTH_PX / COLS;
+const CELL_HEIGHT = 10;
+const CELL_WIDTH = 10;
 const CELL_DOUBLE_HEIGHT = CELL_HEIGHT * 2;
 const CELL_DOUBLE_WIDTH = CELL_WIDTH * 2;
 const TEXT_X_OFFSET = CELL_WIDTH / 2;
 const TEXT_Y_OFFSET = CELL_HEIGHT * (4 / 5);
+const METRICS = {};
 const MOSAIC_METRIC = {
   _contiguous: {
     _textLength: CELL_WIDTH + 0.4,
@@ -707,10 +775,19 @@ const MOSAIC_METRIC = {
 Object.freeze(MOSAIC_METRIC);
 class VectorViewBase {
   constructor(model, dom) {
-    this._svg = new SVG(dom).viewbox_(`0 0 ${WIDTH_PX} ${HEIGHT_PX}`).size_(WIDTH_PX * SCREEN_SCALE, HEIGHT_PX * SCREEN_SCALE * ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO]).attr_({
+    METRICS._COLS = model.cols_;
+    METRICS._ROWS = model.rows_;
+    this._WIDTH_PX = model.cols_ * CELL_WIDTH;
+    this._HEIGHT_PX = model.rows_ * CELL_HEIGHT;
+    this._ASPECT_RATIO_VERTICAL_SCALE = {
+      1.33: this._WIDTH_PX / (1.33 * this._HEIGHT_PX),
+      1.2: this._WIDTH_PX / (1.2 * this._HEIGHT_PX),
+      1.22: this._WIDTH_PX / (1.22 * this._HEIGHT_PX)
+    };
+    this._svg = new SVG(dom).viewbox_(`0 0 ${this._WIDTH_PX} ${this._HEIGHT_PX}`).size_(this._WIDTH_PX * SCREEN_SCALE, this._HEIGHT_PX * SCREEN_SCALE * this._ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO]).attr_({
       "preserveAspectRatio": "none",
       "style": "font-family: sans-serif"
-    }).style_(getStyle());
+    }).style_(VECTOR_STYLE);
     this.d = this._svg.group_().attr_("class", "conceal_concealed flash_flashing");
     this._aspectRatio = DEFAULT_ASPECT_RATIO;
     this._createDisplay();
@@ -725,6 +802,14 @@ class VectorViewBase {
     this._pageContainsBox = false;
     this._plugins = {};
     console.debug("VectorViewBase constructed");
+  }
+  // for plugins accessing static members
+  static get ROWS() {
+    return METRICS._ROWS;
+  }
+  // for plugins accessing static members
+  static get COLS() {
+    return METRICS._COLS;
   }
   addTo_(selector) {
     this._svg.addTo_(selector);
@@ -858,7 +943,7 @@ class VectorViewBase {
     this.setHeight_(this._svg.height_());
   }
   setHeight_(height) {
-    const width = this._aspectRatio == "natural" ? height * (WIDTH_PX / HEIGHT_PX) : height * this._aspectRatio;
+    const width = this._aspectRatio == "natural" ? height * (this._WIDTH_PX / this._HEIGHT_PX) : height * this._aspectRatio;
     this._svg.size_(width, height);
   }
   _setMixMode() {
@@ -889,14 +974,14 @@ class VectorViewBase {
   }
   _drawGrid() {
     this._gridLayer = this.d.group_();
-    for (let row = 0; row < ROWS$1; row++) {
-      this._gridLayer.line_(0, row * CELL_HEIGHT, WIDTH_PX - 1, row * CELL_HEIGHT).attr_({
+    for (let row = 0; row < METRICS._ROWS; row++) {
+      this._gridLayer.line_(0, row * CELL_HEIGHT, this._WIDTH_PX - 1, row * CELL_HEIGHT).attr_({
         stroke: "#555",
         "stroke-width": 0.5
       });
     }
-    for (let col = 0; col < COLS; col++) {
-      this._gridLayer.line_(col * CELL_WIDTH, 0, col * CELL_WIDTH, HEIGHT_PX - 1).attr_({
+    for (let col = 0; col < METRICS._COLS; col++) {
+      this._gridLayer.line_(col * CELL_WIDTH, 0, col * CELL_WIDTH, this._HEIGHT_PX - 1).attr_({
         stroke: "#555",
         "stroke-width": 0.5
       });
@@ -927,9 +1012,9 @@ class VectorViewBase {
       "text-anchor": "middle",
       "fill": "#fff"
     }).attr_("id", "textlayer");
-    for (let rowNum = 0; rowNum < ROWS$1; rowNum++) {
+    for (let rowNum = 0; rowNum < METRICS._ROWS; rowNum++) {
       const rowCells = [];
-      for (let colNum = 0; colNum < COLS; colNum++) {
+      for (let colNum = 0; colNum < METRICS._COLS; colNum++) {
         rowCells.push(textGroup.plain_(getRandomLetter()).attr_({
           x: colNum * CELL_WIDTH + TEXT_X_OFFSET,
           y: rowNum * CELL_HEIGHT + TEXT_Y_OFFSET
@@ -1037,7 +1122,7 @@ class VectorViewBase {
     };
   }
   _createImageOverlay() {
-    const image = this.d.image_(WIDTH_PX, HEIGHT_PX);
+    const image = this.d.image_(this._WIDTH_PX, this._HEIGHT_PX);
     image.attr_("preserveAspectRatio", "none");
     return image;
   }
@@ -1051,11 +1136,7 @@ VectorViewBase._CELL_WIDTH = CELL_WIDTH;
 VectorViewBase._CELL_HEIGHT = CELL_HEIGHT;
 VectorViewBase._CELL_DOUBLE_WIDTH = CELL_DOUBLE_WIDTH;
 VectorViewBase._CELL_DOUBLE_HEIGHT = CELL_DOUBLE_HEIGHT;
-VectorViewBase._WIDTH_PX = WIDTH_PX;
-VectorViewBase._HEIGHT_PX = HEIGHT_PX;
 VectorViewBase._MOSAIC_METRIC = MOSAIC_METRIC;
-VectorViewBase.ROWS = ROWS$1;
-VectorViewBase.COLS = COLS;
 const colourLookupFn = (colourSymbol) => fillColourFromColourAttrib(colourSymbol);
 const isDoubleHeightFn = (size) => size == CellSize.DOUBLE_HEIGHT_;
 const isDoubleWidthFn = (size) => size == CellSize.DOUBLE_WIDTH_;
@@ -1065,325 +1146,6 @@ const _getYTranslate = (row) => 0 - row * CELL_HEIGHT;
 const _getXTranslate = (col) => 0 - col * CELL_WIDTH;
 function getRandomLetter() {
   return String.fromCharCode(32 + Math.random() * 95);
-}
-function getStyle() {
-  return `@font-face {
-font-family: 'Unscii';
-src: url('fonts/unscii-16.woff') format('woff'), 
-url('fonts/unscii-16.ttf') format('truetype'),
-url('fonts/unscii-16.otf') format('opentype');
-unicode-range: U+0000-00FF, U+2022, U+2500, U+2502, U+250C, U+2510, U+2514, U+2518, U+251C, U+251D, U+2524, U+2525, U+252C, U+252F, U+2534, U+2537, U+253C, U+253F, U+2588, U+258C, U+2590, U+2592, U+25CB, U+25CF, U+25E2-25E5, U+2B60-2B63, U+E0C0-E0FF, U+1FB00-1FB70, U+1FB75, U+1FBA0-1FBA7;
--webkit-font-smoothing: none;
-font-smooth: never;
-}
-@font-face {
-font-family: 'Bedstead';
-src: url('fonts/bedstead.otf') format('opentype');
-unicode-range: U+0000-00FF;
-}
-@keyframes blink {
-to {
-visibility: hidden;
-}
-}
-@keyframes fancyblink {
-from {
-filter: none;
-opacity: 0.7;
-}
-33% {
-filter: none;
-opacity: 1;
-}
-66% {
-filter: blur(0px);
-opacity: 1;
-}
-95% {
-filter: blur(4px);
-opacity: 0;
-}
-to {
-filter: blur(0px);
-opacity: 0;
-}
-}
-#textlayer {
-font-size: 10px;
-}
-.mosaic {
-font-family: 'Unscii';
-font-size: 10.3px;
-}
-.mosaic_separated {
-font-family: 'Unscii';
-font-size: 10px;
-}
-.flash_flashing .flash {
-/* animation: blink 2s steps(3, start) infinite; */
-animation: fancyblink 2s linear infinite;
-}
-.conceal_concealed  .conceal {
-visibility: hidden;
-}
-svg #background {
-transition-property: opacity;
-transition-duration: 0.25s;
-}
-svg {
-background-color: transparent;
-}
-svg use {
-shape-rendering: crispEdges;
-}
-rect { color: orange; }
-`;
-}
-const g0_latin = { "$": "¤", "": "■" };
-const g0_latin__czech_slovak = { "#": "#", "$": "ů", "@": "č", "[": "ť", "\\": "ž", "]": "ý", "^": "í", "_": "ř", "`": "é", "{": "á", "|": "|", "}": "ú", "~": "š" };
-const g0_latin__english = { "#": "£", "$": "$", "@": "@", "[": "←", "\\": "½", "]": "→", "^": "↑", "_": "#", "`": "—", "{": "¼", "|": "‖", "}": "¾", "~": "÷" };
-const g0_latin__estonian = { "#": "#", "$": "õ", "@": "Š", "[": "Ä", "\\": "Ö", "]": "Ž", "^": "Ü", "_": "Õ", "`": "š", "{": "ä", "|": "ö", "}": "ž", "~": "ü" };
-const g0_latin__french = { "#": "é", "$": "ï", "@": "à", "[": "ë", "\\": "ê", "]": "ù", "^": "î", "_": "#", "`": "è", "{": "â", "|": "ô", "}": "û", "~": "ç" };
-const g0_latin__german = { "#": "#", "$": "$", "@": "§", "[": "Ä", "\\": "Ö", "]": "Ü", "^": "^", "_": "_", "`": "°", "{": "ä", "|": "ö", "}": "ü", "~": "ß" };
-const g0_latin__italian = { "#": "£", "$": "$", "@": "é", "[": "°", "\\": "ç", "]": "→", "^": "↑", "_": "#", "`": "ù", "{": "à", "|": "ò", "}": "è", "~": "ì" };
-const g0_latin__latvian_lithuanian = { "#": "#", "$": "$", "@": "Š", "[": "ė", "\\": "ę", "]": "Ž", "^": "č", "_": "ū", "`": "š", "{": "ą", "|": "ų", "}": "ž", "~": "į" };
-const g0_latin__polish = { "#": "#", "$": "ń", "@": "ą", "[": "Ƶ", "\\": "Ś", "]": "Ł", "^": "ć", "_": "ó", "`": "ę", "{": "ż", "|": "ś", "}": "ł", "~": "ź" };
-const g0_latin__portuguese_spanish = { "#": "ç", "$": "$", "@": "¡", "[": "á", "\\": "é", "]": "í", "^": "ó", "_": "ú", "`": "¿", "{": "ü", "|": "ñ", "}": "è", "~": "à" };
-const g0_latin__romanian = { "#": "#", "$": "¤", "@": "Ț", "[": "Â", "\\": "Ș", "]": "Ă", "^": "Î", "_": "ı", "`": "ț", "{": "â", "|": "ș", "}": "ă", "~": "î" };
-const g0_latin__serbian_croatian_slovenian = { "#": "#", "$": "Ë", "@": "Č", "[": "Ć", "\\": "Ž", "]": "Đ", "^": "Š", "_": "ë", "`": "č", "{": "ć", "|": "ž", "}": "đ", "~": "š" };
-const g0_latin__swedish_finnish_hungarian = { "#": "#", "$": "¤", "@": "É", "[": "Ä", "\\": "Ö", "]": "Å", "^": "Ü", "_": "_", "`": "é", "{": "ä", "|": "ö", "}": "å", "~": "ü" };
-const g0_latin__turkish = { "#": "₺", "$": "ğ", "@": "İ", "[": "Ş", "\\": "Ö", "]": "Ç", "^": "Ü", "_": "Ğ", "`": "ı", "{": "ş", "|": "ö", "}": "ç", "~": "ü" };
-const g2_latin = { "0": "°", "1": "±", "2": "²", "3": "³", "4": "×", "5": "µ", "6": "¶", "7": "·", "8": "÷", "9": "’", "!": "¡", '"': "¢", "#": "£", "%": "¥", "&": "#", "'": "§", "(": "¤", ")": "‘", "*": "“", "+": "«", ",": "←", "-": "↑", ".": "→", "/": "↓", ":": "”", ";": "»", "<": "¼", "=": "½", ">": "¾", "?": "¿", "@": " ", "A": "̀", "B": "́", "C": "̂", "D": "̃", "E": "̄", "F": "̆", "G": "̇", "H": "̈", "I": "̣", "J": "̊", "K": "̧", "L": "̲", "M": "̋", "N": "̨", "O": "̌", "P": "—", "Q": "¹", "R": "®", "S": "©", "T": "™", "U": "♪", "V": "₠", "W": "‰", "X": "α", "Y": null, "Z": null, "[": null, "\\": "⅛", "]": "⅜", "^": "⅝", "_": "⅞", "`": "Ω", "a": "Æ", "b": "Ð", "c": "ª", "d": "Ħ", "e": null, "f": "Ĳ", "g": "Ŀ", "h": "Ł", "i": "Ø", "j": "Œ", "k": "º", "l": "Þ", "m": "Ŧ", "n": "Ŋ", "o": "ŉ", "p": "ĸ", "q": "æ", "r": "đ", "s": "ð", "t": "ħ", "u": "ı", "v": "ĳ", "w": "ŀ", "x": "ł", "y": "ø", "z": "œ", "{": "ß", "|": "þ", "}": "ŧ", "~": "ŋ", "": "■" };
-const g0_greek = { "<": "«", ">": "»", "@": "ΐ", "A": "Α", "B": "Β", "C": "Γ", "D": "Δ", "E": "Ε", "F": "Ζ", "G": "Η", "H": "Θ", "I": "Ι", "J": "Κ", "K": "Λ", "L": "Μ", "M": "Ν", "N": "Ξ", "O": "Ο", "P": "Π", "Q": "Ρ", "R": "ʹ", "S": "Σ", "T": "Τ", "U": "Υ", "V": "Φ", "W": "Χ", "X": "Ψ", "Y": "Ω", "Z": "Ϊ", "[": "Ϋ", "\\": "ά", "]": "έ", "^": "ή", "_": "ί", "`": "ΰ", "a": "α", "b": "β", "c": "γ", "d": "δ", "e": "ε", "f": "ζ", "g": "η", "h": "θ", "i": "ι", "j": "κ", "k": "λ", "l": "μ", "m": "ν", "n": "ξ", "o": "ο", "p": "π", "q": "ρ", "r": "ς", "s": "σ", "t": "τ", "u": "υ", "v": "φ", "w": "χ", "x": "ψ", "y": "ω", "z": "ϊ", "{": "ϋ", "|": "ό", "}": "ύ", "~": "ώ", "": "■" };
-const g2_greek = { "0": "°", "1": "±", "2": "²", "3": "³", "4": "×", "5": "m", "6": "n", "7": "p", "8": "÷", "9": "’", "!": "a", '"': "b", "#": "£", "$": "e", "%": "h", "&": "i", "'": "§", "(": ":", ")": "‘", "*": "“", "+": "k", ",": "←", "-": "↑", ".": "→", "/": "↓", ":": "”", ";": "t", "<": "¼", "=": "½", ">": "¾", "?": "x", "@": " ", "A": "̀", "B": "́", "C": "̂", "D": "̃", "E": "̄", "F": "̆", "G": "̇", "H": "̈", "I": "̣", "J": "̊", "K": "̧", "L": "̲", "M": "̋", "N": "̨", "O": "̌", "P": "?", "Q": "¹", "R": "®", "S": "©", "T": "™", "U": "♪", "V": "₠", "W": "‰", "X": "ɑ", "Y": "Ί", "Z": "Ύ", "[": "Ώ", "\\": "⅛", "]": "⅜", "^": "⅝", "_": "⅞", "`": "C", "a": "D", "b": "F", "c": "G", "d": "J", "e": "L", "f": "Q", "g": "R", "h": "S", "i": "U", "j": "V", "k": "W", "l": "Y", "m": "Z", "n": "Ά", "o": "Ή", "p": "c", "q": "d", "r": "f", "s": "g", "t": "j", "u": "l", "v": "q", "w": "r", "x": "s", "y": "u", "z": "v", "{": "w", "|": "y", "}": "z", "~": "Έ", "": "■" };
-const g0_cyrillic = { "@": "Ю", "A": "А", "B": "Б", "C": "Ц", "D": "Д", "E": "Е", "F": "Ф", "G": "Г", "H": "Х", "I": "И", "J": "Ѝ", "K": "К", "L": "Л", "M": "М", "N": "Н", "O": "О", "P": "П", "Q": "Я", "R": "Р", "S": "С", "T": "Т", "U": "У", "V": "Ж", "W": "В", "X": "Ь", "Z": "З", "[": "Ш", "]": "Щ", "^": "Ч", "`": "ю", "a": "а", "b": "б", "c": "ц", "d": "д", "e": "е", "f": "ф", "g": "г", "h": "х", "i": "и", "j": "ѝ", "k": "к", "l": "л", "m": "м", "n": "н", "o": "о", "p": "п", "q": "я", "r": "р", "s": "с", "t": "т", "u": "у", "v": "ж", "w": "в", "x": "ь", "z": "з", "{": "ш", "}": "щ", "~": "ч", "": "■" };
-const g0_cyrillic__russian_bulgarian = { "&": "ы", "Y": "Ъ", "\\": "Э", "_": "Ы", "y": "ъ", "|": "э" };
-const g0_cyrillic__serbian_croatian = { "@": "Ч", "J": "Ј", "Q": "Ќ", "V": "В", "W": "Ѓ", "X": "Љ", "Y": "Њ", "[": "Ћ", "\\": "Ж", "]": "Ђ", "^": "Ш", "_": "Џ", "`": "ч", "j": "ј", "q": "ќ", "v": "в", "w": "ѓ", "x": "љ", "y": "њ", "{": "ћ", "|": "ж", "}": "ђ", "~": "ш" };
-const g0_cyrillic__ukranian = { "&": "ї", "Y": "І", "\\": "Є", "_": "Ї", "y": "і", "|": "є" };
-const g2_cyrillic = { "0": "m", "1": "n", "2": "p", "3": "t", "4": "x", "5": "x", "6": "°", "7": "±", "8": "²", "9": "³", "!": "a", '"': "b", "#": "£", "$": "e", "%": "h", "&": "i", "'": "§", "(": ":", ")": "‘", "*": "“", "+": "k", ",": "←", "-": "↑", ".": "→", "/": "↓", ":": "¼", ";": "½", "<": "¾", "=": "÷", ">": "’", "?": "”", "@": " ", "A": "̀", "B": "́", "C": "̂", "D": "̃", "E": "̄", "F": "̆", "G": "̇", "H": "̈", "I": "̣", "J": "̊", "K": "̧", "L": "̲", "M": "̋", "N": "̨", "O": "̌", "P": "?", "Q": "©", "R": "®", "S": "¹", "T": "ɑ", "U": "Ί", "V": "Ύ", "W": "Ώ", "X": "‰", "Y": "₠", "Z": "™", "[": "⅛", "\\": "⅜", "]": "⅝", "^": "⅞", "_": "♪", "`": "C", "a": "D", "b": "F", "c": "G", "d": "J", "e": "L", "f": "Q", "g": "R", "h": "S", "i": "U", "j": "V", "k": "W", "l": "Y", "m": "Z", "n": "Ά", "o": "Ή", "p": "c", "q": "d", "r": "f", "s": "g", "t": "j", "u": "l", "v": "q", "w": "r", "x": "s", "y": "u", "z": "v", "{": "w", "|": "y", "}": "z", "~": "Έ", "": "■" };
-const g0_arabic = { "#": "£", "&": "ﻰ", "'": "ﻱ", "(": ")", ")": "(", ";": "؛", "<": ">", ">": "<", "?": "؟", "@": "ﺔ", "A": "ﺀ", "B": "ﺒ", "C": "ﺏ", "D": "ﺘ", "E": "ﺕ", "F": "ﺎ", "G": "ﺍ", "H": "ﺑ", "I": "ﺓ", "J": "ﺗ", "K": "ﺛ", "L": "ﺟ", "M": "ﺣ", "N": "ﺧ", "O": "ﺩ", "P": "ﺫ", "Q": "ﺭ", "R": "ﺯ", "S": "ﺳ", "T": "ﺷ", "U": "ﺻ", "V": "ﺿ", "W": "ﻃ", "X": "ﻇ", "Y": "ﻋ", "Z": "ﻏ", "[": "ﺜ", "\\": "ﺠ", "]": "ﺤ", "^": "ﺨ", "_": "#", "`": "ـ", "a": "ﻓ", "b": "ﻗ", "c": "ﻛ", "d": "ﻟ", "e": "ﻣ", "f": "ﻧ", "g": "ﻫ", "h": "ﻭ", "i": "ﻰ", "j": "ﻳ", "k": "ﺙ", "l": "ﺝ", "m": "ﺡ", "n": "ﺥ", "o": "ﻴ", "p": "ﻯ", "q": "ﻌ", "r": "ﻐ", "s": "ﻔ", "t": "ﻑ", "u": "ﻘ", "v": "ﻕ", "w": "ﻙ", "x": "ﻠ", "y": "ﻝ", "z": "ﻤ", "{": "ﻡ", "|": "ﻨ", "}": "ﻥ", "~": "ﻻ", "": "■" };
-const g2_arabic = { "0": "٠", "1": "١", "2": "٢", "3": "٣", "4": "٤", "5": "٥", "6": "٦", "7": "٧", "8": "٨", "9": "٩", "!": "ﻉ", '"': "ﺁ", "#": "ﺃ", "$": "ﺅ", "%": "ﺇ", "&": "ﺋ", "'": "ﺊ", "(": "ﭼ", ")": "ﭽ", "*": "ﭺ", "+": "ﭘ", ",": "ﭙ", "-": "ﭖ", ".": "ﮊ", "/": "ﮔ", ":": "ﻎ", ";": "ﻍ", "<": "ﻼ", "=": "ﻬ", ">": "ﻪ", "?": "ﻩ", "@": "à", "[": "ë", "\\": "ê", "]": "ù", "^": "î", "_": "ﻊ", "`": "é", "{": "â", "|": "ô", "}": "û", "~": "ç", "": "■" };
-const g0_hebrew = { "#": "£", "[": "←", "\\": "½", "]": "→", "^": "↑", "_": "#", "`": "א", "a": "ב", "b": "ג", "c": "ד", "d": "ה", "e": "ו", "f": "ז", "g": "ח", "h": "ט", "i": "י", "j": "ך", "k": "כ", "l": "ל", "m": "ם", "n": "מ", "o": "ן", "p": "נ", "q": "ס", "r": "ע", "s": "ף", "t": "פ", "u": "ץ", "v": "צ", "w": "ק", "x": "ר", "y": "ש", "z": "ת", "{": "₪", "|": "‖", "}": "¾", "~": "÷", "": "■" };
-const g1_block_mosaic_to_unicode__legacy_computing = { "0": "🬏", "1": "🬐", "2": "🬑", "3": "🬒", "4": "🬓", "5": "▌", "6": "🬔", "7": "🬕", "8": "🬖", "9": "🬗", " ": " ", "!": "🬀", '"': "🬁", "#": "🬂", "$": "🬃", "%": "🬄", "&": "🬅", "'": "🬆", "(": "🬇", ")": "🬈", "*": "🬉", "+": "🬊", ",": "🬋", "-": "🬌", ".": "🬍", "/": "🬎", ":": "🬘", ";": "🬙", "<": "🬚", "=": "🬛", ">": "🬜", "?": "🬝", "`": "🬞", "a": "🬟", "b": "🬠", "c": "🬡", "d": "🬢", "e": "🬣", "f": "🬤", "g": "🬥", "h": "🬦", "i": "🬧", "j": "▐", "k": "🬨", "l": "🬩", "m": "🬪", "n": "🬫", "o": "🬬", "p": "🬭", "q": "🬮", "r": "🬯", "s": "🬰", "t": "🬱", "u": "🬲", "v": "🬳", "w": "🬴", "x": "🬵", "y": "🬶", "z": "🬷", "{": "🬸", "|": "🬹", "}": "🬺", "~": "🬻", "": "█" };
-const g1_block_mosaic_to_unicode__unscii_separated = { "0": "", "1": "", "2": "", "3": "", "4": "", "5": "", "6": "", "7": "", "8": "", "9": "", " ": " ", "!": "", '"': "", "#": "", "$": "", "%": "", "&": "", "'": "", "(": "", ")": "", "*": "", "+": "", ",": "", "-": "", ".": "", "/": "", ":": "", ";": "", "<": "", "=": "", ">": "", "?": "", "`": "", "a": "", "b": "", "c": "", "d": "", "e": "", "f": "", "g": "", "h": "", "i": "", "j": "", "k": "", "l": "", "m": "", "n": "", "o": "", "p": "", "q": "", "r": "", "s": "", "t": "", "u": "", "v": "", "w": "", "x": "", "y": "", "z": "", "{": "", "|": "", "}": "", "~": "", "": "" };
-const g3 = { "0": "🭇", "1": "🭈", "2": "🭉", "3": "🭊", "4": "🭋", "5": "◢", "6": "🭌", "7": "🭍", "8": "🭎", "9": "🭏", " ": "🬼", "!": "🬽", '"': "🬾", "#": "🬿", "$": "🭀", "%": "◣", "&": "🭁", "'": "🭂", "(": "🭃", ")": "🭄", "*": "🭅", "+": "🭆", ",": "🭨", "-": "🭩", ".": "🭰", "/": "▒", ":": "🭐", ";": "🭑", "<": "🭪", "=": "🭫", ">": "🭵", "?": "█", "@": "┷", "A": "┯", "B": "┝", "C": "┥", "D": "🮤", "E": "🮥", "F": "🮦", "G": "🮧", "H": "🮠", "I": "🮡", "J": "🮢", "K": "🮣", "L": "┿", "M": "•", "N": "●", "O": "○", "P": "│", "Q": "─", "R": "┌", "S": "┐", "T": "└", "U": "┘", "V": "├", "W": "┤", "X": "┬", "Y": "┴", "Z": "┼", "[": "→", "\\": "←", "]": "↑", "^": "↓", "_": " ", "`": "🭒", "a": "🭓", "b": "🭔", "c": "🭕", "d": "🭖", "e": "◥", "f": "🭗", "g": "🭘", "h": "🭙", "i": "🭚", "j": "🭛", "k": "🭜", "l": "🭬", "m": "🭭", "n": null, "o": null, "p": "🭝", "q": "🭞", "r": "🭟", "s": "🭠", "t": "🭡", "u": "◤", "v": "🭢", "w": "🭣", "x": "🭤", "y": "🭥", "z": "🭦", "{": "🭧", "|": "🭮", "}": "🭯", "~": null, "": null };
-const encodings = {
-  g0_latin,
-  g0_latin__czech_slovak,
-  g0_latin__english,
-  g0_latin__estonian,
-  g0_latin__french,
-  g0_latin__german,
-  g0_latin__italian,
-  g0_latin__latvian_lithuanian,
-  g0_latin__polish,
-  g0_latin__portuguese_spanish,
-  g0_latin__romanian,
-  g0_latin__serbian_croatian_slovenian,
-  g0_latin__swedish_finnish_hungarian,
-  g0_latin__turkish,
-  g2_latin,
-  g0_greek,
-  g2_greek,
-  g0_cyrillic,
-  g0_cyrillic__russian_bulgarian,
-  g0_cyrillic__serbian_croatian,
-  g0_cyrillic__ukranian,
-  g2_cyrillic,
-  g0_arabic,
-  g2_arabic,
-  g0_hebrew,
-  g1_block_mosaic_to_unicode__legacy_computing,
-  g1_block_mosaic_to_unicode__unscii_separated,
-  g3
-};
-const sextants = {};
-class WrappedCell {
-  constructor(cell) {
-    this.type = cell.type_;
-    this.flashing = cell.flashing_;
-    this.concealed = cell.concealed_;
-    this.size = cell.size_;
-    this.sextants = cell.getSextants_();
-  }
-}
-class Cell {
-  constructor() {
-    this._byte = " ";
-    this._char = " ";
-    this._fgColour = Colour.WHITE;
-    this._bgColour = Colour.BLACK;
-    this._type = CellType.ALPHA_;
-    this._flashing = false;
-    this._size = CellSize.NORMAL_SIZE_;
-    this._concealed = false;
-    this._boxed = false;
-    this._byteHeld = null;
-    this._isCursive = false;
-    this._diacriticCode = null;
-    this._enhancedChar = null;
-  }
-  set byte_(byte) {
-    this._byte = byte;
-  }
-  get byte_() {
-    return this._byte;
-  }
-  set fgColour_(colour) {
-    this._fgColour = colour;
-  }
-  get fgColour_() {
-    return this._fgColour;
-  }
-  set bgColour_(colour) {
-    this._bgColour = colour;
-  }
-  get bgColour_() {
-    return this._bgColour;
-  }
-  get isCursive_() {
-    return this._isCursive;
-  }
-  setMappedChar_(encoding) {
-    const type = this._type;
-    const byte = this._byte;
-    if (isAlphaOrG1ButNotMosaic(type, byte)) {
-      this._char = getCharWithEncoding(byte, encoding);
-      if (this._diacriticCode > 0) {
-        const diacriticKey = String.fromCharCode(this._diacriticCode + 64);
-        this._char += encodings["g2_latin"][diacriticKey];
-      }
-      if (encoding.includes("arabic")) {
-        this._isCursive = Utils.isCursive_(this._char);
-      } else {
-        this._isCursive = false;
-      }
-    } else {
-      this._char = getCharForGraphic(type, byte);
-    }
-    this._byteHeld = null;
-  }
-  setSpace_(heldMosaic) {
-    if ((this._type == CellType.MOSAIC_CONTIGUOUS_ || this._type == CellType.MOSAIC_SEPARATED_) && heldMosaic.active_) {
-      this._byteHeld = heldMosaic.char_;
-      this._type = heldMosaic.type_;
-      let charEncoding = "g1_block_mosaic_to_unicode__legacy_computing";
-      if (this._type == CellType.MOSAIC_SEPARATED_) charEncoding = "g1_block_mosaic_to_unicode__unscii_separated";
-      this._char = getCharWithEncoding(heldMosaic.char_, charEncoding);
-    } else {
-      this._byteHeld = null;
-      this._char = " ";
-    }
-  }
-  get char_() {
-    return this._char;
-  }
-  get type_() {
-    return this._type;
-  }
-  set type_(type) {
-    this._type = type;
-  }
-  set flashing_(state) {
-    this._flashing = state;
-  }
-  get flashing_() {
-    return this._flashing;
-  }
-  get size_() {
-    return this._size;
-  }
-  set size_(size) {
-    this._size = size;
-  }
-  set concealed_(concealed) {
-    this._concealed = concealed;
-  }
-  get concealed_() {
-    return this._concealed;
-  }
-  set boxed_(boxed) {
-    this._boxed = boxed;
-  }
-  get boxed_() {
-    return this._boxed;
-  }
-  // used in rendering to distinguish burn-through characters in G1 set
-  // (should get type_ handle this instead?)
-  // applies to the base byte or the held byte
-  isMosaicCell_() {
-    if (this._byteHeld) return true;
-    const code = this._byte.charCodeAt(0);
-    return code <= 127 && (code & 32) == 32;
-  }
-  // used in page model to keep track of mosaic to hold: G1, and MSB is 1
-  // applies to the base byte
-  isMosaic_() {
-    const code = this._byte.charCodeAt(0);
-    const isMosaic = (this._type == CellType.MOSAIC_CONTIGUOUS_ || this._type == CellType.MOSAIC_SEPARATED_) && code <= 127 && (code & 32) == 32;
-    return isMosaic;
-  }
-  getSextants_() {
-    const code = this._byteHeld != null ? this._byteHeld.charCodeAt(0) : this._byte.charCodeAt(0);
-    if (code > 127) return null;
-    if (code in sextants) return sextants[code];
-    const sextant = code >= 96 ? code - 64 : code - 32;
-    const bits = [];
-    for (let b = 0; b < 6; b++) {
-      bits.push(sextant & 1 << b ? "1" : "0");
-    }
-    sextants[code] = bits;
-    return bits;
-  }
-}
-class EnhancedCell extends Cell {
-  constructor(cell) {
-    super();
-    Object.assign(this, cell);
-  }
-  set diacritic_(diacriticCode) {
-    this._diacriticCode = diacriticCode;
-  }
-  get diacritic_() {
-    return this._diacriticCode;
-  }
-  set enhancedChar_(char) {
-    this._enhancedChar = char;
-  }
-  get char_() {
-    return this._enhancedChar == null ? this._char : this._enhancedChar;
-  }
-}
-function getCharWithEncoding(byte, encoding) {
-  if (!(encoding in encodings)) throw new Error(`Cell getCharWithEncoding: bad encoding: ${encoding}`);
-  if (byte in encodings[encoding]) return encodings[encoding][byte];
-  const matches = encoding.match(/^(.+)__/);
-  if (matches != null) {
-    const baseEncoding = matches[1];
-    if (byte in encodings[baseEncoding]) {
-      encodings[encoding][byte] = encodings[baseEncoding][byte];
-      return encodings[baseEncoding][byte];
-    }
-  }
-  return byte;
-}
-function isAlphaOrG1ButNotMosaic(type, byte) {
-  const isAlpha = type === CellType.ALPHA_;
-  const isG1Type = type === CellType.MOSAIC_CONTIGUOUS_ || type === CellType.MOSAIC_SEPARATED_;
-  const isNotMosaic = (byte.charCodeAt(0) & 32) == 0;
-  return isAlpha || isG1Type && isNotMosaic;
-}
-function getCharForGraphic(type, byte) {
-  switch (type) {
-    case CellType.MOSAIC_CONTIGUOUS_:
-      return getCharWithEncoding(byte, "g1_block_mosaic_to_unicode__legacy_computing");
-    case CellType.MOSAIC_SEPARATED_:
-      return getCharWithEncoding(byte, "g1_block_mosaic_to_unicode__unscii_separated");
-    case CellType.G3_:
-      return getCharWithEncoding(byte, "g3");
-    default:
-      return null;
-  }
 }
 class View extends VectorViewBase {
   constructor(model, webkitCompat, dom) {
@@ -1415,56 +1177,53 @@ class View extends VectorViewBase {
   }
   _renderMosaic(row, col, cell, fill) {
     if ("_mosaic" in this._plugins) {
-      const wrappedCell = new WrappedCell(cell);
-      const rendered = this._plugins._mosaic(row, col, wrappedCell, fill);
+      const rendered = this._plugins._mosaic(row, col, cell.public_(), fill);
       if (rendered) return;
     }
     const sextants2 = cell.getSextants_();
     if (!sextants2.includes("1")) return;
-    const id = (cell.type_ == CellType.MOSAIC_CONTIGUOUS_ ? "c" : "s") + sextants2.join("");
-    let width = VectorViewBase._CELL_WIDTH;
-    let height = VectorViewBase._CELL_HEIGHT;
-    if (cell.type_ == CellType.MOSAIC_CONTIGUOUS_) {
-      width = VectorViewBase._CELL_WIDTH + 0.3;
-      height = VectorViewBase._CELL_HEIGHT + 0.2;
-    }
-    if (!this._mosaicSymbols.has(id)) {
-      this._mosaicSymbols.add(id);
-      const symbol = this._svg.symbol_(id);
-      if (cell.type_ == CellType.MOSAIC_CONTIGUOUS_) {
-        symbol.attr_({
-          preserveAspectRatio: "none",
-          width,
-          // FUDGE cell is bigger than it should be
-          height,
-          // to close tiny gaps on Chromecast
-          viewBox: "0 0 12 18"
-        });
-        for (let i = 0; i < 6; i++) {
-          sextants2[i] == "1" && symbol.rect_(6, 6).move_(i % 2 * 6, Math.floor(i / 2) * 6);
-        }
-      } else {
-        symbol.attr_({
-          preserveAspectRatio: "none",
-          width,
-          height,
-          viewBox: "0 0 12 18"
-        });
-        for (let i = 0; i < 6; i++) {
-          sextants2[i] == "1" && symbol.rect_(4, 4).move_(i % 2 * 6 + 1, Math.floor(i / 2) * 6 + 2);
-        }
+    const id = this._getMosaicId(cell.type_, sextants2);
+    const isContiguous = cell.type_ == CellType.MOSAIC_CONTIGUOUS_;
+    const width = VectorViewBase._CELL_WIDTH + (isContiguous ? 0.3 : 0);
+    const height = VectorViewBase._CELL_HEIGHT + (isContiguous ? 0.2 : 0);
+    if (!this._mosaicSymbols.has(id)) this._createMosaicSymbol(sextants2, id, isContiguous, width, height);
+    const useEl = this._placeMosaic(row, col, id, fill, isContiguous, width, height);
+    this._applyCellAttributes(useEl, cell);
+  }
+  _getMosaicId(cellType, sextants2) {
+    return (cellType === CellType.MOSAIC_CONTIGUOUS_ ? "c" : "s") + sextants2.join("");
+  }
+  _createMosaicSymbol(sextants2, id, isContiguous, width, height) {
+    this._mosaicSymbols.add(id);
+    const symbol = this._svg.symbol_(id);
+    const rectSize = isContiguous ? 6 : 4;
+    const offsets = isContiguous ? [0, 0] : [1, 2];
+    symbol.attr_({
+      preserveAspectRatio: "none",
+      width,
+      height,
+      viewBox: "0 0 12 18"
+    });
+    for (let i = 0; i < 6; i++) {
+      if (sextants2[i] === "1") {
+        const x = i % 2 * 6 + offsets[0];
+        const y = Math.floor(i / 2) * 6 + offsets[1];
+        symbol.rect_(rectSize, rectSize).move_(x, y);
       }
     }
-    let use;
-    if (cell.type_ == CellType.MOSAIC_CONTIGUOUS_)
-      use = this._graphicrows[row].use_(id).move_(col * VectorViewBase._CELL_WIDTH - 0.15, row * VectorViewBase._CELL_HEIGHT - 0.1).fill_(fill);
-    else
-      use = this._graphicrows[row].use_(id).move_(col * VectorViewBase._CELL_WIDTH, row * VectorViewBase._CELL_HEIGHT).fill_(fill);
-    if (this._webkitCompat)
-      use.attr_({ width, height });
-    if (cell.size_ == CellSize.DOUBLE_HEIGHT_ || cell.size_ == CellSize.DOUBLE_SIZE_)
+    return { width, height };
+  }
+  _placeMosaic(row, col, id, fill, isContiguous, width, height) {
+    const x = col * VectorViewBase._CELL_WIDTH - (isContiguous ? 0.15 : 0);
+    const y = row * VectorViewBase._CELL_HEIGHT - (isContiguous ? 0.1 : 0);
+    const use = this._graphicrows[row].use_(id).move_(x, y).fill_(fill);
+    if (this._webkitCompat) use.attr_({ width, height });
+    return use;
+  }
+  _applyCellAttributes(use, cell) {
+    if (cell.size_ === CellSize.DOUBLE_HEIGHT_ || cell.size_ === CellSize.DOUBLE_SIZE_)
       use.attr_("height", VectorViewBase._CELL_DOUBLE_HEIGHT);
-    if (cell.size_ == CellSize.DOUBLE_WIDTH_ || cell.size_ == CellSize.DOUBLE_SIZE_)
+    if (cell.size_ === CellSize.DOUBLE_WIDTH_ || cell.size_ === CellSize.DOUBLE_SIZE_)
       use.attr_("width", VectorViewBase._CELL_DOUBLE_WIDTH);
     if (cell.flashing_) use.addClass_("flash");
     if (cell.concealed_) use.addClass_("conceal");
@@ -1596,11 +1355,11 @@ class TeletextController {
     this._windowDom = null;
     if (typeof window == "object") this._windowDom = window;
     this._opt = {
-      webkitCompat_: true
-      // generate SVG that's compatible with webkit by default. The resulting SVG is larger
+      webkitCompat_: false
+      // This was a compatibility fix for webkit. The bug was fixed mid 2023: https://bugs.webkit.org/show_bug.cgi?id=200445
     };
     if (typeof options == "object") {
-      if ("webkitCompat" in options && !options.webkitCompat) this._opt.webkitCompat_ = false;
+      if ("webkitCompat" in options) this._opt.webkitCompat_ = options.webkitCompat;
       if ("dom" in options) this._windowDom = options.dom;
     }
     if (this._windowDom == null)
@@ -1635,7 +1394,7 @@ class TeletextController {
   }
   _processHeader(header) {
     header = Utils.decodeOutputLine_(header);
-    return header.join("").substring(0, 32).padStart(40, " ");
+    return header.join("").substring(0, 32).padStart(this._model.cols_, " ");
   }
   showTestPage(name) {
     let page;
@@ -1650,9 +1409,9 @@ class TeletextController {
   }
   showRandomisedPage() {
     const rows = [];
-    for (let row = 0; row < 25; row++) {
+    for (let row = 0; row < this._model.rows_; row++) {
       const cols = [];
-      for (let col = 0; col < 40; col++) {
+      for (let col = 0; col < this._model.cols_; col++) {
         cols.push(String.fromCharCode(Math.random() * 127));
       }
       rows.push(cols.join(""));
@@ -1789,6 +1548,9 @@ class TeletextController {
   getScreenImage() {
     return this._view.getStaticScreen_();
   }
+  getText(withGraphics) {
+    return this._model.getText_(withGraphics);
+  }
   // getScreenBitmap() {
   //     // TODO - convert the vector to a bitmap
   // }
@@ -1798,6 +1560,245 @@ class TeletextController {
   // dumpToConsole() {
   //     this._model.dumpToConsole();
   // }
+}
+const g0_latin = { "$": "¤", "": "■" };
+const g0_latin__czech_slovak = { "#": "#", "$": "ů", "@": "č", "[": "ť", "\\": "ž", "]": "ý", "^": "í", "_": "ř", "`": "é", "{": "á", "|": "|", "}": "ú", "~": "š" };
+const g0_latin__english = { "#": "£", "$": "$", "@": "@", "[": "←", "\\": "½", "]": "→", "^": "↑", "_": "#", "`": "—", "{": "¼", "|": "‖", "}": "¾", "~": "÷" };
+const g0_latin__estonian = { "#": "#", "$": "õ", "@": "Š", "[": "Ä", "\\": "Ö", "]": "Ž", "^": "Ü", "_": "Õ", "`": "š", "{": "ä", "|": "ö", "}": "ž", "~": "ü" };
+const g0_latin__french = { "#": "é", "$": "ï", "@": "à", "[": "ë", "\\": "ê", "]": "ù", "^": "î", "_": "#", "`": "è", "{": "â", "|": "ô", "}": "û", "~": "ç" };
+const g0_latin__german = { "#": "#", "$": "$", "@": "§", "[": "Ä", "\\": "Ö", "]": "Ü", "^": "^", "_": "_", "`": "°", "{": "ä", "|": "ö", "}": "ü", "~": "ß" };
+const g0_latin__italian = { "#": "£", "$": "$", "@": "é", "[": "°", "\\": "ç", "]": "→", "^": "↑", "_": "#", "`": "ù", "{": "à", "|": "ò", "}": "è", "~": "ì" };
+const g0_latin__latvian_lithuanian = { "#": "#", "$": "$", "@": "Š", "[": "ė", "\\": "ę", "]": "Ž", "^": "č", "_": "ū", "`": "š", "{": "ą", "|": "ų", "}": "ž", "~": "į" };
+const g0_latin__polish = { "#": "#", "$": "ń", "@": "ą", "[": "Ƶ", "\\": "Ś", "]": "Ł", "^": "ć", "_": "ó", "`": "ę", "{": "ż", "|": "ś", "}": "ł", "~": "ź" };
+const g0_latin__portuguese_spanish = { "#": "ç", "$": "$", "@": "¡", "[": "á", "\\": "é", "]": "í", "^": "ó", "_": "ú", "`": "¿", "{": "ü", "|": "ñ", "}": "è", "~": "à" };
+const g0_latin__romanian = { "#": "#", "$": "¤", "@": "Ț", "[": "Â", "\\": "Ș", "]": "Ă", "^": "Î", "_": "ı", "`": "ț", "{": "â", "|": "ș", "}": "ă", "~": "î" };
+const g0_latin__serbian_croatian_slovenian = { "#": "#", "$": "Ë", "@": "Č", "[": "Ć", "\\": "Ž", "]": "Đ", "^": "Š", "_": "ë", "`": "č", "{": "ć", "|": "ž", "}": "đ", "~": "š" };
+const g0_latin__swedish_finnish_hungarian = { "#": "#", "$": "¤", "@": "É", "[": "Ä", "\\": "Ö", "]": "Å", "^": "Ü", "_": "_", "`": "é", "{": "ä", "|": "ö", "}": "å", "~": "ü" };
+const g0_latin__turkish = { "#": "₺", "$": "ğ", "@": "İ", "[": "Ş", "\\": "Ö", "]": "Ç", "^": "Ü", "_": "Ğ", "`": "ı", "{": "ş", "|": "ö", "}": "ç", "~": "ü" };
+const g2_latin = { "0": "°", "1": "±", "2": "²", "3": "³", "4": "×", "5": "µ", "6": "¶", "7": "·", "8": "÷", "9": "’", "!": "¡", '"': "¢", "#": "£", "%": "¥", "&": "#", "'": "§", "(": "¤", ")": "‘", "*": "“", "+": "«", ",": "←", "-": "↑", ".": "→", "/": "↓", ":": "”", ";": "»", "<": "¼", "=": "½", ">": "¾", "?": "¿", "@": " ", "A": "̀", "B": "́", "C": "̂", "D": "̃", "E": "̄", "F": "̆", "G": "̇", "H": "̈", "I": "̣", "J": "̊", "K": "̧", "L": "̲", "M": "̋", "N": "̨", "O": "̌", "P": "—", "Q": "¹", "R": "®", "S": "©", "T": "™", "U": "♪", "V": "₠", "W": "‰", "X": "α", "Y": null, "Z": null, "[": null, "\\": "⅛", "]": "⅜", "^": "⅝", "_": "⅞", "`": "Ω", "a": "Æ", "b": "Ð", "c": "ª", "d": "Ħ", "e": null, "f": "Ĳ", "g": "Ŀ", "h": "Ł", "i": "Ø", "j": "Œ", "k": "º", "l": "Þ", "m": "Ŧ", "n": "Ŋ", "o": "ŉ", "p": "ĸ", "q": "æ", "r": "đ", "s": "ð", "t": "ħ", "u": "ı", "v": "ĳ", "w": "ŀ", "x": "ł", "y": "ø", "z": "œ", "{": "ß", "|": "þ", "}": "ŧ", "~": "ŋ", "": "■" };
+const g0_greek = { "<": "«", ">": "»", "@": "ΐ", "A": "Α", "B": "Β", "C": "Γ", "D": "Δ", "E": "Ε", "F": "Ζ", "G": "Η", "H": "Θ", "I": "Ι", "J": "Κ", "K": "Λ", "L": "Μ", "M": "Ν", "N": "Ξ", "O": "Ο", "P": "Π", "Q": "Ρ", "R": "ʹ", "S": "Σ", "T": "Τ", "U": "Υ", "V": "Φ", "W": "Χ", "X": "Ψ", "Y": "Ω", "Z": "Ϊ", "[": "Ϋ", "\\": "ά", "]": "έ", "^": "ή", "_": "ί", "`": "ΰ", "a": "α", "b": "β", "c": "γ", "d": "δ", "e": "ε", "f": "ζ", "g": "η", "h": "θ", "i": "ι", "j": "κ", "k": "λ", "l": "μ", "m": "ν", "n": "ξ", "o": "ο", "p": "π", "q": "ρ", "r": "ς", "s": "σ", "t": "τ", "u": "υ", "v": "φ", "w": "χ", "x": "ψ", "y": "ω", "z": "ϊ", "{": "ϋ", "|": "ό", "}": "ύ", "~": "ώ", "": "■" };
+const g2_greek = { "0": "°", "1": "±", "2": "²", "3": "³", "4": "×", "5": "m", "6": "n", "7": "p", "8": "÷", "9": "’", "!": "a", '"': "b", "#": "£", "$": "e", "%": "h", "&": "i", "'": "§", "(": ":", ")": "‘", "*": "“", "+": "k", ",": "←", "-": "↑", ".": "→", "/": "↓", ":": "”", ";": "t", "<": "¼", "=": "½", ">": "¾", "?": "x", "@": " ", "A": "̀", "B": "́", "C": "̂", "D": "̃", "E": "̄", "F": "̆", "G": "̇", "H": "̈", "I": "̣", "J": "̊", "K": "̧", "L": "̲", "M": "̋", "N": "̨", "O": "̌", "P": "?", "Q": "¹", "R": "®", "S": "©", "T": "™", "U": "♪", "V": "₠", "W": "‰", "X": "ɑ", "Y": "Ί", "Z": "Ύ", "[": "Ώ", "\\": "⅛", "]": "⅜", "^": "⅝", "_": "⅞", "`": "C", "a": "D", "b": "F", "c": "G", "d": "J", "e": "L", "f": "Q", "g": "R", "h": "S", "i": "U", "j": "V", "k": "W", "l": "Y", "m": "Z", "n": "Ά", "o": "Ή", "p": "c", "q": "d", "r": "f", "s": "g", "t": "j", "u": "l", "v": "q", "w": "r", "x": "s", "y": "u", "z": "v", "{": "w", "|": "y", "}": "z", "~": "Έ", "": "■" };
+const g0_cyrillic = { "@": "Ю", "A": "А", "B": "Б", "C": "Ц", "D": "Д", "E": "Е", "F": "Ф", "G": "Г", "H": "Х", "I": "И", "J": "Ѝ", "K": "К", "L": "Л", "M": "М", "N": "Н", "O": "О", "P": "П", "Q": "Я", "R": "Р", "S": "С", "T": "Т", "U": "У", "V": "Ж", "W": "В", "X": "Ь", "Z": "З", "[": "Ш", "]": "Щ", "^": "Ч", "`": "ю", "a": "а", "b": "б", "c": "ц", "d": "д", "e": "е", "f": "ф", "g": "г", "h": "х", "i": "и", "j": "ѝ", "k": "к", "l": "л", "m": "м", "n": "н", "o": "о", "p": "п", "q": "я", "r": "р", "s": "с", "t": "т", "u": "у", "v": "ж", "w": "в", "x": "ь", "z": "з", "{": "ш", "}": "щ", "~": "ч", "": "■" };
+const g0_cyrillic__russian_bulgarian = { "&": "ы", "Y": "Ъ", "\\": "Э", "_": "Ы", "y": "ъ", "|": "э" };
+const g0_cyrillic__serbian_croatian = { "@": "Ч", "J": "Ј", "Q": "Ќ", "V": "В", "W": "Ѓ", "X": "Љ", "Y": "Њ", "[": "Ћ", "\\": "Ж", "]": "Ђ", "^": "Ш", "_": "Џ", "`": "ч", "j": "ј", "q": "ќ", "v": "в", "w": "ѓ", "x": "љ", "y": "њ", "{": "ћ", "|": "ж", "}": "ђ", "~": "ш" };
+const g0_cyrillic__ukranian = { "&": "ї", "Y": "І", "\\": "Є", "_": "Ї", "y": "і", "|": "є" };
+const g2_cyrillic = { "0": "m", "1": "n", "2": "p", "3": "t", "4": "x", "5": "x", "6": "°", "7": "±", "8": "²", "9": "³", "!": "a", '"': "b", "#": "£", "$": "e", "%": "h", "&": "i", "'": "§", "(": ":", ")": "‘", "*": "“", "+": "k", ",": "←", "-": "↑", ".": "→", "/": "↓", ":": "¼", ";": "½", "<": "¾", "=": "÷", ">": "’", "?": "”", "@": " ", "A": "̀", "B": "́", "C": "̂", "D": "̃", "E": "̄", "F": "̆", "G": "̇", "H": "̈", "I": "̣", "J": "̊", "K": "̧", "L": "̲", "M": "̋", "N": "̨", "O": "̌", "P": "?", "Q": "©", "R": "®", "S": "¹", "T": "ɑ", "U": "Ί", "V": "Ύ", "W": "Ώ", "X": "‰", "Y": "₠", "Z": "™", "[": "⅛", "\\": "⅜", "]": "⅝", "^": "⅞", "_": "♪", "`": "C", "a": "D", "b": "F", "c": "G", "d": "J", "e": "L", "f": "Q", "g": "R", "h": "S", "i": "U", "j": "V", "k": "W", "l": "Y", "m": "Z", "n": "Ά", "o": "Ή", "p": "c", "q": "d", "r": "f", "s": "g", "t": "j", "u": "l", "v": "q", "w": "r", "x": "s", "y": "u", "z": "v", "{": "w", "|": "y", "}": "z", "~": "Έ", "": "■" };
+const g0_arabic = { "#": "£", "&": "ﻰ", "'": "ﻱ", "(": ")", ")": "(", ";": "؛", "<": ">", ">": "<", "?": "؟", "@": "ﺔ", "A": "ﺀ", "B": "ﺒ", "C": "ﺏ", "D": "ﺘ", "E": "ﺕ", "F": "ﺎ", "G": "ﺍ", "H": "ﺑ", "I": "ﺓ", "J": "ﺗ", "K": "ﺛ", "L": "ﺟ", "M": "ﺣ", "N": "ﺧ", "O": "ﺩ", "P": "ﺫ", "Q": "ﺭ", "R": "ﺯ", "S": "ﺳ", "T": "ﺷ", "U": "ﺻ", "V": "ﺿ", "W": "ﻃ", "X": "ﻇ", "Y": "ﻋ", "Z": "ﻏ", "[": "ﺜ", "\\": "ﺠ", "]": "ﺤ", "^": "ﺨ", "_": "#", "`": "ـ", "a": "ﻓ", "b": "ﻗ", "c": "ﻛ", "d": "ﻟ", "e": "ﻣ", "f": "ﻧ", "g": "ﻫ", "h": "ﻭ", "i": "ﻰ", "j": "ﻳ", "k": "ﺙ", "l": "ﺝ", "m": "ﺡ", "n": "ﺥ", "o": "ﻴ", "p": "ﻯ", "q": "ﻌ", "r": "ﻐ", "s": "ﻔ", "t": "ﻑ", "u": "ﻘ", "v": "ﻕ", "w": "ﻙ", "x": "ﻠ", "y": "ﻝ", "z": "ﻤ", "{": "ﻡ", "|": "ﻨ", "}": "ﻥ", "~": "ﻻ", "": "■" };
+const g2_arabic = { "0": "٠", "1": "١", "2": "٢", "3": "٣", "4": "٤", "5": "٥", "6": "٦", "7": "٧", "8": "٨", "9": "٩", "!": "ﻉ", '"': "ﺁ", "#": "ﺃ", "$": "ﺅ", "%": "ﺇ", "&": "ﺋ", "'": "ﺊ", "(": "ﭼ", ")": "ﭽ", "*": "ﭺ", "+": "ﭘ", ",": "ﭙ", "-": "ﭖ", ".": "ﮊ", "/": "ﮔ", ":": "ﻎ", ";": "ﻍ", "<": "ﻼ", "=": "ﻬ", ">": "ﻪ", "?": "ﻩ", "@": "à", "[": "ë", "\\": "ê", "]": "ù", "^": "î", "_": "ﻊ", "`": "é", "{": "â", "|": "ô", "}": "û", "~": "ç", "": "■" };
+const g0_hebrew = { "#": "£", "[": "←", "\\": "½", "]": "→", "^": "↑", "_": "#", "`": "א", "a": "ב", "b": "ג", "c": "ד", "d": "ה", "e": "ו", "f": "ז", "g": "ח", "h": "ט", "i": "י", "j": "ך", "k": "כ", "l": "ל", "m": "ם", "n": "מ", "o": "ן", "p": "נ", "q": "ס", "r": "ע", "s": "ף", "t": "פ", "u": "ץ", "v": "צ", "w": "ק", "x": "ר", "y": "ש", "z": "ת", "{": "₪", "|": "‖", "}": "¾", "~": "÷", "": "■" };
+const g1_block_mosaic_to_unicode__legacy_computing = { "0": "🬏", "1": "🬐", "2": "🬑", "3": "🬒", "4": "🬓", "5": "▌", "6": "🬔", "7": "🬕", "8": "🬖", "9": "🬗", " ": " ", "!": "🬀", '"': "🬁", "#": "🬂", "$": "🬃", "%": "🬄", "&": "🬅", "'": "🬆", "(": "🬇", ")": "🬈", "*": "🬉", "+": "🬊", ",": "🬋", "-": "🬌", ".": "🬍", "/": "🬎", ":": "🬘", ";": "🬙", "<": "🬚", "=": "🬛", ">": "🬜", "?": "🬝", "`": "🬞", "a": "🬟", "b": "🬠", "c": "🬡", "d": "🬢", "e": "🬣", "f": "🬤", "g": "🬥", "h": "🬦", "i": "🬧", "j": "▐", "k": "🬨", "l": "🬩", "m": "🬪", "n": "🬫", "o": "🬬", "p": "🬭", "q": "🬮", "r": "🬯", "s": "🬰", "t": "🬱", "u": "🬲", "v": "🬳", "w": "🬴", "x": "🬵", "y": "🬶", "z": "🬷", "{": "🬸", "|": "🬹", "}": "🬺", "~": "🬻", "": "█" };
+const g1_block_mosaic_to_unicode__unscii_separated = { "0": "", "1": "", "2": "", "3": "", "4": "", "5": "", "6": "", "7": "", "8": "", "9": "", " ": " ", "!": "", '"': "", "#": "", "$": "", "%": "", "&": "", "'": "", "(": "", ")": "", "*": "", "+": "", ",": "", "-": "", ".": "", "/": "", ":": "", ";": "", "<": "", "=": "", ">": "", "?": "", "`": "", "a": "", "b": "", "c": "", "d": "", "e": "", "f": "", "g": "", "h": "", "i": "", "j": "", "k": "", "l": "", "m": "", "n": "", "o": "", "p": "", "q": "", "r": "", "s": "", "t": "", "u": "", "v": "", "w": "", "x": "", "y": "", "z": "", "{": "", "|": "", "}": "", "~": "", "": "" };
+const g3 = { "0": "🭇", "1": "🭈", "2": "🭉", "3": "🭊", "4": "🭋", "5": "◢", "6": "🭌", "7": "🭍", "8": "🭎", "9": "🭏", " ": "🬼", "!": "🬽", '"': "🬾", "#": "🬿", "$": "🭀", "%": "◣", "&": "🭁", "'": "🭂", "(": "🭃", ")": "🭄", "*": "🭅", "+": "🭆", ",": "🭨", "-": "🭩", ".": "🭰", "/": "▒", ":": "🭐", ";": "🭑", "<": "🭪", "=": "🭫", ">": "🭵", "?": "█", "@": "┷", "A": "┯", "B": "┝", "C": "┥", "D": "🮤", "E": "🮥", "F": "🮦", "G": "🮧", "H": "🮠", "I": "🮡", "J": "🮢", "K": "🮣", "L": "┿", "M": "•", "N": "●", "O": "○", "P": "│", "Q": "─", "R": "┌", "S": "┐", "T": "└", "U": "┘", "V": "├", "W": "┤", "X": "┬", "Y": "┴", "Z": "┼", "[": "→", "\\": "←", "]": "↑", "^": "↓", "_": " ", "`": "🭒", "a": "🭓", "b": "🭔", "c": "🭕", "d": "🭖", "e": "◥", "f": "🭗", "g": "🭘", "h": "🭙", "i": "🭚", "j": "🭛", "k": "🭜", "l": "🭬", "m": "🭭", "n": null, "o": null, "p": "🭝", "q": "🭞", "r": "🭟", "s": "🭠", "t": "🭡", "u": "◤", "v": "🭢", "w": "🭣", "x": "🭤", "y": "🭥", "z": "🭦", "{": "🭧", "|": "🭮", "}": "🭯", "~": null, "": null };
+const encodings = {
+  g0_latin,
+  g0_latin__czech_slovak,
+  g0_latin__english,
+  g0_latin__estonian,
+  g0_latin__french,
+  g0_latin__german,
+  g0_latin__italian,
+  g0_latin__latvian_lithuanian,
+  g0_latin__polish,
+  g0_latin__portuguese_spanish,
+  g0_latin__romanian,
+  g0_latin__serbian_croatian_slovenian,
+  g0_latin__swedish_finnish_hungarian,
+  g0_latin__turkish,
+  g2_latin,
+  g0_greek,
+  g2_greek,
+  g0_cyrillic,
+  g0_cyrillic__russian_bulgarian,
+  g0_cyrillic__serbian_croatian,
+  g0_cyrillic__ukranian,
+  g2_cyrillic,
+  g0_arabic,
+  g2_arabic,
+  g0_hebrew,
+  g1_block_mosaic_to_unicode__legacy_computing,
+  g1_block_mosaic_to_unicode__unscii_separated,
+  g3
+};
+const sextants = {};
+class Cell {
+  constructor() {
+    this._byte = " ";
+    this._char = " ";
+    this._fgColour = Colour.WHITE;
+    this._bgColour = Colour.BLACK;
+    this._type = CellType.ALPHA_;
+    this._flashing = false;
+    this._size = CellSize.NORMAL_SIZE_;
+    this._concealed = false;
+    this._boxed = false;
+    this._byteHeld = null;
+    this._isCursive = false;
+    this._diacriticCode = null;
+    this._enhancedChar = null;
+  }
+  // public interface used for plugins
+  public_() {
+    return {
+      type: this._type,
+      flashing: this._flashing,
+      concealed: this._concealed,
+      size: this._size,
+      sextants: this.getSextants_()
+    };
+  }
+  set byte_(byte) {
+    this._byte = byte;
+  }
+  get byte_() {
+    return this._byte;
+  }
+  set fgColour_(colour) {
+    this._fgColour = colour;
+  }
+  get fgColour_() {
+    return this._fgColour;
+  }
+  set bgColour_(colour) {
+    this._bgColour = colour;
+  }
+  get bgColour_() {
+    return this._bgColour;
+  }
+  get isCursive_() {
+    return this._isCursive;
+  }
+  setMappedChar_(encoding) {
+    const type = this._type;
+    const byte = this._byte;
+    if (isAlphaOrG1ButNotMosaic(type, byte)) {
+      this._char = getCharWithEncoding(byte, encoding);
+      if (this._diacriticCode > 0) {
+        const diacriticKey = String.fromCharCode(this._diacriticCode + 64);
+        this._char += encodings["g2_latin"][diacriticKey];
+      }
+      if (encoding.includes("arabic")) {
+        this._isCursive = Utils.isCursive_(this._char);
+      } else {
+        this._isCursive = false;
+      }
+    } else {
+      this._char = getCharForGraphic(type, byte);
+    }
+    this._byteHeld = null;
+  }
+  setSpace_(heldMosaic) {
+    if ((this._type == CellType.MOSAIC_CONTIGUOUS_ || this._type == CellType.MOSAIC_SEPARATED_) && heldMosaic.active_) {
+      this._byteHeld = heldMosaic.char_;
+      this._type = heldMosaic.type_;
+      let charEncoding = "g1_block_mosaic_to_unicode__legacy_computing";
+      if (this._type == CellType.MOSAIC_SEPARATED_) charEncoding = "g1_block_mosaic_to_unicode__unscii_separated";
+      this._char = getCharWithEncoding(heldMosaic.char_, charEncoding);
+    } else {
+      this._byteHeld = null;
+      this._char = " ";
+    }
+  }
+  get char_() {
+    return this._enhancedChar == null ? this._char : this._enhancedChar;
+  }
+  get type_() {
+    return this._type;
+  }
+  set type_(type) {
+    this._type = type;
+  }
+  set flashing_(state) {
+    this._flashing = state;
+  }
+  get flashing_() {
+    return this._flashing;
+  }
+  get size_() {
+    return this._size;
+  }
+  set size_(size) {
+    this._size = size;
+  }
+  set concealed_(concealed) {
+    this._concealed = concealed;
+  }
+  get concealed_() {
+    return this._concealed;
+  }
+  set boxed_(boxed) {
+    this._boxed = boxed;
+  }
+  get boxed_() {
+    return this._boxed;
+  }
+  // used in rendering to distinguish burn-through characters in G1 set
+  // (should get type_ handle this instead?)
+  // applies to the base byte or the held byte
+  isMosaicCell_() {
+    if (this._byteHeld) return true;
+    const code = this._byte.charCodeAt(0);
+    return code <= 127 && (code & 32) == 32;
+  }
+  // used in page model to keep track of mosaic to hold: G1, and MSB is 1
+  // applies to the base byte
+  isMosaic_() {
+    const code = this._byte.charCodeAt(0);
+    const isMosaic = (this._type == CellType.MOSAIC_CONTIGUOUS_ || this._type == CellType.MOSAIC_SEPARATED_) && code <= 127 && (code & 32) == 32;
+    return isMosaic;
+  }
+  getSextants_() {
+    const code = this._byteHeld != null ? this._byteHeld.charCodeAt(0) : this._byte.charCodeAt(0);
+    if (code > 127) return null;
+    if (code in sextants) return sextants[code];
+    const sextant = code >= 96 ? code - 64 : code - 32;
+    const bits = [];
+    for (let b = 0; b < 6; b++) {
+      bits.push(sextant & 1 << b ? "1" : "0");
+    }
+    sextants[code] = bits;
+    return bits;
+  }
+  // enhancements attributes
+  set diacritic_(diacriticCode) {
+    this._diacriticCode = diacriticCode;
+  }
+  get diacritic_() {
+    return this._diacriticCode;
+  }
+  set enhancedChar_(char) {
+    this._enhancedChar = char;
+  }
+}
+function getCharWithEncoding(byte, encoding) {
+  if (!(encoding in encodings)) throw new Error(`Cell getCharWithEncoding: bad encoding: ${encoding}`);
+  if (byte in encodings[encoding]) return encodings[encoding][byte];
+  const matches = encoding.match(/^(.+)__/);
+  if (matches != null) {
+    const baseEncoding = matches[1];
+    if (byte in encodings[baseEncoding]) {
+      encodings[encoding][byte] = encodings[baseEncoding][byte];
+      return encodings[baseEncoding][byte];
+    }
+  }
+  return byte;
+}
+function isAlphaOrG1ButNotMosaic(type, byte) {
+  const isAlpha = type === CellType.ALPHA_;
+  const isG1Type = type === CellType.MOSAIC_CONTIGUOUS_ || type === CellType.MOSAIC_SEPARATED_;
+  const isNotMosaic = (byte.charCodeAt(0) & 32) == 0;
+  return isAlpha || isG1Type && isNotMosaic;
+}
+function getCharForGraphic(type, byte) {
+  switch (type) {
+    case CellType.MOSAIC_CONTIGUOUS_:
+      return getCharWithEncoding(byte, "g1_block_mosaic_to_unicode__legacy_computing");
+    case CellType.MOSAIC_SEPARATED_:
+      return getCharWithEncoding(byte, "g1_block_mosaic_to_unicode__unscii_separated");
+    case CellType.G3_:
+      return getCharWithEncoding(byte, "g3");
+    default:
+      return null;
+  }
 }
 class Event {
   constructor(sender) {
@@ -1840,6 +1841,8 @@ const DEFAULT_PRIMARY_G0_CHARACTER_SET = "g0_latin";
 const DEFAULT_G2_CHARACTER_SET = "g2_latin";
 const ENHANCEMENT_LEVELS = [Level[1.5], Level[2.5]];
 const G3_CHARS_IN_LEVEL_1_5 = "Q[\\]";
+const BOX_START = Attributes.charFromAttribute(Attributes.START_BOX);
+const BOX_END = Attributes.charFromAttribute(Attributes.END_BOX);
 class PageModel {
   constructor() {
     this._screen = [];
@@ -1853,10 +1856,10 @@ class PageModel {
     this._primaryG0CharacterEncoding = DEFAULT_PRIMARY_G0_CHARACTER_SET;
     this._secondaryG0CharacterEncoding = null;
     this._g2CharacterEncoding = DEFAULT_G2_CHARACTER_SET;
-    this._startBoxChar = Attributes.charFromAttribute(Attributes.START_BOX);
-    this._endBoxChar = Attributes.charFromAttribute(Attributes.END_BOX);
     this._level = Level[1];
     this._enhancement = [];
+    this.rows_ = ROWS;
+    this.cols_ = CELLS_PER_ROW;
     this.onSet_ = new Event(this);
     console.debug("PageModel constructed");
   }
@@ -1960,7 +1963,7 @@ class PageModel {
   //     this._screen.forEach((row, index) => {
   //         let rowString = '';
   //         row.forEach(cell => {
-  //             rowString += cell.byte.charCodeAt(0).toString(16).padStart(2, '0') + ' ';
+  //             rowString += cell.byte_.charCodeAt(0).toString(16).padStart(2, '0') + ' ';
   //         });
   //         console.log(index, '|', rowString, '|');
   //     });
@@ -2011,193 +2014,41 @@ class PageModel {
       throw new Error("PageModel.getRow E42 bad rowNum");
     }
     const rowModel = new RowModel();
-    let textColour, switchedG0CharacterEncoding;
-    let nextCellType = CellType.ALPHA_;
-    let nextTextColour = Colour.WHITE;
-    let nextFlashing = false;
-    let nextSize = CellSize.NORMAL_SIZE_;
-    let nextSwitchedG0CharacterEncoding = false;
-    let nextConcealed = false;
-    let cancelNextHoldMosaics = false;
-    let nextBoxed = false;
-    let backgroundColour = Colour.BLACK;
-    let graphicType = CellType.MOSAIC_CONTIGUOUS_;
-    let heldMosaic = {
-      active_: false,
-      char_: " ",
-      type_: CellType.MOSAIC_CONTIGUOUS_
-    };
+    const rs = _createRowState();
     let rowEnhancements = [];
     if (ENHANCEMENT_LEVELS.includes(this._level))
       rowEnhancements = this._enhancement.filter((e) => e.y_ == rowNum);
+    let previousByte = null;
     this._screen[rowNum].forEach((cell, cellIndex) => {
       const char = cell.byte_;
       const attrib = attribFromChar(this._level, char);
-      textColour = nextTextColour;
-      cell.type_ = nextCellType;
-      cell.boxed_ = nextBoxed;
-      switchedG0CharacterEncoding = nextSwitchedG0CharacterEncoding;
-      if (attrib.attribute_ != Attributes.STEADY) cell.flashing_ = nextFlashing;
-      if (attrib.attribute_ != Attributes.NORMAL_SIZE) cell.size_ = nextSize;
-      if (attrib.attribute_ != Attributes.CONCEAL) cell.concealed_ = nextConcealed;
-      if (cancelNextHoldMosaics) {
-        if (attrib.attribute_ != Attributes.HOLD_MOSAICS) {
-          heldMosaic.active_ = false;
-          heldMosaic.char_ = " ";
+      _applyPendingRowState(cell, rs, attrib);
+      const handleAttr = attributeHandlers[attrib.attribute_];
+      if (handleAttr) {
+        handleAttr({
+          rs,
+          _cell: cell,
+          _attrib: attrib,
+          _rowModel: rowModel,
+          _previousByte: previousByte,
+          _secondaryG0CharacterEncoding: this._secondaryG0CharacterEncoding
+        });
+        cell.setSpace_(rs._heldMosaic);
+      } else {
+        cell.setMappedChar_(
+          rs._switchedG0CharacterEncoding ? this._secondaryG0CharacterEncoding : this._primaryG0CharacterEncoding
+        );
+        if (cell.isMosaic_()) {
+          rs._heldMosaic.char_ = char;
+          rs._heldMosaic.type_ = cell.type_;
         }
-        cancelNextHoldMosaics = false;
       }
-      switch (attrib.attribute_) {
-        case Attributes.TEXT_COLOUR:
-          nextCellType = CellType.ALPHA_;
-          nextTextColour = attrib.colour_;
-          nextConcealed = false;
-          cell.setSpace_(heldMosaic);
-          break;
-        case Attributes.MOSAIC_COLOUR:
-          nextCellType = graphicType;
-          nextTextColour = attrib.colour_;
-          nextConcealed = false;
-          cell.setSpace_(heldMosaic);
-          break;
-        case Attributes.NEW_BACKGROUND:
-          backgroundColour = textColour;
-          cell.setSpace_(heldMosaic);
-          break;
-        case Attributes.BLACK_BACKGROUND:
-          backgroundColour = Colour.BLACK;
-          cell.setSpace_(heldMosaic);
-          break;
-        case Attributes.CONTIGUOUS_GRAPHICS:
-          graphicType = CellType.MOSAIC_CONTIGUOUS_;
-          if (cell.type_ == CellType.MOSAIC_SEPARATED_) cell.type_ = CellType.MOSAIC_CONTIGUOUS_;
-          if (nextCellType == CellType.MOSAIC_SEPARATED_) nextCellType = CellType.MOSAIC_CONTIGUOUS_;
-          cell.setSpace_(heldMosaic);
-          break;
-        case Attributes.SEPARATED_GRAPHICS:
-          graphicType = CellType.MOSAIC_SEPARATED_;
-          if (cell.type_ == CellType.MOSAIC_CONTIGUOUS_) cell.type_ = CellType.MOSAIC_SEPARATED_;
-          if (nextCellType == CellType.MOSAIC_CONTIGUOUS_) nextCellType = CellType.MOSAIC_SEPARATED_;
-          cell.setSpace_(heldMosaic);
-          break;
-        case Attributes.ESC:
-          if (this._secondaryG0CharacterEncoding) {
-            nextSwitchedG0CharacterEncoding = !switchedG0CharacterEncoding;
-          }
-          cell.setSpace_(heldMosaic);
-          break;
-        case Attributes.FLASH:
-          nextFlashing = true;
-          cell.setSpace_(heldMosaic);
-          break;
-        case Attributes.STEADY:
-          cell.flashing_ = false;
-          nextFlashing = false;
-          cell.setSpace_(heldMosaic);
-          break;
-        case Attributes.NORMAL_SIZE:
-          cell.size_ = CellSize.NORMAL_SIZE_;
-          nextSize = CellSize.NORMAL_SIZE_;
-          cell.setSpace_(heldMosaic);
-          break;
-        case Attributes.DOUBLE_HEIGHT:
-          nextSize = CellSize.DOUBLE_HEIGHT_;
-          rowModel.doubleHeight_ = true;
-          cell.setSpace_(heldMosaic);
-          break;
-        case Attributes.DOUBLE_WIDTH:
-          nextSize = CellSize.DOUBLE_WIDTH_;
-          cell.setSpace_(heldMosaic);
-          break;
-        case Attributes.DOUBLE_SIZE:
-          nextSize = CellSize.DOUBLE_SIZE_;
-          rowModel.doubleHeight_ = true;
-          cell.setSpace_(heldMosaic);
-          break;
-        case Attributes.CONCEAL:
-          cell.concealed_ = true;
-          nextConcealed = true;
-          cell.setSpace_(heldMosaic);
-          break;
-        case Attributes.HOLD_MOSAICS:
-          heldMosaic.active_ = true;
-          cell.setSpace_(heldMosaic);
-          break;
-        case Attributes.RELEASE_MOSAICS:
-          cancelNextHoldMosaics = true;
-          cell.setSpace_(heldMosaic);
-          break;
-        case Attributes.START_BOX:
-          if (cellIndex >= 1) {
-            if (this._screen[rowNum][cellIndex - 1].byte_ == this._startBoxChar) {
-              cell.boxed_ = true;
-              nextBoxed = true;
-            }
-          }
-          cell.setSpace_(heldMosaic);
-          break;
-        case Attributes.END_BOX:
-          if (cellIndex + 1 < CELLS_PER_ROW) {
-            if (this._screen[rowNum][cellIndex + 1].byte_ == this._endBoxChar) {
-              nextBoxed = false;
-            }
-          }
-          cell.setSpace_(heldMosaic);
-          break;
-        case Attributes.UNKNOWN_:
-          cell.setSpace_(heldMosaic);
-          break;
-        default:
-          if (switchedG0CharacterEncoding)
-            cell.setMappedChar_(this._secondaryG0CharacterEncoding);
-          else
-            cell.setMappedChar_(this._primaryG0CharacterEncoding);
-          if (cell.isMosaic_()) {
-            heldMosaic.char_ = char;
-            heldMosaic.type_ = cell.type_;
-          }
-      }
-      cell.fgColour_ = textColour;
-      cell.bgColour_ = backgroundColour;
+      cell.fgColour_ = rs._textColour;
+      cell.bgColour_ = rs._backgroundColour;
       const cellEnhancements = rowEnhancements.filter((e) => e.x_ == cellIndex);
-      cellEnhancements.forEach((e) => {
-        const ecell = new EnhancedCell(cell);
-        cell = ecell;
-        if (e.type_ == "g0") {
-          cell.byte_ = e.char_;
-          cell.diacritic_ = e.diacritic_;
-          cell.type_ = CellType.ALPHA_;
-          if (this._primaryG0CharacterEncoding.includes("latin")) {
-            cell.setMappedChar_("g0_latin");
-          } else {
-            cell.setMappedChar_(this._primaryG0CharacterEncoding);
-          }
-        } else if (e.type_ == "g1") {
-          if (this._level == Level[2.5]) {
-            cell.byte_ = e.char_;
-            cell.type_ = graphicType;
-            if (this._primaryG0CharacterEncoding.includes("latin")) {
-              cell.setMappedChar_("g0_latin");
-            } else {
-              cell.setMappedChar_(this._primaryG0CharacterEncoding);
-            }
-          }
-        } else if (e.type_ == "g2") {
-          cell.byte_ = e.char_;
-          cell.type_ = CellType.ALPHA_;
-          cell.setMappedChar_(this._g2CharacterEncoding);
-        } else if (e.type_ == "g3") {
-          if (this._isAllowedG3Char(e.char_)) {
-            cell.byte_ = e.char_;
-            cell.type_ = CellType.G3_;
-            cell.setMappedChar_();
-          }
-        } else if (e.type_ == "char") {
-          cell.enhancedChar_ = e.char_;
-          cell.type_ = CellType.ALPHA_;
-        }
-      });
+      this._applyEnhancementsToCell(cell, cellEnhancements, rs);
       rowModel.addCell_(cell);
+      previousByte = char;
     });
     return rowModel;
   }
@@ -2216,9 +2067,226 @@ class PageModel {
     });
     return bytes;
   }
+  // returns text, respecting character sets and hidden cells/rows
+  getText_(withGraphics) {
+    let text = "";
+    for (let r = 0; r < ROWS; r++) {
+      const rowModel = this.getRow_(r);
+      for (let c = 0; c < CELLS_PER_ROW; c++) {
+        const cell = rowModel.getCell_(c);
+        text += _getVisibleChar(cell.type_, cell.char_, cell.isMosaicCell_(), withGraphics);
+        if (cell.size_ == CellSize.DOUBLE_WIDTH_ || cell.size_ == CellSize.DOUBLE_SIZE_) {
+          if (c < CELLS_PER_ROW - 1) text += " ";
+          c++;
+        }
+      }
+      text += "\n";
+      if (rowModel.doubleHeight_) {
+        if (r < ROWS - 1) text += "\n";
+        r++;
+      }
+    }
+    return text;
+  }
   _isAllowedG3Char(char) {
     return this._level == Level[1.5] && G3_CHARS_IN_LEVEL_1_5.indexOf(char) == -1 ? false : true;
   }
+  _applyEnhancementsToCell(cell, enhancements, rs) {
+    enhancements.forEach((e) => {
+      switch (e.type_) {
+        case "g0":
+          cell.byte_ = e.char_;
+          cell.diacritic_ = e.diacritic_;
+          cell.type_ = CellType.ALPHA_;
+          if (this._primaryG0CharacterEncoding.includes("latin")) {
+            cell.setMappedChar_("g0_latin");
+          } else {
+            cell.setMappedChar_(this._primaryG0CharacterEncoding);
+          }
+          break;
+        case "g1":
+          if (this._level == Level[2.5]) {
+            cell.byte_ = e.char_;
+            cell.type_ = rs._graphicType;
+            if (this._primaryG0CharacterEncoding.includes("latin")) {
+              cell.setMappedChar_("g0_latin");
+            } else {
+              cell.setMappedChar_(this._primaryG0CharacterEncoding);
+            }
+          }
+          break;
+        case "g2":
+          cell.byte_ = e.char_;
+          cell.type_ = CellType.ALPHA_;
+          cell.setMappedChar_(this._g2CharacterEncoding);
+          break;
+        case "g3":
+          if (this._isAllowedG3Char(e.char_)) {
+            cell.byte_ = e.char_;
+            cell.type_ = CellType.G3_;
+            cell.setMappedChar_();
+          }
+          break;
+        case "char":
+          cell.enhancedChar_ = e.char_;
+          cell.type_ = CellType.ALPHA_;
+          break;
+      }
+    });
+  }
+}
+function _createRowState() {
+  return {
+    // set-after attribute defaults
+    _nextCellType: CellType.ALPHA_,
+    _nextTextColour: Colour.WHITE,
+    _nextFlashing: false,
+    _nextSize: CellSize.NORMAL_SIZE_,
+    _nextSwitchedG0CharacterEncoding: false,
+    _nextConcealed: false,
+    // setting is set-at, unsetting is set-after
+    _cancelNextHoldMosaics: false,
+    // setting is set-at, cancelling is set-after
+    _nextBoxed: false,
+    // set-after current value
+    _textColour: Colour.WHITE,
+    _switchedG0CharacterEncoding: false,
+    // set-at attribute defaults
+    _backgroundColour: Colour.BLACK,
+    _graphicType: CellType.MOSAIC_CONTIGUOUS_,
+    _heldMosaic: {
+      active_: false,
+      char_: " ",
+      type_: CellType.MOSAIC_CONTIGUOUS_
+    }
+  };
+}
+function _applyPendingRowState(cell, state, attrib) {
+  state._textColour = state._nextTextColour;
+  state._switchedG0CharacterEncoding = state._nextSwitchedG0CharacterEncoding;
+  cell.type_ = state._nextCellType;
+  cell.boxed_ = state._nextBoxed;
+  if (attrib.attribute_ != Attributes.STEADY)
+    cell.flashing_ = state._nextFlashing;
+  if (attrib.attribute_ != Attributes.NORMAL_SIZE)
+    cell.size_ = state._nextSize;
+  if (attrib.attribute_ != Attributes.CONCEAL)
+    cell.concealed_ = state._nextConcealed;
+  if (state._cancelNextHoldMosaics) {
+    if (attrib.attribute_ != Attributes.HOLD_MOSAICS) {
+      state._heldMosaic.active_ = false;
+      state._heldMosaic.char_ = " ";
+    }
+    state._cancelNextHoldMosaics = false;
+  }
+}
+const attributeHandlers = {
+  // set after this cell
+  [Attributes.TEXT_COLOUR]: ({ rs, _attrib }) => {
+    rs._nextCellType = CellType.ALPHA_;
+    rs._nextTextColour = _attrib.colour_;
+    rs._nextConcealed = false;
+  },
+  // set after
+  [Attributes.MOSAIC_COLOUR]: ({ rs, _attrib }) => {
+    rs._nextCellType = rs._graphicType;
+    rs._nextTextColour = _attrib.colour_;
+    rs._nextConcealed = false;
+  },
+  // set at this cell
+  [Attributes.NEW_BACKGROUND]: ({ rs }) => {
+    rs._backgroundColour = rs._textColour;
+  },
+  // set at
+  [Attributes.BLACK_BACKGROUND]: ({ rs }) => {
+    rs._backgroundColour = Colour.BLACK;
+  },
+  // set at
+  [Attributes.CONTIGUOUS_GRAPHICS]: ({ rs, _cell }) => {
+    rs._graphicType = CellType.MOSAIC_CONTIGUOUS_;
+    if (_cell.type_ == CellType.MOSAIC_SEPARATED_)
+      _cell.type_ = CellType.MOSAIC_CONTIGUOUS_;
+    if (rs._nextCellType == CellType.MOSAIC_SEPARATED_)
+      rs._nextCellType = CellType.MOSAIC_CONTIGUOUS_;
+  },
+  // set at
+  [Attributes.SEPARATED_GRAPHICS]: ({ rs, _cell }) => {
+    rs._graphicType = CellType.MOSAIC_SEPARATED_;
+    if (_cell.type_ === CellType.MOSAIC_CONTIGUOUS_)
+      _cell.type_ = CellType.MOSAIC_SEPARATED_;
+    if (rs._nextCellType === CellType.MOSAIC_CONTIGUOUS_)
+      rs._nextCellType = CellType.MOSAIC_SEPARATED_;
+  },
+  // switches G0 sets. set after
+  [Attributes.ESC]: ({ rs, _secondaryG0CharacterEncoding }) => {
+    if (_secondaryG0CharacterEncoding) {
+      rs._nextSwitchedG0CharacterEncoding = !rs._switchedG0CharacterEncoding;
+    }
+  },
+  // set after
+  [Attributes.FLASH]: ({ rs }) => {
+    rs._nextFlashing = true;
+  },
+  // set at
+  [Attributes.STEADY]: ({ rs, _cell }) => {
+    _cell.flashing_ = false;
+    rs._nextFlashing = false;
+  },
+  // set at
+  [Attributes.NORMAL_SIZE]: ({ rs, _cell }) => {
+    _cell.size_ = CellSize.NORMAL_SIZE_;
+    rs._nextSize = CellSize.NORMAL_SIZE_;
+  },
+  // set after
+  [Attributes.DOUBLE_HEIGHT]: ({ rs, _rowModel }) => {
+    rs._nextSize = CellSize.DOUBLE_HEIGHT_;
+    _rowModel.doubleHeight_ = true;
+  },
+  // set after
+  [Attributes.DOUBLE_WIDTH]: ({ rs }) => {
+    rs._nextSize = CellSize.DOUBLE_WIDTH_;
+  },
+  // set after
+  [Attributes.DOUBLE_SIZE]: ({ rs, _rowModel }) => {
+    rs._nextSize = CellSize.DOUBLE_SIZE_;
+    _rowModel.doubleHeight_ = true;
+  },
+  // set at
+  [Attributes.CONCEAL]: ({ rs, _cell }) => {
+    _cell.concealed_ = true;
+    rs._nextConcealed = true;
+  },
+  // set at
+  [Attributes.HOLD_MOSAICS]: ({ rs }) => {
+    rs._heldMosaic.active_ = true;
+  },
+  // set after
+  [Attributes.RELEASE_MOSAICS]: ({ rs }) => {
+    rs._cancelNextHoldMosaics = true;
+  },
+  // set between two start box attributes
+  [Attributes.START_BOX]: ({ rs, _cell, _previousByte }) => {
+    if (_previousByte == BOX_START) {
+      _cell.boxed_ = true;
+      rs._nextBoxed = true;
+    }
+  },
+  // set between two end box attributes
+  [Attributes.END_BOX]: ({ rs, _cell, _previousByte }) => {
+    if (_previousByte == BOX_END) {
+      _cell.boxed_ = false;
+      rs._nextBoxed = false;
+    }
+  },
+  [Attributes.UNKNOWN_]: () => {
+  }
+};
+function _getVisibleChar(type, char, isMosaicCell, withGraphics) {
+  const visibleChar = char || " ";
+  if (withGraphics) return visibleChar;
+  const isAlpha = type === CellType.ALPHA_;
+  const isBurnThroughAlpha = (type === CellType.MOSAIC_CONTIGUOUS_ || type === CellType.MOSAIC_SEPARATED_) && !isMosaicCell;
+  return isAlpha || isBurnThroughAlpha ? visibleChar : " ";
 }
 function Teletext(options) {
   const model = new PageModel();
