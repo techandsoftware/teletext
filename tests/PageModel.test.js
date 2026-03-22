@@ -322,13 +322,13 @@ test('getRow_ applies the correct cell type on a held mosaic', () => {
     const row = model.getRow_(rowNum);
 
     const expected = {
-        2: { char_: '\ud83e\udf24',
+        2: { char_: '\ud83e\udf24', // \u{1FB24}
              type_: CellType.MOSAIC_CONTIGUOUS_ },
-        4: { char_: '\ud83e\udf17',
+        4: { char_: '\ud83e\udf17', // \u{1FB17}
              type_: CellType.MOSAIC_CONTIGUOUS_ }, // separated is active but the held mosaic is contiguous
-        5: { char_: '\ud83e\udf17',
+        5: { char_: '\ud83e\udf17', // \u{1FB17}
              type_: CellType.MOSAIC_CONTIGUOUS_ }, // held
-        6: { char_: '\ue0ea', // Unscii
+        6: { char_: '\ue0ea',       // Unscii - Unicode 16 has since mapped this
              type_: CellType.MOSAIC_SEPARATED_ } // non-held - separated takes effect
     };
 
@@ -430,9 +430,9 @@ test('getRow_ applies level 2.5 enhancements', () => {
     const row = model.getRow_(rowNum);
     // spec question - assuming that the separated form from the base page is applied to G1 enhancements
     const expected = {
-        0: { char_: '\ud83e\udf00', // unicode mosaic/sextant
+        0: { char_: '\ud83e\udf00', // unicode mosaic/sextant \u{1FB00}
              type_: CellType.MOSAIC_CONTIGUOUS_ },
-        2: { char_: '\ue0c1', // unscii
+        2: { char_: '\ue0c1', // unscii - Unicode 16 has since mapped this
              type_: CellType.MOSAIC_SEPARATED_ },
         3: { char_: '@' }, // G0 Latin set
         4: { char_: 'D' }, // G0 Latin set
