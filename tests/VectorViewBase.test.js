@@ -1,8 +1,9 @@
-// SPDX-FileCopyrightText: © 2025 Rob Hardy
+// SPDX-FileCopyrightText: © 2026 Rob Hardy
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// @vitest-environment happy-dom
+
 import { expect, test } from 'vitest'
-import { JSDOM } from 'jsdom';
 
 import { PageModel } from '../lib/PageModel.js';
 import { VectorViewBase } from '../lib//VectorViewBase.js';
@@ -10,18 +11,18 @@ import { Utils } from '../lib/Utils.js';
 import testpages from '../lib/data/testpages.json';
 
 test('VectorViewBase renders page to SVG', () => {
-    const dom = new JSDOM('<div id="teletextscreen"></div>');
+    document.body.innerHTML = '<div id="teletextscreen"></div>';
     const input = testpages.ENGINEERING;
 
     const model = new PageModel();
-    const rows = Utils.decodeBase64URLEncoded_(input, dom.window.atob);
+    const rows = Utils.decodeBase64URLEncoded_(input, atob);
     model.setRows_(rows);
 
-    const view = new VectorViewBase(model, dom.window);
+    const view = new VectorViewBase(model, window);
     view.addTo_('#teletextscreen');
     view._update();
 
-    const svg = dom.window.document.querySelector('#teletextscreen').innerHTML;
+    const svg = document.querySelector('#teletextscreen').innerHTML;
 
     expect(svg).toMatchSnapshot();
 });
