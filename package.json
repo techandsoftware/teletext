@@ -49,6 +49,7 @@
   "bugs": {
     "url": "https://bitbucket.org/rahardy/teletext/issues"
   },
+  "homepage": "https://teletext-for-javascript-docs.robdev.org.uk/teletext-features",
   "files": [
     "LICENSES/AGPL-3.0-only.txt",
     "dist/*.js",
