@@ -458,7 +458,7 @@ describe('getText_ returns text', () => {
         model = new PageModel();
         const rowNum = 1;
 
-        const text = 'a'
+        const text = 'a#'
             + Att.charFromGraphicColour(Colour.RED)
             + 'b' // block mosaic
             + Att.charFromTextColour(Colour.GREEN)
@@ -475,28 +475,49 @@ describe('getText_ returns text', () => {
 
         model.setRowFromChars_(0, text);
         model.setRowFromChars_(1, 'hidden');
-        // model.setRowFromChars_(1, ''.padEnd(40, ' '));
+        model.setRowFromChars_(2, 'xx' + Att.charFromAttribute(Att.SEPARATED_GRAPHICS) + ''.padEnd(37, 'x'));
+
+        const enhancement = new Enhancement(model);
+        enhancement.
+            pos(0, 2).putG0('e', 1). // text
+            pos(1, 2).putG1('!').    // graphic - contiguous mosaic
+            pos(3, 2).putG1('!').    // graphic - separated mosaic
+            pos(4, 2).putG1('[').    // text (burned through)
+            pos(5, 2).putG1('D').    // text (burned through)
+            pos(6, 2).putG2('!').    // text
+            pos(7, 2).putG3('!').    // graphic
+            pos(8, 2).putAt().       // text
+            end();
+
+        // TODO enhancements
+        model.setPrimaryG0CharacterEncoding_('g0_latin__english');
         model.setLevel_(Level[2.5]);
     });
 
     test('text only', () => {
         const result = model.getText_(false);
         const rows = result.split('\n');
-        expect(rows[0]).toEqual('a   c d e '.padEnd(40, ' '));
+        expect(rows[0]).toEqual('a£   c d e '.padEnd(40, ' '));
         expect(rows[1]).toEqual('');
-
+        expect(rows[2]).toEqual('e\u0300   [D¡ @' + 'x'.repeat(31));
     });
 
     test('text and graphics', () => {
         const result = model.getText_(true);
         const rows = result.split('\n');
 
-        // \u{1FB20} = BLOCK SEXTANT-6
-        // \u{1FB25} = BLOCK SEXTANT-1236
-        // \u{E0F0} = SEPARATED BLOCK SEXTANT-46 in Unscii's PUA (Unicode 16 has since mapped this as \u{1CE78})
-        const expected = 'a \u{1FB20} c d e    \u{1FB25}\u{1FB25}\u{E0F0}\u{E0F0}' + ' '.repeat(23);
+        /*
+        \u{0300} = grave accent
+        \u{1FB20} = BLOCK SEXTANT-6
+        \u{1FB25} = BLOCK SEXTANT-1236
+        \u{E0F0} = SEPARATED BLOCK SEXTANT-46 in Unscii's PUA (Unicode 16 has since mapped this as \u{1CE78})
+        \u{1FB00} = BLOCK SEXTANT-1
+        \u{E0C1} = SEPARATED BLOCK SEXTANT-1 in Unscii's PUA (Unicode 16 has since mapped this as \u{1CE51})
+        \u{1FB3D} = LOWER LEFT BLOCK DIAGONAL LOWER MIDDLE LEFT TO LOWER RIGHT */
+        const expected = 'a£ \u{1FB20} c d e    \u{1FB25}\u{1FB25}\u{E0F0}\u{E0F0}' + ' '.repeat(22);
         expect(rows[0]).toEqual(expected);
         expect(rows[1]).toEqual('');
+        expect(rows[2]).toEqual('e\u{0300}\u{1FB00} \u{E0C1}[D¡\u{1FB3D}@' + 'x'.repeat(31));
     });
 });
 
