@@ -40,6 +40,8 @@ It can also be run in nodejs by passing in a DOM window, see the API.
   * [API](https://teletext-for-javascript-docs.robdev.org.uk/teletext-screen-api.html)
   * [Demos](https://teletext-for-javascript-docs.robdev.org.uk/demos/)
 
+* [CHANGELOG](./CHANGELOG.md)
+
 # License
 
 The project is licensed under GNU Affero General Public License 3 [AGPL-3.0-only](https://www.gnu.org/licenses/agpl-3.0.en.html). For commercial support and integration enquiries, contact <techandsoftwareltd@outlook.com>.
