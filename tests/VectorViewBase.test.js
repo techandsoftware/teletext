@@ -15,7 +15,7 @@ test('VectorViewBase renders page to SVG', () => {
     const input = testpages.ENGINEERING;
 
     const model = new PageModel();
-    const rows = Utils.decodeBase64URLEncoded_(input, atob);
+    const rows = Utils.decodeBase64URLEncoded_(input);
     model.setRows_(rows);
 
     const view = new VectorViewBase(model, window);
