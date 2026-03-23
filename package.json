@@ -43,10 +43,10 @@
   "license": "AGPL-3.0-only",
   "repository": {
     "type": "git",
-    "url": "git+https://bitbucket.org/rahardy/teletext.git"
+    "url": "git+https://github.com/techandsoftware/teletext.git"
   },
   "bugs": {
-    "url": "https://bitbucket.org/rahardy/teletext/issues"
+    "url": "https://github.com/techandsoftware/teletext/issues"
   },
   "homepage": "https://teletext-for-javascript-docs.robdev.org.uk/teletext-features",
   "files": [
