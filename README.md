@@ -40,6 +40,18 @@ It can also be run in nodejs, see the API.
   * [API](https://teletext-for-javascript-docs.robdev.org.uk/teletext-screen-api.html)
   * [Demos](https://teletext-for-javascript-docs.robdev.org.uk/demos/)
 
+# Local demos
+
+The `demo/` directory contains HTML pages which can be served with `npm run dev`:
+
+* [import_lib_from_dist.html](http://localhost:5173/import_lib_from_dist.html) — imports the module from `dist/`
+* [import_from_jsdelivr.html](http://localhost:5173/import_from_jsdelivr.html) — imports the module from the jsdelivr CDN
+
+The `demoscript/` directory contains nodejs scripts:
+
+* `teletext-to-text.js` — outputs a teletext page as plain Unicode text (no DOM required)
+* `teletext-to-svg.js` — outputs a teletext page as SVG (requires `jsdom`)
+
 # License
 
 The project is licensed under GNU Affero General Public License 3 [AGPL-3.0-only](https://www.gnu.org/licenses/agpl-3.0.en.html). For commercial support and integration enquiries, contact <techandsoftwareltd@outlook.com>.
