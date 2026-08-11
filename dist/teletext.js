@@ -7,7 +7,7 @@ const CURSIVE_CHARS = "ﻰﺋﺊﭼﭽﭘﭙﮔﻎﻼﻬﻪﻊﺔﺒﺘﺎﺑﺗ
 class Utils {
   // "base64url" encoding defined here https://tools.ietf.org/html/rfc4648
   // the packed data format is from https://github.com/rawles/edit.tf
-  static decodeBase64URLEncoded_(input, atob) {
+  static decodeBase64URLEncoded_(input) {
     input = input.replace(/-/g, "+").replace(/_/g, "/");
     const pad = input.length % 4;
     if (pad) {
@@ -1362,19 +1362,19 @@ class TeletextController {
       if ("webkitCompat" in options) this._opt.webkitCompat_ = options.webkitCompat;
       if ("dom" in options) this._windowDom = options.dom;
     }
-    if (this._windowDom == null)
-      throw new Error("TeletextController E24: No window dom object available");
-    this._view = new View(model, this._opt.webkitCompat_, this._windowDom);
     this._model = model;
+    this._view = null;
+    if (this._windowDom) {
+      this._view = new View(model, this._opt.webkitCompat_, this._windowDom);
+      this._initEventHandlers();
+    }
     this._levelIndex = 1;
     this._testPageIndex = 0;
-    this._initEventHandlers();
     this._viewSelector = null;
     this._height = null;
     this._posX = 0;
     this._posY = 0;
     this._font = null;
-    console.debug("TeletextController constructed");
   }
   setRowFromOutputLine(rowNum, string) {
     const chars = Utils.decodeOutputLine_(string);
@@ -1419,7 +1419,7 @@ class TeletextController {
     this.setPageRows(rows);
   }
   loadPageFromEncodedString(input, header) {
-    const decoded = Utils.decodeBase64URLEncoded_(input, this._windowDom.atob);
+    const decoded = Utils.decodeBase64URLEncoded_(input);
     if (typeof header != "undefined") decoded[0] = this._processHeader(header);
     this.setPageRows(decoded);
   }
@@ -1457,6 +1457,8 @@ class TeletextController {
     this._model.setLevel_(level);
   }
   addTo(selector) {
+    if (this._windowDom == null)
+      throw new Error("addTo E142: No window dom object available");
     this._selector = selector;
     this._view.addTo_(selector);
   }
