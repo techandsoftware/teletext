@@ -31,7 +31,7 @@ For local development, install the module and import the following if you're usi
 import { Teletext } from '@techandsoftware/teletext';
 ```
 
-It can also be run in nodejs by passing in a DOM window, see the API.
+It can also be run in nodejs, see the API.
 
 # Docs
 
