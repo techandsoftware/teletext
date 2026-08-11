@@ -17,12 +17,13 @@
     "@vitest/coverage-v8": "^4.1.0",
     "eslint": "^10.1.0",
     "globals": "^17.4.0",
-    "vite": "^7.1.0",
+    "vite": "^7.3.6",
     "vitest": "^4.1.0"
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && vite build --mode minified",
+    "build": "vite build",
+    "build:unminified": "vite build --mode unminified",
     "lint": "eslint",
     "test": "vitest --silent --reporter verbose",
     "reuselint": "reuse lint",

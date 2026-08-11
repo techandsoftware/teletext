@@ -13,57 +13,56 @@ const BANNER = `/*! @techandsoftware/teletext
     SPDX${''}-License-Identifier: AGPL-3.0-only
  */`;
 
+const terserOptions = {
+  ecma: 2016,
+  toplevel: true,
+  compress: {
+    drop_console: true,
+    passes: 2,
+    pure_getters: true,
+    unsafe: true,
+    unsafe_symbols: true,
+    unsafe_arrows: true
+  },
+  mangle: {
+    properties: {
+      regex: "^_.+|.+_$"
+    }
+  },
+  format: {
+    comments: /^!|@license|@preserve/i,
+    preamble: BANNER
+  }
+};
 
 export default defineConfig(({ mode }) => {
 
-  const isMinified = mode === "minified";
+  const unminified = mode === 'unminified';
 
-  // used for non-minified build
-  const rollupConfig = {
-    output: {
-      banner: `\`${BANNER}\`;` // bodge for https://github.com/vitejs/vite/issues/21076
-    }
-  };
-
-  // used for minified buld
-  const terserConfig = {
-    ecma: 2016,
-    toplevel: true,
-    compress: {
-      drop_console: true,
-      passes: 2,
-      pure_getters: true,
-      unsafe: true,
-      unsafe_symbols: true,
-      unsafe_arrows: true
-    },
-    mangle: {
-      properties: {
-        regex: "^_.+|.+_$"
-      }
-    },
-    format: {
-      comments: /^!|@license|@preserve/i,
-      preserve_annotations: true,
-      preamble: BANNER
-    }
-  };
-
-  return {
+  const config = {
     publicDir: "demo",
     build: {
       copyPublicDir: false,
       emptyOutDir: false,
-      sourcemap: !isMinified,
       lib: {
         entry: resolve(__dirname, "lib/app.js"),
         name: "@techandsoftware/teletext",
-        fileName: isMinified ? "teletext.min" : "teletext",
+        fileName: unminified ? "teletext" : "teletext.min",
         formats: ["es"]
       },
-      rollupOptions: isMinified ? undefined : rollupConfig,
-      minify: isMinified ? "terser" : false,
-      terserOptions: isMinified ? terserConfig : undefined
+      minify: "terser",
+      terserOptions,
     }
+  };
+
+  if (unminified) {
+    Object.assign(config.build, {
+      sourcemap: true,
+      rollupOptions: { output: { banner: `\`${BANNER}\`;` } }, // bodge for https://github.com/vitejs/vite/issues/21076
+      minify: false,
+      terserOptions: undefined,
+    });
   }
+
+  return config;
 });
