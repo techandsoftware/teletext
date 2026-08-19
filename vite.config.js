@@ -30,7 +30,6 @@ const terserOptions = {
     }
   },
   format: {
-    comments: /^!|@license|@preserve/i,
     preamble: BANNER
   }
 };
@@ -41,6 +40,9 @@ export default defineConfig(({ mode }) => {
 
   const config = {
     publicDir: "demo",
+    esbuild: {
+      legalComments: 'inline',
+    },
     build: {
       copyPublicDir: false,
       emptyOutDir: false,
@@ -58,7 +60,7 @@ export default defineConfig(({ mode }) => {
   if (unminified) {
     Object.assign(config.build, {
       sourcemap: true,
-      rollupOptions: { output: { banner: `\`${BANNER}\`;` } }, // bodge for https://github.com/vitejs/vite/issues/21076
+      rollupOptions: { output: { banner: BANNER } },
       minify: false,
       terserOptions: undefined,
     });
