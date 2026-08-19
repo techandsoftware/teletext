@@ -1,6 +1,9 @@
 <!-- SPDX-FileCopyrightText: © 2026 Rob Hardy
      SPDX-License-Identifier: AGPL-3.0-only -->
 
+# v1.3.1
+* `getScreenImage()` returns cleaner SVG without unused elements, which can accumulate after multiple screen redraws
+
 # v1.3.0
 
 * added `getText()` - returns plain text render
