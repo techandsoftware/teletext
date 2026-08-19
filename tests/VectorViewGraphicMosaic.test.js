@@ -34,3 +34,30 @@ test('VectorViewGraphicMosaic renders page to SVG', () => {
   const svg = renderPageToSVG(false);
   expect(svg).toMatchSnapshot();
 });
+
+test('getStaticScreen_ renders to SVG without unused elements', () => {
+  document.body.innerHTML = '<div id="teletextscreen"></div>';
+
+  const model = new PageModel();
+  const view = new View(model, false, window);
+  view.addTo_('#teletextscreen');
+
+  model.setRows_(Utils.decodeBase64URLEncoded_(testpages.ENGINEERING));
+  view._update();
+
+  model.setRows_(Utils.decodeBase64URLEncoded_(testpages.ADVERT));
+  view._update();
+
+  const html = view.getStaticScreen_();
+  const doc = new DOMParser().parseFromString(html, 'image/svg+xml');
+
+  const spaceTexts = [...doc.querySelectorAll('text')].filter(el => el.textContent === ' ');
+  expect(spaceTexts).toHaveLength(0);
+
+  const emptyClipPaths = [...doc.querySelectorAll('clipPath')].filter(el => el.childElementCount === 0);
+  expect(emptyClipPaths).toHaveLength(0);
+
+  const usedIds = new Set([...doc.querySelectorAll('use')].map(el => el.getAttribute('href')?.slice(1)));
+  const unusedSymbols = [...doc.querySelectorAll('symbol')].filter(el => !usedIds.has(el.id));
+  expect(unusedSymbols).toHaveLength(0);
+});
