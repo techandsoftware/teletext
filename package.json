@@ -22,8 +22,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "build:unminified": "vite build --mode unminified",
+    "build:min": "vite build",
+    "build:unmin": "vite build --mode unminified",
+    "build": "npm run build:min && npm run build:unmin",
     "lint": "eslint",
     "test": "vitest --silent --reporter verbose",
     "reuselint": "reuse lint",
