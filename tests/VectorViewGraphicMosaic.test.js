@@ -60,4 +60,7 @@ test('getStaticScreen_ renders to SVG without unused elements', () => {
   const usedIds = new Set([...doc.querySelectorAll('use')].map(el => el.getAttribute('href')?.slice(1)));
   const unusedSymbols = [...doc.querySelectorAll('symbol')].filter(el => !usedIds.has(el.id));
   expect(unusedSymbols).toHaveLength(0);
+
+  const emptyGroups = [...doc.querySelectorAll('g:not([id]):not([class])')].filter(el => el.childElementCount === 0);
+  expect(emptyGroups).toHaveLength(0);
 });
