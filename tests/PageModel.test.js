@@ -441,8 +441,8 @@ test('getRow_ applies level 2.5 enhancements', () => {
     };
 
     checkExpectedCells(row, expected);
-    expect(row.getCell_(3).isMosaic_()).toBe(false);
-    expect(row.getCell_(4).isMosaic_()).toBe(false);
+    expect(row.getCell_(3).isMosaicHoldable_()).toBe(false);
+    expect(row.getCell_(4).isMosaicHoldable_()).toBe(false);
 
     // test correct G0 set used for certain G1 characters
     model.setPrimaryG0CharacterEncoding_('g0_greek');

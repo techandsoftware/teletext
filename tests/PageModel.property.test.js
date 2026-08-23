@@ -139,18 +139,18 @@ test.prop([colourArb, mosaicAttributesArb, charArb])('getRow_ handles mosaic att
     if (isG0 && isHeld) {
         // non-mosaic char not used as the held char
         expect(cell.char_).toBe(unheldMosaicDefaultChar);
-        expect(cell.isMosaicCell_()).toBe(true);
+        expect(cell.isMosaic_()).toBe(true);
     }
     if (isG0 && !isHeld) {
         // G0 character is used instead of a mosaic
         const code = cell.char_.charCodeAt(0);
         expect(code >= 0x40 && code <= 0x5f).toBe(true); // default primary G0 set in this range since it's almost ASCII
-        expect(cell.isMosaicCell_()).toBe(false);
+        expect(cell.isMosaic_()).toBe(false);
     }
     if (!isG0) {
         // G1 mosaic character mapped to Unicode sextants
         expect(isUnicodeSextantCharacter(cell.char_)).toBe(true);
-        expect(cell.isMosaicCell_()).toBe(true);
+        expect(cell.isMosaic_()).toBe(true);
     }
 
     // colour and type applied
