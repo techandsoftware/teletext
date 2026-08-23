@@ -158,5 +158,3 @@ test.prop([colourArb, mosaicAttributesArb, charArb])('getRow_ handles mosaic att
     expect(cell.fgColour_).toBe(fgColour);
 });
 
-// TODO
-// double width, double size
