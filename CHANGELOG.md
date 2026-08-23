@@ -3,6 +3,7 @@
 
 # v1.3.1
 * `getScreenImage()` returns cleaner SVG without unused elements, which can accumulate after multiple screen redraws
+* Uses shadow DOM for the internal DOM tree
 
 # v1.3.0
 
