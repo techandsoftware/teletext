@@ -22,7 +22,7 @@ test('VectorViewBase renders page to SVG', () => {
     view.addTo_('#teletextscreen');
     view._update();
 
-    const svg = document.querySelector('#teletextscreen').innerHTML;
+    const svg = document.querySelector('#teletextscreen').shadowRoot.innerHTML;
 
     expect(svg).toMatchSnapshot();
 });

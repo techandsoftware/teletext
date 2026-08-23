@@ -22,7 +22,7 @@ function renderPageToSVG(webkitCompatible) {
   view.addTo_('#teletextscreen');
   view._update();
 
-  return document.querySelector('#teletextscreen').innerHTML;
+  return document.querySelector('#teletextscreen').shadowRoot.innerHTML;
 }
 
 test('VectorViewGraphicMosaic renders page to SVG with legacy webkit compatibility fix', () => {
