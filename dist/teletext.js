@@ -1,75 +1,70 @@
-`/*! @techandsoftware/teletext
+/*! @techandsoftware/teletext
     https://www.npmjs.com/package/@techandsoftware/teletext
     SPDX-FileCopyrightText: (c) 2026 Rob Hardy
     SPDX-License-Identifier: AGPL-3.0-only
- */`;
+ */
 const CURSIVE_CHARS = "ﻰﺋﺊﭼﭽﭘﭙﮔﻎﻼﻬﻪﻊﺔﺒﺘﺎﺑﺗﺛﺟﺣﺧﺳﺷﺻﺿﻃﻇﻋﻏﺜﺠﺤﺨـﻓﻗﻛﻟﻣﻧﻫﻰﻳﻴﻌﻐﻔﻘﻠﻤﻨ";
-class Utils {
-  // "base64url" encoding defined here https://tools.ietf.org/html/rfc4648
-  // the packed data format is from https://github.com/rawles/edit.tf
-  static decodeBase64URLEncoded_(input) {
-    input = input.replace(/-/g, "+").replace(/_/g, "/");
-    const pad = input.length % 4;
-    if (pad) {
-      if (pad === 1) throw new Error("Utils.decodeBase64URLEncoded E16: Input base64url string is the wrong length to determine padding");
-      input += new Array(5 - pad).join("=");
-    }
-    const data = atob(input);
-    const rows = [];
-    let row = [];
-    for (const val of dataTo7Bits(data)) {
-      row.push(String.fromCharCode(val));
-      if (row.length == 40) {
-        rows.push(row.join(""));
-        row = [];
-      }
-    }
-    if (row.length < 40)
+function decodeBase64URLEncoded_(input) {
+  input = input.replace(/-/g, "+").replace(/_/g, "/");
+  const pad = input.length % 4;
+  if (pad) {
+    if (pad === 1) throw new Error("Utils.decodeBase64URLEncoded E16: Input base64url string is the wrong length to determine padding");
+    input += new Array(5 - pad).join("=");
+  }
+  const data = atob(input);
+  const rows = [];
+  let row = [];
+  for (const val of dataTo7Bits(data)) {
+    row.push(String.fromCharCode(val));
+    if (row.length == 40) {
       rows.push(row.join(""));
-    return rows;
-  }
-  // Output Line format from .tti file format https://zxnet.co.uk/teletext/documents/ttiformat.pdf
-  static decodeOutputLine_(line) {
-    const decoded = [];
-    let decodeNextChar = false;
-    for (const c of [...line]) {
-      const code = c.charCodeAt(0);
-      if (code == 27) {
-        decodeNextChar = true;
-      } else if (code >= 128 && code <= 159) {
-        const char = String.fromCharCode(code - 128);
-        decoded.push(char);
-        decodeNextChar = false;
-      } else if (code >= 160) {
-        console.warn("W47 decodeOutputLine: bad character:", c);
-        decoded.push("");
-        decodeNextChar = false;
-      } else if (decodeNextChar) {
-        const char = String.fromCharCode(code - 64);
-        decoded.push(char);
-        decodeNextChar = false;
-      } else {
-        decoded.push(c);
-      }
+      row = [];
     }
-    return decoded;
   }
-  static getRowsFromOutputLines_(lines) {
-    const rows = [];
-    const regEx = /^OL,(\d{1,2}),(.*)/;
-    for (const line of [...lines]) {
-      const matches = line.match(regEx);
-      if (matches != null) {
-        rows[matches[1]] = Utils.decodeOutputLine_(matches[2]);
-      } else {
-        console.warn("E66 getRowsFromOutputLines_: bad line", line);
-      }
+  if (row.length < 40)
+    rows.push(row.join(""));
+  return rows;
+}
+function decodeOutputLine_(line) {
+  const decoded = [];
+  let decodeNextChar = false;
+  for (const c of [...line]) {
+    const code = c.charCodeAt(0);
+    if (code == 27) {
+      decodeNextChar = true;
+    } else if (code >= 128 && code <= 159) {
+      const char = String.fromCharCode(code - 128);
+      decoded.push(char);
+      decodeNextChar = false;
+    } else if (code >= 160) {
+      console.warn("W47 decodeOutputLine: bad character:", c);
+      decoded.push("");
+      decodeNextChar = false;
+    } else if (decodeNextChar) {
+      const char = String.fromCharCode(code - 64);
+      decoded.push(char);
+      decodeNextChar = false;
+    } else {
+      decoded.push(c);
     }
-    return rows;
   }
-  static isCursive_(char) {
-    return CURSIVE_CHARS.indexOf(char) != -1;
+  return decoded;
+}
+function getRowsFromOutputLines_(lines) {
+  const rows = [];
+  const regEx = /^OL,(\d{1,2}),(.*)/;
+  for (const line of [...lines]) {
+    const matches = line.match(regEx);
+    if (matches != null) {
+      rows[matches[1]] = decodeOutputLine_(matches[2]);
+    } else {
+      console.warn("E66 getRowsFromOutputLines_: bad line", line);
+    }
   }
+  return rows;
+}
+function isCursive_(char) {
+  return CURSIVE_CHARS.indexOf(char) != -1;
 }
 function intToBits(n) {
   let bits = [];
@@ -106,7 +101,6 @@ const testpages = {
   SPLASH
 };
 const NS = "http://www.w3.org/2000/svg";
-let clipPathId = 0;
 let _window;
 let _doc;
 class Element {
@@ -163,24 +157,6 @@ class Element {
       this.addClass_(name);
     return this;
   }
-  data_(objOrName, val) {
-    if (typeof objOrName == "object") {
-      for (const dataProp in objOrName) {
-        if (objOrName[dataProp] == null)
-          delete this._e.dataset[dataProp];
-        else
-          this._e.dataset[dataProp] = objOrName[dataProp];
-      }
-    } else {
-      if (typeof val == "undefined")
-        return this._e.dataset[objOrName];
-      else if (val == null)
-        delete this._e.dataset[objOrName];
-      else
-        this._e.dataset[objOrName] = val;
-    }
-    return this;
-  }
 }
 class SVG extends Element {
   constructor(windowDom) {
@@ -191,10 +167,21 @@ class SVG extends Element {
     this._e.setAttribute("xmlns", NS);
     return this;
   }
+  headStyle_(css) {
+    this._headStyle = css;
+    return this;
+  }
   addTo_(selector) {
     const node = _doc.querySelector(selector);
     if (node) {
-      node.appendChild(this._e);
+      if (this._headStyle && !_doc.getElementById("ttx-font-faces")) {
+        const style = _doc.createElement("style");
+        style.id = "ttx-font-faces";
+        style.append(this._headStyle);
+        _doc.head.appendChild(style);
+      }
+      const root = node.shadowRoot || (node.attachShadow ? node.attachShadow({ mode: "open" }) : node);
+      root.appendChild(this._e);
     } else {
       throw new Error("@techandsoftware/teletext: E117: addTo failed to match provided selector");
     }
@@ -382,46 +369,40 @@ class Defs extends Element {
   constructor() {
     super();
     this._e = _doc.createElementNS(NS, "defs");
+    this._clipPathId = 0;
     return this;
   }
   clip_() {
-    const clip = new ClipPath();
+    const clip = new ClipPath(this._clipPathId++);
     this._e.append(clip._node());
     return clip;
   }
-  find_(selector) {
-    const matchedEls = this._e.querySelectorAll(selector);
-    return [...matchedEls].map(wrapSVGElement);
+}
+class ClipPath extends Element {
+  constructor(id) {
+    super();
+    this._e = _doc.createElementNS(NS, "clipPath");
+    this._e.setAttribute("id", `clipPath-${id}`);
+    this._c = [];
+    return this;
   }
   rect_(width, height) {
     const rect = new Rect(width, height);
-    this._e.append(rect._node());
+    this._e.appendChild(rect._node());
+    this._c.push(rect);
     return rect;
   }
-}
-class ClipPath extends Element {
-  constructor() {
-    super();
-    this._e = _doc.createElementNS(NS, "clipPath");
-    this._e.setAttribute("id", `clipPath-${clipPathId}`);
-    clipPathId++;
-    return this;
-  }
   children_() {
-    return [...this._e.children].map(wrapSVGElement);
+    return this._c;
   }
-  add_(shape) {
-    this._e.appendChild(shape._node());
+  removeChild_(rect) {
+    this._c = this._c.filter((c) => c !== rect);
+    rect.remove_();
   }
 }
 class Rect extends Element {
-  constructor(widthOrEl, height) {
+  constructor(width, height) {
     super();
-    if (widthOrEl instanceof _window.SVGElement) {
-      this._e = widthOrEl;
-      return this;
-    }
-    const width = widthOrEl;
     this._e = _doc.createElementNS(NS, "rect");
     this._e.setAttribute("width", parseInt(width));
     this._e.setAttribute("height", parseInt(height));
@@ -463,17 +444,6 @@ class Line extends Element {
     this._e.setAttribute("y2", y2);
     return this;
   }
-}
-function wrapSVGElement(el) {
-  let wrappedEl;
-  switch (el.tagName) {
-    case "rect":
-      wrappedEl = new Rect(el);
-      break;
-    default:
-      throw new Error("SVG:wrapSVGElement Unable to wrap SVG element " + el.tagName);
-  }
-  return wrappedEl;
 }
 const Colour = {
   BLACK: /* @__PURE__ */ Symbol("BLACK"),
@@ -682,9 +652,9 @@ function createReverseLookup(input) {
   }
   return Object.freeze(reverseLookup);
 }
-const VECTOR_STYLE = `@font-face {
+const FONT_FACE_STYLE = `@font-face {
 font-family: 'Unscii';
-src: url('fonts/unscii-16.woff') format('woff'), 
+src: url('fonts/unscii-16.woff') format('woff'),
 url('fonts/unscii-16.ttf') format('truetype'),
 url('fonts/unscii-16.otf') format('opentype');
 unicode-range: U+0000-00FF, U+2022, U+2500, U+2502, U+250C, U+2510, U+2514, U+2518, U+251C, U+251D, U+2524, U+2525, U+252C, U+252F, U+2534, U+2537, U+253C, U+253F, U+2588, U+258C, U+2590, U+2592, U+25CB, U+25CF, U+25E2-25E5, U+2B60-2B63, U+E0C0-E0FF, U+1FB00-1FB70, U+1FB75, U+1FBA0-1FBA7;
@@ -695,7 +665,8 @@ font-smooth: never;
 font-family: 'Bedstead';
 src: url('fonts/bedstead.otf') format('opentype');
 unicode-range: U+0000-00FF;
-}
+}`;
+const VECTOR_STYLE = `${FONT_FACE_STYLE}
 @keyframes blink {
 to {
 visibility: hidden;
@@ -787,7 +758,7 @@ class VectorViewBase {
     this._svg = new SVG(dom).viewbox_(`0 0 ${this._WIDTH_PX} ${this._HEIGHT_PX}`).size_(this._WIDTH_PX * SCREEN_SCALE, this._HEIGHT_PX * SCREEN_SCALE * this._ASPECT_RATIO_VERTICAL_SCALE[DEFAULT_ASPECT_RATIO]).attr_({
       "preserveAspectRatio": "none",
       "style": "font-family: sans-serif"
-    }).style_(VECTOR_STYLE);
+    }).headStyle_(FONT_FACE_STYLE).style_(VECTOR_STYLE);
     this.d = this._svg.group_().attr_("class", "conceal_concealed flash_flashing");
     this._aspectRatio = DEFAULT_ASPECT_RATIO;
     this._createDisplay();
@@ -844,7 +815,7 @@ class VectorViewBase {
         }
         const cell = rowModel.getCell_(cellIndex);
         const bg = fillColourFromColourAttrib(cell.bgColour_);
-        const isMosaicByte = cell.isMosaicCell_();
+        const isMosaicByte = cell.isMosaic_();
         const fill = fillColourFromColourAttrib(cell.fgColour_);
         const attr = this._getCellAttr(cell.type_, isMosaicByte, cell.isCursive_);
         this._renderCell(cellView, cell, attr, fill, cellIndex, rowIndex, isMosaicByte);
@@ -862,12 +833,11 @@ class VectorViewBase {
       });
       if (rowModel.doubleHeight_) {
         this._setRowDoubleHeight(rowIndex);
-        this._setBoxDoubleHeight();
+        this._setBoxDoubleHeight(rowIndex);
         nextRowHidden = true;
       } else {
         nextRowHidden = false;
       }
-      this._makeClipFromBoxesForRow(rowIndex);
     });
     if ("_endOfUpdate" in this._plugins) this._plugins._endOfUpdate(this._svg.width_(), this._svg.height_());
     this.d.addClass_("conceal_concealed");
@@ -970,7 +940,21 @@ class VectorViewBase {
     this._refreshMixMode();
   }
   getStaticScreen_() {
-    return this._svg._node().outerHTML;
+    const clone = this._svg._node().cloneNode(true);
+    for (const el of clone.querySelectorAll("text")) {
+      if (el.textContent === " ") el.remove();
+    }
+    for (const el of clone.querySelectorAll("clipPath")) {
+      if (el.childElementCount === 0) el.remove();
+    }
+    const usedIds = new Set([...clone.querySelectorAll("use")].map((el) => el.getAttribute("href")?.slice(1)));
+    for (const el of clone.querySelectorAll("symbol")) {
+      if (!usedIds.has(el.id)) el.remove();
+    }
+    for (const el of clone.querySelectorAll("g > g > g")) {
+      if (el.childElementCount === 0) el.remove();
+    }
+    return clone.outerHTML;
   }
   _drawGrid() {
     this._gridLayer = this.d.group_();
@@ -1026,7 +1010,7 @@ class VectorViewBase {
     this._textLayer = textGroup;
   }
   _resetBoxClipForRow(rowNum) {
-    this._boxLayer.children_().filter((b) => b.data_("r") == rowNum).forEach((b) => b.remove_());
+    this._boxLayer.children_().filter((b) => b.rowNum_ === rowNum).forEach((b) => this._boxLayer.removeChild_(b));
   }
   _resetBackgroundForRow(rowNum) {
     if (this._bgrows[rowNum]) {
@@ -1052,23 +1036,14 @@ class VectorViewBase {
   _setRowDoubleHeight(rowNum) {
     this._bgrows[rowNum].children_().forEach((bg) => bg.attr_("height", CELL_DOUBLE_HEIGHT));
   }
-  _setBoxDoubleHeight() {
-    this._defs.find_("[data-boxbuffer]").forEach((box) => box.height_(CELL_DOUBLE_HEIGHT));
+  _setBoxDoubleHeight(rowNum) {
+    this._boxLayer.children_().filter((b) => b.rowNum_ === rowNum).forEach((b) => b.height_(CELL_DOUBLE_HEIGHT));
   }
   _setBoxForRow(rowNum, colNum) {
     const x = colNum * CELL_WIDTH;
     const y = rowNum * CELL_HEIGHT;
-    this._lastBoxBuffer = this._defs.rect_(CELL_WIDTH, CELL_HEIGHT).data_("boxbuffer", true).move_(x, y);
-  }
-  // FUDGE move boxes tagged with data-boxbuffer into the clip layer.
-  _makeClipFromBoxesForRow(rowNum) {
-    this._defs.find_("[data-boxbuffer]").forEach((box) => {
-      box.data_({
-        r: rowNum,
-        boxbuffer: null
-      });
-      this._boxLayer.add_(box);
-    });
+    this._lastBoxBuffer = this._boxLayer.rect_(CELL_WIDTH, CELL_HEIGHT).move_(x, y);
+    this._lastBoxBuffer.rowNum_ = rowNum;
   }
   _getCellAttr(cellType, isMosaicChar, isCursive) {
     if (cellType == CellType.MOSAIC_CONTIGUOUS_ && isMosaicChar || cellType == CellType.G3_) {
@@ -1377,14 +1352,14 @@ class TeletextController {
     this._font = null;
   }
   setRowFromOutputLine(rowNum, string) {
-    const chars = Utils.decodeOutputLine_(string);
+    const chars = decodeOutputLine_(string);
     this._model.setRowFromChars_(rowNum, chars);
   }
   setRow(rowNum, string) {
     this._model.setRowFromChars_(rowNum, string);
   }
   setPageFromOutputLines(lines, header) {
-    const rows = Utils.getRowsFromOutputLines_(lines);
+    const rows = getRowsFromOutputLines_(lines);
     if (typeof header != "undefined") rows[0] = this._processHeader(header);
     this.setPageRows(rows);
   }
@@ -1393,7 +1368,7 @@ class TeletextController {
     this._model.setRows_(rows);
   }
   _processHeader(header) {
-    header = Utils.decodeOutputLine_(header);
+    header = decodeOutputLine_(header);
     return header.join("").substring(0, 32).padStart(this._model.cols_, " ");
   }
   showTestPage(name) {
@@ -1419,7 +1394,7 @@ class TeletextController {
     this.setPageRows(rows);
   }
   loadPageFromEncodedString(input, header) {
-    const decoded = Utils.decodeBase64URLEncoded_(input);
+    const decoded = decodeBase64URLEncoded_(input);
     if (typeof header != "undefined") decoded[0] = this._processHeader(header);
     this.setPageRows(decoded);
   }
@@ -1504,7 +1479,10 @@ class TeletextController {
     this._view.detach_();
     if (this._selector) {
       const el = this._windowDom.document.querySelector(this._selector);
-      if (el) el.removeChild(el.firstChild);
+      if (el) {
+        if (el.shadowRoot) el.shadowRoot.innerHTML = "";
+        else if (el.firstChild) el.removeChild(el.firstChild);
+      }
     }
     this._view = null;
   }
@@ -1679,7 +1657,7 @@ class Cell {
         this._char += encodings["g2_latin"][diacriticKey];
       }
       if (encoding.includes("arabic")) {
-        this._isCursive = Utils.isCursive_(this._char);
+        this._isCursive = isCursive_(this._char);
       } else {
         this._isCursive = false;
       }
@@ -1689,7 +1667,7 @@ class Cell {
     this._byteHeld = null;
   }
   setSpace_(heldMosaic) {
-    if ((this._type == CellType.MOSAIC_CONTIGUOUS_ || this._type == CellType.MOSAIC_SEPARATED_) && heldMosaic.active_) {
+    if (isG1Type(this._type) && heldMosaic.active_) {
       this._byteHeld = heldMosaic.char_;
       this._type = heldMosaic.type_;
       let charEncoding = "g1_block_mosaic_to_unicode__legacy_computing";
@@ -1733,20 +1711,14 @@ class Cell {
   get boxed_() {
     return this._boxed;
   }
-  // used in rendering to distinguish burn-through characters in G1 set
-  // (should get type_ handle this instead?)
-  // applies to the base byte or the held byte
-  isMosaicCell_() {
-    if (this._byteHeld) return true;
-    const code = this._byte.charCodeAt(0);
-    return code <= 127 && (code & 32) == 32;
-  }
-  // used in page model to keep track of mosaic to hold: G1, and MSB is 1
-  // applies to the base byte
+  // applies to the base byte or the held byte; used in rendering G1
   isMosaic_() {
-    const code = this._byte.charCodeAt(0);
-    const isMosaic = (this._type == CellType.MOSAIC_CONTIGUOUS_ || this._type == CellType.MOSAIC_SEPARATED_) && code <= 127 && (code & 32) == 32;
-    return isMosaic;
+    if (this._byteHeld) return true;
+    return byteIsGraphic(this._byte);
+  }
+  // used in page model to decide whether to update the held mosaic register
+  isMosaicHoldable_() {
+    return isG1Type(this._type) && byteIsGraphic(this._byte);
   }
   getSextants_() {
     const code = this._byteHeld != null ? this._byteHeld.charCodeAt(0) : this._byte.charCodeAt(0);
@@ -1784,11 +1756,15 @@ function getCharWithEncoding(byte, encoding) {
   }
   return byte;
 }
+function isG1Type(type) {
+  return type === CellType.MOSAIC_CONTIGUOUS_ || type === CellType.MOSAIC_SEPARATED_;
+}
+function byteIsGraphic(byte) {
+  const code = byte.charCodeAt(0);
+  return code <= 127 && (code & 32) !== 0;
+}
 function isAlphaOrG1ButNotMosaic(type, byte) {
-  const isAlpha = type === CellType.ALPHA_;
-  const isG1Type = type === CellType.MOSAIC_CONTIGUOUS_ || type === CellType.MOSAIC_SEPARATED_;
-  const isNotMosaic = (byte.charCodeAt(0) & 32) == 0;
-  return isAlpha || isG1Type && isNotMosaic;
+  return type === CellType.ALPHA_ || isG1Type(type) && !byteIsGraphic(byte);
 }
 function getCharForGraphic(type, byte) {
   switch (type) {
@@ -2040,7 +2016,7 @@ class PageModel {
         cell.setMappedChar_(
           rs._switchedG0CharacterEncoding ? this._secondaryG0CharacterEncoding : this._primaryG0CharacterEncoding
         );
-        if (cell.isMosaic_()) {
+        if (cell.isMosaicHoldable_()) {
           rs._heldMosaic.char_ = char;
           rs._heldMosaic.type_ = cell.type_;
         }
@@ -2076,7 +2052,7 @@ class PageModel {
       const rowModel = this.getRow_(r);
       for (let c = 0; c < CELLS_PER_ROW; c++) {
         const cell = rowModel.getCell_(c);
-        text += _getVisibleChar(cell.type_, cell.char_, cell.isMosaicCell_(), withGraphics);
+        text += _getVisibleChar(cell.type_, cell.char_, cell.isMosaic_(), withGraphics);
         if (cell.size_ == CellSize.DOUBLE_WIDTH_ || cell.size_ == CellSize.DOUBLE_SIZE_) {
           if (c < CELLS_PER_ROW - 1) text += " ";
           c++;
