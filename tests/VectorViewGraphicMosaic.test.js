@@ -7,7 +7,7 @@ import { expect, test } from 'vitest'
 
 import { PageModel } from '../lib/PageModel.js';
 import { View } from '../lib//VectorViewGraphicMosaic.js';
-import { Utils } from '../lib/Utils.js';
+import * as Utils from '../lib/Utils.js';
 import testpages from '../lib/data/testpages.json';
 
 function renderPageToSVG(webkitCompatible) {
